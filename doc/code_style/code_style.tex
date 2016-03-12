@@ -1,6 +1,6 @@
 \documentclass[12pt,a4paper,final]{report} % When using the draft no
-                                            % pictures are included in
-                                            % the document
+                                           % pictures are included in
+                                           % the document
 \usepackage[utf8]{inputenc}
 \usepackage[UKenglish]{babel}
 
@@ -122,15 +122,61 @@
 \title{Report}
 
 \begin{document}
-\tableofcontents
-\listoffigures
-\listoftables
-\chapter{Coding style}
-Comming soon ... but should have noticed we use C++.
+
+% Enable the following when using a report docuemtn style
+
+%\tableofcontents
+%\listoffigures
+%\listoftables
+
+\chapter[Here]{Coding style}
+Here we present a kind of rules to happily coding together. First of
+all, as you may already noticed, we use C++ as our programming
+language. Why? well, that is because of its widely continuous
+spreading along the scientific community and all its nicely offered
+features.
+
+The list of rules that you'll find here were taken from our own
+experience. We took what has worked for us when working in cooperative
+projects, and set aside those sily things that only made cooperation
+painful instead of fun. Thus, sit back, relax and continue reading.
 
 \section{Comments}
-There is one and only simple rule here. Comment your work as much as
-you can.
+There is nothing more frustrating than having to review someone's else
+code (and sometimes or own code) and find out that the variables take
+names as those presented in Table
+\ref{tbl:variables_names_when_learning_to_program}, the function names
+are not representative of the work performed by the funcition, and
+there is not a single commented line that tell us why the code is
+doing what it is doing or what is the intented function of the
+code. We may have to either 
+\begin{itemize}
+\item spend a lot of time and effort to understand what is going on
+  with the code, or
+\item directly talk with the person that developed that code to
+  explain it to us.
+\end{itemize}
+Well, this may have been avoided if the code had been at least
+commented.
+
+One of the things we think is quite important to have is self
+explanatory code, which may be obtained by using appropriate variables
+and functions names, indentation and few comments for the tricky parts
+of the code.
+
+comment the code when the code itself does not tells you the complete
+histoty.
+
+Therefore, there is only one and simple rule to follow regarding
+comments in your code. \textbf{Comment your work as much as you
+  can}. Hope you got it, if not here it is again. \textbf{Comment
+  your work as much as you can}.
+
+\section{Indentation}
+This is simple, indent your code for easy reading. I use emacs as my
+preferred editor and I have it configured to create one whitespace
+when I press TAB. You can copy and use my emacs configuration file
+(.emacs) from the the \textbf{tools} folder.
 
 \section{Variables}
 We use variables to store values or data that are used frequently in
@@ -142,19 +188,23 @@ variable. If you want to store the velocity use \texttt{v} or
 \texttt{velocity} as the variable name.
 
 Avoid using the well known variables names:
-\begin{itemize}
-  \item \texttt{var1}\\
-  \item \texttt{var2}\\
-  \item \texttt{varn}\\
-  \item \texttt{value}\\
-  \item \texttt{variable}\\
-  \item \texttt{my\_variable}\\
-  \item \texttt{this\_variable}\\
-  \item \texttt{other\_variable}\\
-  \item \texttt{another\_variable}\\
-  \item \texttt{here}\\
-  \item \texttt{there}
-\end{itemize}
+\begin{table}
+  \centering
+  \begin{tabular}{|c|c|c|}
+    \hline
+    \texttt{var1} & \texttt{var2} & \texttt{varn}\\
+    \hline
+    \texttt{value} & \texttt{variable} & \texttt{my\_variable}\\
+    \hline
+    \texttt{this\_variable} & \texttt{other\_variable} &
+    \texttt{another\_variable}\\
+    \hline
+    \texttt{delete\_variable} &  \texttt{here} & \texttt{there}\\
+    \hline
+\end{tabular}
+\label{tbl:variables_names_when_learning_to_program}
+\caption{Variables names used when learning to program.}.
+\end{table}
 I know you (use?) have used those variable names, everyone does it.
 
 \subsection{Variables types}
@@ -194,6 +244,8 @@ promote reusability.
   \item Functions names MUST all be in lowercase.
   \item Use ``\_'' to separate words in the function name.
 \end{itemize}
+
+\subsection{Split large funtions into sub-task}
 
 \subsection{Input and output arguments}
 

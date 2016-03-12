@@ -23,11 +23,13 @@ doc/**/*.htm
 # Latex generated files
 # --------------------------------------------------------------
 doc/**/*.aux
+doc/**/*.bcf
 doc/**/*.log
 doc/**/*.lof
 doc/**/*.lot
 doc/**/*.dvi
 doc/**/*.pdf
+doc/**/*.run.xml
 doc/**/*.toc
 doc/**/*.kilepr
 
