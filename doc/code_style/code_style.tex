@@ -105,7 +105,7 @@
 % style is how the bibliography is cited and printed at the
 % bibliography section, and the option sorting=nyt sorts the
 % bibliography by name=n, year=y and title=t).
-\addbibresource{target_tracking.bib} % Imports the bibliography file
+\addbibresource{code_style.bib} % Imports the bibliography file
 
 \usepackage{csquotes} % Add this, otherwise a warning is thrown if not
                       % included
@@ -113,6 +113,9 @@
 % ========================================================================
 % Bibliography stuff ----------------------------- END -------------------
 % ========================================================================
+
+% The listing package to add formated blocks of code
+\usepackage{listings}
 
 % MY definitions (short-cuts)
 % For vectors
@@ -129,54 +132,78 @@
 %\listoffigures
 %\listoftables
 
-\chapter[Here]{Coding style}
-Here we present a kind of rules to happily coding together. First of
-all, as you may already noticed, we use C++ as our programming
-language. Why? well, that is because of its widely continuous
-spreading along the scientific community and all its nicely offered
-features.
+\chapter{Coding style}
+Here we present a kind of coding/programming style rules to happily
+coding together. First of all, as you may already noticed, we use C++
+as our programming language. Why? well, that is because of its widely
+continuous spreading along the scientific community and all its nicely
+offered features.
 
 The list of rules that you'll find here were taken from our own
 experience. We took what has worked for us when working in cooperative
-projects, and set aside those sily things that only made cooperation
-painful instead of fun. Thus, sit back, relax and continue reading.
+projects, and set aside those silly things that only made cooperation
+painful and nol longer fun. Hope you agree with us in the list of
+rules we present here, thus, sit back, relax and happy reading.
 
 \section{Comments}
+
+``\textit{Comments are supposed to make your code easier to understand
+  and maintain-- not harder}'', \cite{when_comments_go_bad:URL}.
+
 There is nothing more frustrating than having to review someone's else
-code (and sometimes or own code) and find out that the variables take
-names as those presented in Table
-\ref{tbl:variables_names_when_learning_to_program}, the function names
-are not representative of the work performed by the funcition, and
-there is not a single commented line that tell us why the code is
-doing what it is doing or what is the intented function of the
-code. We may have to either 
+code (and sometimes our own code) and find out that the variables or
+functions names are not representative of what they are used for, the
+code is a complete mess having no identation at all, and the worse
+thing is that there is not a single commented line to give us a clue
+of what is going on. In front of this situation we have two options,
 \begin{itemize}
-\item spend a lot of time and effort to understand what is going on
-  with the code, or
-\item directly talk with the person that developed that code to
-  explain it to us.
+\item spend a lot of time and effort to understand the code (and find
+  out that the code is not doing what you are looking for), or
+\item throw it away and do your own implementation (I personally
+  prefer this option).
 \end{itemize}
-Well, this may have been avoided if the code had been at least
-commented.
 
-One of the things we think is quite important to have is self
-explanatory code, which may be obtained by using appropriate variables
-and functions names, indentation and few comments for the tricky parts
-of the code.
+Certaintly, the above prevents code reusing which is one of the main
+purposes of this library.
 
-comment the code when the code itself does not tells you the complete
-histoty.
+First of all, try to make your code as self-explanatory as
+possible. Suppose that you are telling a story to a group of people
+and you want everyone that is hearing you do not get lost while you
+are talking. If the syntaxis of the programming language does not
+allow you to write your story clearly then use comments, do not be
+afraid of them.
 
-Therefore, there is only one and simple rule to follow regarding
-comments in your code. \textbf{Comment your work as much as you
-  can}. Hope you got it, if not here it is again. \textbf{Comment
-  your work as much as you can}.
+Put your comments as close as possible to the source code they are
+referring. A developer may not notice a comment that referrs to a code
+line that he/she is modifying, thus the comments and the code will be
+out of sync, \cite{when_comments_go_bad:URL}.
+
+Use comments to clarify the selection of some algorithms or to mention
+things to rememeber during the execution of the code.
+
+When writing functions that perform a large number of sub-tasks, use
+the initial part of it to write a (brief!) summary of the followed
+strategy by the function and include a list with the main steps of the
+function. This way the reader of your code gets an idea of what to
+expect in the body of the function.
+
+One final thing, always keep in mind that what may be transparently
+obvious for you, may be completely obscure and complex for another
+developer (or for yourself after returning from a nonprogramming
+period), use comments to ease the reading of your code, not to make it
+harder.
+
+If you are looking for some good reasons for not documenting your code
+then check see these ones
+\cite{why_programmers_do_not_comment_their_code:URL} and see what
+better matches with you.
 
 \section{Indentation}
 This is simple, indent your code for easy reading. I use emacs as my
-preferred editor and I have it configured to create one whitespace
-when I press TAB. You can copy and use my emacs configuration file
-(.emacs) from the the \textbf{tools} folder.
+preferred editor and have it configured to automatically indent with a
+single whitespace when pressing TAB. You can copy and use my emacs
+configuration file (.emacs) from the the \textbf{tools} folder or
+configure your favorite editor to indent with a single whitespace.
 
 \section{Variables}
 We use variables to store values or data that are used frequently in
@@ -184,10 +211,11 @@ the body of a function or as part of a class.
 
 \subsection{Variables names}
 Use variable names that reflect the values or data stored in the
-variable. If you want to store the velocity use \texttt{v} or
-\texttt{velocity} as the variable name.
+variable. If you require to store the velocity you should use
+\texttt{v} or \texttt{velocity} as the variable name. 
 
 Avoid using the well known variables names:
+
 \begin{table}
   \centering
   \begin{tabular}{|c|c|c|}
@@ -202,10 +230,18 @@ Avoid using the well known variables names:
     \texttt{delete\_variable} &  \texttt{here} & \texttt{there}\\
     \hline
 \end{tabular}
-\label{tbl:variables_names_when_learning_to_program}
-\caption{Variables names used when learning to program.}.
+\label{tbl:bad_variables_names}
+\caption{Bad variables names.}
 \end{table}
 I know you (use?) have used those variable names, everyone does it.
+
+Variables that stores the number of elements of something must use the
+prefix {\verb n_ }. For example, if you want to store the number of
+processors, the variable must be named as follow:
+
+\begin{lstlisting}[language=C++]
+  const unsigned n_processors = nprocessors();
+\end{lstlisting}
 
 \subsection{Variables types}
 Use \texttt{unsigned} instead of \texttt{int} in loops (\texttt{for}

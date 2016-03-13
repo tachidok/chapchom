@@ -2,11 +2,11 @@
 
 ### What the project is?
 
-We intend to develop a **Pattern-Object-Oriented numerical library**
-with aims to solve PDE's by the Finite Element Method and Mesh Free
-Methods.
+We intend to develop a **Parallel-Pattern-Object-Oriented numerical
+library** with aims to solve PDE's by the Finite Element Method and
+Mesh Free Methods.
 
-### How to configure?
+### How to configure it?
 
 Creating the CMake files :construction:, it will be added soon (cause
 it is a really pain to compile every file with the common g++ -Wall
@@ -14,14 +14,15 @@ it is a really pain to compile every file with the common g++ -Wall
 
 #### What you need to have it working and running nicely?
 
-* A C++ compiler, with MPI support to use parallel features.
+* A C++ compiler - with MPI support to use parallel features.
 
-* CMake, to configure and install.
+* CMake - to configure and install.
 
-* Latex and Biber to build documentation (see notes in the doc folder
-  for installation instructions of Latex and Biber).
+* Latex and Biber - to build documentation (see notes in the doc
+  folder for installation instructions of Latex and Biber).
 
-* Docygen to build classes diagrams and useful documentation from the code.
+* Doxygen - to build classes diagrams and useful documentation from
+  the code.
 
 ### Examples and test cases
 
@@ -40,11 +41,15 @@ Mmm ... that is something we need to carefully think about.
 
 ### How to contribute
 
-During the initial stage the contributions are only allowed by a
-selected number of people, but once we have something intereseting to
-share with you we will make it open to the public. Please check
-continuously for updates or contact the developers by email (I guess
-the email is somewhere listed in the gitHub page ... or not).
+During the initial stage contributions are only allowed by a selected
+number of people, but once we have something intereseting to share
+with you we will make it open to the public. Please check continuously
+for updates or contact the developers by email (I guess the email is
+somewhere listed in the gitHub page ... or not).
+
+#### Notes for contributors Please check the documentation for
+anything you need to set-up your account, get a copy of the latest
+development and start submitting your amazing contributions ....
 
 ### When did this start?
 

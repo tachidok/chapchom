@@ -32,6 +32,11 @@ doc/**/*.pdf
 doc/**/*.run.xml
 doc/**/*.toc
 doc/**/*.kilepr
+# --------------------------------------------------------------
+# Latex generated files (for bibliography)
+# --------------------------------------------------------------
+doc/**/*.bbl
+doc/**/*.blg
 
 # ##############################################################
 # C++
@@ -120,6 +125,9 @@ install_manifest.txt
 
 # Emacs temporary files
 *~
+# This require a / because the first character is a #
+/#*
+.#*
 
 # ##############################################################
 # Visual Studio
