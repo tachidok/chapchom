@@ -25,38 +25,34 @@ class CCLUSolverNumericalRecipes : public virtual CALinearSolver
  // Empty constructor
  CCLUSolverNumericalRecipes();
  
- // Constructor where we specify the matrix A of size m X n
- CCLUSolverNumericalRecipes(const double **_A,
-                            const unsigned m, const unsigned n);
+ // Constructor where we specify the matrix A
+ CCLUSolverNumericalRecipes(CAMatrix *_A_pt);
  
  // Empty destructor
  ~CCLUSolverNumericalRecipes();
  
- // Virtual function to solve a system of equations with input A. We
- // specify the right-hand side b and the x vector where the result is
- // returned. We assume that the input/output vectors have the correct
- // dimensions (size n). Note that the input A is not modified, it is
- // copied to an internal storage
- void solve(const double **_A, const unsigned m, const unsigned n, 
-	    const double *b, double *x);
- 
- // Virtual function to solve a system of equations with the already
- // stored matrix A. We specify the right-hand side b and the x vector
- // where the result is returned. We assume that the input/output
- // vectors have the correct dimensions (size n).
- void solve(const double *b, double *x);
- 
- // Virtual function to re-solve a system of equations with the
- // already stored matrix A. Reusing the LU decomposition. We specify
- // the right-hand side b and the x vector where the result is
+ // Solve a system of equations with input A. We specify the
+ // right-hand side b and the x vector where the result is
  // returned. We assume that the input/output vectors have the correct
  // dimensions (size n).
- void resolve(const double *b, double *x);
+ void solve(CAMatrix *_A_pt, CAMatrix *_b_pt, CAMatrix *_x_pt);
+ 
+ // Solve a system of equations with the already stored matrix A. We
+ // specify the right-hand side b and the x vector where the result is
+ // returned. We assume that the input/output vectors have the correct
+ // dimensions (size n).
+ void solve(CAMatrix *_b_pt, CAMatrix *_x_pt);
+ 
+ // Re-solve a system of equations with the already stored matrix
+ // A. Reusing the LU decomposition. We specify the right-hand side b
+ // and the x vector where the result is returned. We assume that the
+ // input/output vectors have the correct dimensions (size n).
+ void resolve(CAMatrix *_b_pt, CAMatrix *_x_pt);
  
  // Performs LU factorisation of the input matrix, the factorisation
  // is internally stored such that it can be re-used when calling
  // resolve
- void factorise(const double **_A, const unsigned m, const unsigned n);
+ void factorise(CAMatrix *_A_pt);
  
  // Performs LU factorisation of already stored matrix A, the
  // factorisation is internally stored such that it can be re-used
@@ -64,7 +60,7 @@ class CCLUSolverNumericalRecipes : public virtual CALinearSolver
  void factorise();
  
  // Performs the back substitution with the LU decomposed matrix
- void back_substitution(const double *b, double *x);
+ void back_substitution(CAMatrix *_b_pt, CAMatrix *_x_pt);
  
  protected:
  
@@ -86,13 +82,10 @@ class CCLUSolverNumericalRecipes : public virtual CALinearSolver
  // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
  CCLUSolverNumericalRecipes& operator=(const CCLUSolverNumericalRecipes &copy);
  
- // Data used for ludcmp() and lubksb()
- float **lu_a;
- float *lu_b;
- float lu_d;
- int lu_n;
- int *lu_indx;
- 
+ // Data used for ludcmp()
+ Mat_DP lu_a;
+ Vec_INT *lu_indx;
+  
 };
 
 #endif // #ifndef CCLUSOLVER_H

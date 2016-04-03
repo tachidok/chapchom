@@ -125,8 +125,9 @@ install_manifest.txt
 
 # Emacs temporary files
 *~
-# This require a / because the first character is a #
-/#*
+# This requires a '\' because the first character is a #
+\#*#
+/#*/#
 .#*
 
 # ##############################################################

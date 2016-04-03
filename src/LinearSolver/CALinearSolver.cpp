@@ -5,43 +5,24 @@
 #include "CALinearSolver.h"
 
 // ===================================================================
-// Empty constructor
+// Constructor
 // ===================================================================
 CALinearSolver::CALinearSolver() 
- : Matrix_A_has_been_set(false) { }
+ : Matrix_A_has_been_set(false)
+{ 
+ A_pt = 0;
+}
 
 // ===================================================================
 // Constructor where we specify the matrix A of size m X n
 // ===================================================================
-CALinearSolver::CALinearSolver(const double **_A,
-			       const unsigned m, const unsigned n)
+CALinearSolver::CALinearSolver(CAMatrix *_A_pt)
 {
- // Store the number of rows and columns
- NRows = m;
- NColumns = n;
- 
- // TODO Julio: Implement a class Matrix to efficiently store the
- // matrix
- 
- // Create storage for the matrix
- A = new double*[NRows];
- for(unsigned i = 0; i < NRows; i++)
-  {
-   A[i] = new double[NColumns];
-  }
- 
- // ... and copy the matrix (an element by element copy, uff!!)
- for (unsigned i = 0; i < NRows; i++)
-  {
-   for (unsigned j = 0; j < NColumns; j++)
-    {
-     A[i][j] = _A[i][j];
-    }
-  }
+ // Set the pointer of the matrix A
+ A_pt = _A_pt;
  
  // Set the flag to indicate that the matrix A has been set
  Matrix_A_has_been_set = true;
- 
 }
 
 // ===================================================================
@@ -56,35 +37,13 @@ CALinearSolver::~CALinearSolver()
 // ===================================================================
 // Set the matrix A
 // ===================================================================
-void CALinearSolver::set_matrix_A(const double **_A,
-				  const unsigned m, const unsigned n)
+void CALinearSolver::set_matrix_A(CAMatrix *_A_pt)
 {
- // Before copying the values for the matrix we check whether we need
- // to clean up any previously stored matrix
+ // First clean any other previously stored matrix
  clean_up();
  
- // Store the number of rows and columns
- NRows = m;
- NColumns = n;
- 
- // TODO Julio: Implement a class Matrix to efficiently store the
- // matrix
- 
- // Create storage for the matrix
- A = new double*[NRows];
- for(unsigned i = 0; i < NRows; i++)
-  {
-   A[i] = new double[NColumns];
-  }
- 
- // ... and copy the matrix (an element by element copy, uff!!)
- for (unsigned i = 0; i < NRows; i++)
-  {
-   for (unsigned j = 0; j < NColumns; j++)
-    {
-     A[i][j] = _A[i][j];
-    }
-  }
+ // Set the pointer of the matrix A
+ A_pt = _A_pt;
  
  // Set the flag to indicate that the matrix A has been set
  Matrix_A_has_been_set = true;
@@ -95,20 +54,19 @@ void CALinearSolver::set_matrix_A(const double **_A,
 // ===================================================================
 void CALinearSolver::clean_up()
 {
- // Check whether the matrix A has been set, if that is the case then
- // free the allocated memory
+ // Check whether the matrix has been set
  if (Matrix_A_has_been_set)
   {
-   for(unsigned i = 0; i < NRows; i++)
-    {
-     delete A[i];
-     A[i] = 0;
-    }
-   delete A;
-   A = 0;
+   // Delete the content of the matrix
+   A_pt->free_memory_for_matrix();
+   
+   // Set thise pointer of the matrix to nothing
+   A_pt = 0;
+   
+   // Mark the matrix as not been set
+   Matrix_A_has_been_set = false;
   }
  
- Matrix_A_has_been_set = false;
 }
 
 // ===================================================================
@@ -118,7 +76,7 @@ void CALinearSolver::clean_up()
 // and the x vector where the result is returned. We assume that the
 // input/output vectors have the correct dimensions (size n).
 // ===================================================================
-void CALinearSolver::resolve(const double *b, double *x)
+void CALinearSolver::resolve(CAMatrix *_b_pt, CAMatrix *_x_pt)
 {
  // Throw an error if called
  

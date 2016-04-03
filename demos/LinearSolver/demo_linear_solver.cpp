@@ -3,64 +3,34 @@
 
 // The class to create a solver object
 #include "../../src/LinearSolver/CCLUSolverNumericalRecipes.h"
-
-const unsigned my_function(double *A[], unsigned n)
-{
- std::cout << std::endl;
- for (unsigned i = 0; i < n; i++)
-  {
-   for (unsigned j = 0; j < n; j++)
-    {
-     std::cout << A[i][j] << " ";
-    }
-   std::cout << std::endl;
-  }
- 
- return 0;
- 
-}
-
-const unsigned my_function2(double b[], unsigned n)
-{
- std::cout << std::endl;
- for (unsigned i = 0; i < n; i++)
-  {
-   std::cout << b[i] << " ";
-  }
- std::cout << std::endl;
- 
- return 0;
- 
-}
+#include "../../src/Matrix/CCMatrix.h"
 
 int main(int argc, char *argv[])
 {
  // Create a matrix
- const unsigned n = 10;
- double **A = new double*[n];
- for (unsigned i = 0; i < n; i++)
+ const unsigned nrows = 10;
+ 
+ double **A = new double*[nrows];
+ for (unsigned i = 0; i < nrows; i++)
   {
-   A[i] = new double[n];
+   A[i] = new double[nrows];
   }
  
- double *b = new double[n];
- for (unsigned i = 0; i < n; i++)
+ double **b = new double*[nrows];
+ for (unsigned i = 0; i < nrows; i++)
   {
-   b[i] = i;
+   b[i] = new double[1];
   }
  
  // Create a linear solver with the matrix A (pass it size)
  //CALinearSolver *linear_solver_pt = new CCLUSolverNumericalRecipes(A, n, n);
  CALinearSolver *linear_solver_pt = new CCLUSolverNumericalRecipes();
  
- std::cout << "Starting ..." << std::endl;
- 
- //my_function(A, n);
- //my_function2(b, n);
- 
- for (unsigned i = 0; i < n; i++)
+ // Free memory
+ for (unsigned i = 0; i < nrows; i++)
   {
    delete A[i];
+   delete b[i];
   }
  delete [] A;
  A = 0;
@@ -68,7 +38,6 @@ int main(int argc, char *argv[])
  delete [] b;
  b = 0;
  
- // Free memory
  delete linear_solver_pt;
  linear_solver_pt = 0;
  
