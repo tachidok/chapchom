@@ -23,13 +23,20 @@ doc/**/*.htm
 # Latex generated files
 # --------------------------------------------------------------
 doc/**/*.aux
+doc/**/*.bcf
 doc/**/*.log
 doc/**/*.lof
 doc/**/*.lot
 doc/**/*.dvi
 doc/**/*.pdf
+doc/**/*.run.xml
 doc/**/*.toc
 doc/**/*.kilepr
+# --------------------------------------------------------------
+# Latex generated files (for bibliography)
+# --------------------------------------------------------------
+doc/**/*.bbl
+doc/**/*.blg
 
 # ##############################################################
 # C++
@@ -118,6 +125,9 @@ install_manifest.txt
 
 # Emacs temporary files
 *~
+# This requires a '\' because the first character is a #
+\#*\#
+.#*
 
 # ##############################################################
 # Visual Studio
