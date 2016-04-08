@@ -8,40 +8,186 @@
 # https://github.com/github/gitignore # which is a collection of
 # gitignore files
 
-# ##############################################################
+# ==============================================================
 # All files in the build directory
-# ##############################################################
+# ==============================================================
 build/
 
-# ##############################################################
+# ==============================================================
 # Some files in the doc directory
-# ##############################################################
+# ==============================================================
 doc/**/*.html
 doc/**/*.htm
 
-# --------------------------------------------------------------
-# Latex generated files
-# --------------------------------------------------------------
+# ==============================================================
+# Latex generated files in doc directoy
+# ==============================================================
+## Core latex/pdflatex auxiliary files:
 doc/**/*.aux
-doc/**/*.bcf
-doc/**/*.log
 doc/**/*.lof
+doc/**/*.log
 doc/**/*.lot
-doc/**/*.dvi
-doc/**/*.pdf
-doc/**/*.run.xml
+doc/**/*.fls
+doc/**/*.out
 doc/**/*.toc
-doc/**/*.kilepr
-# --------------------------------------------------------------
-# Latex generated files (for bibliography)
-# --------------------------------------------------------------
+doc/**/*.fmt
+
+## Intermediate documents:
+doc/**/*.dvi
+doc/**/*-converted-to.*
+# these rules might exclude image files for figures etc.
+# doc/**/*.ps
+# doc/**/*.eps
+doc/**/*.pdf
+
+## Bibliography auxiliary files (bibtex/biblatex/biber):
 doc/**/*.bbl
+doc/**/*.bcf
 doc/**/*.blg
+doc/**/*-blx.aux
+doc/**/*-blx.bib
+doc/**/*.brf
+doc/**/*.run.xml
 
-# ##############################################################
+## Build tool auxiliary files:
+doc/**/*.fdb_latexmk
+doc/**/*.synctex
+doc/**/*.synctex.gz
+doc/**/*.synctex.gz(busy)
+doc/**/*.pdfsync
+
+## Auxiliary and intermediate files from other packages:
+# algorithms
+doc/**/*.alg
+doc/**/*.loa
+
+# achemso
+doc/**/acs-*.bib
+
+# amsthm
+doc/**/*.thm
+
+# beamer
+doc/**/*.nav
+doc/**/*.snm
+doc/**/*.vrb
+
+# cprotect
+doc/**/*.cpt
+
+#(e)ledmac/(e)ledpar
+doc/**/*.end
+doc/**/*.[1-9]
+doc/**/*.[1-9][0-9]
+doc/**/*.[1-9][0-9][0-9]
+doc/**/*.[1-9]R
+doc/**/*.[1-9][0-9]R
+doc/**/*.[1-9][0-9][0-9]R
+doc/**/*.eledsec[1-9]
+doc/**/*.eledsec[1-9]R
+doc/**/*.eledsec[1-9][0-9]
+doc/**/*.eledsec[1-9][0-9]R
+doc/**/*.eledsec[1-9][0-9][0-9]
+doc/**/*.eledsec[1-9][0-9][0-9]R
+
+# glossaries
+doc/**/*.acn
+doc/**/*.acr
+doc/**/*.glg
+doc/**/*.glo
+doc/**/*.gls
+
+# gnuplottex
+doc/**/*-gnuplottex-*
+
+# hyperref
+doc/**/*.brf
+
+# knitr
+doc/**/*-concordance.tex
+doc/**/*.tikz
+doc/**/*-tikzDictionary
+
+# listings
+doc/**/*.lol
+
+# makeidx
+doc/**/*.idx
+doc/**/*.ilg
+doc/**/*.ind
+doc/**/*.ist
+
+# minitoc
+doc/**/*.maf
+doc/**/*.mtc
+doc/**/*.mtc[0-9]
+doc/**/*.mtc[1-9][0-9]
+
+# minted
+doc/**/_minted*
+doc/**/*.pyg
+
+# morewrites
+doc/**/*.mw
+
+# mylatexformat
+doc/**/*.fmt
+
+# nomencl
+doc/**/*.nlo
+
+# sagetex
+doc/**/*.sagetex.sage
+doc/**/*.sagetex.py
+doc/**/*.sagetex.scmd
+
+# sympy
+doc/**/*.sout
+doc/**/*.sympy
+doc/**/sympy-plots-for-*.tex/
+
+# pdfcomment
+doc/**/*.upa
+doc/**/*.upb
+
+#pythontex
+doc/**/*.pytxcode
+doc/**/pythontex-files-*/
+
+# Texpad
+doc/**/.texpadtmp
+
+# TikZ & PGF
+doc/**/*.dpth
+doc/**/*.md5
+doc/**/*.auxlock
+
+# todonotes
+doc/**/*.tdo
+
+# xindy
+doc/**/*.xdy
+
+# xypic precompiled matrices
+doc/**/*.xyc
+
+# WinEdt
+doc/**/*.bak
+doc/**/*.sav
+
+# endfloat
+doc/**/*.ttt
+doc/**/*.fff
+
+# Latexian
+doc/**/TSWLatexianTemp*
+
+# Kile
+doc/**/*.kilepr
+
+# ==============================================================
 # C++
-# ##############################################################
-
+# ==============================================================
 # Compiled Object files
 *.slo
 *.lo
@@ -71,10 +217,9 @@ doc/**/*.blg
 *.out
 *.app
 
-# ##############################################################
+# ==============================================================
 # C
-# ##############################################################
-
+# ==============================================================
 # Object files
 *.o
 *.ko
@@ -108,10 +253,9 @@ doc/**/*.blg
 # Debug files
 *.dSYM/
 
-# ##############################################################
+# ==============================================================
 # CMake
-# ##############################################################
-
+# ==============================================================
 CMakeCache.txt
 CMakeFiles
 CMakeScripts
@@ -119,20 +263,18 @@ Makefile
 cmake_install.cmake
 install_manifest.txt
 
-# ##############################################################
+# ==============================================================
 # Emacs
-# ##############################################################
-
+# ==============================================================
 # Emacs temporary files
 *~
 # This requires a '\' because the first character is a #
 \#*\#
 .#*
 
-# ##############################################################
+# ==============================================================
 # Visual Studio
-# ##############################################################
-
+# ==============================================================
 ## Ignore Visual Studio temporary files, build results, and
 ## files generated by popular Visual Studio add-ons.
 
