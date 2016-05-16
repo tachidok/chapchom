@@ -9,9 +9,11 @@
 # gitignore files
 
 # ==============================================================
-# All files in the build directory
+# All files in the build and bin directories
 # ==============================================================
 build/
+**/build/
+**/bin/
 
 # ==============================================================
 # Some files in the doc directory
