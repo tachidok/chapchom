@@ -1,6 +1,3 @@
-/** \file This file implements the methods of the CAODEs class
- */
-
 #include "ca_odes.h"
 
 // ===================================================================
@@ -25,7 +22,3 @@ CAODEs::~CAODEs()
  N_calls_ode.clear();
  
 }
- 
-
- 
-

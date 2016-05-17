@@ -186,7 +186,7 @@ void CCODEsFromTable::evaluate(const double t,
  // y[1] represents the y-position
  dy[1] = interpolator_pt->interpolate_1D(time, vel_y, t, interpolation_order);
 }
- 
+
 // ===================================================================
 // Evaluates the specified ode by "i" of the system of odes at the
 // given time "t" and the values of the function in "y". The
@@ -196,6 +196,9 @@ void CCODEsFromTable::evaluate(const unsigned i, const double t,
 			       const std::vector<double> &y,
 			       std::vector<double> &dy)
 {
-
+ // TODO Julio: Implement a class to handle runtime errors and call
+ // it here!!!
+ std::cout << "ERROR in CCODEsFromTable::evaluate() - This method is not implemented for this class" << std::endl;
+ throw(1);
+ return;
 }
- 

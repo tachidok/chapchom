@@ -27,7 +27,7 @@ OptionRead()
 #====================================================================
 build_dir=build
 lib_dir=lib
-lib_name=developing_library
+lib_name=chapchom
 
 #====================================================================
 # The building script

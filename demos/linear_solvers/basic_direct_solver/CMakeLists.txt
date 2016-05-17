@@ -30,4 +30,4 @@ SET(main_source demo_linear_solver)
 #FIND_LIBRARY(multirate_path multirate ../../lib)
 
 ADD_EXECUTABLE(${PROJECT_NAME} ${main_source})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} developing_library)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} chapchom)

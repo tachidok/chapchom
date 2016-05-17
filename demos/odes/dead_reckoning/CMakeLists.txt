@@ -30,4 +30,4 @@ SET(main_source demo_dead_reckoning)
 #FIND_LIBRARY(multirate_path multirate ../../lib)
 
 ADD_EXECUTABLE(${PROJECT_NAME} ${src_files} ${main_source})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} developing_library)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} chapchom)
