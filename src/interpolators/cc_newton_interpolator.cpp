@@ -32,7 +32,7 @@ double CCNewtonInterpolator::interpolate_1D(std::vector<double> &x_points,
  // that
  
  // Get the size of the data set
- const unsigned n_x_points = n_points.size();
+ const unsigned n_x_points = x_points.size();
  const unsigned n_fx_points = fx_points.size();
  
  if (n_x_points != n_fx_points)
@@ -49,10 +49,12 @@ double CCNewtonInterpolator::interpolate_1D(std::vector<double> &x_points,
  if (n_x_points - 1 != order)
   {
    std::cout << "ERROR in CCNewtonInterpolator::interpolate_1D() - The number of data points do not match with the requested interpolation order" << std::endl;
+   throw(1);
+   return 0;
   }
  
  // The coefficients vector
- std::vector<double> a(n_order + 1);
+ std::vector<double> a(order + 1);
  
  // What interpolation to perform
  if (order == 0) // zero interpolation or no interpolation

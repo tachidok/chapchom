@@ -7,14 +7,14 @@
 #define CCNEWTONINTERPOLATOR_H
 
 #include "../general/h_common_includes.h"
-
+#include "ca_interpolator.h"
 
 /** \class CCNewtonInterpolator cc_newton_interpolator.h
 
     \brief This class implements the Newton form of the interpolation
     polynomial
  */
-class CCNewtonInterpolator
+class CCNewtonInterpolator : public virtual CAInterpolator
 {
  
  public:

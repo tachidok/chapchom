@@ -20,7 +20,7 @@ ENDIF()
 #ENDIF()
 
 # Adding library's sources
-SET(include_src_directories src/general src/linear_solvers src/odes)
+SET(include_src_directories src/general src/linear_solvers src/odes src/interpolators)
 
 # Adding include directories
 INCLUDE_DIRECTORIES(include_src_directories)
@@ -40,6 +40,7 @@ INCLUDE_DIRECTORIES(include_src_directories)
 AUX_SOURCE_DIRECTORY(src/general src_lib_general)
 AUX_SOURCE_DIRECTORY(src/linear_solvers src_lib_linear_solvers)
 AUX_SOURCE_DIRECTORY(src/odes src_lib_odes)
+AUX_SOURCE_DIRECTORY(src/interpolators src_lib_interpolators)
 
 #FOREACH(i ${src_lib_directories})
 	#ADD_SUBDIRECTORY(${i})
@@ -55,7 +56,7 @@ AUX_SOURCE_DIRECTORY(src/odes src_lib_odes)
 #SET(src_lib_NumericalRecipes lubksb	ludcmp)
 
 # setting sources and main file
-SET(sources ${src_lib_general} ${src_lib_linear_solves} ${src_lib_odes})
+SET(sources ${src_lib_general} ${src_lib_linear_solves} ${src_lib_odes} ${src_lib_interpolators})
 #SET(main_source CCncrtSolver)
 
 #SET_TARGET_PROPERTIES(${PROJECT_NAME} LIBRARY_OUTPUT_DIRECTORY ../lib)

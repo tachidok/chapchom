@@ -37,7 +37,7 @@ double CAInterpolator::interpolate_1D(std::vector<double> &x_points,
 // interpolation and the desired "x" value to interpolate
 // ===================================================================
 double CAInterpolator::interpolate_2D(std::vector<std::vector<double> > &x_points,
-				      std::vector<std::vector<double> > &fx_points
+				      std::vector<std::vector<double> > &fx_points,
 				      std::vector<double> &x,
 				      const unsigned order)
 {
@@ -53,7 +53,7 @@ double CAInterpolator::interpolate_2D(std::vector<std::vector<double> > &x_point
 // interpolation and the desired "x" value to interpolate
 // ===================================================================
 double CAInterpolator::interpolate_3D(std::vector<std::vector<std::vector<double> > > &x_points,
-				      std::vector<std::vector<std::vector<double> > > &fx_points
+				      std::vector<std::vector<std::vector<double> > > &fx_points,
 				      std::vector<double> &x,
 				      const unsigned order)
 {

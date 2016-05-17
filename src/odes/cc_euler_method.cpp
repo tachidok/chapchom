@@ -58,9 +58,14 @@ void CCEulerMethod::integrate_step(CAODEs &odes, const double h,
  
  // Evaluate the ODE at the current time "t", all of them before doing
  // the updating of the "y's"
- for (unsigned i = 0; i < n_odes; i++)
+ //for (unsigned i = 0; i < n_odes; i++)
+
+// TODO: tachidok, we need to implement this other way such that we
+// can evaluate all of the equations even though we call integrate
+// step
   {
-   odes.evaluate(i, t, y, dy);
+   //odes.evaluate(i, t, y, dy);
+   odes.evaluate(t, y, dy);
   }
  
  // Once the derivatives have been evaluated do one step of Euler's

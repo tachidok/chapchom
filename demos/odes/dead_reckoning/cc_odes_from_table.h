@@ -8,11 +8,15 @@
 #include "../../../src/general/h_common_includes.h"
 // The class implementing the interfaces for the ODEs
 #include "../../../src/odes/ca_odes.h"
+#include "../../../src/interpolators/cc_newton_interpolator.h"
+
+// Load data from FILE
+#include <stdio.h>
 
 /** \class CCOdesFromTable cc_odes_from_table.h
     
     \brief This class implements a set of odes from a Table. It
-    inherints the interface to define ODEs from the CAODEs class
+    inherits the interface to define ODEs from the CAODEs class
  */
 class CCODEsFromTable : public CAODEs
 {
@@ -27,6 +31,12 @@ class CCODEsFromTable : public CAODEs
  /** Empty destructor
   */
  virtual ~CCODEsFromTable();
+ 
+ /** 
+     \brief Loads the data from an input file to generate a table from
+     which the ode takes its values
+  */
+ void load_table(const char *filename);
  
  /** \brief Evaluates the system of odes at the given time "t" and the
      values of the function in "y". The evaluation produces results in
@@ -56,6 +66,20 @@ class CCODEsFromTable : public CAODEs
   http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
  */
  CCODEsFromTable& operator=(const CCODEsFromTable &copy);
+ 
+ // Indicates whether the data have been loaded from the table or not
+ bool Loaded_table;
+
+ // Number of data in the loaded table
+ unsigned N_data_in_table;
+ 
+ // Storage for the loaded data
+ std::vector<double> Table_time;
+ std::vector<double> Table_vel_north;
+ std::vector<double> Table_vel_east;
+ 
+ // The interpolator
+ CCNewtonInterpolator *interpolator_pt;
  
 };
 
