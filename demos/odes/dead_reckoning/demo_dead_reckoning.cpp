@@ -6,6 +6,7 @@
 //#include "../../src/odes/ca_explicit_method.h"
 #include "../../../src/integration/ca_integration_method.h"
 #include "../../../src/integration/cc_euler_method.h"
+#include "../../../src/integration/cc_RK4_method.h"
 // The odes
 #include "cc_odes_from_table.h"
 
@@ -20,7 +21,8 @@ int main(int argc, char *argv[])
  odes->load_table("./extracted_data.dat");
  
  // Create an instance of the integrator method
- CAIntegrationMethod *integrator = new CCEulerMethod();
+ //CAIntegrationMethod *integrator = new CCEulerMethod();
+ CAIntegrationMethod *integrator = new CCRK4Method();
  // Get the number of history values required by the integration
  // method
  const unsigned n_history_values = integrator->n_history_values();
@@ -36,7 +38,7 @@ int main(int argc, char *argv[])
   }
  
  // Open two files to store the results
- FILE *file_latitude_pt = fopen("./my_latitude.dat", "w");
+ FILE *file_latitude_pt = fopen("./latitudeRK4.dat", "w");
  if (file_latitude_pt == 0)
   {
    std::cout << "ERROR in main() - Could not create the file [my_latitude.dat]"
@@ -45,7 +47,7 @@ int main(int argc, char *argv[])
    return 0;
   }
  
- FILE *file_longitude_pt = fopen("./my_longitude.dat", "w");
+ FILE *file_longitude_pt = fopen("./longitudeRK4.dat", "w");
  if (file_longitude_pt == 0)
   {
    std::cout << "ERROR in main() - Could not create the file [my_longitude.dat]"
@@ -63,7 +65,7 @@ int main(int argc, char *argv[])
  const double t_final = 4145;
  //const double t_final = 10;
  // Set the number of steps we want to take
- const double n_steps = 100000;
+ const double n_steps = 10000;
  //const double n_steps = 100;
  // Get the step size
  const double h = (t_final - t_initial) / n_steps;

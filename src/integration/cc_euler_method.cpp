@@ -35,7 +35,7 @@ void CCEulerMethod::integrate(CAODEs &odes, const double h,
  // Loop from "t_initial" to "t_final" with "h" size steps
  while (t <= t_final)
   {
-   // Do one Euler's step
+   // Do one integration step
    integrate_step(odes, h, t, y);
    t+=h;
   }
