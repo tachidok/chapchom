@@ -1,5 +1,5 @@
-#ifndef CCODESFROMTABLE_H
-#define CCODESFROMTABLE_H
+#ifndef CCODESFROMTABLEBASEDONVELOCITY_H
+#define CCODESFROMTABLEBASEDONVELOCITY_H
 
 #include "../../../src/general/h_common_includes.h"
 // The class implementing the interfaces for the ODEs
@@ -9,20 +9,20 @@
 // Load data from FILE
 #include <stdio.h>
 
-/// \class CCOdesFromTable cc_odes_from_table.h
+/// \class CCOdesFromTableBasedOnVelocity cc_odes_from_table.h
     
 /// This class implements a set of odes from a Table. It inherits the
 /// interface to define ODEs from the CAODEs class
-class CCODEsFromTable : public CAODEs
+class CCODEsFromTableBasedOnVelocity : public CAODEs
 {
  
  public:
 
  /// Constructor, sets the number of odes
- CCODEsFromTable();
+ CCODEsFromTableBasedOnVelocity();
  
  /// Empty destructor
- virtual ~CCODEsFromTable();
+ virtual ~CCODEsFromTableBasedOnVelocity();
  
  /// Loads the data from an input file to generate a table from which
  /// the ode takes its values
@@ -45,12 +45,12 @@ class CCODEsFromTable : public CAODEs
  /// Copy constructor (we do not want this class to be
  /// copiable). Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CCODEsFromTable(const CCODEsFromTable &copy);
+ CCODEsFromTableBasedOnVelocity(const CCODEsFromTableBasedOnVelocity &copy);
 
  /// Assignment operator (we do not want this class to be
  /// copiable. Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CCODEsFromTable& operator=(const CCODEsFromTable &copy);
+ CCODEsFromTableBasedOnVelocity& operator=(const CCODEsFromTableBasedOnVelocity &copy);
  
  // Indicates whether the data have been loaded from the table or not
  bool Loaded_table;
@@ -68,4 +68,4 @@ class CCODEsFromTable : public CAODEs
  
 };
 
-#endif // #ifndef CCODESFROMTABLE_H
+#endif // #ifndef CCODESFROMTABLEBASEDONVELOCITY_H

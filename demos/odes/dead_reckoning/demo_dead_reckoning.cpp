@@ -8,7 +8,8 @@
 #include "../../../src/integration/cc_euler_method.h"
 #include "../../../src/integration/cc_RK4_method.h"
 // The odes
-#include "cc_odes_from_table.h"
+#include "cc_odes_from_table_based_on_velocity.h"
+#include "cc_odes_from_table_based_on_acceleration.h"
 
 int main(int argc, char *argv[])
 {
@@ -17,12 +18,13 @@ int main(int argc, char *argv[])
  // -----------------------------------------------------------------
  
  // Create an instance of the ODEs to solve
- CCODEsFromTable *odes = new CCODEsFromTable();
+ //CCODEsFromTableBasedOnVelocity *odes = new CCODEsFromTableBasedOnVelocity();
+ CCODEsFromTableBasedOnAcceleration *odes = new CCODEsFromTableBasedOnAcceleration();
  odes->load_table("./extracted_data.dat");
  
  // Create an instance of the integrator method
- //CAIntegrationMethod *integrator = new CCEulerMethod();
- CAIntegrationMethod *integrator = new CCRK4Method();
+ CAIntegrationMethod *integrator = new CCEulerMethod();
+ //CAIntegrationMethod *integrator = new CCRK4Method();
  // Get the number of history values required by the integration
  // method
  const unsigned n_history_values = integrator->n_history_values();
@@ -38,7 +40,7 @@ int main(int argc, char *argv[])
   }
  
  // Open two files to store the results
- FILE *file_latitude_pt = fopen("./latitudeRK4.dat", "w");
+ FILE *file_latitude_pt = fopen("./latitudeEuler.dat", "w");
  if (file_latitude_pt == 0)
   {
    std::cout << "ERROR in main() - Could not create the file [my_latitude.dat]"
@@ -47,7 +49,7 @@ int main(int argc, char *argv[])
    return 0;
   }
  
- FILE *file_longitude_pt = fopen("./longitudeRK4.dat", "w");
+ FILE *file_longitude_pt = fopen("./longitudeEuler.dat", "w");
  if (file_longitude_pt == 0)
   {
    std::cout << "ERROR in main() - Could not create the file [my_longitude.dat]"
@@ -62,10 +64,10 @@ int main(int argc, char *argv[])
  // -----------------------------------------------------------------
  // Set the initial and final interval values
  const double t_initial = 0.0;
- const double t_final = 4145;
+ const double t_final = 4144;
  //const double t_final = 10;
  // Set the number of steps we want to take
- const double n_steps = 10000;
+ const double n_steps = 1000;
  //const double n_steps = 100;
  // Get the step size
  const double h = (t_final - t_initial) / n_steps;
@@ -74,29 +76,16 @@ int main(int argc, char *argv[])
  double t = t_initial;
  
  // Initial conditions
- y[0][0] = -98.2285316455;
- y[0][1] = 19.0159704133;
+ y[0][0] = 0.0;         // Initial x-position
+ y[0][1] = -0.05994836; // Initial x-velocity
+ y[0][2] = 0.0;         // Initial y-position
+ y[0][3] = 0.033224355; // Initial y-velocity
  
  // The first data
  std::cout << "t: " << t << " y[0][0]: " << y[0][0] << std::endl;
- std::cout << "t: " << t << " y[0][1]: " << y[0][1] << std::endl;
+ std::cout << "t: " << t << " y[0][2]: " << y[0][2] << std::endl;
  fprintf(file_longitude_pt, "%lf %lf\n", t, y[0][0]);
- fprintf(file_latitude_pt, "%lf %lf\n", t, y[0][1]);
- 
-#if 0
- // Evaluate ode
- for (unsigned i = 0; i < n_steps; i++)
-  {
-   std::vector<double> dy(2);
-   odes->evaluate(t, y[0], dy);
-   std::cout << "t: " << t << " y[0][0]: " << y[0]
-	     << " dy[0]: " << dy[0] << std::endl;
-   std::cout << "t: " << t << " y[0][1]: " << y[1]
-	     << " dy[1]: " << dy[1] << std::endl;
-   getchar();
-   t+=h;
-  }
-#endif // #if 0
+ fprintf(file_latitude_pt, "%lf %lf\n", t, y[0][2]);
  
  // Integrate
  //integrator->integrate(*odes, h, t_initial, t_final, y);
@@ -104,9 +93,9 @@ int main(int argc, char *argv[])
   {
    integrator->integrate_step(*odes, h, t, y);
    std::cout << "t: " << t << " y[1][0]: " << y[1][0] << std::endl;
-   std::cout << "t: " << t << " y[1][1]: " << y[1][1] << std::endl;
+   std::cout << "t: " << t << " y[1][2]: " << y[1][2] << std::endl;
    fprintf(file_longitude_pt, "%lf %lf\n", t, y[1][0]);
-   fprintf(file_latitude_pt, "%lf %lf\n", t, y[1][1]);
+   fprintf(file_latitude_pt, "%lf %lf\n", t, y[1][2]);
    // Update data
    for (unsigned j = 0; j < n_odes; j++)
     {
