@@ -1,13 +1,13 @@
-/** \file This file implements the CCODEsFromTable class
+/** \file This file implements the CCODEsFromTableBasedOnVelocity class
  */
 
-#include "cc_odes_from_table.h"
+#include "cc_odes_from_table_based_on_velocity.h"
 
 // ===================================================================
 // Constructor, sets the number of odes. We currently have two odes,
 // one for the velocity and the other for the acceleration
 // ===================================================================
-CCODEsFromTable::CCODEsFromTable()
+CCODEsFromTableBasedOnVelocity::CCODEsFromTableBasedOnVelocity()
  : CAODEs(2)
 {
  // The values have not been loaded into a table 
@@ -24,7 +24,7 @@ CCODEsFromTable::CCODEsFromTable()
 // ===================================================================
 // Empty destructor
 // ===================================================================
-CCODEsFromTable::~CCODEsFromTable()
+CCODEsFromTableBasedOnVelocity::~CCODEsFromTableBasedOnVelocity()
 { 
  // Free memory for interpolator
  delete interpolator_pt;
@@ -35,13 +35,13 @@ CCODEsFromTable::~CCODEsFromTable()
 // Loads the data from an input file to generate a table from which
 // the ode takes its values
 // ===================================================================
-void CCODEsFromTable::load_table(const char *filename)
+void CCODEsFromTableBasedOnVelocity::load_table(const char *filename)
 { 
  // Open the file with the data
  FILE *file_pt = fopen(filename, "r");
  if (file_pt == 0)
   {
-   std::cout << "ERROR in CCODEsFromTable::load_table() - The data file [" 
+   std::cout << "ERROR in CCODEsFromTableBasedOnVelocity::load_table() - The data file [" 
 	     << filename << "] was not opened" << std::endl;
    throw(1);
    return;
@@ -76,7 +76,7 @@ void CCODEsFromTable::load_table(const char *filename)
 		       &acc_x, &acc_y, &acc_z);
    if (n_read != 11)
     {
-     std::cout << "ERROR in CCODEsFromTable::load_table() - Number of read values (" << n_read << ")" << std::endl;
+     std::cout << "ERROR in CCODEsFromTableBasedOnVelocity::load_table() - Number of read values (" << n_read << ")" << std::endl;
      throw(1);
      return;
     }
@@ -96,9 +96,9 @@ void CCODEsFromTable::load_table(const char *filename)
 // of the function in "y". The evaluation produces results in the dy
 // vector
 // ===================================================================
-void CCODEsFromTable::evaluate(const double t,
-			       const std::vector<double> &y,
-			       std::vector<double> &dy)
+void CCODEsFromTableBasedOnVelocity::evaluate(const double t,
+					      const std::vector<double> &y,
+					      std::vector<double> &dy)
 {
  // Do linear interpolation
  unsigned interpolation_order = 1;
@@ -163,7 +163,7 @@ void CCODEsFromTable::evaluate(const double t,
 
  if (i == N_data_in_table - 1)
   {
-   std::cout << "ERROR in CCODEsFromTable::evaluate - The requeste 't' value is out of the range of the current data" << std::endl;
+   std::cout << "ERROR in CCODEsFromTableBasedOnVelocity::evaluate - The requeste 't' value is out of the range of the current data" << std::endl;
    throw(1);
    return;
   }
@@ -192,13 +192,13 @@ void CCODEsFromTable::evaluate(const double t,
 // given time "t" and the values of the function in "y". The
 // evaluation produces results in the dy vector at the dy[i] position
 // ===================================================================
-void CCODEsFromTable::evaluate(const unsigned i, const double t,
-			       const std::vector<double> &y,
-			       std::vector<double> &dy)
+void CCODEsFromTableBasedOnVelocity::evaluate(const unsigned i, const double t,
+					      const std::vector<double> &y,
+					      std::vector<double> &dy)
 {
  // TODO Julio: Implement a class to handle runtime errors and call
  // it here!!!
- std::cout << "ERROR in CCODEsFromTable::evaluate() - This method is not implemented for this class" << std::endl;
+ std::cout << "ERROR in CCODEsFromTableBasedOnVelocity::evaluate() - This method is not implemented for this class" << std::endl;
  throw(1);
  return;
 }
