@@ -90,6 +90,7 @@ void CCODEsFromTableBasedOnAcceleration::load_table(const char *filename)
    Table_acc_y[i] = acc_y;
   }
  
+
  // Close the file
  fclose(file_pt);
  
@@ -204,21 +205,24 @@ void CCODEsFromTableBasedOnAcceleration::evaluate(const double t,
    acc_y[0]= Table_acc_y[i_left];
    acc_y[1]= Table_acc_y[i_right];
    
+   // -----------------
+   // y[0] x-position
+   // y[1] x-velocity
+   // y[2] y-position
+   // y[3] y-velocity
+   // -----------------   
+   // dy[0] x-velocity
+   // dy[1] x-acceleration
+   // dy[2] y-velocity
+   // dy[3] y-acceleration
+   
 #if 1
-   // y[0] represents the x-position
-   // y[1] represents the x-velocity
+   dy[0] = y[1];
    dy[1] = interpolator_pt->interpolate_1D(time, acc_x, t, interpolation_order);
-   dy[0] = y[0] - 0.5 * dy[1]*t*t;
-   //dy[0] = y[1];
-   // y[2] represents the y-position
-   // y[3] represents the y-velocity
+   dy[2] = y[3];
    dy[3] = interpolator_pt->interpolate_1D(time, acc_y, t, interpolation_order);
-   dy[2] = y[2] - 0.5 * dy[3]*t*t;
-   //dy[2] = y[3];
 #endif // #if 1
 #if 0
-   // y[0] represents the x-position
-   // y[1] represents the y-position
    dy[0] = interpolator_pt->interpolate_1D(time, vel_x, t, interpolation_order);
    dy[1] = interpolator_pt->interpolate_1D(time, vel_y, t, interpolation_order);
 #endif // #if 0
@@ -226,14 +230,10 @@ void CCODEsFromTableBasedOnAcceleration::evaluate(const double t,
  else // Do not do interpolation, the exact values are in the table
   {
 #if 1
-   // y[0] represents the x-position
-   // y[1] represents the x-velocity
+   dy[0] = y[1];
    dy[1] = Table_acc_x[i_exact];
-   dy[0] = y[0] - 0.5 * dy[1]*t*t;
-   // y[2] represents the y-position
-   // y[3] represents the y-velocity
+   dy[2] = y[3];
    dy[3] = Table_acc_y[i_exact];
-   dy[2] = y[2] - 0.5 * dy[3]*t*t;
 #endif //#if 1
 #if 0
    dy[0] = Table_vel_east[i_exact];

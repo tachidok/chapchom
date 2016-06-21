@@ -65,5 +65,6 @@
 #include <fstream>
 #include <sstream>
 
+#include "definitions.h"
 
 #endif // #ifndef COMMON_INCLUDES_H

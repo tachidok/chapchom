@@ -72,7 +72,7 @@ void CCEulerMethod::integrate_step(CAODEs &odes, const double h,
  // Evaluate the ODE at time "t" using the current values of "y"
  odes.evaluate(t, y[k], dy);
  
- // Once the derivatives have been evaluated do one step of Euler's
+ // Once the derivatives have been obtained do one step of Euler's
  // method
  for (unsigned i = 0; i < n_odes; i++)
   {

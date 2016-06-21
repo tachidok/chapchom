@@ -1,7 +1,7 @@
 #ifndef CCNEWTONINTERPOLATOR_H
 #define CCNEWTONINTERPOLATOR_H
 
-#include "../general/h_common_includes.h"
+#include "../general/common_includes.h"
 #include "ca_interpolator.h"
 
 /// @class CCNewtonInterpolator cc_newton_interpolator.h

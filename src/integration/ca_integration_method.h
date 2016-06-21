@@ -1,7 +1,7 @@
 #ifndef CAINTEGRATIONMETHOD_H
 #define CAINTEGRATIONMETHOD_H
 
-#include "../general/h_common_includes.h"
+#include "../general/common_includes.h"
 #include "../odes/ca_odes.h"
 
 /// @class CAIntegrationMethod ca_integration_method.h
