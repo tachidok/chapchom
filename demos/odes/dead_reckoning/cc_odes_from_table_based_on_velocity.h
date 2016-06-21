@@ -1,7 +1,7 @@
 #ifndef CCODESFROMTABLEBASEDONVELOCITY_H
 #define CCODESFROMTABLEBASEDONVELOCITY_H
 
-#include "../../../src/general/h_common_includes.h"
+#include "../../../src/general/common_includes.h"
 // The class implementing the interfaces for the ODEs
 #include "../../../src/odes/ca_odes.h"
 #include "../../../src/interpolation/cc_newton_interpolator.h"

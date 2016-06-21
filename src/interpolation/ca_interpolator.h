@@ -1,7 +1,7 @@
 #ifndef CAINTERPOLATOR_H
 #define CAINTERPOLATOR_H
 
-#include "../general/h_common_includes.h"
+#include "../general/common_includes.h"
 
 /// @class CAInterpolator ca_interpolator.h
 
