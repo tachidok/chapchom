@@ -32,12 +32,18 @@ class CCEulerMethod : public CAExplicitIntegrationMethod
  /// Copy constructor (we do not want this class to be
  /// copiable). Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CCEulerMethod(const CCEulerMethod &copy);
+ CCEulerMethod(const CCEulerMethod &copy)
+  {
+   BrokenCopy::broken_copy("CCEulerMethod");
+  }
  
  /// Assignment operator (we do not want this class to be
  /// copiable. Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CCEulerMethod& operator=(const CCEulerMethod &copy);
+ void operator=(const CCEulerMethod &copy)
+  {
+   BrokenCopy::broken_assign("CCEulerMethod");
+  }
 
 };
 

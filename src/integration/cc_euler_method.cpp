@@ -55,10 +55,17 @@ void CCEulerMethod::integrate_step(CAODEs &odes, const double h,
  const unsigned n_history_values = y.size();
  if (n_history_values < N_history_values)
   {
-   std::cout << "ERROR in CCEulerMethod::integrate_step() - The number of history values is not enough to apply this integration method" << std::endl;
-   std::cout << "Required number of history values: " << N_history_values << std::endl;
-   std::cout << "Number of history values in input vector 'y': " << n_history_values << std::endl;
-   throw(1);
+   // Error message
+   std::ostringstream error_message;
+   error_message << "The number of history values is not enough to apply "
+		 << "this integration method" << std::endl;
+   std::cout << "Required number of history values: "
+	     << N_history_values << std::endl;
+   std::cout << "Number of history values in input vector 'y': "
+	     << n_history_values << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
   }
  
  // Rename a variable

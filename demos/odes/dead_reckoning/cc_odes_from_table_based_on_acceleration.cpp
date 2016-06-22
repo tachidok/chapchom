@@ -1,6 +1,5 @@
 /** \file This file implements the CCODEsFromTableBasedOnAcceleration class
  */
-
 #include "cc_odes_from_table_based_on_acceleration.h"
 
 // ===================================================================
@@ -18,6 +17,9 @@ CCODEsFromTableBasedOnAcceleration::CCODEsFromTableBasedOnAcceleration()
  
  // Create the interpolator
  interpolator_pt = new CCNewtonInterpolator();
+ 
+ // Read the data from file
+ load_table("./data.dat");
  
 }
 
@@ -41,10 +43,13 @@ void CCODEsFromTableBasedOnAcceleration::load_table(const char *filename)
  FILE *file_pt = fopen(filename, "r");
  if (file_pt == 0)
   {
-   std::cout << "ERROR in CCODEsFromTableBasedOnAcceleration::load_table() - The data file [" 
-	     << filename << "] was not opened" << std::endl;
-   throw(1);
-   return;
+   // Error message
+   std::ostringstream error_message;
+   error_message << "The data file [" << filename << "] was not opened"
+		 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
   }
  
  // Resize the containers based on the Table size
@@ -78,9 +83,12 @@ void CCODEsFromTableBasedOnAcceleration::load_table(const char *filename)
 		       &acc_x, &acc_y, &acc_z);
    if (n_read != 11)
     {
-     std::cout << "ERROR in CCODEsFromTableBasedOnAcceleration::load_table() - Number of read values (" << n_read << ")" << std::endl;
-     throw(1);
-     return;
+     // Error message
+     std::ostringstream error_message;
+     error_message << "Number of read values (" << n_read << ")" << std::endl;
+     throw ChapchomLibError(error_message.str(),
+			    CHAPCHOM_CURRENT_FUNCTION,
+			    CHAPCHOM_EXCEPTION_LOCATION);
     }
    
    Table_time[i] = time;
@@ -176,8 +184,13 @@ void CCODEsFromTableBasedOnAcceleration::evaluate(const double t,
       }
      else
       {
-       std::cout << "ERROR in CCODEsFromTableBasedOnAcceleration::evaluate - The requeste 't' value is not in the table" << std::endl;
-       throw(1);
+       // Error message
+       std::ostringstream error_message;
+       error_message << "The requested 't' value is not in the table"
+		     << std::endl;
+       throw ChapchomLibError(error_message.str(),
+			      CHAPCHOM_CURRENT_FUNCTION,
+			      CHAPCHOM_EXCEPTION_LOCATION);
       }
      
     } // The searched value is not exactly in the table
@@ -252,9 +265,11 @@ void CCODEsFromTableBasedOnAcceleration::evaluate(const unsigned i, const double
 					      const std::vector<double> &y,
 					      std::vector<double> &dy)
 {
- // TODO Julio: Implement a class to handle runtime errors and call
- // it here!!!
- std::cout << "ERROR in CCODEsFromTableBasedOnAcceleration::evaluate() - This method is not implemented for this class" << std::endl;
- throw(1);
- return;
+ // Error message
+ std::ostringstream error_message;
+ error_message << "This method is not implemented for this class"
+	       << std::endl;
+ throw ChapchomLibError(error_message.str(),
+			CHAPCHOM_CURRENT_FUNCTION,
+			CHAPCHOM_EXCEPTION_LOCATION);
 }

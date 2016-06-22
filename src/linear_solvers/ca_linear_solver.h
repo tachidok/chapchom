@@ -7,8 +7,10 @@
 #ifndef CALINEARSOLVER_H
 #define CALINEARSOLVER_H
 
-#include "../General/HCommon_includes.h"
-#include "../Matrix/CAMatrix.h"
+#include "../general/common_includes.h"
+#include "../general/utilities.h"
+
+#include "../matrix/ca_matrix.h"
 
 // Abstract class to solve linear systems of equations, this class is
 // inhereted by any concrete implementations of linear solvers.
@@ -65,12 +67,19 @@ class CALinearSolver
  
  // Copy constructor (we do not want this class to be copiable). Check
  // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CALinearSolver(const CALinearSolver &copy);
-
+ CALinearSolver(const CALinearSolver &copy)
+  {
+   BrokenCopy::broken_copy("CALinearSolver");
+  }
+ 
  // Assignment operator (we do not want this class to be
  // copiable. Check
  // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CALinearSolver& operator=(const CALinearSolver &copy);
+ void operator=(const CALinearSolver &copy)
+  {
+   BrokenCopy::broken_assign("CALinearSolver");
+  }
+ 
 };
 
 #endif // #ifndef CALINEARSOLVER_H

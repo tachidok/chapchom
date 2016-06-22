@@ -78,50 +78,11 @@ void CALinearSolver::clean_up()
 // ===================================================================
 void CALinearSolver::resolve(CAMatrix *_b_pt, CAMatrix *_x_pt)
 {
- // Throw an error if called
- 
- // TODO Julio: Implement a class to handle runtime errors and call
- // it here!!!
- std::cout << std::endl;
- std::cout << std::endl;
- std::cout << "ERROR in CALinearSolver::resolve() - Virtual function not implemented in derived class" << std::endl;
- std::cout << std::endl;
- std::cout << std::endl;
- throw(1);
+ // Error message
+ std:ostringstream error_message;
+ error_message << "Virtual function not implemented in derived class"
+	       << std::endl;
+ throw ChapchomLibError(error_message.str(),
+			CHAPCHOM_CURRENT_FUNCTION,
+			CHAPCHOM_EXCEPTION_LOCATION);
 }
-
-// ===================================================================
-// Copy constructor (we do not want this class to be copiable because
-// it contains dynamically allocated variables, A in this case). Check
-// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
-// ===================================================================
-CALinearSolver::CALinearSolver(const CALinearSolver &copy)
-{
- // TODO Julio: Implement a class to handle runtime errors and call
- // it here!!!
- std::cout << std::endl;
- std::cout << std::endl;
- std::cout << "ERROR in CALinearSolver::CALinearSolver() - Copy constructor called" << std::endl;
- std::cout << std::endl;
- std::cout << std::endl;
- throw(1);
-}
-
-// ===================================================================
-// Assignment operator (we do not want this class to be copiable
-// because it contains dynamically allocated variables, A in this
-// case). Check
-// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
-// ===================================================================
-CALinearSolver& CALinearSolver::operator=(const CALinearSolver &copy)
-{
- // TODO Julio: Implement a class to handle runtime errors and call
- // it here!!!
- std::cout << std::endl;
- std::cout << std::endl;
- std::cout << "ERROR in CALinearSolver::operator=() - Assignment called" << std::endl;
- std::cout << std::endl;
- std::cout << std::endl;
- throw(1);
-}
-

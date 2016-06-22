@@ -34,13 +34,19 @@ class CAExplicitIntegrationMethod : public virtual CAIntegrationMethod
  /// Copy constructor (we do not want this class to be
  /// copiable). Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CAExplicitIntegrationMethod(const CAExplicitIntegrationMethod &copy);
-
+ CAExplicitIntegrationMethod(const CAExplicitIntegrationMethod &copy)
+  {
+   BrokenCopy::broken_copy("CAExplicitIntegrationMethod");
+  }
+ 
  /// Assignment operator (we do not want this class to be
  /// copiable. Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CAExplicitIntegrationMethod& operator=(const CAExplicitIntegrationMethod &copy);
-
+ void operator=(const CAExplicitIntegrationMethod &copy)
+  {
+   BrokenCopy::broken_assign("CAExplicitIntegrationMethod");
+  }
+ 
 };
 
 #endif // #ifndef CAEXPLICITINTEGRATIONMETHOD_H

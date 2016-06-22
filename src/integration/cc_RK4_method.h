@@ -32,12 +32,18 @@ class CCRK4Method : public CAExplicitIntegrationMethod
  /// Copy constructor (we do not want this class to be
  /// copiable). Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CCRK4Method(const CCRK4Method &copy);
+ CCRK4Method(const CCRK4Method &copy)
+  {
+   BrokenCopy::broken_copy("CCRK4Method");
+  }
  
  /// Assignment operator (we do not want this class to be
  /// copiable. Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CCRK4Method& operator=(const CCRK4Method &copy);
+ void operator=(const CCRK4Method &copy)
+  {
+   BrokenCopy::broken_assign("CCRK4Method");
+  }
 
 };
 

@@ -2,6 +2,8 @@
 #define CAINTEGRATIONMETHOD_H
 
 #include "../general/common_includes.h"
+#include "../general/utilities.h"
+
 #include "../odes/ca_odes.h"
 
 /// @class CAIntegrationMethod ca_integration_method.h
@@ -46,12 +48,18 @@ class CAIntegrationMethod
  /// Copy constructor (we do not want this class to be
  /// copiable). Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CAIntegrationMethod(const CAIntegrationMethod &copy);
+ CAIntegrationMethod(const CAIntegrationMethod &copy)
+  {
+   BrokenCopy::broken_copy("CAIntegrationMethod");
+  }
 
  /// Assignment operator (we do not want this class to be
  /// copiable. Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CAIntegrationMethod& operator=(const CAIntegrationMethod &copy);
+ void operator=(const CAIntegrationMethod &copy)
+  {
+   BrokenCopy::broken_assign("CAIntegrationMethod");
+  }
  
  /// The number of history values
  unsigned N_history_values;

@@ -34,20 +34,27 @@ double CCNewtonInterpolator::interpolate_1D(std::vector<double> &x_points,
  
  if (n_x_points != n_fx_points)
   {
-   std::cout << "ERROR in CCNewtonInterpolator::interpolate_1D() - The number of data points do not match" << std::endl;
-   std::cout << "Number of x-points: " << n_x_points << std::endl;
-   std::cout << "Number of fx-points: " << n_fx_points << std::endl;
-   throw(1);
-   return 0;
+   // Error message
+   std::ostringstream error_message;
+   error_message << "The number of data points do not match" << std::endl
+		 << "Number of x-points: " << n_x_points << std::endl
+		 << "Number of fx-points: " << n_fx_points << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
   }
  
  // We check whether we have the corresponding number of data points
  // to perform the given order interpolation
  if (n_x_points - 1 != order)
   {
-   std::cout << "ERROR in CCNewtonInterpolator::interpolate_1D() - The number of data points do not match with the requested interpolation order" << std::endl;
-   throw(1);
-   return 0;
+   // Error message
+   std::ostringstream error_message;
+   error_message << "The number of data points do not match with the "
+		 << "requested\ninterpolation order" << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
   }
  
  // The coefficients vector
@@ -90,9 +97,16 @@ double CCNewtonInterpolator::interpolate_1D(std::vector<double> &x_points,
   }
  else
   {
-   std::cout << "ERROR in CCNewtonInterpolator::interpolate_1D() - The requested interpolation order is not implemented" << std::endl;
-   std::cout << "We only implement zero, linear and quadratic interpolation" << std::endl;
+   // Error message
+   std::ostringstream error_message;
+   error_message << "The requested interpolation order is not implemented"
+		 << std::endl;
+   std::cout << "We only implement zero, linear and quadratic interpolation"
+	     << std::endl;
    std::cout << "Requested interpolation order: " << order << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
   }
  
 }

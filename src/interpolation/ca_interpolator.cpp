@@ -25,9 +25,13 @@ double CAInterpolator::interpolate_1D(std::vector<double> &x_points,
 				      const double x,
 				      const unsigned order)
 {
- std::cout << "ERROR in CAInterpolator::interpolate_1D() - The used interpolator does not support this functionality" << std::endl;
- throw(1);
- return 0;
+ // Error message
+ std::ostringstream error_message;
+ error_message << "The used interpolator does not support this "
+	       << "functionality" << std::endl;
+ throw ChapchomLibError(error_message.str(),
+			CHAPCHOM_CURRENT_FUNCTION,
+			CHAPCHOM_EXCEPTION_LOCATION);
 }
 
 // ===================================================================
@@ -39,11 +43,13 @@ double CAInterpolator::interpolate_2D(std::vector<std::vector<double> > &x_point
 				      std::vector<double> &x,
 				      const unsigned order)
 {
- // TODO Julio: Implement a class to handle runtime errors and call
- // it here!!!
- std::cout << "ERROR in CAInterpolator::interpolate_2D() - The used interpolator does not support this functionality" << std::endl;
- throw(1);
- return 0;
+ // Error message
+ std::ostringstream error_message;
+ error_message << "The used interpolator does not support this "
+	       << "functionality" << std::endl;
+ throw ChapchomLibError(error_message.str(),
+			CHAPCHOM_CURRENT_FUNCTION,
+			CHAPCHOM_EXCEPTION_LOCATION);
 }
 
 // ===================================================================
@@ -55,9 +61,11 @@ double CAInterpolator::interpolate_3D(std::vector<std::vector<std::vector<double
 				      std::vector<double> &x,
 				      const unsigned order)
 {
- // TODO Julio: Implement a class to handle runtime errors and call
- // it here!!!
- std::cout << "ERROR in CAInterpolator::interpolate_3D() - The used interpolator does not support this functionality" << std::endl;
- throw(1);
- return 0;
+ // Error message
+ std::ostringstream error_message;
+ error_message << "The used interpolator does not support this functionality"
+	       << std::endl;
+ throw ChapchomLibError(error_message.str(),
+			CHAPCHOM_CURRENT_FUNCTION,
+			CHAPCHOM_EXCEPTION_LOCATION);
 }

@@ -2,6 +2,7 @@
 #define CAODES_H
 
 #include "../general/common_includes.h"
+#include "../general/utilities.h"
 
 /// @class CAODEs ca_odes.h
     
@@ -50,12 +51,18 @@ class CAODEs
  /// Copy constructor (we do not want this class to be
  /// copiable). Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CAODEs(const CAODEs &copy);
+ CAODEs(const CAODEs &copy)
+  {
+   BrokenCopy::broken_copy("CAODEs");
+  }
  
  /// Assignment operator (we do not want this class to be
  /// copiable. Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CAODEs& operator=(const CAODEs &copy);
+ void operator=(const CAODEs &copy)
+  {
+   BrokenCopy::broken_assign("CAODEs");
+  }
 
  /// The number of odes
  unsigned N_odes;

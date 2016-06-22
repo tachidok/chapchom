@@ -19,6 +19,9 @@ CCODEsFromTableBasedOnVelocity::CCODEsFromTableBasedOnVelocity()
  // Create the interpolator
  interpolator_pt = new CCNewtonInterpolator();
  
+ // Load the data from table
+ load_table("./data.dat");
+ 
 }
 
 // ===================================================================
@@ -41,10 +44,13 @@ void CCODEsFromTableBasedOnVelocity::load_table(const char *filename)
  FILE *file_pt = fopen(filename, "r");
  if (file_pt == 0)
   {
-   std::cout << "ERROR in CCODEsFromTableBasedOnVelocity::load_table() - The data file [" 
-	     << filename << "] was not opened" << std::endl;
-   throw(1);
-   return;
+   // Error message
+   std::ostringstream error_message;
+   error_message << "The data file [" << filename << "] was not opened"
+		 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
   }
  
  // Resize the containers based on the Table size
@@ -76,9 +82,13 @@ void CCODEsFromTableBasedOnVelocity::load_table(const char *filename)
 		       &acc_x, &acc_y, &acc_z);
    if (n_read != 11)
     {
-     std::cout << "ERROR in CCODEsFromTableBasedOnVelocity::load_table() - Number of read values (" << n_read << ")" << std::endl;
-     throw(1);
-     return;
+     // Error message
+     std::ostringstream error_message;
+     error_message << "Number of read values (" << n_read << ")"
+		   << std::endl;
+     throw ChapchomLibError(error_message.str(),
+			    CHAPCHOM_CURRENT_FUNCTION,
+			    CHAPCHOM_EXCEPTION_LOCATION);
     }
    
    Table_time[i] = time;
@@ -163,9 +173,13 @@ void CCODEsFromTableBasedOnVelocity::evaluate(const double t,
 
  if (i == N_data_in_table - 1)
   {
-   std::cout << "ERROR in CCODEsFromTableBasedOnVelocity::evaluate - The requeste 't' value is out of the range of the current data" << std::endl;
-   throw(1);
-   return;
+   // Error message
+   std::ostringstream error_message;
+   error_message << "The requested 't' value is out of the range of the "
+		 << "current data" << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
   }
  
  // Store the data used to interpolate in the correponding data structures
@@ -196,9 +210,11 @@ void CCODEsFromTableBasedOnVelocity::evaluate(const unsigned i, const double t,
 					      const std::vector<double> &y,
 					      std::vector<double> &dy)
 {
- // TODO Julio: Implement a class to handle runtime errors and call
- // it here!!!
- std::cout << "ERROR in CCODEsFromTableBasedOnVelocity::evaluate() - This method is not implemented for this class" << std::endl;
- throw(1);
- return;
+ // Error message
+ std::ostringstream error_message;
+ error_message << "This method is not implemented for this class"
+	       << std::endl;
+ throw ChapchomLibError(error_message.str(),
+			CHAPCHOM_CURRENT_FUNCTION,
+			CHAPCHOM_EXCEPTION_LOCATION);
 }

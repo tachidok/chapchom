@@ -27,8 +27,8 @@ namespace BrokenCopy
 //======================================================================
 
 /// The class can only be instantiated by the derived classes
-/// LibError and LibWarning.
-class LibException : public std::runtime_error
+/// ChapchomLibError and ChapchomLibWarning.
+class ChapchomLibException : public std::runtime_error
 {
  
  public:
@@ -40,20 +40,20 @@ class LibException : public std::runtime_error
  protected:
  
  /// Constructor takes the error description, function name and a
- /// location string provided by the EXCEPTION_LOCATION macro and
- /// combines them into a standard header. The exception type will be
- /// the string "WARNING" or "ERROR" and the message is written to the
- /// exception_stream, with a specified output_width. Optionally
+ /// location string provided by the CHAPCHOM_EXCEPTION_LOCATION macro
+ /// and combines them into a standard header. The exception type will
+ /// be the string "WARNING" or "ERROR" and the message is written to
+ /// the exception_stream, with a specified output_width. Optionally
  /// provide a traceback of the function calls.
- LibException(const std::string &error_description,
-	      const std::string &function_name,
-	      const char *location,
-	      const std::string &exception_type,
-	      std::ostream &exception_stream,
-	      const unsigned &output_width);
+ ChapchomLibException(const std::string &error_description,
+		      const std::string &function_name,
+		      const char *location,
+		      const std::string &exception_type,
+		      std::ostream &exception_stream,
+		      const unsigned &output_width);
  
  /// The destructor cannot throw an exception (C++ STL standard)
- ~LibException() throw(); 
+ ~ChapchomLibException() throw(); 
  
  /// Exception stream to which we write message in destructor        
  std::ostream* Exception_stream_pt;
@@ -72,7 +72,7 @@ class LibException : public std::runtime_error
 /// error stream and stream width can be specified. The default is
 /// cerr with a width of 70 characters.
 /// ====================================================================
-class LibError : public LibException
+class ChapchomLibError : public ChapchomLibException
 {
  /// Output stream that is used to write the errors
  static std::ostream *Stream_pt;
@@ -84,12 +84,12 @@ class LibError : public LibException
 
  /// Constructor requires the error description and the function in
  /// which the error occured and the location provided by the
- /// EXCEPTION_LOCATION macro
- LibError(const std::string &error_description,
-	  const std::string &function_name,
-	  const char *location) :
- LibException(error_description,function_name,location,"ERROR",
-	      *Stream_pt,Output_width) 
+ /// CHAPCHOM_EXCEPTION_LOCATION macro
+ ChapchomLibError(const std::string &error_description,
+		  const std::string &function_name,
+		  const char *location) :
+ ChapchomLibException(error_description,function_name,location,"ERROR",
+		      *Stream_pt,Output_width) 
   { }
  
  /// Static member function used to specify the error stream, which
@@ -105,11 +105,11 @@ class LibError : public LibException
 };
 
 //====================================================================
-/// An LibWarning object which should be created as a temporary
+/// An ChapchomLibWarning object which should be created as a temporary
 /// object to issue a warning. The warning stream and stream width can
 /// be specified. The default is cerr with a width of 70 characters.
 //====================================================================
-class LibWarning : public LibException
+class ChapchomLibWarning : public ChapchomLibException
 {
  /// Output stream that is used to write the errors
  static std::ostream *Stream_pt;
@@ -121,11 +121,11 @@ class LibWarning : public LibException
 
  /// Constructor requires the warning description and the function
  /// in which the warning occurred.
- LibWarning(const std::string &warning_description,
-	    const std::string &function_name,
-	    const char* location) :
- LibException(warning_description,function_name, location,
-	      "WARNING",*Stream_pt,Output_width) { }
+ ChapchomLibWarning(const std::string &warning_description,
+		    const std::string &function_name,
+		    const char* location) :
+ ChapchomLibException(warning_description,function_name, location,
+		      "WARNING",*Stream_pt,Output_width) { }
  
  /// Static member function used to specify the error stream, which
  /// must be passed as a pointer because streams cannot be copied.

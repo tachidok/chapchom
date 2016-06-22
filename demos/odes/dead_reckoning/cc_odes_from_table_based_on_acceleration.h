@@ -45,12 +45,18 @@ class CCODEsFromTableBasedOnAcceleration : public CAODEs
  /// Copy constructor (we do not want this class to be
  /// copiable). Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CCODEsFromTableBasedOnAcceleration(const CCODEsFromTableBasedOnAcceleration &copy);
-
+ CCODEsFromTableBasedOnAcceleration(const CCODEsFromTableBasedOnAcceleration &copy)
+  {
+   BrokenCopy::broken_copy("CCODEsFromTableBasedOnAcceleration");
+  }
+ 
  /// Assignment operator (we do not want this class to be
  /// copiable. Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CCODEsFromTableBasedOnAcceleration& operator=(const CCODEsFromTableBasedOnAcceleration &copy);
+ void operator=(const CCODEsFromTableBasedOnAcceleration &copy)
+  {
+   BrokenCopy::broken_assign("CCODEsFromTableBasedOnAcceleration");
+  }
  
  // Indicates whether the data have been loaded from the table or not
  bool Loaded_table;

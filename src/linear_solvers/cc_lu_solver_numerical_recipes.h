@@ -74,13 +74,19 @@ class CCLUSolverNumericalRecipes : public virtual CALinearSolver
  // it contains dynamically allocated variables, A in this
  // case). Check
  // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CCLUSolverNumericalRecipes(const CCLUSolverNumericalRecipes &copy);
+ CCLUSolverNumericalRecipes(const CCLUSolverNumericalRecipes &copy)
+  {
+   BrokenCopy::broken_copy("CCLUSolverNumericalRecipes");
+  }
  
  // Copy constructor (we do not want this class to be copiable because
  // it contains dynamically allocated variables, A in this
  // case). Check
  // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CCLUSolverNumericalRecipes& operator=(const CCLUSolverNumericalRecipes &copy);
+ void operator=(const CCLUSolverNumericalRecipes &copy)
+  {
+   BrokenCopy::broken_assign("CCLUSolverNumericalRecipes");
+  }
  
  // Data used for ludcmp()
  Mat_DP lu_a;
