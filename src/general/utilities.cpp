@@ -17,35 +17,37 @@ namespace BrokenCopy
  void broken_assign(const std::string& class_name)
   {
    //Write the error message into a string
-   std::string error_message = "No assignment operator allowed for class\n\n";
-   error_message += class_name;
-   error_message += "\n\n";
-   error_message += "Deliberately broken to avoid the accidental \n";
-   error_message += "use of the inappropriate C++ default.\n";
-   error_message += "If you really need an assignment operator\n";
-   error_message += "for this class, write it yourself...\n";
-   
-   throw LibError(error_message, "broken_assign()", EXCEPTION_LOCATION);
+   std::ostringstream error_message;
+   error_message << "No assignment operator allowed for class\n\n";
+   error_message << class_name;
+   error_message << "\n\n";
+   error_message << "Deliberately broken to avoid the accidental \n";
+   error_message << "use of the inappropriate C++ default.\n";
+   error_message << "If you really need an assignment operator\n";
+   error_message << "for this class, write it yourself...\n";
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
   }
  
  /// Issue error message and terminate execution
  void broken_copy(const std::string& class_name)
   {
    //Write the error message into a string
-   std::string error_message = "No copy constructor allowed for class\n\n";
-   error_message += class_name;
-   error_message += "\n\n";
-   error_message += "is deliberately broken to avoid the accidental\n";
-   error_message += "use of the inappropriate C++ default.\n";
-   error_message +=
+   std::ostringstream error_message;
+   error_message << "No copy constructor allowed for class\n\n";
+   error_message << class_name;
+   error_message << "\n\n";
+   error_message << "is deliberately broken to avoid the accidental\n";
+   error_message << "use of the inappropriate C++ default.\n";
+   error_message <<
     "All function arguments should be passed by reference or\n";
-   error_message +=
+   error_message <<
     "constant reference. If you really need a copy constructor\n";
-   error_message += "for this class, write it yourself...\n";
-
-   throw LibError(error_message,
-		  CURRENT_FUNCTION,
-		  EXCEPTION_LOCATION);
+   error_message << "for this class, write it yourself...\n";
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
   }
 
 }
@@ -62,13 +64,12 @@ namespace BrokenCopy
 /// exception_stream, with a specified output_width. Optionally
 /// provide a traceback of the function calls.
 //==========================================================================
-LibException::LibException(const std::string &error_description,
-			   const std::string &function_name,
-			   const char *location,
-			   const std::string &exception_type,
-			   std::ostream &exception_stream,
-			   const unsigned &output_width, 
-			   bool list_trace_back) : 
+ChapchomLibException::ChapchomLibException(const std::string &error_description,
+					   const std::string &function_name,
+					   const char *location,
+					   const std::string &exception_type,
+					   std::ostream &exception_stream,
+					   const unsigned &output_width) : 
  std::runtime_error("Exception")
 {
  // By default we shout
@@ -117,10 +118,10 @@ LibException::LibException(const std::string &error_description,
 }
 
 //========================================================================
-/// The LibException destructor actually spawns the error message
+/// The ChapchomLibException destructor actually spawns the error message
 /// created in the constructor (unless suppresed)
 //==========================================================================
-LibException::~LibException() throw()
+ChapchomLibException::~ChapchomLibException() throw()
 {
  if (!Suppress_error_message)
   {
@@ -131,24 +132,24 @@ LibException::~LibException() throw()
 }
 
 //========================================================================
-/// Default output stream for LibErrors (cerr)
+/// Default output stream for ChapchomLibErrors (cerr)
 //========================================================================
-std::ostream *LibError::Stream_pt = &std::cerr;
+std::ostream *ChapchomLibError::Stream_pt = &std::cerr;
 
 //=======================================================================
-/// Default output width for LibErrors (70)
+/// Default output width for ChapchomLibErrors (70)
 //=======================================================================
-unsigned LibError::Output_width = 70;
+unsigned ChapchomLibError::Output_width = 70;
 
 //=======================================================================
-/// Default output stream for LibWarnings (cerr)
+/// Default output stream for ChapchomLibWarnings (cerr)
 //=======================================================================
-std::ostream *LibWarning::Stream_pt = &std::cerr;
+std::ostream *ChapchomLibWarning::Stream_pt = &std::cerr;
 
 //=======================================================================
-/// Default output width for LibWarnings (70)
+/// Default output width for ChapchomLibWarnings (70)
 //=======================================================================
-unsigned LibWarning::Output_width = 70;
+unsigned ChapchomLibWarning::Output_width = 70;
 
 
 

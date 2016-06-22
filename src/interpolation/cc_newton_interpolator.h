@@ -1,7 +1,6 @@
 #ifndef CCNEWTONINTERPOLATOR_H
 #define CCNEWTONINTERPOLATOR_H
 
-#include "../general/common_includes.h"
 #include "ca_interpolator.h"
 
 /// @class CCNewtonInterpolator cc_newton_interpolator.h
@@ -30,12 +29,18 @@ class CCNewtonInterpolator : public virtual CAInterpolator
  /// Copy constructor (we do not want this class to be
  /// copiable). Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CCNewtonInterpolator(const CCNewtonInterpolator &copy);
+ CCNewtonInterpolator(const CCNewtonInterpolator &copy)
+  {
+   BrokenCopy::broken_copy("CCNewtonInterpolator");
+  }
  
  /// Assignment operator (we do not want this class to be
  /// copiable. Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CCNewtonInterpolator& operator=(const CCNewtonInterpolator &copy);
+ void operator=(const CCNewtonInterpolator &copy)
+  {
+   BrokenCopy::broken_assign("CCNewtonInterpolator");
+  }
 
 };
 

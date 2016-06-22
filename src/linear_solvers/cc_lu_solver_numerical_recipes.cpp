@@ -109,17 +109,14 @@ void CCLUSolverNumericalRecipes::factorise()
  const unsigned long ncolumns = A_pt->ncolumns();
  if (nrows!=ncolumns)
   {
-   // TODO Julio: Implement a class to handle runtime errors and call
-   // it here!!!
-   std::cout << std::endl;
-   std::cout << std::endl;
-   std::cout << "ERROR in CCLUSolverNumericalRecipes::factorise() - "
-             << "The matrix is not square." << std::endl;
-   std::cout << "The matrix is of size: " << nrows << " x "
-             << ncolumns << std::endl;
-   std::cout << std::endl;
-   std::cout << std::endl;
-   throw(1);
+   // Error message
+   std:ostringstream error_message;
+   error_message << "The matrix is not square." << std::endl
+		 << "The matrix is of size: " << nrows << " x "
+		 << ncolumns << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
   }
  
  // The matrix used as input and output, after calling ludcmp it has
@@ -189,43 +186,5 @@ void CCLUSolverNumericalRecipes::back_substitution(CAMatrix *_b_pt,
    
   }
  
-}
-
-// ===================================================================
-// Copy constructor (we do not want this class to be copiable because
-// it contains dynamically allocated variables, A in this case). Check
-// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
-// ===================================================================
-CCLUSolverNumericalRecipes::CCLUSolverNumericalRecipes(const CCLUSolverNumericalRecipes &copy)
-{
- // TODO Julio: Implement a class to handle runtime errors and call it
- // here!!!
- std::cout << std::endl;
- std::cout << std::endl;
- std::cout << "ERROR in "
-           << "CCLUSolverNumericalRecipes::CCLUSolverNumericalRecipes() "
-           << "- Copy constructor called" << std::endl;
- std::cout << std::endl;
- std::cout << std::endl;
- throw(1);
-}
-
-// ===================================================================
-// Assignment operator (we do not want this class to be copiable
-// because it contains dynamically allocated variables, A in this
-// case). Check
-// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
-// ===================================================================
-CCLUSolverNumericalRecipes& CCLUSolverNumericalRecipes::operator=(const CCLUSolverNumericalRecipes &copy)
-{
- // TODO Julio: Implement a class to handle runtime errors and call it
- // here!!!
- std::cout << std::endl;
- std::cout << std::endl;
- std::cout << "ERROR in CCLUSolverNumericalRecipes::operator=() - "
-           << "Assignment called" << std::endl;
- std::cout << std::endl;
- std::cout << std::endl;
- throw(1);
 }
 

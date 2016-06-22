@@ -2,6 +2,7 @@
 #define CAINTERPOLATOR_H
 
 #include "../general/common_includes.h"
+#include "../general/utilities.h"
 
 /// @class CAInterpolator ca_interpolator.h
 
@@ -43,12 +44,18 @@ class CAInterpolator
  /// Copy constructor (we do not want this class to be
  /// copiable). Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CAInterpolator(const CAInterpolator &copy);
+ CAInterpolator(const CAInterpolator &copy)
+  {
+   BrokenCopy::broken_copy("CAInterpolator");
+  }
 
  /// Assignment operator (we do not want this class to be
  /// copiable. Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CAInterpolator& operator=(const CAInterpolator &copy);
+ void operator=(const CAInterpolator &copy)
+  {
+   BrokenCopy::broken_assign("CAInterpolator");
+  }
 
 };
 

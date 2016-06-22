@@ -25,7 +25,7 @@ OptionRead()
 #====================================================================
 build_dir=build
 bin_dir=bin
-example=dead_reckoning
+example=dead_reckoning_from_velocities
 
 #====================================================================
 # The building script
