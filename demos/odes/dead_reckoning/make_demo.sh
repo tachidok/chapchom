@@ -25,7 +25,9 @@ OptionRead()
 #====================================================================
 build_dir=build
 bin_dir=bin
-example=dead_reckoning_from_velocities
+example_velocity=dead_reckoning_from_accelerations
+#example_velocity=dead_reckoning_from_velocities
+example_acceleration=dead_reckoning_from_accelerations
 
 #====================================================================
 # The building script
@@ -34,7 +36,8 @@ example=dead_reckoning_from_velocities
 echo ""
 echo "============================================================= "
 echo ""
-echo "Example: ("$example")"
+echo "Example: ("$example_velocity")"
+echo "Example: ("$example_acceleration")"
 echo ""
 echo ""
 echo "I will use the '"$build_dir"' directory as the temp build folder"
@@ -67,11 +70,11 @@ fi
 echo ""
 echo ""
 
-echo "Building the '"$example"' example ..."
-cmake ../ -Dexample_name=$example
+echo "Building the '"$example_velocity"' example ..."
+cmake ../ -Dexample_name=$example_velocity
 make clean
 make
-cp $example ../$bin_dir
+cp $example_velocity ../$bin_dir
 echo "Done"
 
 #====================================================================
@@ -83,8 +86,8 @@ cd ..
 echo ""
 echo "============================================================= "
 echo ""
-echo "Example '"$example"' built and ready to use"
-echo "You can run it by typing '"./$example"' at the '"$bin_dir"' directory"
+echo "Example '"$example_velocity"' built and ready to use"
+echo "You can run it by typing '"./$example_velocity"' at the '"$bin_dir"' directory"
 echo ""
 echo "============================================================= "
 echo ""

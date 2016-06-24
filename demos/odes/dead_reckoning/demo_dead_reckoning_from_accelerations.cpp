@@ -36,24 +36,30 @@ int main(int argc, char *argv[])
   }
  
  // Open two files to store the results
- FILE *file_latitude_pt = fopen("./latitudeEuler.dat", "w");
+ char file_latitude_name[100];
+ // sprintf(file_latitude_name, "./latitude_from_acceleration.dat");
+ sprintf(file_latitude_name, "./roll.dat");
+ FILE *file_latitude_pt = fopen(file_latitude_name, "w");
  if (file_latitude_pt == 0)
   {
    // Error message
-   std::string error_message;
-   error_message << "Could not create the file [latitude.dat]"
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_latitude_name << "]"
 		 << std::endl;
    throw ChapchomLibError(error_message.str(),
 			  CHAPCHOM_CURRENT_FUNCTION,
 			  CHAPCHOM_EXCEPTION_LOCATION);
   }
  
- FILE *file_longitude_pt = fopen("./longitudeEuler.dat", "w");
+ char file_longitude_name[100];
+ // sprintf(file_longitude_name, "./longitude_from_acceleration.dat");
+ sprintf(file_longitude_name, "./pitch.dat");
+ FILE *file_longitude_pt = fopen(file_longitude_name, "w");
  if (file_longitude_pt == 0)
   {
    // Error message
-   std::string error_message;
-   error_message << "Could not create the file [longitude.dat]"
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_longitude_name << "]"
 		 << std::endl;
    throw ChapchomLibError(error_message.str(),
 			  CHAPCHOM_CURRENT_FUNCTION,
@@ -61,15 +67,15 @@ int main(int argc, char *argv[])
   }
  
  // -----------------------------------------------------------------
- // Configuration and initialisation of the problem (time, initial
- // values)
+ // Configuration and initialisation of the problem (steps, h,
+ // initial values)
  // -----------------------------------------------------------------
- // Set the initial and final interval values
+ // Set the initial and final interval values (got from the number of data in Table)
  const double t_initial = 0.0;
  const double t_final = 4144;
  //const double t_final = 10;
  // Set the number of steps we want to take
- const double n_steps = 100000;
+ const double n_steps = 10000;
  //const double n_steps = 100;
  // Get the step size
  const double h = (t_final - t_initial) / n_steps;
@@ -82,14 +88,17 @@ int main(int argc, char *argv[])
  y[0][1] = -0.05994836; // Initial x-velocity
  y[0][2] = 0.0;         // Initial y-position
  y[0][3] = 0.033224355; // Initial y-velocity
+ y[0][4] = 0.0;         // Initial roll
+ y[0][5] = 0.0;         // Initial pitch
  
- // The first data
- std::cout << "t: " << t << " y[0][0]: " << y[0][0] << std::endl;
- std::cout << "t: " << t << " y[0][1]: " << y[0][1] << std::endl;
- std::cout << "t: " << t << " y[0][2]: " << y[0][2] << std::endl;
- std::cout << "t: " << t << " y[0][3]: " << y[0][3] << std::endl;
- fprintf(file_longitude_pt, "%lf %lf\n", t, y[0][0]);
- fprintf(file_latitude_pt, "%lf %lf\n", t, y[0][2]);
+ // Output the initial data to screen
+ std::cout << "t: " << t
+           << " x-pos: " << y[0][0] << " x-vel: " << y[0][1]
+           << " y-pos: " << y[0][2] << " y-vel: " << y[0][3]
+           << " roll: " << y[0][4] << " pitch: " << y[0][5] << std::endl;
+ 
+ fprintf(file_longitude_pt, "%lf %lf\n", t, y[0][4]);
+ fprintf(file_latitude_pt, "%lf %lf\n", t, y[0][5]);
  
  // Integrate
  //integrator->integrate(*odes, h, t_initial, t_final, y);
@@ -101,13 +110,14 @@ int main(int argc, char *argv[])
     {
      y[0][j] = y[1][j];
     }
+   // Update time
    t+=h;
-   std::cout << "t: " << t << " y[0][0]: " << y[0][0] << std::endl;
-   std::cout << "t: " << t << " y[0][1]: " << y[0][1] << std::endl;
-   std::cout << "t: " << t << " y[0][2]: " << y[0][2] << std::endl;
-   std::cout << "t: " << t << " y[0][3]: " << y[0][3] << std::endl;
-   fprintf(file_longitude_pt, "%lf %lf\n", t, y[0][0]);
-   fprintf(file_latitude_pt, "%lf %lf\n", t, y[0][2);
+   std::cout << "t: " << t
+             << " x-pos: " << y[0][0] << " x-vel: " << y[0][1]
+             << " y-pos: " << y[0][2] << " y-vel: " << y[0][3]
+             << " roll: " << y[0][4] << " pitch: " << y[0][5] << std::endl;
+   fprintf(file_longitude_pt, "%lf %lf\n", t, y[0][4]);
+   fprintf(file_latitude_pt, "%lf %lf\n", t, y[0][5]);
    //getchar();
   }
  

@@ -28,6 +28,12 @@ class CCODEsFromTableBasedOnAcceleration : public CAODEs
  /// the ode takes its values
  void load_table(const char *filename);
  
+ /// Get the values of the sensors at specific time (computed from table)
+ void get_sensors_lecture(const double t,
+                          double &vel_x, double &vel_y, double &vel_z,
+                          double &acc_x, double &acc_y, double &acc_z,
+                          double &gyro_x, double &gyro_y, double &gyro_z);
+ 
  /// Evaluates the system of odes at the given time "t" and the values
  /// of the function in "y". The evaluation produces results in the dy
  /// vector
@@ -46,6 +52,7 @@ class CCODEsFromTableBasedOnAcceleration : public CAODEs
  /// copiable). Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
  CCODEsFromTableBasedOnAcceleration(const CCODEsFromTableBasedOnAcceleration &copy)
+  : CAODEs(copy)
   {
    BrokenCopy::broken_copy("CCODEsFromTableBasedOnAcceleration");
   }
@@ -68,8 +75,13 @@ class CCODEsFromTableBasedOnAcceleration : public CAODEs
  std::vector<double> Table_time;
  std::vector<double> Table_vel_north;
  std::vector<double> Table_vel_east;
+ std::vector<double> Table_vel_height;
  std::vector<double> Table_acc_x;
  std::vector<double> Table_acc_y;
+ std::vector<double> Table_acc_z;
+ std::vector<double> Table_gyro_x;
+ std::vector<double> Table_gyro_y;
+ std::vector<double> Table_gyro_z;
  
  // The interpolator
  CCNewtonInterpolator *interpolator_pt;
