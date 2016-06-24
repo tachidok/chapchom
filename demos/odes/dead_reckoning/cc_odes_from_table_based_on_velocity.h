@@ -28,6 +28,9 @@ class CCODEsFromTableBasedOnVelocity : public CAODEs
  /// the ode takes its values
  void load_table(const char *filename);
  
+ /// Get the values of the sensors at specific time (computed from table)
+ void get_sensors_lecture(const double t, double &vel_x, double &vel_y);
+ 
  /// Evaluates the system of odes at the given time "t" and the values
  /// of the function in "y". The evaluation produces results in the dy
  /// vector

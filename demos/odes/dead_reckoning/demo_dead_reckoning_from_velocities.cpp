@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 
  // Open two files to store the results
  char file_latitude_name[100];
- sprintf(file_latitude_name, "./latitudeEulerVelocity.dat");
+ sprintf(file_latitude_name, "./latitude_from_velocity.dat");
  FILE *file_latitude_pt = fopen(file_latitude_name, "w");
  if (file_latitude_pt == 0)
   {
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
   }
  
  char file_longitude_name[100];
- sprintf(file_longitude_name, "./longitudeEulerVelocity.dat");
+ sprintf(file_longitude_name, "./longitude_from_velocity.dat");
  FILE *file_longitude_pt = fopen(file_longitude_name, "w");
  if (file_longitude_pt == 0)
   {
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
  const double t_final = 4144;
  //const double t_final = 10;
  // Set the number of steps
- const double n_steps = 100000;
+ const double n_steps = 10000;
  //const double n_steps = 100;
  // Get the step size
  const double h = (t_final - t_initial) / n_steps;
@@ -86,10 +86,10 @@ int main(int argc, char *argv[])
  y[0][1] = 0.0;         // Initial y-position
  
  // Output the initial data to screen
- std::cout << "t: " << t << " y[0][0]: " << y[0][0] << std::endl;
- std::cout << "t: " << t << " y[0][1]: " << y[0][1] << std::endl;
+ std::cout << "t: " << t
+           << " x-pos: " << y[0][0] << " y-pos: " << y[0][1] << std::endl;
  fprintf(file_longitude_pt, "%lf %lf\n", t, y[0][0]);
- fprintf(file_latitude_pt, "%lf %lf\n", t, y[0][2]);
+ fprintf(file_latitude_pt, "%lf %lf\n", t, y[0][1]);
  
  // Integrate
  //integrator->integrate(*odes, h, t_initial, t_final, y);
@@ -103,8 +103,8 @@ int main(int argc, char *argv[])
     }
    // Update time
    t+=h;
-   std::cout << "t: " << t << " y[0][0]: " << y[0][0] << std::endl;
-   std::cout << "t: " << t << " y[0][1]: " << y[0][1] << std::endl;
+   std::cout << "t: " << t
+             << " x-pos: " << y[0][0] << " y-pos: " << y[0][1] << std::endl;
    fprintf(file_longitude_pt, "%lf %lf\n", t, y[0][0]);
    fprintf(file_latitude_pt, "%lf %lf\n", t, y[0][1]);
    //getchar();

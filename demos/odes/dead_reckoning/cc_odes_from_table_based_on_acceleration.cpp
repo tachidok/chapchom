@@ -7,7 +7,7 @@
 // one for the velocity and the other for the acceleration
 // ===================================================================
 CCODEsFromTableBasedOnAcceleration::CCODEsFromTableBasedOnAcceleration()
- : CAODEs(4)
+ : CAODEs(6)
 {
  // The values have not been loaded into a table 
  Loaded_table = false;
@@ -22,7 +22,6 @@ CCODEsFromTableBasedOnAcceleration::CCODEsFromTableBasedOnAcceleration()
  load_table("./data.dat");
  
 }
-
 // ===================================================================
 // Empty destructor
 // ===================================================================
@@ -38,7 +37,7 @@ CCODEsFromTableBasedOnAcceleration::~CCODEsFromTableBasedOnAcceleration()
 // the ode takes its values
 // ===================================================================
 void CCODEsFromTableBasedOnAcceleration::load_table(const char *filename)
-{ 
+{
  // Open the file with the data
  FILE *file_pt = fopen(filename, "r");
  if (file_pt == 0)
@@ -56,13 +55,18 @@ void CCODEsFromTableBasedOnAcceleration::load_table(const char *filename)
  Table_time.resize(N_data_in_table);
  Table_vel_north.resize(N_data_in_table);
  Table_vel_east.resize(N_data_in_table);
+ Table_vel_height.resize(N_data_in_table);
  Table_acc_x.resize(N_data_in_table);
  Table_acc_y.resize(N_data_in_table);
+ Table_acc_z.resize(N_data_in_table);
+ Table_gyro_x.resize(N_data_in_table);
+ Table_gyro_y.resize(N_data_in_table);
+ Table_gyro_z.resize(N_data_in_table);
  
- // Get rid of the first where the headers are stored
- char headers[200];
- fgets(headers, 200, file_pt);
- //std::cerr << headers;
+ // Get rid of the first line where the headers are stored
+ char *headers=NULL;
+ size_t length = 0;
+ getline(&headers, &length, file_pt);
  // Read the data
  for (unsigned i = 0; i < N_data_in_table; i++)
   {
@@ -77,11 +81,19 @@ void CCODEsFromTableBasedOnAcceleration::load_table(const char *filename)
    double acc_x;
    double acc_y;
    double acc_z;
-   int n_read = fscanf(file_pt, "%d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
+   double gyro_x;
+   double gyro_y;
+   double gyro_z;
+   double magnet_x;
+   double magnet_y;
+   double magnet_z;
+   int n_read = fscanf(file_pt, "%d,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf",
 		       &index, &time, &latitude, &longitude, &height,
 		       &vel_north, &vel_east, &vel_down,
-		       &acc_x, &acc_y, &acc_z);
-   if (n_read != 11)
+		       &acc_x, &acc_y, &acc_z,
+                       &gyro_x, &gyro_y, &gyro_z,
+                       &magnet_x, &magnet_y, &magnet_z);
+   if (n_read != 17)
     {
      // Error message
      std::ostringstream error_message;
@@ -93,9 +105,14 @@ void CCODEsFromTableBasedOnAcceleration::load_table(const char *filename)
    
    Table_time[i] = time;
    Table_vel_north[i] = vel_north;
-   Table_vel_east[i] = vel_east; 
+   Table_vel_east[i] = vel_east;
+   Table_vel_height[i] = vel_down;
    Table_acc_x[i] = acc_x;
    Table_acc_y[i] = acc_y;
+   Table_acc_z[i] = acc_z;
+   Table_gyro_x[i] = gyro_x;
+   Table_gyro_y[i] = gyro_y;
+   Table_gyro_z[i] = gyro_z;
   }
  
 
@@ -105,13 +122,12 @@ void CCODEsFromTableBasedOnAcceleration::load_table(const char *filename)
 }
 
 // ===================================================================
-// Evaluates the system of odes at the given time "t" and the values
-// of the function in "y". The evaluation produces results in the dy
-// vector
+/// Get the values of the sensors at specific time (computed from table)
 // ===================================================================
-void CCODEsFromTableBasedOnAcceleration::evaluate(const double t,
-						  const std::vector<double> &y,
-						  std::vector<double> &dy)
+void CCODEsFromTableBasedOnAcceleration::get_sensors_lecture(const double t,
+                         double &x_vel, double &y_vel, double &z_vel,
+                         double &x_acc, double &y_acc, double &z_acc,
+                         double &x_gyro, double &y_gyro, double &z_gyro)
 {
  // Do linear interpolation
  unsigned interpolation_order = 1;
@@ -203,8 +219,13 @@ void CCODEsFromTableBasedOnAcceleration::evaluate(const double t,
    std::vector<double> time(interpolation_order + 1);
    std::vector<double> vel_x(interpolation_order + 1);
    std::vector<double> vel_y(interpolation_order + 1);
+   std::vector<double> vel_z(interpolation_order + 1);
    std::vector<double> acc_x(interpolation_order + 1);
    std::vector<double> acc_y(interpolation_order + 1);
+   std::vector<double> acc_z(interpolation_order + 1);
+   std::vector<double> gyro_x(interpolation_order + 1);
+   std::vector<double> gyro_y(interpolation_order + 1);
+   std::vector<double> gyro_z(interpolation_order + 1);
    
    // Copy the data
    time[0] = Table_time[i_left];
@@ -213,46 +234,86 @@ void CCODEsFromTableBasedOnAcceleration::evaluate(const double t,
    vel_x[1]= Table_vel_east[i_right];
    vel_y[0]= Table_vel_north[i_left];
    vel_y[1]= Table_vel_north[i_right];
+   vel_z[0]= Table_vel_height[i_left];
+   vel_z[1]= Table_vel_height[i_right];
    acc_x[0]= Table_acc_x[i_left];
    acc_x[1]= Table_acc_x[i_right];
    acc_y[0]= Table_acc_y[i_left];
    acc_y[1]= Table_acc_y[i_right];
+   acc_z[0]= Table_acc_z[i_left];
+   acc_z[1]= Table_acc_z[i_right];
+   gyro_x[0]= Table_gyro_x[i_left];
+   gyro_x[1]= Table_gyro_x[i_right];
+   gyro_y[0]= Table_gyro_y[i_left];
+   gyro_y[1]= Table_gyro_y[i_right];
+   gyro_z[0]= Table_gyro_z[i_left];
+   gyro_z[1]= Table_gyro_z[i_right];
    
-   // -----------------
-   // y[0] x-position
-   // y[1] x-velocity
-   // y[2] y-position
-   // y[3] y-velocity
-   // -----------------   
-   // dy[0] x-velocity
-   // dy[1] x-acceleration
-   // dy[2] y-velocity
-   // dy[3] y-acceleration
-   
-#if 1
-   dy[0] = y[1];
-   dy[1] = interpolator_pt->interpolate_1D(time, acc_x, t, interpolation_order);
-   dy[2] = y[3];
-   dy[3] = interpolator_pt->interpolate_1D(time, acc_y, t, interpolation_order);
-#endif // #if 1
-#if 0
-   dy[0] = interpolator_pt->interpolate_1D(time, vel_x, t, interpolation_order);
-   dy[1] = interpolator_pt->interpolate_1D(time, vel_y, t, interpolation_order);
-#endif // #if 0
+   x_vel = interpolator_pt->interpolate_1D(time, vel_x, t, interpolation_order);
+   y_vel = interpolator_pt->interpolate_1D(time, vel_y, t, interpolation_order);
+   z_vel = interpolator_pt->interpolate_1D(time, vel_z, t, interpolation_order);
+   x_acc = interpolator_pt->interpolate_1D(time, acc_x, t, interpolation_order);
+   y_acc = interpolator_pt->interpolate_1D(time, acc_y, t, interpolation_order);
+   z_acc = interpolator_pt->interpolate_1D(time, acc_z, t, interpolation_order);
+   x_gyro = interpolator_pt->interpolate_1D(time, gyro_x, t, interpolation_order);
+   y_gyro = interpolator_pt->interpolate_1D(time, gyro_y, t, interpolation_order);
+   z_gyro = interpolator_pt->interpolate_1D(time, gyro_z, t, interpolation_order);
   }
  else // Do not do interpolation, the exact values are in the table
   {
-#if 1
-   dy[0] = y[1];
-   dy[1] = Table_acc_x[i_exact];
-   dy[2] = y[3];
-   dy[3] = Table_acc_y[i_exact];
-#endif //#if 1
-#if 0
-   dy[0] = Table_vel_east[i_exact];
-   dy[1] = Table_vel_north[i_exact];
-#endif // #if 0
+   x_vel = Table_vel_east[i_exact];
+   y_vel = Table_vel_north[i_exact];
+   z_vel = Table_vel_height[i_exact];
+   x_acc = Table_acc_x[i_exact];
+   y_acc = Table_acc_y[i_exact];
+   z_acc = Table_acc_z[i_exact];
+   x_gyro = Table_gyro_x[i_exact];
+   y_gyro = Table_gyro_y[i_exact];
+   z_gyro = Table_gyro_z[i_exact];
   }
+ 
+}
+
+// ===================================================================
+// Evaluates the system of odes at the given time "t" and the values
+// of the function in "y". The evaluation produces results in the dy
+// vector
+// ===================================================================
+void CCODEsFromTableBasedOnAcceleration::evaluate(const double t,
+						  const std::vector<double> &y,
+						  std::vector<double> &dy)
+{
+
+ // Velocities
+ double vel_x, vel_y, vel_z;
+ // Accelerations
+ double acc_x, acc_y, acc_z;
+ // Angle rates (gyro data)
+ double gyro_x, gyro_y, gyro_z;
+ // Retrieve data from table
+ get_sensors_lecture(t, vel_x, vel_y, vel_z, acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z);
+ 
+ // -----------------
+ // y[0] x-position
+ // y[1] x-velocity
+ // y[2] y-position
+ // y[3] y-velocity
+ // y[4] roll
+ // y[5] pitch
+ // -----------------   
+ // dy[0] x-velocity
+ // dy[1] x-acceleration
+ // dy[2] y-velocity
+ // dy[3] y-acceleration
+ // dy[4] x-angle velocity (with respect to z)
+ // dy[5] y-angle velocity (with respect to z)
+ 
+ dy[0] = vel_x;
+ dy[1] = acc_x;
+ dy[2] = vel_y;
+ dy[3] = acc_y;
+ dy[4] = gyro_x;
+ dy[5] = gyro_y;
  
 }
 
@@ -262,8 +323,8 @@ void CCODEsFromTableBasedOnAcceleration::evaluate(const double t,
 // evaluation produces results in the dy vector at the dy[i] position
 // ===================================================================
 void CCODEsFromTableBasedOnAcceleration::evaluate(const unsigned i, const double t,
-					      const std::vector<double> &y,
-					      std::vector<double> &dy)
+                                                  const std::vector<double> &y,
+                                                  std::vector<double> &dy)
 {
  // Error message
  std::ostringstream error_message;
