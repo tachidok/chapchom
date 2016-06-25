@@ -7,7 +7,7 @@
 // one for the velocity and the other for the acceleration
 // ===================================================================
 CCODEsFromTableBasedOnAcceleration::CCODEsFromTableBasedOnAcceleration()
- : CAODEs(6)
+ : CAODEs(7)
 {
  // The values have not been loaded into a table 
  Loaded_table = false;
@@ -255,9 +255,10 @@ void CCODEsFromTableBasedOnAcceleration::get_sensors_lecture(const double t,
    x_acc = interpolator_pt->interpolate_1D(time, acc_x, t, interpolation_order);
    y_acc = interpolator_pt->interpolate_1D(time, acc_y, t, interpolation_order);
    z_acc = interpolator_pt->interpolate_1D(time, acc_z, t, interpolation_order);
-   x_gyro = interpolator_pt->interpolate_1D(time, gyro_x, t, interpolation_order);
-   y_gyro = interpolator_pt->interpolate_1D(time, gyro_y, t, interpolation_order);
-   z_gyro = interpolator_pt->interpolate_1D(time, gyro_z, t, interpolation_order);
+   // Transform to radians because the lectures are given in degress
+   x_gyro = interpolator_pt->interpolate_1D(time, gyro_x, t, interpolation_order) * (M_PI / 180.0);
+   y_gyro = interpolator_pt->interpolate_1D(time, gyro_y, t, interpolation_order) * (M_PI / 180.0);
+   z_gyro = interpolator_pt->interpolate_1D(time, gyro_z, t, interpolation_order) * (M_PI / 180.0);
   }
  else // Do not do interpolation, the exact values are in the table
   {
@@ -267,9 +268,10 @@ void CCODEsFromTableBasedOnAcceleration::get_sensors_lecture(const double t,
    x_acc = Table_acc_x[i_exact];
    y_acc = Table_acc_y[i_exact];
    z_acc = Table_acc_z[i_exact];
-   x_gyro = Table_gyro_x[i_exact];
-   y_gyro = Table_gyro_y[i_exact];
-   z_gyro = Table_gyro_z[i_exact];
+   // Transform to radians because the lectures are given in degress
+   x_gyro = Table_gyro_x[i_exact] * (M_PI / 180.0);
+   y_gyro = Table_gyro_y[i_exact] * (M_PI / 180.0);
+   z_gyro = Table_gyro_z[i_exact] * (M_PI / 180.0);
   }
  
 }
@@ -300,13 +302,15 @@ void CCODEsFromTableBasedOnAcceleration::evaluate(const double t,
  // y[3] y-velocity
  // y[4] roll
  // y[5] pitch
+ // y[6] yaw
  // -----------------   
  // dy[0] x-velocity
  // dy[1] x-acceleration
  // dy[2] y-velocity
  // dy[3] y-acceleration
- // dy[4] x-angle velocity (with respect to z)
- // dy[5] y-angle velocity (with respect to z)
+ // dy[4] z-angle velocity (with respect to y)
+ // dy[5] z-angle velocity (with respect to x)
+ // dy[6] x-angle velocity (with respect to y)
  
  dy[0] = vel_x;
  dy[1] = acc_x;
@@ -314,6 +318,7 @@ void CCODEsFromTableBasedOnAcceleration::evaluate(const double t,
  dy[3] = acc_y;
  dy[4] = gyro_x;
  dy[5] = gyro_y;
+ dy[6] = gyro_z;
  
 }
 
