@@ -9,6 +9,8 @@
 // The odes
 #include "cc_odes_from_table_based_on_acceleration.h"
 
+#define DEBUG
+
 void fill_rotation_matrices(std::vector<std::vector<double> > &R,
                             std::vector<std::vector<double> > &R_t,
                             const double theta_x,
@@ -186,6 +188,36 @@ int main(int argc, char *argv[])
 			  CHAPCHOM_EXCEPTION_LOCATION);
   }
  
+ char file_filtered_roll_pitch_yaw_name[100];
+ sprintf(file_filtered_roll_pitch_yaw_name, "./RESLT/filtered_roll_pitch_yaw.dat");
+ FILE *file_filtered_roll_pitch_yaw_pt = fopen(file_filtered_roll_pitch_yaw_name, "w");
+ if (file_filtered_roll_pitch_yaw_pt == 0)
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_filtered_roll_pitch_yaw_name << "]"
+		 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+#ifdef DEBUG
+ char file_DEBUG_name[100];
+ sprintf(file_DEBUG_name, "./RESLT/DEBUG.dat");
+ FILE *file_DEBUG_pt = fopen(file_DEBUG_name, "w");
+ if (file_DEBUG_pt == 0)
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_DEBUG_name << "]"
+		 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
+  }
+#endif // #ifdef DEBUG
+ 
  // ----------------------------------------------------------------------------
  // FILES (END)
  // ----------------------------------------------------------------------------
@@ -247,31 +279,69 @@ int main(int argc, char *argv[])
                            dummy_data, dummy_data, dummy_data);
  
  // Create an accelerations vector
- std::vector<double> w(3, 0.0);
+ std::vector<double> w(dim, 0.0);
  w[0] = acc_x; w[1] = acc_y; w[2] = acc_z;
  // Gravity compensation
  std::vector<double> w_prime(3, 0.0);
- // Transform from the body frame to the global frame
+ // Transform from the body reference frame to the global reference
+ // frame
  multiply_matrix_times_vector(R_t, w, w_prime);
+
+#ifdef DEBUG
+ // We should be able to recover the original vector from w_prime
+ std::vector<double> test(dim, 0.0);
+ // Transform from the body reference frame to the global reference
+ // frame
+ multiply_matrix_times_vector(R, w_prime, test);
+
+ // Get the distance between the two vectors
+ double dist = 0.0;
+ for (unsigned i = 0; i < dim; i++)
+  {
+   dist+=(w[i]-test[i])*(w[i]-test[i]);
+  }
+ dist = sqrt(dist);
+ // Output the raw and the modified accelerations
+ fprintf(file_DEBUG_pt, "%lf %lf\n", t, dist);
+#endif // #ifdef DEBUG
+ 
  // Extract gravity
  w_prime[2]+=9.81;
-
+ 
  // Output the raw and the modified accelerations
- fprintf(file_raw_accelerations_pt, "%lf %lf %lf %lf\n", t, acc_x, acc_y, acc_z);
+ fprintf(file_raw_accelerations_pt, "%lf %lf %lf %lf\n", t, w[0], w[1], w[2]);
  fprintf(file_modified_accelerations_pt, "%lf %lf %lf %lf\n", t, w_prime[0], w_prime[1], w_prime[2]);
  
  // Get roll and pitch from accelerations
- double roll_from_acc = atan2(w_prime[1], w_prime[2]);
+#if 1
+ double roll_from_acc = atan2(w_prime[2], w_prime[1]);
  double pitch_from_acc = atan2(w_prime[0], w_prime[2]);
  double yaw_from_acc = atan2(w_prime[1], w_prime[0]);
+#else
+ double roll_from_acc = atan2(w[2], w[1]);
+ double pitch_from_acc = atan2(w[0], w[2]);
+ double yaw_from_acc = atan2(w[1], w[0]);
+#endif //#if 0
  
  fprintf(file_roll_pitch_yaw_from_acc_pt, "%lf %lf %lf %lf\n", t,
          roll_from_acc, pitch_from_acc, yaw_from_acc);
  
+ // Use complementary filter to get better estimates for roll, pitch
+ // and yaw
+ const double alpha = 0.98;
+ double roll_filtered = alpha * y[1][4] + (1.0 - alpha) * roll_from_acc;
+ double pitch_filtered = alpha * y[1][5] + (1.0 - alpha) * pitch_from_acc;
+ double yaw_filtered =  alpha * y[1][6] + (1.0 - alpha) * yaw_from_acc;
+ 
+ // Update the value of the function with the new values
+ y[0][4] = roll_filtered;
+ y[0][5] = pitch_filtered;
+ y[0][6] = yaw_filtered;
+ 
  // Integrate
  //integrator->integrate(*odes, h, t_initial, t_final, y);
  for (unsigned i = 0; i < n_steps; i++)
-  {
+  {   
    integrator->integrate_step(*odes, h, t, y);
    // Update data
    for (unsigned j = 0; j < n_odes; j++)
@@ -289,6 +359,7 @@ int main(int argc, char *argv[])
    
    // Fill rotation matrices
    fill_rotation_matrices(R, R_t, y[0][4], y[0][5], y[0][6]);
+   //fill_rotation_matrices(R, R_t, roll_filtered, pitch_filtered, yaw_filtered);
    
    // Get the accelerometers readings from the Table
    odes->get_sensors_lecture(t, dummy_data, dummy_data, dummy_data,
@@ -302,6 +373,25 @@ int main(int argc, char *argv[])
    
    // Transform from the body frame to the global frame
    multiply_matrix_times_vector(R_t, w, w_prime);
+   
+#ifdef DEBUG
+   // We should be able to recover the original vector from w_prime
+   std::vector<double> test(dim, 0.0);
+   // Transform from the body reference frame to the global reference
+   // frame
+   multiply_matrix_times_vector(R, w_prime, test);
+   
+   // Get the distance between the two vectors
+   double dist = 0.0;
+   for (unsigned i = 0; i < dim; i++)
+    {
+     dist+=(w[i]-test[i])*(w[i]-test[i]);
+    }
+   dist = sqrt(dist);
+   // Output the raw and the modified accelerations
+   fprintf(file_DEBUG_pt, "%lf %lf\n", t, dist);
+#endif // #ifdef DEBUG
+   
    // Extract gravity
    w_prime[2]+=9.81;
    
@@ -309,14 +399,35 @@ int main(int argc, char *argv[])
    fprintf(file_raw_accelerations_pt, "%lf %lf %lf %lf\n", t, acc_x, acc_y, acc_z);
    fprintf(file_modified_accelerations_pt, "%lf %lf %lf %lf\n", t,
            w_prime[0], w_prime[1], w_prime[2]);
-   
-   // Get roll and pitch from accelerations   
-   roll_from_acc = atan2(w_prime[1], w_prime[2]);
+
+#if 1
+   // Get roll and pitch from accelerations
+   roll_from_acc = atan2(w_prime[2], w_prime[1]);
    pitch_from_acc = atan2(w_prime[0], w_prime[2]);
    yaw_from_acc = atan2(w_prime[1], w_prime[0]);
+#else
+   roll_from_acc = atan2(w[2], w[1]);
+   pitch_from_acc = atan2(w[0], w[2]);
+   yaw_from_acc = atan2(w[1], w[0]);
+#endif
    
    fprintf(file_roll_pitch_yaw_from_acc_pt, "%lf %lf %lf %lf\n", t,
            roll_from_acc, pitch_from_acc, yaw_from_acc);
+   
+   // Use complementary filter to get better estimates for roll, pitch
+   // and yaw
+   roll_filtered = alpha * y[0][4] + (1.0 - alpha) * roll_from_acc;
+   pitch_filtered = alpha * y[0][5] + (1.0 - alpha) * pitch_from_acc;
+   yaw_filtered =  alpha * y[0][6] + (1.0 - alpha) * yaw_from_acc;
+   
+   // Update the value of the function with the new values
+   y[0][4] = roll_filtered;
+   y[0][5] = pitch_filtered;
+   y[0][6] = yaw_filtered;
+   
+   fprintf(file_filtered_roll_pitch_yaw_pt, "%lf %lf %lf %lf\n", t,
+           roll_filtered, pitch_filtered, yaw_filtered);
+   
   }
  
  std::cout << "[FINISHING UP] ... " << std::endl;
@@ -326,6 +437,10 @@ int main(int argc, char *argv[])
  fclose(file_roll_pitch_yaw_from_gyro_pt);
  fclose(file_raw_accelerations_pt);
  fclose(file_modified_accelerations_pt);
+ fclose(file_filtered_roll_pitch_yaw_pt);
+#ifdef DEBUG
+ fclose(file_DEBUG_pt);
+#endif // #ifdef DEBUG
  
  // Free memory
  delete integrator;
