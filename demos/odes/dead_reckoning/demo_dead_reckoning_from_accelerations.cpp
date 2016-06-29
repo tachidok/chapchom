@@ -49,6 +49,51 @@ void fill_rotation_matrices(std::vector<std::vector<double> > &R,
  R_t[2][2] = R[2][2];
 }
 
+void update_rotation_matrices(std::vector<std::vector<double> > &R0,
+                              std::vector<std::vector<double> > &R1,
+                              std::vector<std::vector<double> > &R0_t,
+                              std::vector<double> &dr)
+{
+ // Get values for first row of rotation matrix (CROSS-PRODUCT)
+ // r_x[t+1] = r_x[t] + r_x[t] x dr
+ R0[0][0] = R1[0][0] + (R1[0][1] * dr[2] - R1[0][2] * dr[1]);
+ R0[0][1] = R1[0][1] + (R1[0][2] * dr[0] - R1[0][0] * dr[2]);
+ R0[0][2] = R1[0][2] + (R1[0][0] * dr[1] - R1[0][1] * dr[0]);
+ // Get values for second row of rotation matrix
+ // r_y[t+1] = r_y[t] + r_y[t] x dr
+ R0[1][0] = R1[1][0] + (R1[1][1] * dr[2] - R1[1][2] * dr[1]);
+ R0[1][1] = R1[1][1] + (R1[1][2] * dr[0] - R1[1][0] * dr[2]);
+ R0[1][2] = R1[1][2] + (R1[1][0] * dr[1] - R1[1][1] * dr[0]);
+ // Get values for third row of rotation matrix
+ // r_z[t+1] = r_z[t] + r_z[t] x dr
+ R0[2][0] = R1[2][0] + (R1[2][1] * dr[2] - R1[2][2] * dr[1]);
+ R0[2][1] = R1[2][1] + (R1[2][2] * dr[0] - R1[2][0] * dr[2]);
+ R0[2][2] = R1[2][2] + (R1[2][0] * dr[1] - R1[2][1] * dr[0]);
+ 
+ // Copy values from current time step to the previous one
+ for (unsigned i = 0; i < dim; i++)
+  {
+   for (unsigned j = 0; j < dim; j++)
+    {
+     R1[i][j] = R0[i][j];
+    }
+  }
+ 
+ // Transpose matrix
+ R0_t[0][0] = R0[0][0];
+ R0_t[0][1] = R0[1][0];
+ R0_t[0][2] = R0[2][0];
+ 
+ R0_t[1][0] = R0[0][1];
+ R0_t[1][1] = R0[1][1];
+ R0_t[1][2] = R0[2][1];
+ 
+ R0_t[2][0] = R0[0][2];
+ R0_t[2][1] = R0[1][2];
+ R0_t[2][2] = R0[2][2];
+ 
+}
+
 void multiply_matrix_times_vector(std::vector<std::vector<double> > &A,
                                   std::vector<double> &b,
                                   std::vector<double> &x)
@@ -202,6 +247,20 @@ int main(int argc, char *argv[])
 			  CHAPCHOM_EXCEPTION_LOCATION);
   }
  
+ char file_cosine_paper_roll_pitch_yaw_name[100];
+ sprintf(file_cosine_paper_roll_pitch_yaw_name, "./RESLT/cosine_paper_roll_pitch_yaw.dat");
+ FILE *file_cosine_paper_roll_pitch_yaw_pt = fopen(file_cosine_paper_roll_pitch_yaw_name, "w");
+ if (file_cosine_paper_roll_pitch_yaw_pt == 0)
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_cosine_paper_roll_pitch_yaw_name << "]"
+		 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
 #ifdef DEBUG
  char file_DEBUG_name[100];
  sprintf(file_DEBUG_name, "./RESLT/DEBUG.dat");
@@ -239,6 +298,20 @@ int main(int argc, char *argv[])
  // Initial time
  double t = t_initial;
  
+ // -----------------------------------------------------------------------------
+ // Initialise
+ // -----------------------------------------------------------------------------
+ 
+ // Get the readings from sensores
+ // Accelerations
+ double acc_x, acc_y, acc_z;
+ // Gyro
+ double gyro_x, gyro_y, gyro_z;
+ // Retrieve data from table
+ odes->get_sensors_lecture(t, dummy_data, dummy_data, dummy_data,
+                           acc_x, acc_y, acc_z,
+                           gyro_x, gyro_y, gyro_z); 
+ 
  // Initial conditions
  y[0][0] = 0.0;         // Initial x-position
  y[0][1] = -0.05994836; // Initial x-velocity
@@ -255,9 +328,27 @@ int main(int argc, char *argv[])
            << " roll: " << y[0][4] << " pitch: " << y[0][5] << " yaw: " << y[0][6]<< std::endl;
  
  fprintf(file_roll_pitch_yaw_from_gyro_pt, "%lf %lf %lf %lf\n", t, y[0][4], y[0][5], y[0][6]);
+
+ // Dimension of the problem
+ const unsigned dim = 3;
+ 
+ // The rotation matrix (roll, pitch and yaw)
+ std::vector<std::vector<double> > R0(dim);
+ std::vector<std::vector<double> > R1(dim);
+ for (unsigned i = 0; i < dim; i++)
+  {
+   R0[i].resize(dim);
+   R1[i].resize(dim);
+   for (unsigned j = 0; j < dim; j++)
+    {
+     // at current time step
+     R0[i][j] = 0.0;
+     // at previous time step
+     R1[i][j] = 0.0;
+    }
+  }
  
  // Create the rotations matrix
- const unsigned dim = 3;
  std::vector<std::vector<double> > R(dim);
  std::vector<std::vector<double> > R_t(dim);
  for (unsigned i = 0; i < dim; i++)
@@ -268,15 +359,6 @@ int main(int argc, char *argv[])
  
  // Fill rotation matrices
  fill_rotation_matrices(R, R_t, y[0][4], y[0][5], y[0][6]);
- 
- // Get the accelerometers readings from the Table
- double dummy_data;
- // Accelerations
- double acc_x, acc_y, acc_z;
- // Retrieve data from table
- odes->get_sensors_lecture(t, dummy_data, dummy_data, dummy_data,
-                           acc_x, acc_y, acc_z,
-                           dummy_data, dummy_data, dummy_data);
  
  // Create an accelerations vector
  std::vector<double> w(dim, 0.0);
@@ -438,6 +520,7 @@ int main(int argc, char *argv[])
  fclose(file_raw_accelerations_pt);
  fclose(file_modified_accelerations_pt);
  fclose(file_filtered_roll_pitch_yaw_pt);
+ fclose(file_cosine_paper_roll_pitch_yaw_pt);
 #ifdef DEBUG
  fclose(file_DEBUG_pt);
 #endif // #ifdef DEBUG
