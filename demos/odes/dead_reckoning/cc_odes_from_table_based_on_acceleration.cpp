@@ -7,7 +7,7 @@
 // one for the velocity and the other for the acceleration
 // ===================================================================
 CCODEsFromTableBasedOnAcceleration::CCODEsFromTableBasedOnAcceleration()
- : CAODEs(7)
+ : CAODEs(10)
 {
  // The values have not been loaded into a table 
  Loaded_table = false;
@@ -125,9 +125,9 @@ void CCODEsFromTableBasedOnAcceleration::load_table(const char *filename)
 /// Get the values of the sensors at specific time (computed from table)
 // ===================================================================
 void CCODEsFromTableBasedOnAcceleration::get_sensors_lecture(const double t,
-                         double &x_vel, double &y_vel, double &z_vel,
-                         double &x_acc, double &y_acc, double &z_acc,
-                         double &x_gyro, double &y_gyro, double &z_gyro)
+                                                             std::vector<double> &vel, 
+                                                             std::vector<double> &acc,
+                                                             std::vector<double> &gyro)
 {
  // Do linear interpolation
  unsigned interpolation_order = 1;
@@ -249,29 +249,29 @@ void CCODEsFromTableBasedOnAcceleration::get_sensors_lecture(const double t,
    gyro_z[0]= Table_gyro_z[i_left];
    gyro_z[1]= Table_gyro_z[i_right];
    
-   x_vel = interpolator_pt->interpolate_1D(time, vel_x, t, interpolation_order);
-   y_vel = interpolator_pt->interpolate_1D(time, vel_y, t, interpolation_order);
-   z_vel = interpolator_pt->interpolate_1D(time, vel_z, t, interpolation_order);
-   x_acc = interpolator_pt->interpolate_1D(time, acc_x, t, interpolation_order);
-   y_acc = interpolator_pt->interpolate_1D(time, acc_y, t, interpolation_order);
-   z_acc = interpolator_pt->interpolate_1D(time, acc_z, t, interpolation_order);
+   vel[0] = interpolator_pt->interpolate_1D(time, vel_x, t, interpolation_order);
+   vel[1] = interpolator_pt->interpolate_1D(time, vel_y, t, interpolation_order);
+   vel[2] = interpolator_pt->interpolate_1D(time, vel_z, t, interpolation_order);
+   acc[0] = interpolator_pt->interpolate_1D(time, acc_x, t, interpolation_order);
+   acc[1] = interpolator_pt->interpolate_1D(time, acc_y, t, interpolation_order);
+   acc[2] = interpolator_pt->interpolate_1D(time, acc_z, t, interpolation_order);
    // Transform to radians because the lectures are given in degress
-   x_gyro = interpolator_pt->interpolate_1D(time, gyro_x, t, interpolation_order) * (M_PI / 180.0);
-   y_gyro = interpolator_pt->interpolate_1D(time, gyro_y, t, interpolation_order) * (M_PI / 180.0);
-   z_gyro = interpolator_pt->interpolate_1D(time, gyro_z, t, interpolation_order) * (M_PI / 180.0);
+   gyro[0] = interpolator_pt->interpolate_1D(time, gyro_x, t, interpolation_order) * (M_PI / 180.0);
+   gyro[1] = interpolator_pt->interpolate_1D(time, gyro_y, t, interpolation_order) * (M_PI / 180.0);
+   gyro[2] = interpolator_pt->interpolate_1D(time, gyro_z, t, interpolation_order) * (M_PI / 180.0);
   }
  else // Do not do interpolation, the exact values are in the table
   {
-   x_vel = Table_vel_east[i_exact];
-   y_vel = Table_vel_north[i_exact];
-   z_vel = Table_vel_height[i_exact];
-   x_acc = Table_acc_x[i_exact];
-   y_acc = Table_acc_y[i_exact];
-   z_acc = Table_acc_z[i_exact];
+   vel[0] = Table_vel_east[i_exact];
+   vel[0] = Table_vel_north[i_exact];
+   vel[0] = Table_vel_height[i_exact];
+   acc[0] = Table_acc_x[i_exact];
+   acc[0] = Table_acc_y[i_exact];
+   acc[0] = Table_acc_z[i_exact];
    // Transform to radians because the lectures are given in degress
-   x_gyro = Table_gyro_x[i_exact] * (M_PI / 180.0);
-   y_gyro = Table_gyro_y[i_exact] * (M_PI / 180.0);
-   z_gyro = Table_gyro_z[i_exact] * (M_PI / 180.0);
+   gyro[0] = Table_gyro_x[i_exact] * (M_PI / 180.0);
+   gyro[0] = Table_gyro_y[i_exact] * (M_PI / 180.0);
+   gyro[0] = Table_gyro_z[i_exact] * (M_PI / 180.0);
   }
  
 }
@@ -285,15 +285,15 @@ void CCODEsFromTableBasedOnAcceleration::evaluate(const double t,
 						  const std::vector<double> &y,
 						  std::vector<double> &dy)
 {
-
+ const unsigned dim = 3;
  // Velocities
- double vel_x, vel_y, vel_z;
+ std::vector<double> vel(dim);
  // Accelerations
- double acc_x, acc_y, acc_z;
+ std::vector<double> acc(dim);
  // Angle rates (gyro data)
- double gyro_x, gyro_y, gyro_z;
+ std::vector<double> gyro(dim);
  // Retrieve data from table
- get_sensors_lecture(t, vel_x, vel_y, vel_z, acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z);
+ get_sensors_lecture(t, vel, acc, gyro);
  
  // -----------------
  // y[0] x-position
@@ -312,13 +312,16 @@ void CCODEsFromTableBasedOnAcceleration::evaluate(const double t,
  // dy[5] z-angle velocity (with respect to x)
  // dy[6] x-angle velocity (with respect to y)
  
- dy[0] = vel_x;
- dy[1] = acc_x;
- dy[2] = vel_y;
- dy[3] = acc_y;
- dy[4] = gyro_x;
- dy[5] = gyro_y;
- dy[6] = gyro_z;
+ dy[0] = vel[0];
+ dy[1] = acc[0];
+ dy[2] = vel[1];
+ dy[3] = acc[1];
+ dy[4] = gyro[0];
+ dy[5] = gyro[1];
+ dy[6] = gyro[2];
+ dy[7] = gyro[0];
+ dy[8] = gyro[1];
+ dy[9] = gyro[2];
  
 }
 
