@@ -30,9 +30,9 @@ class CCODEsFromTableBasedOnAcceleration : public CAODEs
  
  /// Get the values of the sensors at specific time (computed from table)
  void get_sensors_lecture(const double t,
-                          double &vel_x, double &vel_y, double &vel_z,
-                          double &acc_x, double &acc_y, double &acc_z,
-                          double &gyro_x, double &gyro_y, double &gyro_z);
+                          std::vector<double> &vel, 
+                          std::vector<double> &acc,
+                          std::vector<double> &gyro);
  
  /// Evaluates the system of odes at the given time "t" and the values
  /// of the function in "y". The evaluation produces results in the dy
