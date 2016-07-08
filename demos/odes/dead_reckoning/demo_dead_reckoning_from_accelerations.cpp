@@ -10,6 +10,9 @@
 #include "cc_odes_from_table_based_on_acceleration.h"
 
 #define DEBUG
+//#define FIRST_ALGORITHM
+//#define SECOND_ALGORITHM
+#define THIRD_ALGORITHM
 
 void fill_rotation_matrices(std::vector<std::vector<double> > &R,
                             std::vector<std::vector<double> > &R_t,
@@ -25,15 +28,15 @@ void fill_rotation_matrices(std::vector<std::vector<double> > &R,
  const double cos_theta_z = cos(theta_z);
  
  R[0][0] = cos_theta_y*cos_theta_z;
- R[0][1] = sin_theta_x*sin_theta_y*cos_theta_z - cos_theta_x*sin_theta_z;
- R[0][2] = cos_theta_x*sin_theta_y*cos_theta_z + sin_theta_x*sin_theta_z;
+ R[0][1] = cos_theta_y*sin_theta_z;
+ R[0][2] = -sin_theta_y;
  
- R[1][0] = cos_theta_y*sin_theta_z;
+ R[1][0] = sin_theta_x*sin_theta_y*cos_theta_z - cos_theta_x*sin_theta_z;
  R[1][1] = sin_theta_x*sin_theta_y*sin_theta_z+cos_theta_x*cos_theta_z;
- R[1][2] = cos_theta_x*sin_theta_y*sin_theta_z-sin_theta_x*cos_theta_z;
+ R[1][2] = sin_theta_x*cos_theta_y;
  
- R[2][0] = -sin_theta_y;
- R[2][1] = sin_theta_x*cos_theta_y;
+ R[2][0] = cos_theta_x*sin_theta_y*cos_theta_z + sin_theta_x*sin_theta_z;
+ R[2][1] = cos_theta_x*sin_theta_y*sin_theta_z-sin_theta_x*cos_theta_z;
  R[2][2] = cos_theta_x*cos_theta_y;
  
  R_t[0][0] = R[0][0];
@@ -49,6 +52,7 @@ void fill_rotation_matrices(std::vector<std::vector<double> > &R,
  R_t[2][2] = R[2][2];
 }
 
+#ifdef SECOND_ALGORITHM
 void update_rotation_matrices(std::vector<std::vector<double> > &R0,
                               std::vector<std::vector<double> > &R1,
                               std::vector<std::vector<double> > &R0_t,
@@ -94,6 +98,7 @@ void update_rotation_matrices(std::vector<std::vector<double> > &R0,
  R0_t[2][2] = R0[2][2];
  
 }
+#endif // #ifdef SECOND_ALGORITHM
 
 void multiply_matrix_times_vector(std::vector<std::vector<double> > &A,
                                   std::vector<double> &b,
@@ -117,7 +122,7 @@ void multiply_matrix_times_vector(std::vector<std::vector<double> > &A,
 			  CHAPCHOM_CURRENT_FUNCTION,
 			  CHAPCHOM_EXCEPTION_LOCATION);   
   }
-
+ 
  // Get the size of the output vector
  const unsigned n_rows_x = x.size();
  // Check that we can multiply
@@ -133,7 +138,7 @@ void multiply_matrix_times_vector(std::vector<std::vector<double> > &A,
 			  CHAPCHOM_CURRENT_FUNCTION,
 			  CHAPCHOM_EXCEPTION_LOCATION);   
   }
-
+ 
  // Clear the vector x
  x.clear();
  x.resize(n_rows_x, 0.0);
@@ -177,35 +182,7 @@ int main(int argc, char *argv[])
 
  // ----------------------------------------------------------------------------
  // FILES (BEGIN)
- // ----------------------------------------------------------------------------
- char file_roll_pitch_yaw_from_acc_name[100];
- sprintf(file_roll_pitch_yaw_from_acc_name, "./RESLT/roll_pitch_yaw_from_acc.dat");
- FILE *file_roll_pitch_yaw_from_acc_pt = fopen(file_roll_pitch_yaw_from_acc_name, "w");
- if (file_roll_pitch_yaw_from_acc_pt == 0)
-  {
-   // Error message
-   std::ostringstream error_message;
-   error_message << "Could not create the file [" << file_roll_pitch_yaw_from_acc_name << "]"
-		 << std::endl;
-   throw ChapchomLibError(error_message.str(),
-			  CHAPCHOM_CURRENT_FUNCTION,
-			  CHAPCHOM_EXCEPTION_LOCATION);
-  }
- 
- char file_roll_pitch_yaw_from_acc2_name[100];
- sprintf(file_roll_pitch_yaw_from_acc2_name, "./RESLT/roll_pitch_yaw_from_acc2.dat");
- FILE *file_roll_pitch_yaw_from_acc2_pt = fopen(file_roll_pitch_yaw_from_acc2_name, "w");
- if (file_roll_pitch_yaw_from_acc2_pt == 0)
-  {
-   // Error message
-   std::ostringstream error_message;
-   error_message << "Could not create the file [" << file_roll_pitch_yaw_from_acc2_name << "]"
-		 << std::endl;
-   throw ChapchomLibError(error_message.str(),
-			  CHAPCHOM_CURRENT_FUNCTION,
-			  CHAPCHOM_EXCEPTION_LOCATION);
-  }
- 
+ // ---------------------------------------------------------------------------- 
  char file_roll_pitch_yaw_from_gyro_name[100];
  sprintf(file_roll_pitch_yaw_from_gyro_name, "./RESLT/roll_pitch_yaw_from_gyro.dat");
  FILE *file_roll_pitch_yaw_from_gyro_pt = fopen(file_roll_pitch_yaw_from_gyro_name, "w");
@@ -228,6 +205,21 @@ int main(int argc, char *argv[])
    // Error message
    std::ostringstream error_message;
    error_message << "Could not create the file [" << file_raw_accelerations_name << "]"
+		 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+#ifdef FIRST_ALGORITHM
+ char file_roll_pitch_yaw_from_acc_name[100];
+ sprintf(file_roll_pitch_yaw_from_acc_name, "./RESLT/roll_pitch_yaw_from_acc.dat");
+ FILE *file_roll_pitch_yaw_from_acc_pt = fopen(file_roll_pitch_yaw_from_acc_name, "w");
+ if (file_roll_pitch_yaw_from_acc_pt == 0)
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_roll_pitch_yaw_from_acc_name << "]"
 		 << std::endl;
    throw ChapchomLibError(error_message.str(),
 			  CHAPCHOM_CURRENT_FUNCTION,
@@ -261,6 +253,22 @@ int main(int argc, char *argv[])
 			  CHAPCHOM_CURRENT_FUNCTION,
 			  CHAPCHOM_EXCEPTION_LOCATION);
   }
+#endif // #ifdef FIRST_ALGORITHM
+
+#ifdef SECOND_ALGORITHM
+ char file_roll_pitch_yaw_from_acc2_name[100];
+ sprintf(file_roll_pitch_yaw_from_acc2_name, "./RESLT/roll_pitch_yaw_from_acc2.dat");
+ FILE *file_roll_pitch_yaw_from_acc2_pt = fopen(file_roll_pitch_yaw_from_acc2_name, "w");
+ if (file_roll_pitch_yaw_from_acc2_pt == 0)
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_roll_pitch_yaw_from_acc2_name << "]"
+		 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
+  }
  
  char file_modified_accelerations2_name[100];
  sprintf(file_modified_accelerations2_name, "./RESLT/modified_accelerations2.dat");
@@ -289,6 +297,51 @@ int main(int argc, char *argv[])
 			  CHAPCHOM_CURRENT_FUNCTION,
 			  CHAPCHOM_EXCEPTION_LOCATION);
   }
+#endif // #ifdef SECOND_ALGORITHM
+ 
+#ifdef THIRD_ALGORITHM 
+ char file_inertial_accelerations_name[100];
+ sprintf(file_inertial_accelerations_name, "./RESLT/inertial_accelerations.dat");
+ FILE *file_inertial_accelerations_pt = fopen(file_inertial_accelerations_name, "w");
+ if (file_inertial_accelerations_pt == 0)
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_inertial_accelerations_name << "]"
+		 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+ char file_inertial_gyro_name[100];
+ sprintf(file_inertial_gyro_name, "./RESLT/inertial_gyro.dat");
+ FILE *file_inertial_gyro_pt = fopen(file_inertial_gyro_name, "w");
+ if (file_inertial_gyro_pt == 0)
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_inertial_gyro_name << "]"
+		 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+ char file_roll_pitch_yaw_name[100];
+ sprintf(file_roll_pitch_yaw_name, "./RESLT/roll_pitch_yaw.dat");
+ FILE *file_roll_pitch_yaw_pt = fopen(file_roll_pitch_yaw_name, "w");
+ if (file_roll_pitch_yaw_pt == 0)
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_roll_pitch_yaw_name << "]"
+		 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
+  }
+#endif // #ifdef THIRD_ALGORITHM
  
 #ifdef DEBUG
  char file_DEBUG_name[100];
@@ -316,7 +369,7 @@ int main(int argc, char *argv[])
  // -----------------------------------------------------------------
  // Set the initial and final interval values (got from the number of data in Table)
  const double t_initial = 0.0;
- const double t_final = 4144;
+ const double t_final = 4108;
  //const double t_final = 100;
  // Set the number of steps we want to take
  const double n_steps = 10000 * 5.0;
@@ -342,8 +395,10 @@ int main(int argc, char *argv[])
  std::vector<double> acc(dim);
  // Gyro data
  std::vector<double> dtheta(dim);
+ // Dummy data
+ std::vector<double> dummy(dim);
  // Retrieve data from table
- odes->get_sensors_lecture(t, vel, acc, dtheta);
+ odes->get_sensors_lecture(t, vel, acc, dtheta, dummy); // tachidok
  
  // Initial conditions
  y[0][0] = 0.0;         // Initial x-position
@@ -356,13 +411,17 @@ int main(int argc, char *argv[])
  y[0][7] = y[0][4];  // Initial roll
  y[0][8] = y[0][5];  // Initial pitch
  y[0][9] = y[0][6];  // Initial yaw
+ y[0][10] = 1.7023341886 * M_PI / 180.0;  // Initial roll
+ y[0][11] = 0.9397878122 * M_PI / 180.0;  // Initial pitch
+ y[0][12] = 40.823029194 * M_PI / 180.0;  // Initial yaw
  
  // Output the initial data to screen
  std::cout << "t: " << t
            << " x-pos: " << y[0][0] << " x-vel: " << y[0][1]
            << " y-pos: " << y[0][2] << " y-vel: " << y[0][3]
            << " roll: " << y[0][4] << " pitch: " << y[0][5] << " yaw: " << y[0][6]
-           << " roll2: " << y[0][7] << " pitch2: " << y[0][8] << " yaw2: " << y[0][9] << std::endl;
+           << " roll2: " << y[0][7] << " pitch2: " << y[0][8] << " yaw2: " << y[0][9]
+           << " roll3: " << y[0][10] << " pitch3: " << y[0][11] << " yaw3: " << y[0][12] << std::endl;
  
  fprintf(file_roll_pitch_yaw_from_gyro_pt, "%lf %lf %lf %lf\n", t, y[0][4], y[0][5], y[0][6]);
  
@@ -370,6 +429,7 @@ int main(int argc, char *argv[])
  // Gravity compensation
  // --------------------------------------------------
  
+#ifdef FIRST_ALGORITHM
  // Create the rotations matrix
  std::vector<std::vector<double> > R(dim);
  std::vector<std::vector<double> > R_t(dim);
@@ -405,7 +465,10 @@ int main(int argc, char *argv[])
  // Output the raw and the modified accelerations
  fprintf(file_DEBUG_pt, "%lf %lf\n", t, dist);
 #endif // #ifdef DEBUG
+ 
+#endif // #ifdef FIRST_ALGORITHM
 
+#ifdef SECOND_ALGORITHM
  // Another gravity compensation
  
  // The rotation matrix (roll, pitch and yaw)
@@ -429,9 +492,9 @@ int main(int argc, char *argv[])
   }
  
  // Set initial roll, pitch and yaw
- R1[0][0] = y[0][4];
- R1[1][1] = y[0][5];
- R1[2][2] = y[0][6];
+ R1[0][0] = y[0][7];
+ R1[1][1] = y[0][8];
+ R1[2][2] = y[0][9];
  
  // Update rotation matrices with the lectures from gyro
  update_rotation_matrices(R0, R1, R0_t, dtheta);
@@ -442,79 +505,141 @@ int main(int argc, char *argv[])
  // frame
  multiply_matrix_times_vector(R0_t, acc, acc_prime2);
  
- // Extract gravity
- acc_prime[2]+=9.81;
- acc_prime2[2]+=9.81;
+#endif // #ifdef SECOND_ALGORITHM
  
- // Output the raw and the modified accelerations
+ // Extract gravity and output the raw and the modified accelerations
  fprintf(file_raw_accelerations_pt, "%lf %lf %lf %lf\n", t, acc[0], acc[1], acc[2]);
+#ifdef FIRST_ALGORITHM
+ acc_prime[2]+=9.81;
  fprintf(file_modified_accelerations_pt, "%lf %lf %lf %lf\n", t, acc_prime[0], acc_prime[1], acc_prime[2]);
+#endif // #ifdef FIRST_ALGORITHM
+#ifdef SECOND_ALGORITHM
+ acc_prime2[2]+=9.81;
  fprintf(file_modified_accelerations2_pt, "%lf %lf %lf %lf\n", t, acc_prime2[0], acc_prime2[1], acc_prime2[2]);
+#endif // #ifdef SECOND_ALGORITHM
  
  // Get roll, pitch and yaw from accelerations
  // euler_angles_from_acc_prime[0] - Roll
  // euler_angles_from_acc_prime[1] - Pitch
- // euler_angles_from_acc_prime[2] - Yaw
+ // euler_angles_from_acc_prime[2] - Yaw 
+#ifdef FIRST_ALGORITHM
  std::vector<double> euler_angles_from_acc_prime(dim, 0.0);
- std::vector<double> euler_angles_from_acc_prime2(dim, 0.0);
-#if 1
+ 
  euler_angles_from_acc_prime[0] = atan2(acc_prime[2], acc_prime[1]);
  euler_angles_from_acc_prime[1] = atan2(acc_prime[0], acc_prime[2]);
  euler_angles_from_acc_prime[2] = atan2(acc_prime[1], acc_prime[0]);
- 
- euler_angles_from_acc_prime2[0] = atan2(acc_prime2[2], acc_prime2[1]);
- euler_angles_from_acc_prime2[1] = atan2(acc_prime2[0], acc_prime2[2]);
- euler_angles_from_acc_prime2[2] = atan2(acc_prime2[1], acc_prime2[0]);
-#else
- euler_angles_from_acc_prime[0] = atan2(acc[2], acc[1]);
- euler_angles_from_acc_prime[1] = atan2(acc[0], acc[2]);
- euler_angles_from_acc_prime[2] = atan2(acc[1], acc[0]);
-#endif //#if 0
  
  fprintf(file_roll_pitch_yaw_from_acc_pt, "%lf %lf %lf %lf\n", t,
          euler_angles_from_acc_prime[0],
          euler_angles_from_acc_prime[1],
          euler_angles_from_acc_prime[2]);
+#endif // #ifdef FIRST_ALGORITHM
+ 
+#ifdef SECOND_ALGORITHM
+ std::vector<double> euler_angles_from_acc_prime2(dim, 0.0);
+ 
+ euler_angles_from_acc_prime2[0] = atan2(acc_prime2[2], acc_prime2[1]);
+ euler_angles_from_acc_prime2[1] = atan2(acc_prime2[0], acc_prime2[2]);
+ euler_angles_from_acc_prime2[2] = atan2(acc_prime2[1], acc_prime2[0]);
  
  fprintf(file_roll_pitch_yaw_from_acc2_pt, "%lf %lf %lf %lf\n", t,
          euler_angles_from_acc_prime2[0],
          euler_angles_from_acc_prime2[1],
          euler_angles_from_acc_prime2[2]);
+#endif // #ifdef SECOND_ALGORITHM
  
  // Use complementary filter to get better estimates for roll, pitch
  // and yaw
  // euler_angles_filtered[0] - Filtered roll
  // euler_angles_filtered[1] - Filtered pitch
  // euler_angles_filtered[2] - Filtered yaw
- std::vector<double> euler_angles_filtered(dim, 0.0);
- std::vector<double> euler_angles_filtered2(dim, 0.0);
+ 
  // Complementary filter
- const double alpha = 0.90;
+ const double alpha = 0.98;
+ 
+ // Update the value of the function with the new values
+#ifdef FIRST_ALGORITHM
+ std::vector<double> euler_angles_filtered(dim, 0.0);
+ 
  euler_angles_filtered[0] = alpha * y[0][4] + (1.0 - alpha) * euler_angles_from_acc_prime[0];
  euler_angles_filtered[1] = alpha * y[0][5] + (1.0 - alpha) * euler_angles_from_acc_prime[1];
  euler_angles_filtered[2] = alpha * y[0][6] + (1.0 - alpha) * euler_angles_from_acc_prime[2];
+ 
+ y[0][4] = euler_angles_filtered[0];
+ y[0][5] = euler_angles_filtered[1];
+ y[0][6] = euler_angles_filtered[2];
+ 
+ fprintf(file_filtered_roll_pitch_yaw_pt, "%lf %lf %lf %lf\n", t,
+         euler_angles_filtered[0], euler_angles_filtered[1], euler_angles_filtered[2]);
+#endif // #ifdef FIRST_ALGORITHM
+ 
+#ifdef SECOND_ALGORITHM
+ std::vector<double> euler_angles_filtered2(dim, 0.0);
  
  euler_angles_filtered2[0] = alpha * y[0][7] + (1.0 - alpha) * euler_angles_from_acc_prime2[0];
  euler_angles_filtered2[1] = alpha * y[0][8] + (1.0 - alpha) * euler_angles_from_acc_prime2[1];
  euler_angles_filtered2[2] = alpha * y[0][9] + (1.0 - alpha) * euler_angles_from_acc_prime2[2];
  
- // Update the value of the function with the new values
- y[0][4] = euler_angles_filtered[0];
- y[0][5] = euler_angles_filtered[1];
- y[0][6] = euler_angles_filtered[2];
- 
  y[0][7] = euler_angles_filtered2[0];
  y[0][8] = euler_angles_filtered2[1];
  y[0][9] = euler_angles_filtered2[2];
  
- fprintf(file_filtered_roll_pitch_yaw_pt, "%lf %lf %lf %lf\n", t,
-         euler_angles_filtered[0], euler_angles_filtered[1], euler_angles_filtered[2]);
  fprintf(file_filtered_roll_pitch_yaw2_pt, "%lf %lf %lf %lf\n", t,
          euler_angles_filtered2[0], euler_angles_filtered2[1], euler_angles_filtered2[2]);
+#endif // #ifdef SECOND_ALGORITHM
+  
+#ifdef THIRD_ALGORITHM
+ 
+ // Create the rotation matrices
+ std::vector<std::vector<double> > R(dim);
+ std::vector<std::vector<double> > R_t(dim);
+ for (unsigned i = 0; i < dim; i++)
+  {
+   R[i].resize(dim);
+   R_t[i].resize(dim);
+  }
+ 
+ // Fill rotation matrices
+ // fill_rotation_matrices(R, R_t, y[0][10], y[0][11], y[0][12]); // tachidok
+ fill_rotation_matrices(R, R_t, dummy[0], dummy[1], dummy[2]);
+ 
+ // Transform from the body reference frame to the global reference
+ // frame
+ std::vector<double> acc_inertial(3, 0.0);
+ multiply_matrix_times_vector(R_t, acc, acc_inertial);//tachidok
+ acc_inertial[2]+=9.81;
+ //std::vector<double> gyro_inertial(3, 0.0);
+ //multiply_matrix_times_vector(R, dtheta, gyro_inertial);
+ 
+ // Output data
+ fprintf(file_inertial_accelerations_pt, "%lf %lf %lf %lf\n",
+         t, acc_inertial[0], acc_inertial[1], acc_inertial[2]);
+ //fprintf(file_inertial_gyro_pt, "%lf %lf %lf %lf\n",
+ //        t, gyro_inertial[0], gyro_inertial[1], gyro_inertial[2]);
+ 
+ // Another one gravity compensation 
+ // -------------------------------------------------------------------
+ // Apply complementary filter
+ // -------------------------------------------------------------------
+ // Transform accelerations to angles
+ std::vector<double> acc_angles(3, 0.0);
+ acc_angles[0] = atan2(acc_inertial[2], acc_inertial[1]);
+ acc_angles[1] = atan2(acc_inertial[0], acc_inertial[2]);
+ acc_angles[2] = atan2(acc_inertial[1], acc_inertial[0]);
+ 
+ // Update filtered Euler angles
+ //y[0][10] = alpha * y[0][10] + (1.0 - alpha) * acc_inertial[0];
+ //y[0][11] = alpha * y[0][11] + (1.0 - alpha) * acc_inertial[1];
+ //y[0][12] = alpha * y[0][12] + (1.0 - alpha) * acc_inertial[2];
+ 
+ // Output data
+ fprintf(file_roll_pitch_yaw_pt, "%lf %lf %lf %lf\n",
+         t, y[0][10], y[0][11], y[0][12]);
+#endif // #ifdef THIRD_ALGORITHM
  
  // Integrate
  //integrator->integrate(*odes, h, t_initial, t_final, y);
- for (unsigned i = 0; i < n_steps; i++)
+ for (unsigned i = 0; i < n_steps && t < 100.0; i++)
   {
    integrator->integrate_step(*odes, h, t, y);
    // Update data
@@ -533,11 +658,12 @@ int main(int argc, char *argv[])
    fprintf(file_roll_pitch_yaw_from_gyro_pt, "%lf %lf %lf %lf\n", t, y[0][4], y[0][5], y[0][6]);
    
    // Get the accelerometers readings from the Table
-   odes->get_sensors_lecture(t, vel, acc, dtheta);
+   odes->get_sensors_lecture(t, vel, acc, dtheta, dummy);
    
    // ----------------------
    // Gravity compensation
    
+#ifdef FIRST_ALGORITHM
    // Fill rotation matrices
    fill_rotation_matrices(R, R_t, y[0][4], y[0][5], y[0][6]);
    //fill_rotation_matrices(R, R_t, roll_filtered, pitch_filtered, yaw_filtered);
@@ -563,6 +689,9 @@ int main(int argc, char *argv[])
    fprintf(file_DEBUG_pt, "%lf %lf\n", t, dist);
 #endif // #ifdef DEBUG
    
+#endif // #ifdef FIRST_ALGORITHM
+   
+#ifdef SECOND_ALGORITHM
    // Another gravity compensation
    
    // Update rotation matrices with the lectures from gyro
@@ -571,78 +700,127 @@ int main(int argc, char *argv[])
    // Transform from the body reference frame to the global reference
    // frame
    multiply_matrix_times_vector(R0_t, acc, acc_prime2);
+#endif // #ifdef SECOND_ALGORITHM
    
-   // Extract gravity
+   // Extract gravity and output the raw and the modified
+   // accelerations
+   fprintf(file_raw_accelerations_pt, "%lf %lf %lf %lf\n", t, acc[0], acc[1], acc[2]);
+#ifdef FIRST_ALGORITHM
    acc_prime[2]+=9.81;
-   acc_prime2[2]+=9.81;
-   
-   // Output the raw and the modified accelerations
-   fprintf(file_raw_accelerations_pt, "%lf %lf %lf %lf\n", t, acc[0], acc[0], acc[2]);
    fprintf(file_modified_accelerations_pt, "%lf %lf %lf %lf\n", t,
            acc_prime[0], acc_prime[1], acc_prime[2]);
+#endif // #ifdef FIRST_ALGORITHM
+#ifdef SECOND_ALGORITHM
+   acc_prime2[2]+=9.81;
    fprintf(file_modified_accelerations2_pt, "%lf %lf %lf %lf\n", t, acc_prime2[0], acc_prime2[1], acc_prime2[2]);
+#endif // #ifdef SECOND_ALGORITHM
    
-#if 1
+   // Use complementary filter to get better estimates for roll, pitch
+   // and yaw, and update the value of the function with the new
+   // values
+#ifdef FIRST_ALGORITHM
    euler_angles_from_acc_prime[0] = atan2(acc_prime[2], acc_prime[1]);
    euler_angles_from_acc_prime[1] = atan2(acc_prime[0], acc_prime[2]);
    euler_angles_from_acc_prime[2] = atan2(acc_prime[1], acc_prime[0]);
-   
-   euler_angles_from_acc_prime2[0] = atan2(acc_prime2[2], acc_prime2[1]);
-   euler_angles_from_acc_prime2[1] = atan2(acc_prime2[0], acc_prime2[2]);
-   euler_angles_from_acc_prime2[2] = atan2(acc_prime2[1], acc_prime2[0]);
-#else
-   euler_angles_from_acc_prime[0] = atan2(acc[2], acc[1]);
-   euler_angles_from_acc_prime[1] = atan2(acc[0], acc[2]);
-   euler_angles_from_acc_prime[2] = atan2(acc[1], acc[0]);
-#endif //#if 0
    
    fprintf(file_roll_pitch_yaw_from_acc_pt, "%lf %lf %lf %lf\n", t,
            euler_angles_from_acc_prime[0],
            euler_angles_from_acc_prime[1],
            euler_angles_from_acc_prime[2]);
    
+   euler_angles_filtered[0] = alpha * y[0][4] + (1.0 - alpha) * euler_angles_from_acc_prime[0];
+   euler_angles_filtered[1] = alpha * y[0][5] + (1.0 - alpha) * euler_angles_from_acc_prime[1];
+   euler_angles_filtered[2] = alpha * y[0][6] + (1.0 - alpha) * euler_angles_from_acc_prime[2];
+   
+   y[0][4] = euler_angles_filtered[0];
+   y[0][5] = euler_angles_filtered[1];
+   y[0][6] = euler_angles_filtered[2];
+   fprintf(file_filtered_roll_pitch_yaw_pt, "%lf %lf %lf %lf\n", t,
+           euler_angles_filtered[0], euler_angles_filtered[1], euler_angles_filtered[2]);
+#endif // #ifdef FIRST_ALGORITHM
+
+#ifdef SECOND_ALGORITHM
+   euler_angles_from_acc_prime2[0] = atan2(acc_prime2[2], acc_prime2[1]);
+   euler_angles_from_acc_prime2[1] = atan2(acc_prime2[0], acc_prime2[2]);
+   euler_angles_from_acc_prime2[2] = atan2(acc_prime2[1], acc_prime2[0]);
+   
    fprintf(file_roll_pitch_yaw_from_acc2_pt, "%lf %lf %lf %lf\n", t,
            euler_angles_from_acc_prime2[0],
            euler_angles_from_acc_prime2[1],
            euler_angles_from_acc_prime2[2]);
    
-   // Use complementary filter to get better estimates for roll, pitch
-   // and yaw
-   euler_angles_filtered[0] = alpha * y[0][4] + (1.0 - alpha) * euler_angles_from_acc_prime[0];
-   euler_angles_filtered[1] = alpha * y[0][5] + (1.0 - alpha) * euler_angles_from_acc_prime[1];
-   euler_angles_filtered[2] = alpha * y[0][6] + (1.0 - alpha) * euler_angles_from_acc_prime[2];
-   
    euler_angles_filtered2[0] = alpha * y[0][7] + (1.0 - alpha) * euler_angles_from_acc_prime2[0];
    euler_angles_filtered2[1] = alpha * y[0][8] + (1.0 - alpha) * euler_angles_from_acc_prime2[1];
    euler_angles_filtered2[2] = alpha * y[0][9] + (1.0 - alpha) * euler_angles_from_acc_prime2[2];
    
-   // Update the value of the function with the new values
-   y[0][4] = euler_angles_filtered[0];
-   y[0][5] = euler_angles_filtered[1];
-   y[0][6] = euler_angles_filtered[2];
-
    y[0][7] = euler_angles_filtered2[0];
    y[0][8] = euler_angles_filtered2[1];
    y[0][9] = euler_angles_filtered2[2];
-
-   fprintf(file_filtered_roll_pitch_yaw_pt, "%lf %lf %lf %lf\n", t,
-           euler_angles_filtered[0], euler_angles_filtered[1], euler_angles_filtered[2]);
    fprintf(file_filtered_roll_pitch_yaw2_pt, "%lf %lf %lf %lf\n", t,
            euler_angles_filtered2[0], euler_angles_filtered2[1], euler_angles_filtered2[2]);
+   
+#endif // #ifdef SECOND_ALGORITHM
+   
+#ifdef THIRD_ALGORITHM
+   // Fill rotation matrices
+   // fill_rotation_matrices(R, R_t, y[0][10], y[0][11], y[0][12]); // tachidok
+   fill_rotation_matrices(R, R_t, dummy[0], dummy[1], dummy[2]);
+   
+   // Transform from the body reference frame to the global reference
+   // frame
+   multiply_matrix_times_vector(R_t, acc, acc_inertial);//tachidok
+   acc_inertial[2]+=9.81;
+   //multiply_matrix_times_vector(R, dtheta, gyro_inertial);
+   
+   // Output data
+   fprintf(file_inertial_accelerations_pt, "%lf %lf %lf %lf\n",
+           t, acc_inertial[0], acc_inertial[1], acc_inertial[2]);
+   //fprintf(file_inertial_gyro_pt, "%lf %lf %lf %lf\n",
+   //        t, gyro_inertial[0], gyro_inertial[1], gyro_inertial[2]);
+   
+   // -------------------------------------------------------------------
+   // Apply complementary filter
+   // -------------------------------------------------------------------
+   // Transform accelerations to angles
+   acc_angles[0] = atan2(acc_inertial[2], acc_inertial[1]);
+   acc_angles[1] = atan2(acc_inertial[0], acc_inertial[2]);
+   acc_angles[2] = atan2(acc_inertial[1], acc_inertial[0]);
+   
+   // Update filtered Euler angles
+   //y[0][10] = alpha * y[0][10] + (1.0 - alpha) * acc_inertial[0];
+   //y[0][11] = alpha * y[0][11] + (1.0 - alpha) * acc_inertial[1];
+   //y[0][12] = alpha * y[0][12] + (1.0 - alpha) * acc_inertial[2];
+   
+   // Output data
+   fprintf(file_roll_pitch_yaw_pt, "%lf %lf %lf %lf\n",
+           t, y[0][10], y[0][11], y[0][12]);
+#endif // #ifdef THIRD_ALGORITHM
    
   }
  
  std::cout << "[FINISHING UP] ... " << std::endl;
  
- // Close the output files
- fclose(file_roll_pitch_yaw_from_acc_pt);
- fclose(file_roll_pitch_yaw_from_acc2_pt);
+ // Close the output file
  fclose(file_roll_pitch_yaw_from_gyro_pt);
  fclose(file_raw_accelerations_pt);
+  
+#ifdef FIRST_ALGORITHM
+ fclose(file_roll_pitch_yaw_from_acc_pt);
  fclose(file_modified_accelerations_pt);
  fclose(file_filtered_roll_pitch_yaw_pt);
+#endif // #ifdef FIRST_ALGORITHM
+ 
+#ifdef SECOND_ALGORITHM
+ fclose(file_roll_pitch_yaw_from_acc2_pt);
  fclose(file_modified_accelerations2_pt);
  fclose(file_filtered_roll_pitch_yaw2_pt);
+#endif // #ifdef SECOND_ALGORITHM
+ 
+#ifdef THIRD_ALGORITHM
+ fclose(file_inertial_accelerations_pt);
+ fclose(file_inertial_gyro_pt);
+#endif // #ifdef THIRD_ALGORITHM
+ 
 #ifdef DEBUG
  fclose(file_DEBUG_pt);
 #endif // #ifdef DEBUG
