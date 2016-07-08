@@ -82,13 +82,17 @@ void CCODEsFromTableBasedOnVelocity::load_table(const char *filename)
    double magnet_x;
    double magnet_y;
    double magnet_z;
-   int n_read = fscanf(file_pt, "%d,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf\n",
+   double roll;
+   double pitch;
+   double yaw;
+   int n_read = fscanf(file_pt, "%d,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf\n",
 		       &index, &time, &latitude, &longitude, &height,
 		       &vel_north, &vel_east, &vel_down,
 		       &acc_x, &acc_y, &acc_z,
                        &gyro_x, &gyro_y, &gyro_z,
-                       &magnet_x, &magnet_y, &magnet_z);
-   if (n_read != 17)
+                       &magnet_x, &magnet_y, &magnet_z,
+                       &roll, &pitch, &yaw);
+   if (n_read != 20)
     {
      // Error message
      std::ostringstream error_message;

@@ -32,7 +32,18 @@ class CCODEsFromTableBasedOnAcceleration : public CAODEs
  void get_sensors_lecture(const double t,
                           std::vector<double> &vel, 
                           std::vector<double> &acc,
-                          std::vector<double> &gyro);
+                          std::vector<double> &gyro,
+                          std::vector<double> &euler_angles);
+ 
+ /// Fills the matrix that performs the transformation from angular
+ /// velocities to Euler-rates
+ void fill_angular_velocities_to_euler_rates_matrix(std::vector<std::vector<double> > &A,
+                                                    std::vector<double> &euler_angles);
+ 
+ /// Multiplies a matrix times a vector
+ void multiply_matrix_times_vector(std::vector<std::vector<double> > &A,
+                                   std::vector<double> &b,
+                                   std::vector<double> &x);
  
  /// Evaluates the system of odes at the given time "t" and the values
  /// of the function in "y". The evaluation produces results in the dy
@@ -52,7 +63,7 @@ class CCODEsFromTableBasedOnAcceleration : public CAODEs
  /// copiable). Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
  CCODEsFromTableBasedOnAcceleration(const CCODEsFromTableBasedOnAcceleration &copy)
-  : CAODEs(copy)
+  : CAODEs(copy), DIM(0)
   {
    BrokenCopy::broken_copy("CCODEsFromTableBasedOnAcceleration");
   }
@@ -64,6 +75,9 @@ class CCODEsFromTableBasedOnAcceleration : public CAODEs
   {
    BrokenCopy::broken_assign("CCODEsFromTableBasedOnAcceleration");
   }
+ 
+ // The dimension of the problem
+ const unsigned DIM;
  
  // Indicates whether the data have been loaded from the table or not
  bool Loaded_table;
@@ -82,10 +96,16 @@ class CCODEsFromTableBasedOnAcceleration : public CAODEs
  std::vector<double> Table_gyro_x;
  std::vector<double> Table_gyro_y;
  std::vector<double> Table_gyro_z;
+ std::vector<double> Table_roll;
+ std::vector<double> Table_pitch;
+ std::vector<double> Table_yaw;
  
  // The interpolator
  CCNewtonInterpolator *interpolator_pt;
  
+ // A transformation matrix from angular velocities to Euler rates
+ std::vector<std::vector<double> > A;
+  
 };
 
 #endif // #ifndef CCODESFROMTABLEBASEDONACCELERATION_H
