@@ -9,7 +9,7 @@
 // Load data from FILE
 #include <stdio.h>
 
-/// \class CCOdesFromTableBasedOnVelocity cc_odes_from_table.h
+/// \class CCOdesFromTableBasedOnVelocity cc_odes_from_table_based_on_velocity.h
     
 /// This class implements a set of odes from a Table. It inherits the
 /// interface to define ODEs from the CAODEs class
