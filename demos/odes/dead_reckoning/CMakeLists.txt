@@ -24,10 +24,12 @@ LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../../lib)
 
 #Adding library's sources
 #SET(src_files cc_odes_from_table_based_on_velocity)
-SET(src_files cc_odes_from_table_based_on_acceleration)
+#SET(src_files cc_odes_from_table_based_on_acceleration)
+SET(src_files cc_odes_from_table_from_xsensMT9B)
 
 #SET(main_source demo_dead_reckoning_from_velocities)
-SET(main_source demo_dead_reckoning_from_accelerations)
+#SET(main_source demo_dead_reckoning_from_accelerations)
+SET(main_source demo_dead_reckoning_for_xsensMT9B)
 
 #FIND_LIBRARY(multirate_path multirate ../../lib)
 

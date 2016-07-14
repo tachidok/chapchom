@@ -25,9 +25,11 @@ OptionRead()
 #====================================================================
 build_dir=build
 bin_dir=bin
-example_velocity=dead_reckoning_from_accelerations
+example_velocity=dead_reckoning_for_xsensMT9B
 #example_velocity=dead_reckoning_from_velocities
 example_acceleration=dead_reckoning_from_accelerations
+example_xsensMT9B=dead_reckoning_for_xsensMT9B
+
 
 #====================================================================
 # The building script
@@ -38,6 +40,7 @@ echo "============================================================= "
 echo ""
 echo "Example: ("$example_velocity")"
 echo "Example: ("$example_acceleration")"
+echo "Example: ("$example_xsensMT9B")"
 echo ""
 echo ""
 echo "I will use the '"$build_dir"' directory as the temp build folder"

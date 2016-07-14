@@ -1,5 +1,5 @@
-#ifndef CCODESFROMTABLEBASEDONACCELERATION_H
-#define CCODESFROMTABLEBASEDONACCELERATION_H
+#ifndef CCODESFROMTABLEFROMXSENSMT9B_H
+#define CCODESFROMTABLEFROMXSENSMT9B_H
 
 #include "../../../src/general/common_includes.h"
 // The class implementing the interfaces for the ODEs
@@ -13,24 +13,23 @@
     
 /// This class implements a set of odes from a Table. It inherits the
 /// interface to define ODEs from the CAODEs class
-class CCODEsFromTableBasedOnAcceleration : public CAODEs
+class CCODEsFromTableFromXSENSMT9B : public CAODEs
 {
  
  public:
 
  /// Constructor, sets the number of odes
- CCODEsFromTableBasedOnAcceleration();
+ CCODEsFromTableFromXSENSMT9B();
  
  /// Empty destructor
- virtual ~CCODEsFromTableBasedOnAcceleration();
+ virtual ~CCODEsFromTableFromXSENSMT9B();
  
  /// Loads the data from an input file to generate a table from which
  /// the ode takes its values
- void load_table(const char *filename);
+ void load_table(const char *euler_angles_filename, const char *raw_data_filename);
  
  /// Get the values of the sensors at specific time (computed from table)
  void get_sensors_lecture(const double t,
-                          std::vector<double> &vel, 
                           std::vector<double> &acc,
                           std::vector<double> &gyro,
                           std::vector<double> &euler_angles);
@@ -62,18 +61,18 @@ class CCODEsFromTableBasedOnAcceleration : public CAODEs
  /// Copy constructor (we do not want this class to be
  /// copiable). Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CCODEsFromTableBasedOnAcceleration(const CCODEsFromTableBasedOnAcceleration &copy)
+ CCODEsFromTableFromXSENSMT9B(const CCODEsFromTableFromXSENSMT9B &copy)
   : CAODEs(copy), DIM(0)
   {
-   BrokenCopy::broken_copy("CCODEsFromTableBasedOnAcceleration");
+   BrokenCopy::broken_copy("CCODEsFromTableFromXSENSMT9B");
   }
  
  /// Assignment operator (we do not want this class to be
  /// copiable. Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- void operator=(const CCODEsFromTableBasedOnAcceleration &copy)
+ void operator=(const CCODEsFromTableFromXSENSMT9B &copy)
   {
-   BrokenCopy::broken_assign("CCODEsFromTableBasedOnAcceleration");
+   BrokenCopy::broken_assign("CCODEsFromTableFromXSENSMT9B");
   }
  
  // The dimension of the problem
@@ -81,15 +80,12 @@ class CCODEsFromTableBasedOnAcceleration : public CAODEs
  
  // Indicates whether the data have been loaded from the table or not
  bool Loaded_table;
-
+ 
  // Number of data in the loaded table
  unsigned N_data_in_table;
  
  // Storage for the loaded data
  std::vector<double> Table_time;
- std::vector<double> Table_vel_north;
- std::vector<double> Table_vel_east;
- std::vector<double> Table_vel_height;
  std::vector<double> Table_acc_x;
  std::vector<double> Table_acc_y;
  std::vector<double> Table_acc_z;
@@ -108,4 +104,4 @@ class CCODEsFromTableBasedOnAcceleration : public CAODEs
   
 };
 
-#endif // #ifndef CCODESFROMTABLEBASEDONACCELERATION_H
+#endif // #ifndef CCODESFROMTABLEFROMXSENSMT9B_H
