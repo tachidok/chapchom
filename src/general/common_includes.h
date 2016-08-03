@@ -38,6 +38,7 @@
 // String library
 // ====================================================================
 #include <cstring> // various narrow character string handling functions
+#include <string>  // library to handle strings, implements std::string
 
 // ====================================================================
 // Containers library
