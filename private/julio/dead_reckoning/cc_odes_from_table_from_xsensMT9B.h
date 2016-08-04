@@ -19,7 +19,8 @@ class CCODEsFromTableFromXSENSMT9B : public CAODEs
  public:
 
  /// Constructor, sets the number of odes
- CCODEsFromTableFromXSENSMT9B();
+ CCODEsFromTableFromXSENSMT9B(const char *euler_angles_filename,
+                              const char *raw_sensors_data_filename);
  
  /// Empty destructor
  virtual ~CCODEsFromTableFromXSENSMT9B();
@@ -43,6 +44,9 @@ class CCODEsFromTableFromXSENSMT9B : public CAODEs
  void multiply_matrix_times_vector(std::vector<std::vector<double> > &A,
                                    std::vector<double> &b,
                                    std::vector<double> &x);
+ 
+ /// Set linear acceleration for current time
+ inline std::vector<double> &linear_acceleration() {return Linear_acceleration;}
  
  /// Evaluates the system of odes at the given time "t" and the values
  /// of the function in "y". The evaluation produces results in the dy
@@ -101,6 +105,9 @@ class CCODEsFromTableFromXSENSMT9B : public CAODEs
  
  // A transformation matrix from angular velocities to Euler rates
  std::vector<std::vector<double> > A;
+
+ // Stores linear acceleration
+ std::vector<double> Linear_acceleration;
   
 };
 

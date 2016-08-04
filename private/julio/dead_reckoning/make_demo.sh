@@ -25,12 +25,12 @@ OptionRead()
 #====================================================================
 build_dir=build
 bin_dir=bin
-example_velocity=dead_reckoning_from_accelerations2
-#example_velocity=dead_reckoning_from_velocities
+example_velocity=dead_reckoning_from_velocities
 example_acceleration=dead_reckoning_from_accelerations
 example_acceleration2=dead_reckoning_from_accelerations2
 example_xsensMT9B=dead_reckoning_for_xsensMT9B
 
+example_velocity=dead_reckoning_for_xsensMT9B
 
 #====================================================================
 # The building script
