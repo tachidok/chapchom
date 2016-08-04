@@ -6,20 +6,23 @@
 // Constructor, sets the number of odes. We currently have two odes,
 // one for the velocity and the other for the acceleration
 // ===================================================================
-CCODEsFromTableFromXSENSMT9B::CCODEsFromTableFromXSENSMT9B()
+CCODEsFromTableFromXSENSMT9B::CCODEsFromTableFromXSENSMT9B(const char *euler_angles_filename,
+                                                           const char *raw_sensors_data_filename)
  : CAODEs(9), DIM(3)
 {
  // The values have not been loaded into a table 
  Loaded_table = false;
  // Initialise the number of data in the Table
  //N_data_in_table = 0;
- N_data_in_table = 18273;
+ //N_data_in_table = 18273;
+ N_data_in_table = 20076;
  
  // Create the interpolator
  interpolator_pt = new CCNewtonInterpolator();
  
  // Read the data from file
- load_table("./xsensMT9B/MT9_euler_00007154_000.log", "./xsensMT9B/MT9_cal_00007154_000.log");
+ //load_table("./xsensMT9B/no_movement/MT9_euler_00007154_000.log", "./xsensMT9B/no_movement/MT9_cal_00007154_000.log");
+ load_table(euler_angles_filename, raw_sensors_data_filename);
  
  // Create storage for the matrix that relates the angular velocities
  // with the Euler rates
@@ -457,12 +460,18 @@ void CCODEsFromTableFromXSENSMT9B::evaluate(const double t,
  // dy[7] dpitch
  // dy[8] dyaw
  
- dy[0] = vel[0];
- dy[1] = acc[0];
- dy[2] = vel[1];
- dy[3] = acc[1];
- dy[4] = vel[2];
- dy[5] = acc[2];
+ //dy[0] = vel[0];
+ //dy[1] = acc[0];
+ //dy[2] = vel[1];
+ //dy[3] = acc[1];
+ //dy[4] = vel[2];
+ //dy[5] = acc[2];
+ dy[0] = y[1];
+ dy[1] = Linear_acceleration[0];
+ dy[2] = y[3];
+ dy[3] = Linear_acceleration[1];
+ dy[4] = y[5];
+ dy[5] = Linear_acceleration[2];
  dy[6] = euler_angles_rates[0];
  dy[7] = euler_angles_rates[1];
  dy[8] = euler_angles_rates[2];

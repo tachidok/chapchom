@@ -10,6 +10,8 @@
 #include "cc_odes_from_table_from_xsensMT9B.h"
 
 #define DEBUG
+//#define T_NO_MOVEMENT
+#define T_TEST1
 
 void fill_rotation_matrices(std::vector<std::vector<double> > &R,
                             std::vector<std::vector<double> > &R_t,
@@ -110,7 +112,17 @@ int main(int argc, char *argv[])
  // -----------------------------------------------------------------
  
  // Create an instance of the ODEs to solve
- CCODEsFromTableFromXSENSMT9B *odes = new CCODEsFromTableFromXSENSMT9B();
+#ifdef T_NO_MOVEMENT
+ CCODEsFromTableFromXSENSMT9B *odes =
+  new CCODEsFromTableFromXSENSMT9B("./xsensMT9B/no_movement/MT9_euler_00007154_000.log",
+                                   "./xsensMT9B/no_movement/MT9_cal_00007154_000.log");
+#endif // #ifdef T_NO_MOVEMENT
+ 
+#ifdef T_TEST1
+ CCODEsFromTableFromXSENSMT9B *odes =
+  new CCODEsFromTableFromXSENSMT9B("./xsensMT9B/test1/MT9_euler_00007154_000.log",
+                                   "./xsensMT9B/test1/MT9_cal_00007154_000.log");
+#endif // #ifdef T_TEST1
  
  // Create an instance of the integrator method
  CAIntegrationMethod *integrator = new CCEulerMethod();
@@ -188,6 +200,34 @@ int main(int argc, char *argv[])
 			  CHAPCHOM_EXCEPTION_LOCATION);
   }
  
+ char file_velocity_name[100];
+ sprintf(file_velocity_name, "./RESLT/velocity.dat");
+ FILE *file_velocity_pt = fopen(file_velocity_name, "w");
+ if (file_velocity_pt == 0)
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_velocity_name << "]"
+		 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+ char file_position_name[100];
+ sprintf(file_position_name, "./RESLT/position.dat");
+ FILE *file_position_pt = fopen(file_position_name, "w");
+ if (file_position_pt == 0)
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_position_name << "]"
+		 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
 #ifdef DEBUG
  char file_DEBUG_name[100];
  sprintf(file_DEBUG_name, "./RESLT/DEBUG.dat");
@@ -213,8 +253,15 @@ int main(int argc, char *argv[])
  // initial values)
  // -----------------------------------------------------------------
  // Set the initial and final interval values (got from the number of data in Table)
+#ifdef T_NO_MOVEMENT
  const double t_initial = 5.113;
  const double t_final = 76.0;
+#endif // #ifdef T_NO_MOVEMENT
+ 
+#ifdef T_TEST1
+ const double t_initial = 25.0;
+ const double t_final = 103.0;
+#endif // #ifdef T_TEST1
  //const double t_final = 100;
  // Set the number of steps we want to take
  const double n_steps = 257.0 * t_final;  // 257 measeurements per second (original number of measurements)
@@ -312,6 +359,9 @@ int main(int argc, char *argv[])
  // Substract gravity
  acc_inertial[2]-=9.81;
  
+ // Set linear acceleration
+ odes->linear_acceleration() = acc_inertial;
+ 
  // -----------------
  // Output data
  // -----------------
@@ -326,6 +376,10 @@ int main(int argc, char *argv[])
  // Euler angles from accelerations
  fprintf(file_roll_pitch_yaw_from_acc_pt, "%lf %lf %lf %lf\n",
          t, acc_angles[0], acc_angles[1], acc_angles[2]);
+ // Velocity
+ fprintf(file_velocity_pt, "%lf %lf %lf %lf\n", t, y[0][1], y[0][3], y[0][5]);
+ // Position
+ fprintf(file_position_pt, "%lf %lf %lf %lf\n", t, y[0][0], y[0][2], y[0][4]);
  
  // -----------------------------------------------------------------
  // Integrate
@@ -388,6 +442,9 @@ int main(int argc, char *argv[])
    // Substract gravity
    acc_inertial[2]-=9.81;
    
+   // Set linear acceleration
+   odes->linear_acceleration() = acc_inertial;
+   
    // -----------------
    // Output data
    // -----------------
@@ -402,6 +459,10 @@ int main(int argc, char *argv[])
    // Euler angles from accelerations
    fprintf(file_roll_pitch_yaw_from_acc_pt, "%lf %lf %lf %lf\n",
            t, acc_angles[0], acc_angles[1], acc_angles[2]);
+   // Velocity
+   fprintf(file_velocity_pt, "%lf %lf %lf %lf\n", t, y[0][1], y[0][3], y[0][5]);
+   // Position
+   fprintf(file_position_pt, "%lf %lf %lf %lf\n", t, y[0][0], y[0][2], y[0][4]);
    
   }
  
@@ -411,7 +472,9 @@ int main(int argc, char *argv[])
  fclose(file_raw_accelerations_pt);
  fclose(file_inertial_accelerations_pt);
  fclose(file_roll_pitch_yaw_pt);
- //fclose(file_roll_pitch_yaw_from_acc_pt);
+ fclose(file_roll_pitch_yaw_from_acc_pt);
+ fclose(file_velocity_pt);
+ fclose(file_position_pt);
  
 #ifdef DEBUG
  fclose(file_DEBUG_pt);
