@@ -10,8 +10,8 @@
 #include "cc_odes_from_table_from_xsensMT9B.h"
 
 #define DEBUG
-//#define T_NO_MOVEMENT
-#define T_TEST1
+#define T_NO_MOVEMENT
+//#define T_TEST1
 
 void fill_rotation_matrices(std::vector<std::vector<double> > &R,
                             std::vector<std::vector<double> > &R_t,
@@ -325,6 +325,7 @@ int main(int argc, char *argv[])
  acc_angles[0] = atan2(acc[1], acc[2]);
  acc_angles[1] = atan2(-acc[0], sqrt(acc[1]*acc[1]+acc[2]*acc[2]));
  acc_angles[2] = atan2(acc[2], sqrt(acc[0]*acc[0]+acc[2]*acc[2]));
+ //acc_angles[2] = atan2(sqrt(acc[0]*acc[0]+acc[1]*acc[1]), acc[0]); // HERE
  
  //acc_angles[2] = atan2(acc[1], acc[0]);
  //acc_angles[2] = atan2(-acc[0], sqrt(acc[0]*acc[0]+acc[1]*acc[1]+acc[2]*acc[2]));
@@ -419,6 +420,8 @@ int main(int argc, char *argv[])
    acc_angles[0] = atan2(acc[1], acc[2]);
    acc_angles[1] = atan2(-acc[0], sqrt(acc[1]*acc[1]+acc[2]*acc[2]));
    acc_angles[2] = atan2(acc[2], sqrt(acc[0]*acc[0]+acc[2]*acc[2]));
+   //acc_angles[2] = atan2(sqrt(acc[0]*acc[0]+acc[1]*acc[1]), acc[0]); // HERE
+   
    //acc_angles[2] = atan2(acc[1], acc[0]);
    //acc_angles[2] = atan2(-acc[0], sqrt(acc[0]*acc[0]+acc[1]*acc[1]+acc[2]*acc[2]));
    //acc_angles[2] = (atan2(acc[1], acc[0]) + atan2(-acc[0], sqrt(acc[0]*acc[0]+acc[1]*acc[1]+acc[2]*acc[2]))) / 2.0;

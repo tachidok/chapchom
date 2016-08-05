@@ -1,16 +1,21 @@
 %% Read data
 % 76 secs. with 257 data per second
-%MT9euler = importfileMT9euler('xsensMT9B/no_movement/MT9_euler_00007154_000.log', 1, 18273);
-%MT9all = importfileMT9raw('xsensMT9B/no_movement/MT9_cal_00007154_000.log', 1, 18273);
-%my_roll_pitch_yaw = importfile_my_roll_pitch_yaw('RESLT/roll_pitch_yaw.dat', 1, 19533);
-%my_roll_pitch_yaw_from_acc = importfile_my_roll_pitch_yaw_from_acc('RESLT/roll_pitch_yaw_from_acc.dat', 1, 19533);
+MT9euler = importfileMT9euler('xsensMT9B/no_movement/MT9_euler_00007154_000.log', 1, 18273);
+MT9all = importfileMT9raw('xsensMT9B/no_movement/MT9_cal_00007154_000.log', 1, 18273);
+
+my_roll_pitch_yaw = importfile_my_roll_pitch_yaw('RESLT/roll_pitch_yaw.dat', 1, 19533);
+my_roll_pitch_yaw_from_acc = importfile_my_roll_pitch_yaw_from_acc('RESLT/roll_pitch_yaw_from_acc.dat', 1, 19533);
+inertial_acceleration = importfile_inertial_acceleration_xsensMT9B('RESLT/inertial_accelerations.dat', 1, 19533);
+my_position = importfile_positionxsensMT9B('RESLT/position.dat', 1, 19533);
 
 % x secs. with 257 data per second
-MT9euler = importfileMT9euler('xsensMT9B/test1/MT9_euler_00007154_000.log', 1, 20076);
-MT9all = importfileMT9raw('xsensMT9B/test1/MT9_cal_00007154_000.log', 1, 20076);
-my_roll_pitch_yaw = importfile_my_roll_pitch_yaw('RESLT/roll_pitch_yaw.dat', 1, 26472);
-my_roll_pitch_yaw_from_acc = importfile_my_roll_pitch_yaw_from_acc('RESLT/roll_pitch_yaw_from_acc.dat', 1, 26472);
-my_position = importfile_positionxsensMT9B('RESLT/position.dat', 1, 26472);
+%MT9euler = importfileMT9euler('xsensMT9B/test1/MT9_euler_00007154_000.log', 1, 20076);
+%MT9all = importfileMT9raw('xsensMT9B/test1/MT9_cal_00007154_000.log', 1, 20076);
+
+%my_roll_pitch_yaw = importfile_my_roll_pitch_yaw('RESLT/roll_pitch_yaw.dat', 1, 26472);
+%my_roll_pitch_yaw_from_acc = importfile_my_roll_pitch_yaw_from_acc('RESLT/roll_pitch_yaw_from_acc.dat', 1, 26472);
+%inertial_acceleration = importfile_inertial_acceleration_xsensMT9B('RESLT/inertial_accelerations.dat', 1, 26472);
+%my_position = importfile_positionxsensMT9B('RESLT/position.dat', 1, 26472);
 
 %% Euler angles
 % Original vs processed roll
@@ -61,11 +66,33 @@ legend('Solution', 'Gyroscope and accelerometer fusion', 'Angle from acceleromet
 %legend('Resultado esperado', 'Ángulo de Euler desde giróscopos', 'Location', 'NorthWest')
 %legend('Original', 'Fusión giróscopos y acelerómetros', 'Location', 'NorthWest')
 
-%% Position
-% Plot position
-figure
-plot(my_position(:, 2), my_position(:, 3), 'b')
-title('Trajectory')
-xlabel('x')
-ylabel('y')
-legend('Trajectory', 'Location', 'NorthWest')
+% %% Inertial acceleration
+% figure
+% plot(inertial_acceleration(:, 1), inertial_acceleration(:, 2), 'b')
+% title('Inertial acceleration')
+% xlabel('Time (s)')
+% ylabel('x-acceleration')
+% legend('Acceleration', 'Location', 'NorthWest')
+% 
+% figure
+% plot(inertial_acceleration(:, 1), inertial_acceleration(:, 3), 'b')
+% title('Inertial acceleration')
+% xlabel('Time (s)')
+% ylabel('y-acceleration')
+% legend('Acceleration', 'Location', 'NorthWest')
+% 
+% figure
+% plot(inertial_acceleration(:, 1), inertial_acceleration(:, 4), 'b')
+% title('Inertial acceleration')
+% xlabel('Time (s)')
+% ylabel('z-acceleration')
+% legend('Acceleration', 'Location', 'NorthWest')
+% 
+% %% Position
+% % Plot position
+% figure
+% plot(my_position(:, 2), my_position(:, 3), 'b')
+% title('Trajectory')
+% xlabel('x')
+% ylabel('y')
+% legend('Trajectory', 'Location', 'NorthWest')
