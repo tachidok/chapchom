@@ -14,8 +14,8 @@ CCODEsFromTableFromXSENSMT9B::CCODEsFromTableFromXSENSMT9B(const char *euler_ang
  Loaded_table = false;
  // Initialise the number of data in the Table
  //N_data_in_table = 0;
- //N_data_in_table = 18273;
- N_data_in_table = 20076;
+ N_data_in_table = 18273;
+ //N_data_in_table = 20076;
  
  // Create the interpolator
  interpolator_pt = new CCNewtonInterpolator();
@@ -417,7 +417,7 @@ void CCODEsFromTableFromXSENSMT9B::evaluate(const double t,
  std::vector<double> dummy(DIM);
  // Retrieve data from table
  get_sensors_lecture(t, acc, gyro, dummy);
-
+ 
  // Zero velocities
  vel[0] = 0.0;
  vel[1] = 0.0;
