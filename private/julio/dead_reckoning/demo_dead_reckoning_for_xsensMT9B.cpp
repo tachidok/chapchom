@@ -10,7 +10,9 @@
 #include "cc_odes_from_table_from_xsensMT9B.h"
 
 #define DEBUG
-#define T_NO_MOVEMENT
+//#define T_NO_MOVEMENT
+//#define T_CHARACTERISE_YAW
+#define T_CHARACTERISE_YAW2
 //#define T_TEST1
 
 void fill_rotation_matrices(std::vector<std::vector<double> > &R,
@@ -117,6 +119,18 @@ int main(int argc, char *argv[])
   new CCODEsFromTableFromXSENSMT9B("./xsensMT9B/no_movement/MT9_euler_00007154_000.log",
                                    "./xsensMT9B/no_movement/MT9_cal_00007154_000.log");
 #endif // #ifdef T_NO_MOVEMENT
+
+#ifdef T_CHARACTERISE_YAW
+ CCODEsFromTableFromXSENSMT9B *odes =
+  new CCODEsFromTableFromXSENSMT9B("./xsensMT9B/characterise_yaw_drift/MT9_euler_00007154_000.log",
+                                   "./xsensMT9B/characterise_yaw_drift/MT9_cal_00007154_000.log");
+#endif // #ifdef T_CHARACTERISE_YAW
+
+#ifdef T_CHARACTERISE_YAW2
+ CCODEsFromTableFromXSENSMT9B *odes =
+  new CCODEsFromTableFromXSENSMT9B("./xsensMT9B/characterise_yaw_drift2/MT9_euler_00007154_000.log",
+                                   "./xsensMT9B/characterise_yaw_drift2/MT9_cal_00007154_000.log");
+#endif // #ifdef T_CHARACTERISE_YAW2
  
 #ifdef T_TEST1
  CCODEsFromTableFromXSENSMT9B *odes =
@@ -200,6 +214,36 @@ int main(int argc, char *argv[])
 			  CHAPCHOM_EXCEPTION_LOCATION);
   }
  
+ char file_raw_magnetometers_name[100];
+ sprintf(file_raw_magnetometers_name, "./RESLT/raw_magnetometers.dat");
+ FILE *file_raw_magnetometers_pt = fopen(file_raw_magnetometers_name, "w");
+ if (file_raw_magnetometers_pt == 0)
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_raw_magnetometers_name << "]"
+		 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
+  }
+
+#ifdef T_CHARACTERISE_YAW
+ char file_drift_yaw_name[100];
+ sprintf(file_drift_yaw_name, "./RESLT/ddrift_yaw.dat");
+ FILE *file_drift_yaw_pt = fopen(file_drift_yaw_name, "w");
+ if (file_drift_yaw_pt == 0)
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_drift_yaw_name << "]"
+		 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
+  }
+#endif // #ifdef T_CHARACTERISE_YAW
+ 
  char file_velocity_name[100];
  sprintf(file_velocity_name, "./RESLT/velocity.dat");
  FILE *file_velocity_pt = fopen(file_velocity_name, "w");
@@ -258,13 +302,26 @@ int main(int argc, char *argv[])
  const double t_final = 76.0;
 #endif // #ifdef T_NO_MOVEMENT
  
+#ifdef T_CHARACTERISE_YAW
+ const double t_initial = 8.54;
+ const double t_final = 82.0;
+#endif // #ifdef T_CHARACTERISE_YAW
+
+#ifdef T_CHARACTERISE_YAW2
+ const double t_initial = 6.219;
+ const double t_final = 1065.0;
+#endif // #ifdef T_CHARACTERISE_YAW2
+ 
 #ifdef T_TEST1
  const double t_initial = 25.0;
  const double t_final = 103.0;
 #endif // #ifdef T_TEST1
  //const double t_final = 100;
+ // Set the number of steps per second
+ const double n_steps_per_second = 257.0; // 257 measeurements per second (original number of measurements)
  // Set the number of steps we want to take
- const double n_steps = 257.0 * t_final;  // 257 measeurements per second (original number of measurements)
+ const double n_steps = n_steps_per_second * t_final;
+ //const double n_steps = 18273;
  // Get the step size
  const double h = (t_final - t_initial) / n_steps;
  
@@ -283,10 +340,12 @@ int main(int argc, char *argv[])
  std::vector<double> acc(dim);
  // Gyro data
  std::vector<double> dtheta(dim);
+ // Magnetometer
+ std::vector<double> magnetometer(dim);
  // Dummy data
  std::vector<double> dummy(dim);
  // Retrieve data from table
- odes->get_sensors_lecture(t, acc, dtheta, dummy); // tachidok
+ odes->get_sensors_lecture(t, acc, dtheta, magnetometer, dummy); // tachidok
  
  // Initial conditions
  y[0][0] = 0.0; // Initial x-position
@@ -306,6 +365,15 @@ int main(int argc, char *argv[])
            << " y-pos: " << y[0][2] << " y-vel: " << y[0][3]
            << " z-pos: " << y[0][4] << " z-vel: " << y[0][5]
            << " roll: " << y[0][6] << " pitch: " << y[0][7] << " yaw: " << y[0][8] << std::endl;
+ 
+#ifdef T_CHARACTERISE_YAW
+ double ddrift_yaw = 0.0;
+#endif
+ 
+ // Bias yaw per step
+ const double bias_yaw = -0.95 * 180.0/M_PI;
+ double yaw_correction = (-1.0 * bias_yaw) / n_steps_per_second;
+ //double yaw_correction = (5.0 * 180.0/M_PI) / n_steps_per_second;
  
  // -------------------------------------------------------------------
  // Apply complementary filter
@@ -331,11 +399,21 @@ int main(int argc, char *argv[])
  //acc_angles[2] = atan2(-acc[0], sqrt(acc[0]*acc[0]+acc[1]*acc[1]+acc[2]*acc[2]));
  //acc_angles[2] = (atan2(acc[1], acc[0]) + atan2(-acc[0], sqrt(acc[0]*acc[0]+acc[1]*acc[1]+acc[2]*acc[2]))) / 2.0;
  
+ std::vector<double> mag_proc(3, 0.0);
+ mag_proc[0] = atan2(magnetometer[1], magnetometer[2]);
+ mag_proc[1] = atan2(-magnetometer[0], sqrt(magnetometer[1]*magnetometer[1]+magnetometer[2]*magnetometer[2]));
+ mag_proc[2] = atan2(magnetometer[2], sqrt(magnetometer[0]*magnetometer[0]+magnetometer[2]*magnetometer[2]));
+
+ // Correction for yaw
+ //yaw_correction = ddrift_yaw;
+ 
  // Update filtered Euler angles
  y[0][6] = alpha * y[0][6] + (1.0 - alpha) * acc_angles[0];
  y[0][7] = alpha * y[0][7] + (1.0 - alpha) * acc_angles[1];
+ //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * yaw_correction;
  //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * acc_angles[2];
- 
+ //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * magnetometer[1];
+   
  // --------------------------------------------------
  // Gravity compensation
  // --------------------------------------------------
@@ -377,6 +455,13 @@ int main(int argc, char *argv[])
  // Euler angles from accelerations
  fprintf(file_roll_pitch_yaw_from_acc_pt, "%lf %lf %lf %lf\n",
          t, acc_angles[0], acc_angles[1], acc_angles[2]);
+ // Raw magnetometers
+ fprintf(file_raw_magnetometers_pt, "%lf %lf %lf %lf\n", t, magnetometer[0], magnetometer[1], magnetometer[2]);
+ //fprintf(file_raw_magnetometers_pt, "%lf %lf %lf %lf\n", t, mag_proc[0], mag_proc[1], mag_proc[2]);
+#ifdef T_CHARACTERISE_YAW
+ // ddrift yaw
+ fprintf(file_drift_yaw_pt, "%lf 0.0 0.0 %lf\n", t, ddrift_yaw);
+#endif // #ifdef T_CHARACTERISE_YAW
  // Velocity
  fprintf(file_velocity_pt, "%lf %lf %lf %lf\n", t, y[0][1], y[0][3], y[0][5]);
  // Position
@@ -392,6 +477,9 @@ int main(int argc, char *argv[])
    // Update data
    for (unsigned j = 0; j < n_odes; j++)
     {
+#ifdef T_CHARACTERISE_YAW
+     ddrift_yaw = (y[1][j] - y[0][j]) / h;
+#endif // #ifdef T_CHARACTERISE_YAW
      y[0][j] = y[1][j];
     }
    // Update time
@@ -403,7 +491,7 @@ int main(int argc, char *argv[])
              << " roll: " << y[0][6] << " pitch: " << y[0][7] << " yaw: " << y[0][8] << std::endl;
    
    // Get the accelerometers readings from the Table
-   odes->get_sensors_lecture(t, acc, dtheta, dummy);
+   odes->get_sensors_lecture(t, acc, dtheta, magnetometer, dummy);
    
    // -------------------------------------------------------------------
    // Apply complementary filter
@@ -426,10 +514,19 @@ int main(int argc, char *argv[])
    //acc_angles[2] = atan2(-acc[0], sqrt(acc[0]*acc[0]+acc[1]*acc[1]+acc[2]*acc[2]));
    //acc_angles[2] = (atan2(acc[1], acc[0]) + atan2(-acc[0], sqrt(acc[0]*acc[0]+acc[1]*acc[1]+acc[2]*acc[2]))) / 2.0;
    
+   mag_proc[0] = atan2(magnetometer[1], magnetometer[2]);
+   mag_proc[1] = atan2(-magnetometer[0], sqrt(magnetometer[1]*magnetometer[1]+magnetometer[2]*magnetometer[2]));
+   mag_proc[2] = atan2(magnetometer[2], sqrt(magnetometer[0]*magnetometer[0]+magnetometer[2]*magnetometer[2]));
+   
+   // Correction for yaw
+   //yaw_correction = ddrift_yaw;
+   
    // Update filtered Euler angles
    y[0][6] = alpha * y[0][6] + (1.0 - alpha) * acc_angles[0];
    y[0][7] = alpha * y[0][7] + (1.0 - alpha) * acc_angles[1];
+   //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * yaw_correction;
    //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * acc_angles[2];
+   //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * magnetometer[1];
    
    // --------------------------------------------------
    // Gravity compensation
@@ -462,6 +559,13 @@ int main(int argc, char *argv[])
    // Euler angles from accelerations
    fprintf(file_roll_pitch_yaw_from_acc_pt, "%lf %lf %lf %lf\n",
            t, acc_angles[0], acc_angles[1], acc_angles[2]);
+   // Raw magnetometers
+   fprintf(file_raw_magnetometers_pt, "%lf %lf %lf %lf\n", t, magnetometer[0], magnetometer[1], magnetometer[2]);
+   //fprintf(file_raw_magnetometers_pt, "%lf %lf %lf %lf\n", t, mag_proc[0], mag_proc[1], mag_proc[2]);
+#ifdef T_CHARACTERISE_YAW
+   // ddrift yaw
+   fprintf(file_drift_yaw_pt, "%lf 0.0 0.0 %lf\n", t, ddrift_yaw);
+#endif // #ifdef T_CHARACTERISE_YAW
    // Velocity
    fprintf(file_velocity_pt, "%lf %lf %lf %lf\n", t, y[0][1], y[0][3], y[0][5]);
    // Position
@@ -476,6 +580,10 @@ int main(int argc, char *argv[])
  fclose(file_inertial_accelerations_pt);
  fclose(file_roll_pitch_yaw_pt);
  fclose(file_roll_pitch_yaw_from_acc_pt);
+ fclose(file_raw_magnetometers_pt);
+#ifdef T_CHARACTERISE_YAW
+ fclose(file_drift_yaw_pt);
+#endif // #ifdef T_CHARACTERISE_YAW
  fclose(file_velocity_pt);
  fclose(file_position_pt);
  

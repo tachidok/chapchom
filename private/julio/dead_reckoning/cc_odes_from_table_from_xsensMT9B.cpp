@@ -14,8 +14,10 @@ CCODEsFromTableFromXSENSMT9B::CCODEsFromTableFromXSENSMT9B(const char *euler_ang
  Loaded_table = false;
  // Initialise the number of data in the Table
  //N_data_in_table = 0;
- N_data_in_table = 18273;
- //N_data_in_table = 20076;
+ //N_data_in_table = 18273; // no movement
+ //N_data_in_table = 20076; // test1
+ //N_data_in_table = 21162; // characterise yaw drift
+ N_data_in_table = 271049; // characterise yaw drift2
  
  // Create the interpolator
  interpolator_pt = new CCNewtonInterpolator();
@@ -85,6 +87,9 @@ void CCODEsFromTableFromXSENSMT9B::load_table(const char *euler_angles_filename,
  Table_gyro_x.resize(N_data_in_table);
  Table_gyro_y.resize(N_data_in_table);
  Table_gyro_z.resize(N_data_in_table);
+ Table_mag_x.resize(N_data_in_table);
+ Table_mag_y.resize(N_data_in_table);
+ Table_mag_z.resize(N_data_in_table);
  Table_roll.resize(N_data_in_table);
  Table_pitch.resize(N_data_in_table);
  Table_yaw.resize(N_data_in_table);
@@ -144,6 +149,9 @@ void CCODEsFromTableFromXSENSMT9B::load_table(const char *euler_angles_filename,
    Table_gyro_x[i] = gyro_x;
    Table_gyro_y[i] = gyro_y;
    Table_gyro_z[i] = gyro_z;
+   Table_mag_x[i] = magnet_x;
+   Table_mag_y[i] = magnet_y;
+   Table_mag_z[i] = magnet_z;
    Table_roll[i] = roll;
    Table_pitch[i] = pitch;
    Table_yaw[i] = yaw;
@@ -163,6 +171,7 @@ void CCODEsFromTableFromXSENSMT9B::load_table(const char *euler_angles_filename,
 void CCODEsFromTableFromXSENSMT9B::get_sensors_lecture(const double t,
                                                        std::vector<double> &acc,
                                                        std::vector<double> &gyro,
+                                                       std::vector<double> &mag,
                                                        std::vector<double> &euler_angles)
 {
  // Do linear interpolation
@@ -259,6 +268,9 @@ void CCODEsFromTableFromXSENSMT9B::get_sensors_lecture(const double t,
    std::vector<double> gyro_x(interpolation_order + 1);
    std::vector<double> gyro_y(interpolation_order + 1);
    std::vector<double> gyro_z(interpolation_order + 1);
+   std::vector<double> mag_x(interpolation_order + 1);
+   std::vector<double> mag_y(interpolation_order + 1);
+   std::vector<double> mag_z(interpolation_order + 1);
    std::vector<double> roll(interpolation_order + 1);
    std::vector<double> pitch(interpolation_order + 1);
    std::vector<double> yaw(interpolation_order + 1);
@@ -278,6 +290,12 @@ void CCODEsFromTableFromXSENSMT9B::get_sensors_lecture(const double t,
    gyro_y[1]= Table_gyro_y[i_right];
    gyro_z[0]= Table_gyro_z[i_left];
    gyro_z[1]= Table_gyro_z[i_right];
+   mag_x[0]= Table_mag_x[i_left];
+   mag_x[1]= Table_mag_x[i_right];
+   mag_y[0]= Table_mag_y[i_left];
+   mag_y[1]= Table_mag_y[i_right];
+   mag_z[0]= Table_mag_z[i_left];
+   mag_z[1]= Table_mag_z[i_right];
    roll[0]= Table_roll[i_left];
    roll[1]= Table_roll[i_right];
    pitch[0]= Table_pitch[i_left];
@@ -291,6 +309,9 @@ void CCODEsFromTableFromXSENSMT9B::get_sensors_lecture(const double t,
    gyro[0] = interpolator_pt->interpolate_1D(time, gyro_x, t, interpolation_order);
    gyro[1] = interpolator_pt->interpolate_1D(time, gyro_y, t, interpolation_order);
    gyro[2] = interpolator_pt->interpolate_1D(time, gyro_z, t, interpolation_order);
+   mag[0] = interpolator_pt->interpolate_1D(time, mag_x, t, interpolation_order);
+   mag[1] = interpolator_pt->interpolate_1D(time, mag_y, t, interpolation_order);
+   mag[2] = interpolator_pt->interpolate_1D(time, mag_z, t, interpolation_order);
    // Transform to radians because the lectures are given in degress
    euler_angles[0] = interpolator_pt->interpolate_1D(time, roll, t, interpolation_order) * (M_PI / 180.0);
    euler_angles[1] = interpolator_pt->interpolate_1D(time, pitch, t, interpolation_order) * (M_PI / 180.0);
@@ -304,6 +325,9 @@ void CCODEsFromTableFromXSENSMT9B::get_sensors_lecture(const double t,
    gyro[0] = Table_gyro_x[i_exact];
    gyro[1] = Table_gyro_y[i_exact];
    gyro[2] = Table_gyro_z[i_exact];
+   mag[0] = Table_gyro_x[i_exact];
+   mag[1] = Table_gyro_y[i_exact];
+   mag[2] = Table_gyro_z[i_exact];
    // Transform to radians because the lectures are given in degress
    euler_angles[0] = Table_roll[i_exact] * (M_PI / 180.0);
    euler_angles[1] = Table_pitch[i_exact] * (M_PI / 180.0);
@@ -413,10 +437,12 @@ void CCODEsFromTableFromXSENSMT9B::evaluate(const double t,
  std::vector<double> acc(DIM);
  // Angle rates (gyro data)
  std::vector<double> gyro(DIM);
+ // Angle rates (gyro data)
+ std::vector<double> mag(DIM);
  // Dummy data
  std::vector<double> dummy(DIM);
  // Retrieve data from table
- get_sensors_lecture(t, acc, gyro, dummy);
+ get_sensors_lecture(t, acc, gyro, mag, dummy);
  
  // Zero velocities
  vel[0] = 0.0;
