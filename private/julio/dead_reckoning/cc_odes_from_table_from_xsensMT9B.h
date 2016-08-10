@@ -33,6 +33,7 @@ class CCODEsFromTableFromXSENSMT9B : public CAODEs
  void get_sensors_lecture(const double t,
                           std::vector<double> &acc,
                           std::vector<double> &gyro,
+                          std::vector<double> &mag,
                           std::vector<double> &euler_angles);
  
  /// Fills the matrix that performs the transformation from angular
@@ -96,6 +97,9 @@ class CCODEsFromTableFromXSENSMT9B : public CAODEs
  std::vector<double> Table_gyro_x;
  std::vector<double> Table_gyro_y;
  std::vector<double> Table_gyro_z;
+ std::vector<double> Table_mag_x;
+ std::vector<double> Table_mag_y;
+ std::vector<double> Table_mag_z;
  std::vector<double> Table_roll;
  std::vector<double> Table_pitch;
  std::vector<double> Table_yaw;
