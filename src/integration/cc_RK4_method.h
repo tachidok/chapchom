@@ -1,11 +1,11 @@
 #ifndef CCRK4METHOD_H
 #define CCRK4METHOD_H
 
-#include "ca_explicit_integration_method.h"
+#include "ac_explicit_integration_method.h"
 
 /// @class CCRK4Method cc_RK4_method.h
 /// This class implements Runge-Kutta 4 method to integrate ODE's
-class CCRK4Method : public CAExplicitIntegrationMethod
+class CCRK4Method : public ACExplicitIntegrationMethod
 {
  
  public:
@@ -18,13 +18,13 @@ class CCRK4Method : public CAExplicitIntegrationMethod
  
  /// Applies Eulers method to the given odes from time "t_initial" to
  /// time "t_final" using a step given by "h".
- void integrate(CAODEs &odes, const double h,
+ void integrate(ACODEs &odes, const double h,
 		const double t_initial, const double t_final,
 		std::vector<std::vector<double> > &y);
 
  /// Applies Eulers method to the given odes from the current time "t"
  /// to the time "t+h".
- void integrate_step(CAODEs &odes, const double h, const double t,
+ void integrate_step(ACODEs &odes, const double h, const double t,
 		     std::vector<std::vector<double> > &y);
  
  protected:

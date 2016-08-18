@@ -13,7 +13,7 @@
     
 /// This class implements a set of odes from a Table. It inherits the
 /// interface to define ODEs from the ACODEs class
-class CCODEsFromTableFromXSENSMT9B : public ACODEs
+class CCODEsFromTableFromXSENSMT9B : public virtual ACODEs
 {
  
  public:

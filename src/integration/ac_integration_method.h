@@ -27,7 +27,7 @@ class ACIntegrationMethod
  /// integration step. Warning: this may require a lot of memory if
  /// the number of h-steps is "large". If you want to keep track of
  /// "y" by yourself call the "integrate_step" method instead
- virtual void integrate(AODEs &odes, const double h,
+ virtual void integrate(ACODEs &odes, const double h,
 			const double t_initial, const double t_final,
 			std::vector<std::vector<double> > &y) = 0;
  
