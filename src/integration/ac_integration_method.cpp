@@ -1,9 +1,9 @@
-#include "ca_integration_method.h"
+#include "ac_integration_method.h"
 
 // ===================================================================
 // Empty constructor
 // ===================================================================
-CAIntegrationMethod::CAIntegrationMethod()
+ACIntegrationMethod::ACIntegrationMethod()
 { 
  // Initialise the number of history values
  N_history_values = 0;
@@ -12,7 +12,7 @@ CAIntegrationMethod::CAIntegrationMethod()
 // ===================================================================
 // Empty destructor
 // ===================================================================
-CAIntegrationMethod::~CAIntegrationMethod()
+ACIntegrationMethod::~ACIntegrationMethod()
 { 
 
 }

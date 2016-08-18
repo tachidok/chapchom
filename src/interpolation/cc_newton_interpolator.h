@@ -1,12 +1,12 @@
 #ifndef CCNEWTONINTERPOLATOR_H
 #define CCNEWTONINTERPOLATOR_H
 
-#include "ca_interpolator.h"
+#include "ac_interpolator.h"
 
 /// @class CCNewtonInterpolator cc_newton_interpolator.h
 /// This class implements the Newton form of the interpolation
 /// polynomial
-class CCNewtonInterpolator : public virtual CAInterpolator
+class CCNewtonInterpolator : public virtual ACInterpolator
 {
  
  public:

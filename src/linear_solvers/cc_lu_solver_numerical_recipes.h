@@ -8,7 +8,7 @@
 #ifndef CCLUSOLVER_H
 #define CCLUSOLVER_H
 
-#include "CALinearSolver.h"
+#include "ACLinearSolver.h"
 
 // The LU factorisation and back-substitution from Numerical Recipes
 #include "../../external_src/NumericalRecipes/nr.h"
@@ -17,7 +17,7 @@
 // class uses the methods ludcmp() and lubksb() from numerical recipes
 // to perform the LU decomposition and back-substitution,
 // respectively.
-class CCLUSolverNumericalRecipes : public virtual CALinearSolver
+class CCLUSolverNumericalRecipes : public virtual ACLinearSolver
 {
  
  public:
@@ -26,7 +26,7 @@ class CCLUSolverNumericalRecipes : public virtual CALinearSolver
  CCLUSolverNumericalRecipes();
  
  // Constructor where we specify the matrix A
- CCLUSolverNumericalRecipes(CAMatrix *_A_pt);
+ CCLUSolverNumericalRecipes(ACMatrix *_A_pt);
  
  // Empty destructor
  ~CCLUSolverNumericalRecipes();
@@ -35,24 +35,24 @@ class CCLUSolverNumericalRecipes : public virtual CALinearSolver
  // right-hand side b and the x vector where the result is
  // returned. We assume that the input/output vectors have the correct
  // dimensions (size n).
- void solve(CAMatrix *_A_pt, CAMatrix *_b_pt, CAMatrix *_x_pt);
+ void solve(ACMatrix *_A_pt, ACMatrix *_b_pt, ACMatrix *_x_pt);
  
  // Solve a system of equations with the already stored matrix A. We
  // specify the right-hand side b and the x vector where the result is
  // returned. We assume that the input/output vectors have the correct
  // dimensions (size n).
- void solve(CAMatrix *_b_pt, CAMatrix *_x_pt);
+ void solve(ACMatrix *_b_pt, ACMatrix *_x_pt);
  
  // Re-solve a system of equations with the already stored matrix
  // A. Reusing the LU decomposition. We specify the right-hand side b
  // and the x vector where the result is returned. We assume that the
  // input/output vectors have the correct dimensions (size n).
- void resolve(CAMatrix *_b_pt, CAMatrix *_x_pt);
+ void resolve(ACMatrix *_b_pt, ACMatrix *_x_pt);
  
  // Performs LU factorisation of the input matrix, the factorisation
  // is internally stored such that it can be re-used when calling
  // resolve
- void factorise(CAMatrix *_A_pt);
+ void factorise(ACMatrix *_A_pt);
  
  // Performs LU factorisation of already stored matrix A, the
  // factorisation is internally stored such that it can be re-used
@@ -60,7 +60,7 @@ class CCLUSolverNumericalRecipes : public virtual CALinearSolver
  void factorise();
  
  // Performs the back substitution with the LU decomposed matrix
- void back_substitution(CAMatrix *_b_pt, CAMatrix *_x_pt);
+ void back_substitution(ACMatrix *_b_pt, ACMatrix *_x_pt);
  
  protected:
  

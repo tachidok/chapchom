@@ -3,7 +3,7 @@
 
 // The required classes to solve Initial Value Problems (IVP)
 // Integration methods
-#include "../../../src/integration/ca_integration_method.h"
+#include "../../../src/integration/ac_integration_method.h"
 #include "../../../src/integration/cc_euler_method.h"
 #include "../../../src/integration/cc_RK4_method.h"
 // The odes
@@ -23,10 +23,10 @@ int main(int argc, char *argv[])
  
  // Create an instance of the integrator method
 #ifdef T_EULER
- CAIntegrationMethod *integrator = new CCEulerMethod();
+ ACIntegrationMethod *integrator = new CCEulerMethod();
 #endif
 #ifdef T_RK4
- CAIntegrationMethod *integrator = new CCRK4Method();
+ ACIntegrationMethod *integrator = new CCRK4Method();
 #endif
  // Get the number of history values required by the integration
  // method

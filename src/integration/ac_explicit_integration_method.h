@@ -1,21 +1,21 @@
-#ifndef CAEXPLICITINTEGRATIONMETHOD_H
-#define CAEXPLICITINTEGRATIONMETHOD_H
+#ifndef ACEXPLICITINTEGRATIONMETHOD_H
+#define ACEXPLICITINTEGRATIONMETHOD_H
 
-#include "ca_integration_method.h"
+#include "ac_integration_method.h"
 
-/// @class CAExplicitIntegrationMethod ca_explicit_integration_method.h
+/// @class ACExplicitIntegrationMethod ac_explicit_integration_method.h
 /// This class implements the interfaces for explicit integration
 /// methods to solve ODE's
-class CAExplicitIntegrationMethod : public virtual CAIntegrationMethod
+class ACExplicitIntegrationMethod : public virtual ACIntegrationMethod
 {
  
  public:
  
  /// Empty constructor
- CAExplicitIntegrationMethod();
+ ACExplicitIntegrationMethod();
  
  /// Empty destructor
- virtual ~CAExplicitIntegrationMethod();
+ virtual ~ACExplicitIntegrationMethod();
  
  /// Applies the explicit method to the given odes from time
  /// "t_initial" to time "t_final" using a step given by "h".
@@ -34,19 +34,19 @@ class CAExplicitIntegrationMethod : public virtual CAIntegrationMethod
  /// Copy constructor (we do not want this class to be
  /// copiable). Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CAExplicitIntegrationMethod(const CAExplicitIntegrationMethod &copy)
+ ACExplicitIntegrationMethod(const ACExplicitIntegrationMethod &copy)
   {
-   BrokenCopy::broken_copy("CAExplicitIntegrationMethod");
+   BrokenCopy::broken_copy("ACExplicitIntegrationMethod");
   }
  
  /// Assignment operator (we do not want this class to be
  /// copiable. Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- void operator=(const CAExplicitIntegrationMethod &copy)
+ void operator=(const ACExplicitIntegrationMethod &copy)
   {
-   BrokenCopy::broken_assign("CAExplicitIntegrationMethod");
+   BrokenCopy::broken_assign("ACExplicitIntegrationMethod");
   }
  
 };
 
-#endif // #ifndef CAEXPLICITINTEGRATIONMETHOD_H
+#endif // #ifndef ACEXPLICITINTEGRATIONMETHOD_H

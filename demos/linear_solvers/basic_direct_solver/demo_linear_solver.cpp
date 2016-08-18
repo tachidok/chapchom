@@ -23,8 +23,8 @@ int main(int argc, char *argv[])
   }
  
  // Create a linear solver with the matrix A (pass it size)
- //CALinearSolver *linear_solver_pt = new CCLUSolverNumericalRecipes(A, n, n);
- CALinearSolver *linear_solver_pt = new CCLUSolverNumericalRecipes();
+ //ACLinearSolver *linear_solver_pt = new CCLUSolverNumericalRecipes(A, n, n);
+ ACLinearSolver *linear_solver_pt = new CCLUSolverNumericalRecipes();
  
  // Free memory
  for (unsigned i = 0; i < nrows; i++)
