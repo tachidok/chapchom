@@ -1,10 +1,10 @@
-#include "ca_explicit_integration_method.h"
+#include "ac_explicit_integration_method.h"
 
 // ===================================================================
 // Empty constructor
 // ===================================================================
-CAExplicitIntegrationMethod::CAExplicitIntegrationMethod()
- : CAIntegrationMethod()
+ACExplicitIntegrationMethod::ACExplicitIntegrationMethod()
+ : ACIntegrationMethod()
 { 
 
 }
@@ -12,7 +12,7 @@ CAExplicitIntegrationMethod::CAExplicitIntegrationMethod()
 // ===================================================================
 // Empty destructor
 // ===================================================================
-CAExplicitIntegrationMethod::~CAExplicitIntegrationMethod()
+ACExplicitIntegrationMethod::~ACExplicitIntegrationMethod()
 { 
 
 }

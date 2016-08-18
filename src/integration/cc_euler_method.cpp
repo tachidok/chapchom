@@ -4,7 +4,7 @@
 // Constructor
 // ===================================================================
 CCEulerMethod::CCEulerMethod()
- : CAExplicitIntegrationMethod()
+ : ACExplicitIntegrationMethod()
 {
  
  // Sets the number of history values
@@ -24,7 +24,7 @@ CCEulerMethod::~CCEulerMethod()
 // Applies Euler's method to the given odes from time "t_initial" to
 // time "t_final" using an h-step size
 // ===================================================================
-void CCEulerMethod::integrate(CAODEs &odes, const double h,
+void CCEulerMethod::integrate(ACODEs &odes, const double h,
 			      const double t_initial,
 			      const double t_final,
 			      std::vector<std::vector<double> > &y)
@@ -46,7 +46,7 @@ void CCEulerMethod::integrate(CAODEs &odes, const double h,
 // Applies Eulers method to the given odes from the current time "t"
 // to the time "t+h"
 // ===================================================================
-void CCEulerMethod::integrate_step(CAODEs &odes, const double h,
+void CCEulerMethod::integrate_step(ACODEs &odes, const double h,
 				   const double t,
 				   std::vector<std::vector<double> > &y)
 {

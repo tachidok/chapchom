@@ -1,8 +1,8 @@
 #ifdef CCFACTORYINTEGRATIONMETHOD_H
 #define CCFACTORYINTEGRATIONMETHOD_H
 
-#include "ca_integration_method.h"
-#include "ca_explicit_integration_method.h"
+#include "ac_integration_method.h"
+#include "ac_explicit_integration_method.h"
 #include "cc_euler_method.h"
 #include "cc_RK4_method.h"
 
@@ -12,17 +12,17 @@
 
 class CCFactoryIntegrationMethod
 {
-
+ 
  public:
-
+ 
  /// Empty constructor
  CCFactoryIntegrationMethod();
-
+ 
  /// Empty destructor
- virtual ~CCIntegrationMethod();
-
+ virtual ~CCFactoryIntegrationMethod();
+ 
  /// Returns the specified integration method
- CAIntegrationMethod* create(std::string method);
+ ACIntegrationMethod* create(std::string method);
  
  protected:
  
@@ -42,6 +42,6 @@ class CCFactoryIntegrationMethod
    BrokenCopy::broken_assign("CCFactoryIntegrationMethod");
   }
  
-}
+};
 
-#endif CCFACTORYINTEGRATIONMETHOD_H
+#endif // #ifdef CCFACTORYINTEGRATIONMETHOD_H

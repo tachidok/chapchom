@@ -4,7 +4,7 @@
 // Constructor
 // ===================================================================
 CCRK4Method::CCRK4Method()
- : CAExplicitIntegrationMethod()
+ : ACExplicitIntegrationMethod()
 {
  
  // Sets the number of history values
@@ -24,7 +24,7 @@ CCRK4Method::~CCRK4Method()
 // Applies Runge-Kutta 4 method to the given odes from time
 // "t_initial" to time "t_final" using an h-step size
 // ===================================================================
-void CCRK4Method::integrate(CAODEs &odes, const double h,
+void CCRK4Method::integrate(ACODEs &odes, const double h,
 			      const double t_initial,
 			      const double t_final,
 			      std::vector<std::vector<double> > &y)
@@ -46,7 +46,7 @@ void CCRK4Method::integrate(CAODEs &odes, const double h,
 // Applies Runge-Kutta 4 method to the given odes from the current
 // time "t" to the time "t+h"
 // ===================================================================
-void CCRK4Method::integrate_step(CAODEs &odes, const double h,
+void CCRK4Method::integrate_step(ACODEs &odes, const double h,
 				 const double t,
 				 std::vector<std::vector<double> > &y)
 {
