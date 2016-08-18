@@ -1,13 +1,13 @@
-// IN THIS FILE: Implementation of an abstract class to solve linear
+CA// IN THIS FILE: Implementation of an abstract class to solve linear
 // systems of equations, this class is inhereted by any concrete
 // implementations of linear solvers
 
-#include "CALinearSolver.h"
+#include "ACLinearSolver.h"
 
 // ===================================================================
 // Constructor
 // ===================================================================
-CALinearSolver::CALinearSolver() 
+ACLinearSolver::ACLinearSolver() 
  : Matrix_A_has_been_set(false)
 { 
  A_pt = 0;
@@ -16,7 +16,7 @@ CALinearSolver::CALinearSolver()
 // ===================================================================
 // Constructor where we specify the matrix A of size m X n
 // ===================================================================
-CALinearSolver::CALinearSolver(CAMatrix *_A_pt)
+ACLinearSolver::ACLinearSolver(ACMatrix *_A_pt)
 {
  // Set the pointer of the matrix A
  A_pt = _A_pt;
@@ -28,7 +28,7 @@ CALinearSolver::CALinearSolver(CAMatrix *_A_pt)
 // ===================================================================
 // Empty destructor
 // ===================================================================
-CALinearSolver::~CALinearSolver()
+ACLinearSolver::~ACLinearSolver()
 {
  // Deallocate memory
  clean_up();
@@ -37,7 +37,7 @@ CALinearSolver::~CALinearSolver()
 // ===================================================================
 // Set the matrix A
 // ===================================================================
-void CALinearSolver::set_matrix_A(CAMatrix *_A_pt)
+void ACLinearSolver::set_matrix_A(ACMatrix *_A_pt)
 {
  // First clean any other previously stored matrix
  clean_up();
@@ -52,7 +52,7 @@ void CALinearSolver::set_matrix_A(CAMatrix *_A_pt)
 // ===================================================================
 // Clean up for any dynamically stored data
 // ===================================================================
-void CALinearSolver::clean_up()
+void ACLinearSolver::clean_up()
 {
  // Check whether the matrix has been set
  if (Matrix_A_has_been_set)
@@ -76,7 +76,7 @@ void CALinearSolver::clean_up()
 // and the x vector where the result is returned. We assume that the
 // input/output vectors have the correct dimensions (size n).
 // ===================================================================
-void CALinearSolver::resolve(CAMatrix *_b_pt, CAMatrix *_x_pt)
+void ACLinearSolver::resolve(ACMatrix *_b_pt, ACMatrix *_x_pt)
 {
  // Error message
  std:ostringstream error_message;

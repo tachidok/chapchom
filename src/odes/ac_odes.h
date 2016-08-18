@@ -1,23 +1,23 @@
-#ifndef CAODES_H
-#define CAODES_H
+#ifndef ACODES_H
+#define ACODES_H
 
 #include "../general/common_includes.h"
 #include "../general/utilities.h"
 
-/// @class CAODEs ca_odes.h
+/// @class ACODEs ac_odes.h
     
 /// This class implements the interface to the odes to be solved by
 /// the integration methods
-class CAODEs
+class ACODEs
 {
 
  public:
  
  /// Constructor, sets the number of odes
- CAODEs(const unsigned n_odes);
+ ACODEs(const unsigned n_odes);
  
  /// Empty destructor
- virtual ~CAODEs();
+ virtual ~ACODEs();
  
  /// Gets the number of odes
  unsigned nodes() const
@@ -51,17 +51,17 @@ class CAODEs
  /// Copy constructor (we do not want this class to be
  /// copiable). Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CAODEs(const CAODEs &copy)
+ ACODEs(const ACODEs &copy)
   {
-   BrokenCopy::broken_copy("CAODEs");
+   BrokenCopy::broken_copy("ACODEs");
   }
  
  /// Assignment operator (we do not want this class to be
  /// copiable. Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- void operator=(const CAODEs &copy)
+ void operator=(const ACODEs &copy)
   {
-   BrokenCopy::broken_assign("CAODEs");
+   BrokenCopy::broken_assign("ACODEs");
   }
 
  /// The number of odes
@@ -72,4 +72,4 @@ class CAODEs
  
 };
 
-#endif // #ifndef CAODES_H
+#endif // #ifndef ACODES_H

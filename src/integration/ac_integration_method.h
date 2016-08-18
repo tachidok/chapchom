@@ -1,25 +1,25 @@
-#ifndef CAINTEGRATIONMETHOD_H
-#define CAINTEGRATIONMETHOD_H
+#ifndef ACINTEGRATIONMETHOD_H
+#define ACINTEGRATIONMETHOD_H
 
 #include "../general/common_includes.h"
 #include "../general/utilities.h"
 
-#include "../odes/ca_odes.h"
+#include "../odes/ac_odes.h"
 
-/// @class CAIntegrationMethod ca_integration_method.h
+/// @class ACIntegrationMethod ac_integration_method.h
 
 /// This class implements the interfaces for integration methods to
 /// solve ODE's
-class CAIntegrationMethod
+class ACIntegrationMethod
 {
  
  public:
  
  /// Empty constructor
- CAIntegrationMethod();
+ ACIntegrationMethod();
  
  /// Empty destructor
- virtual ~CAIntegrationMethod();
+ virtual ~ACIntegrationMethod();
  
  /// Applies the explicit method to the given odes from time
  /// "t_initial" to time "t_final" using a step given by "h". The
@@ -27,13 +27,13 @@ class CAIntegrationMethod
  /// integration step. Warning: this may require a lot of memory if
  /// the number of h-steps is "large". If you want to keep track of
  /// "y" by yourself call the "integrate_step" method instead
- virtual void integrate(CAODEs &odes, const double h,
+ virtual void integrate(AODEs &odes, const double h,
 			const double t_initial, const double t_final,
 			std::vector<std::vector<double> > &y) = 0;
  
  /// Applies the explicit method to the given odes from the current
  /// time "t" to the time "t+h".
- virtual void integrate_step(CAODEs &odes, const double h,
+ virtual void integrate_step(ACODEs &odes, const double h,
 			     const double t,
 			     std::vector<std::vector<double> >&y) = 0;
  
@@ -48,17 +48,17 @@ class CAIntegrationMethod
  /// Copy constructor (we do not want this class to be
  /// copiable). Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CAIntegrationMethod(const CAIntegrationMethod &copy)
+ ACIntegrationMethod(const ACIntegrationMethod &copy)
   {
-   BrokenCopy::broken_copy("CAIntegrationMethod");
+   BrokenCopy::broken_copy("ACIntegrationMethod");
   }
 
  /// Assignment operator (we do not want this class to be
  /// copiable. Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- void operator=(const CAIntegrationMethod &copy)
+ void operator=(const ACIntegrationMethod &copy)
   {
-   BrokenCopy::broken_assign("CAIntegrationMethod");
+   BrokenCopy::broken_assign("ACIntegrationMethod");
   }
  
  /// The number of history values
@@ -66,4 +66,4 @@ class CAIntegrationMethod
  
 };
 
-#endif // #ifndef CAEXPLICITINTEGRATIONMETHOD_H
+#endif // #ifndef ACEXPLICITINTEGRATIONMETHOD_H
