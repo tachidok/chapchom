@@ -4,32 +4,32 @@
 // resolve()
 
 // Check whether the class has been already defined
-#ifndef CALINEARSOLVER_H
-#define CALINEARSOLVER_H
+#ifndef ACLINEARSOLVER_H
+#define ACLINEARSOLVER_H
 
 #include "../general/common_includes.h"
 #include "../general/utilities.h"
 
-#include "../matrix/ca_matrix.h"
+#include "../matrix/ac_matrix.h"
 
 // Abstract class to solve linear systems of equations, this class is
 // inhereted by any concrete implementations of linear solvers.
-class CALinearSolver
+class ACLinearSolver
 {
 
  public:
  
  // Constructor
- CALinearSolver();
+ ACLinearSolver();
  
  // Constructor where we specify the matrix A
- CALinearSolver(CAMatrix *_A_pt);
+ ACLinearSolver(ACMatrix *_A_pt);
  
  // Empty destructor
- virtual ~CALinearSolver();
+ virtual ~ACLinearSolver();
  
  // Set the matrix A
- void set_matrix_A(CAMatrix *_A_pt);
+ void set_matrix_A(ACMatrix *_A_pt);
  
  // Clean up for any dynamically stored data
  void clean_up();
@@ -38,13 +38,13 @@ class CALinearSolver
  // specify the right-hand side b and the x vector where the result is
  // returned. We assume that the input/output vectors have the correct
  // dimensions (size n).
- virtual void solve(CAMatrix *_A_pt, CAMatrix *_b_pt, CAMatrix *_x_pt) = 0;
+ virtual void solve(ACMatrix *_A_pt, ACMatrix *_b_pt, ACMatrix *_x_pt) = 0;
  
  // Virtual function to solve a system of equations with the already
  // stored matrix A. We specify the right-hand side b and the x vector
  // where the result is returned. We assume that the input/output
  // vectors have the correct dimensions (size n).
- virtual void solve(CAMatrix *_b_pt, CAMatrix *_x_pt) = 0;
+ virtual void solve(ACMatrix *_b_pt, ACMatrix *_x_pt) = 0;
  
  // Virtual function to re-solve a system of equations with the
  // already stored matrix A (re-use of the LU decomposition or call
@@ -53,12 +53,12 @@ class CALinearSolver
  // side b and the x vector where the result is returned. We assume
  // that the input/output vectors have the correct dimensions (size
  // n).
- virtual void resolve(CAMatrix *_b_pt, CAMatrix *_x_pt);
+ virtual void resolve(ACMatrix *_b_pt, ACMatrix *_x_pt);
  
  protected:
  
  // The matrix A
- CAMatrix *A_pt;
+ ACMatrix *A_pt;
  
  // Flag to indicate whether the matrix A has been set
  bool Matrix_A_has_been_set;
@@ -67,19 +67,19 @@ class CALinearSolver
  
  // Copy constructor (we do not want this class to be copiable). Check
  // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CALinearSolver(const CALinearSolver &copy)
+ ACLinearSolver(const ACLinearSolver &copy)
   {
-   BrokenCopy::broken_copy("CALinearSolver");
+   BrokenCopy::broken_copy("ACLinearSolver");
   }
  
  // Assignment operator (we do not want this class to be
  // copiable. Check
  // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- void operator=(const CALinearSolver &copy)
+ void operator=(const ACLinearSolver &copy)
   {
-   BrokenCopy::broken_assign("CALinearSolver");
+   BrokenCopy::broken_assign("ACLinearSolver");
   }
  
 };
 
-#endif // #ifndef CALINEARSOLVER_H
+#endif // #ifndef ACLINEARSOLVER_H

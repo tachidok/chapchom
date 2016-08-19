@@ -14,17 +14,17 @@
 
 class CCFactoryIntegrationMethod : virtual public ACFactoryIntegrationMethod
 {
-
+ 
  public:
-
+ 
  /// Empty constructor
  CCFactoryIntegrationMethod();
-
+ 
  /// Empty destructor
- virtual ~CCIntegrationMethod();
-
+ virtual ~CCFactoryIntegrationMethod();
+ 
  /// Returns the specified integration method
- CAIntegrationMethod* create_integration_method(std::string method);
+ ACIntegrationMethod* create_integration_method(std::string method);
  
  protected:
  
@@ -44,6 +44,6 @@ class CCFactoryIntegrationMethod : virtual public ACFactoryIntegrationMethod
    BrokenCopy::broken_assign("CCFactoryIntegrationMethod");
   }
  
-}
+};
 
-#endif CCFACTORYINTEGRATIONMETHOD_H
+#endif // #ifdef CCFACTORYINTEGRATIONMETHOD_H

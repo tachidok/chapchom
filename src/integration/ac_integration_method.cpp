@@ -1,19 +1,18 @@
-#include "ca_explicit_integration_method.h"
+#include "ac_integration_method.h"
 
 // ===================================================================
 // Empty constructor
 // ===================================================================
-CAExplicitIntegrationMethod::CAExplicitIntegrationMethod()
- : CAIntegrationMethod()
+ACIntegrationMethod::ACIntegrationMethod()
 { 
-
+ // Initialise the number of history values
+ N_history_values = 0;
 }
 
 // ===================================================================
 // Empty destructor
 // ===================================================================
-CAExplicitIntegrationMethod::~CAExplicitIntegrationMethod()
+ACIntegrationMethod::~ACIntegrationMethod()
 { 
 
 }
-

@@ -20,7 +20,7 @@ CCFactoryIntegrationMethod::~CCFactoryIntegrationMethod()
 // ===================================================================
 // Returns the specified integration method
 // ===================================================================
-CAIntegrationMethod* CCFactoryIntegrationMethod::
+ACIntegrationMethod* CCFactoryIntegrationMethod::
 create_integration_method(std::string method)
 {
  std::string data = "Abc"; 

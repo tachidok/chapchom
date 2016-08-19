@@ -1,22 +1,22 @@
-#ifndef CAINTERPOLATOR_H
-#define CAINTERPOLATOR_H
+#ifndef ACINTERPOLATOR_H
+#define ACINTERPOLATOR_H
 
 #include "../general/common_includes.h"
 #include "../general/utilities.h"
 
-/// @class CAInterpolator ca_interpolator.h
+/// @class ACInterpolator ac_interpolator.h
 
 /// This class implements the interfaces for interpolation methods
-class CAInterpolator
+class ACInterpolator
 {
  
  public:
 
  /// Empty constructor
- CAInterpolator();
+ ACInterpolator();
   
  /// Empty destructor
- virtual ~CAInterpolator();
+ virtual ~ACInterpolator();
  
  /// Does 1D interpolation specifying the data points, the order of
  /// the interpolation and the desired "x" value to interpolate
@@ -44,19 +44,19 @@ class CAInterpolator
  /// Copy constructor (we do not want this class to be
  /// copiable). Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CAInterpolator(const CAInterpolator &copy)
+ ACInterpolator(const ACInterpolator &copy)
   {
-   BrokenCopy::broken_copy("CAInterpolator");
+   BrokenCopy::broken_copy("ACInterpolator");
   }
 
  /// Assignment operator (we do not want this class to be
  /// copiable. Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- void operator=(const CAInterpolator &copy)
+ void operator=(const ACInterpolator &copy)
   {
-   BrokenCopy::broken_assign("CAInterpolator");
+   BrokenCopy::broken_assign("ACInterpolator");
   }
 
 };
 
-#endif // #ifndef CAINTERPOLATOR_H
+#endif // #ifndef ACINTERPOLATOR_H

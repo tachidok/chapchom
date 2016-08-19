@@ -8,7 +8,7 @@
 // ===================================================================
 CCODEsFromTableFromXSENSMT9B::CCODEsFromTableFromXSENSMT9B(const char *euler_angles_filename,
                                                            const char *raw_sensors_data_filename)
- : CAODEs(9), DIM(3)
+ : ACODEs(9), DIM(3)
 {
  // The values have not been loaded into a table 
  Loaded_table = false;

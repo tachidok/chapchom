@@ -3,7 +3,7 @@
 
 #include "../../../src/general/common_includes.h"
 // The class implementing the interfaces for the ODEs
-#include "../../../src/odes/ca_odes.h"
+#include "../../../src/odes/ac_odes.h"
 #include "../../../src/interpolation/cc_newton_interpolator.h"
 
 // Load data from FILE
@@ -12,8 +12,8 @@
 /// \class CCOdesFromTableBasedOnVelocity cc_odes_from_table_based_on_velocity.h
     
 /// This class implements a set of odes from a Table. It inherits the
-/// interface to define ODEs from the CAODEs class
-class CCODEsFromTableBasedOnVelocity : public CAODEs
+/// interface to define ODEs from the ACODEs class
+class CCODEsFromTableBasedOnVelocity : public virtual ACODEs
 {
  
  public:
@@ -49,7 +49,7 @@ class CCODEsFromTableBasedOnVelocity : public CAODEs
  /// copiable). Check
  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
  CCODEsFromTableBasedOnVelocity(const CCODEsFromTableBasedOnVelocity &copy)
-  : CAODEs(copy)
+  : ACODEs(copy)
   {
    BrokenCopy::broken_copy("CCODEsFromTableBasedOnVelocity");
   }

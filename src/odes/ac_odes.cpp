@@ -1,9 +1,9 @@
-#include "ca_odes.h"
+#include "ac_odes.h"
 
 // ===================================================================
 // Constructor, sets the number of odes
 // ===================================================================
-CAODEs::CAODEs(const unsigned n_odes)
+ACODEs::ACODEs(const unsigned n_odes)
  : N_odes(n_odes)
 {
  
@@ -16,7 +16,7 @@ CAODEs::CAODEs(const unsigned n_odes)
 // ===================================================================
 // Destructor
 // ===================================================================
-CAODEs::~CAODEs()
+ACODEs::~ACODEs()
 {
  // Clear the storage of the vector
  N_calls_ode.clear();

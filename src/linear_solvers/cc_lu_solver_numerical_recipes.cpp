@@ -9,14 +9,14 @@
 // Empty constructor
 // ===================================================================
 CCLUSolverNumericalRecipes::CCLUSolverNumericalRecipes()
- : CALinearSolver(),
+ : ACLinearSolver(),
    Resolve_enabled(false) { }
 
 // ===================================================================
 // Constructor where we specify the matrix A of size m X n
 // ===================================================================
-CCLUSolverNumericalRecipes::CCLUSolverNumericalRecipes(CAMatrix *_A_pt)
- : CALinearSolver(_A_pt),
+CCLUSolverNumericalRecipes::CCLUSolverNumericalRecipes(ACMatrix *_A_pt)
+ : ACLinearSolver(_A_pt),
    Resolve_enabled(false) { }
 
 // ===================================================================
@@ -29,9 +29,9 @@ CCLUSolverNumericalRecipes::~CCLUSolverNumericalRecipes() { }
 // side b and the x vector where the result is returned. We assume
 // that the input/output vectors have the correct dimensions (size n).
 // ===================================================================
-void CCLUSolverNumericalRecipes::solve(CAMatrix *_A_pt,
-                                       CAMatrix *_b_pt,
-                                       CAMatrix *_x_pt)
+void CCLUSolverNumericalRecipes::solve(ACMatrix *_A_pt,
+                                       ACMatrix *_b_pt,
+                                       ACMatrix *_x_pt)
 {
  // Set the matrix and its size
  set_matrix_A(_A_pt);
@@ -47,7 +47,7 @@ void CCLUSolverNumericalRecipes::solve(CAMatrix *_A_pt,
 // returned. We assume that the input/output vectors have the correct
 // dimensions (size n).
 // ===================================================================
-void CCLUSolverNumericalRecipes::solve(CAMatrix *_b_pt, CAMatrix *_x_pt)
+void CCLUSolverNumericalRecipes::solve(ACMatrix *_b_pt, ACMatrix *_x_pt)
 {
  // We can only call solve if the matrix A has been set
  if (Matrix_A_has_been_set)
@@ -68,7 +68,7 @@ void CCLUSolverNumericalRecipes::solve(CAMatrix *_b_pt, CAMatrix *_x_pt)
 // and the x vector where the result is returned. We assume that the
 // input/output vectors have the correct dimensions (size n).
 // ===================================================================
-void CCLUSolverNumericalRecipes::resolve(CAMatrix *_b_pt, CAMatrix *_x_pt)
+void CCLUSolverNumericalRecipes::resolve(ACMatrix *_b_pt, ACMatrix *_x_pt)
 {
  // We can only do back-substitution if a matrix has been
  // factorised
@@ -84,7 +84,7 @@ void CCLUSolverNumericalRecipes::resolve(CAMatrix *_b_pt, CAMatrix *_x_pt)
 // Performs LU factorisation of the input matrix, the factorisation is
 // internally stored such that it can be re-used when calling resolve
 // ===================================================================
-void CCLUSolverNumericalRecipes::factorise(CAMatrix *_A_pt)
+void CCLUSolverNumericalRecipes::factorise(ACMatrix *_A_pt)
 {
  // Set the matrix and its size
  set_matrix_A(_A_pt);
@@ -152,8 +152,8 @@ void CCLUSolverNumericalRecipes::factorise()
 // ===================================================================
 // Performs the back substitution with the LU decomposed matrix
 // ===================================================================
-void CCLUSolverNumericalRecipes::back_substitution(CAMatrix *_b_pt,
-                                                   CAMatrix *_x_pt)
+void CCLUSolverNumericalRecipes::back_substitution(ACMatrix *_b_pt,
+                                                   ACMatrix *_x_pt)
 {
  // Prepare the data to call lubksb()
  
