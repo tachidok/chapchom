@@ -5,7 +5,7 @@
 
 /// @class CCRK4Method cc_RK4_method.h
 /// This class implements Runge-Kutta 4 method to integrate ODE's
-class CCRK4Method : public ACExplicitIntegrationMethod
+class CCRK4Method : public virtual ACExplicitIntegrationMethod
 {
  
  public:

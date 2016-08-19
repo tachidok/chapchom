@@ -1,8 +1,8 @@
-#ifdef ACFACTORYINTEGRATIONMETHOD_H
+#ifndef ACFACTORYINTEGRATIONMETHOD_H
 #define ACFACTORYINTEGRATIONMETHOD_H
 
-#include "ca_integration_method.h"
-#include "ca_explicit_integration_method.h"
+#include "ac_integration_method.h"
+#include "ac_explicit_integration_method.h"
 
 /// @class ACFactoryIntegrationMethod ac_factory_integration_method.h
 
@@ -21,7 +21,7 @@ class ACFactoryIntegrationMethod
  virtual ~ACFactoryIntegrationMethod();
  
  /// Returns the specified integration method
- virtual CAIntegrationMethod* create_integration_method(std::string method) = 0;
+ virtual ACIntegrationMethod* create_integration_method(std::string method) = 0;
  
  protected:
  
@@ -41,6 +41,6 @@ class ACFactoryIntegrationMethod
    BrokenCopy::broken_assign("ACFactoryIntegrationMethod");
   }
  
-}
+};
 
-#endif ACFACTORYINTEGRATIONMETHOD_H
+#endif //#ifndef ACFACTORYINTEGRATIONMETHOD_H

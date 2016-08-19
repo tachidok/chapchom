@@ -36,7 +36,7 @@ class ChapchomLibException : public std::runtime_error
  /// Suppress error message in destructor (useful if error is caught
  /// successfully!)
  void disable_error_message();
-
+ 
  protected:
  
  /// Constructor takes the error description, function name and a

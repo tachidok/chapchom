@@ -1,6 +1,14 @@
 #ifndef DEFINITIONS_H
 #define DEFINITIONS_H
 
+#define CHAPCHOM_WITH_DEBUG
+#ifdef CHAPCHOM_WITH_DEBUG
+// =======================================================================
+// Macros for debugging
+// =======================================================================
+#define DEB(x) std::cerr<<"("<<#x<<"):"<<x<<std::endl;
+#endif // #ifdef CHAPCHOM_WITH_DEBUG
+
 // =======================================================================
 // The macros to deal with strings for error messages are taken from
 // oomph-lib

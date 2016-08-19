@@ -2,8 +2,9 @@
 #include <cmath>
 
 // The required classes to solve Initial Value Problems (IVP)
+// The factory to create the integration method
+#include "../../../src/integration/cc_factory_integration_method.h"
 // Integration methods
-#include "../../../src/integration/ac_integration_method.h"
 #include "../../../src/integration/cc_euler_method.h"
 #include "../../../src/integration/cc_RK4_method.h"
 // The odes
@@ -21,12 +22,17 @@ int main(int argc, char *argv[])
  // Create an instance of the ODEs to solve
  CCODEsFromTableBasedOnVelocity *odes = new CCODEsFromTableBasedOnVelocity();
  
+ // Create the factory for the methods
+ CCFactoryIntegrationMethod *factory_integration_methods =
+  new CCFactoryIntegrationMethod();
  // Create an instance of the integrator method
 #ifdef T_EULER
- ACIntegrationMethod *integrator = new CCEulerMethod();
+ ACIntegrationMethod *integrator =
+  factory_integration_methods->create_integration_method("Euler");
 #endif
 #ifdef T_RK4
- ACIntegrationMethod *integrator = new CCRK4Method();
+ ACIntegrationMethod *integrator =
+  factory_integration_methods->create_integration_method("RK4");
 #endif
  // Get the number of history values required by the integration
  // method

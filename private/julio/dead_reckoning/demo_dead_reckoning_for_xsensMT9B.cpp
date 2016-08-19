@@ -2,17 +2,18 @@
 #include <cmath>
 
 // The required classes to solve Initial Value Problems (IVP)
+// The factory to create the integration method
+#include "../../../src/integration/cc_factory_integration_method.h"
 // Integration methods
-#include "../../../src/integration/ac_integration_method.h"
 #include "../../../src/integration/cc_euler_method.h"
 #include "../../../src/integration/cc_RK4_method.h"
 // The odes
 #include "cc_odes_from_table_from_xsensMT9B.h"
 
 #define DEBUG
-//#define T_NO_MOVEMENT
+#define T_NO_MOVEMENT
 //#define T_CHARACTERISE_YAW
-#define T_CHARACTERISE_YAW2
+//#define T_CHARACTERISE_YAW2
 //#define T_TEST1
 
 void fill_rotation_matrices(std::vector<std::vector<double> > &R,
@@ -137,10 +138,15 @@ int main(int argc, char *argv[])
   new CCODEsFromTableFromXSENSMT9B("./xsensMT9B/test1/MT9_euler_00007154_000.log",
                                    "./xsensMT9B/test1/MT9_cal_00007154_000.log");
 #endif // #ifdef T_TEST1
- 
+
+ // Create the factory for the methods
+ CCFactoryIntegrationMethod *factory_integration_methods =
+  new CCFactoryIntegrationMethod();
  // Create an instance of the integrator method
- ACIntegrationMethod *integrator = new CCEulerMethod();
- //ACIntegrationMethod *integrator = new CCRK4Method();
+ ACIntegrationMethod *integrator =
+  factory_integration_methods->create_integration_method("Euler");
+ // ACIntegrationMethod *integrator =
+ // factory_integration_methods->create_integration_method("RK4");
  // Get the number of history values required by the integration
  // method
  const unsigned n_history_values = integrator->n_history_values();
