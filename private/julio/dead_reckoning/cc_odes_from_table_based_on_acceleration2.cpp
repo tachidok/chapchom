@@ -7,7 +7,7 @@
 // one for the velocity and the other for the acceleration
 // ===================================================================
 CCODEsFromTableBasedOnAcceleration2::CCODEsFromTableBasedOnAcceleration2()
- : CAODEs(7), DIM(3)
+ : ACODEs(7), DIM(3)
 {
  // The values have not been loaded into a table 
  Loaded_table = false;

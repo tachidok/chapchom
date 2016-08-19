@@ -1,4 +1,4 @@
-#ifdef CCFACTORYINTEGRATIONMETHOD_H
+#ifndef CCFACTORYINTEGRATIONMETHOD_H
 #define CCFACTORYINTEGRATIONMETHOD_H
 
 // Include the parent class
@@ -46,4 +46,4 @@ class CCFactoryIntegrationMethod : virtual public ACFactoryIntegrationMethod
  
 };
 
-#endif // #ifdef CCFACTORYINTEGRATIONMETHOD_H
+#endif // #ifndef CCFACTORYINTEGRATIONMETHOD_H

@@ -5,7 +5,7 @@
 
 /// @class CCEulerMethod cc_euler_method.h
 /// This class implements Euler's method to integrate ODE's
-class CCEulerMethod : public ACExplicitIntegrationMethod
+class CCEulerMethod : public virtual ACExplicitIntegrationMethod
 {
  
  public:
