@@ -4,6 +4,7 @@
 // Empty constructor
 // ===================================================================
 CCFactoryIntegrationMethod::CCFactoryIntegrationMethod()
+ : ACFactoryIntegrationMethod()
 { 
 
 }
@@ -19,7 +20,8 @@ CCFactoryIntegrationMethod::~CCFactoryIntegrationMethod()
 // ===================================================================
 // Returns the specified integration method
 // ===================================================================
-ACIntegrationMethod* CCFactoryIntegrationMethod::create(std::string method)
+ACIntegrationMethod* CCFactoryIntegrationMethod::
+create_integration_method(std::string method)
 {
  std::string data = "Abc"; 
  std::transform(data.begin(), data.end(), data.begin(), ::tolower);

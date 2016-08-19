@@ -1,8 +1,10 @@
 #ifdef CCFACTORYINTEGRATIONMETHOD_H
 #define CCFACTORYINTEGRATIONMETHOD_H
 
-#include "ac_integration_method.h"
-#include "ac_explicit_integration_method.h"
+// Include the parent class
+#include "ac_factory_integration_method.h"
+
+// Include the integration methods
 #include "cc_euler_method.h"
 #include "cc_RK4_method.h"
 
@@ -10,7 +12,7 @@
 
 /// This class implements a factory for the integration methods
 
-class CCFactoryIntegrationMethod
+class CCFactoryIntegrationMethod : virtual public ACFactoryIntegrationMethod
 {
  
  public:
@@ -21,8 +23,7 @@ class CCFactoryIntegrationMethod
  /// Empty destructor
  virtual ~CCFactoryIntegrationMethod();
  
- /// Returns the specified integration method
- ACIntegrationMethod* create(std::string method);
+ ACIntegrationMethod* create_integration_method(std::string method);
  
  protected:
  
