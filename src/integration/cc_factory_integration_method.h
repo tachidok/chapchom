@@ -23,6 +23,7 @@ class CCFactoryIntegrationMethod : virtual public ACFactoryIntegrationMethod
  /// Empty destructor
  virtual ~CCFactoryIntegrationMethod();
  
+ /// Returns the specified integration method
  ACIntegrationMethod* create_integration_method(std::string method);
  
  protected:
