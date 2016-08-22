@@ -1,9 +1,13 @@
 #include <iostream>
 #include <cmath>
 
-// The class to create a solver object
-#include "../../src/LinearSolver/CCLUSolverNumericalRecipes.h"
-#include "../../src/Matrix/CCMatrix.h"
+// The class to solve linear systems using numerical recipes
+// implementation
+#include "../../../src/linear_solvers/cc_lu_solver_numerical_recipes.h"
+// The class to represent matrices in CHAPCHOM
+
+// TODO. Do the same example but using the matrix representation of
+// chapchom
 
 int main(int argc, char *argv[])
 {
