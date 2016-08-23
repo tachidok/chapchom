@@ -14,10 +14,10 @@ CCODEsFromTableFromXSENSMT9B::CCODEsFromTableFromXSENSMT9B(const char *euler_ang
  Loaded_table = false;
  // Initialise the number of data in the Table
  //N_data_in_table = 0;
- //N_data_in_table = 18273; // no movement
+ N_data_in_table = 18273; // no movement
  //N_data_in_table = 20076; // test1
  //N_data_in_table = 21162; // characterise yaw drift
- N_data_in_table = 271049; // characterise yaw drift2
+ //N_data_in_table = 271049; // characterise yaw drift2
  
  // Create the interpolator
  interpolator_pt = new CCNewtonInterpolator();

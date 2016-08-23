@@ -24,10 +24,10 @@ class ACMatrix
  ACMatrix();
  
  // Constructor to create an n X n zero matrix
- ACMatrix(const unsigned n);
+ ACMatrix(const unsigned long n);
  
  // Constructor to create an m X n zero matrix
- ACMatrix(const unsigned m, const unsigned n);
+ ACMatrix(const unsigned long m, const unsigned long n);
   
  // Destructor
  virtual ~ACMatrix();
@@ -35,27 +35,27 @@ class ACMatrix
  // Transforms the input vector to a matrix class type (virtual such
  // that each derived class has to implement it)
  virtual void set_matrix(const double *matrix_pt,
-                         const unsigned m,
-                         const unsigned n) = 0;
+                         const unsigned long m,
+                         const unsigned long n) = 0;
  
  // Clean up for any dynamically stored data
  virtual void clean_up() = 0;
  
  // Free allocated memory for matrix
  virtual void free_memory_for_matrix() = 0;
-
+ 
  // Get the specified value from the matrix (read-only)
- virtual const double value(const unsigned i, const unsigned j) const = 0;
+ virtual const double value(const unsigned long i, const unsigned long j) const = 0;
  
  // Set values in the matrix (write version)
- virtual double &value(const unsigned i, const unsigned j) = 0;
+ virtual double &value(const unsigned long i, const unsigned long j) = 0;
  
  // Get the specified value from the matrix
- inline double get_value(const unsigned i, const unsigned j) const
+ inline double get_value(const unsigned long i, const unsigned long j) const
  {return value(i,j);}
  
  // Set values in the matrix
- inline void set_value(const unsigned i, const unsigned j, double v)
+ inline void set_value(const unsigned long i, const unsigned long j, double v)
  {value(i, j) = v;}
  
  /// Get access using brackets as matrix(i,j). Read-only version

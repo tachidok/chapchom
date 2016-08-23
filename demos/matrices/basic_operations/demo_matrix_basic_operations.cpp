@@ -9,10 +9,13 @@ int main(int argc, char *argv[])
  // Show matrix manipulation for addition, multiplication and
  // transpose
  
- // Size of the matrix (number of rowns and columns)
- const unsigned n_rows = 10;
- const unsigned n_columns = 10;
- 
+ // Size of the matrix (number of rows and columns)
+ const unsigned long n_rows = 10;
+ const unsigned long n_columns = 10;
+
+ // ----------------------------------------------------------
+ // Identity matrix
+ // ----------------------------------------------------------
  CCMatrix I(n_rows, n_columns);
  
  // Feed some data to the matrix (the identity)
@@ -24,6 +27,9 @@ int main(int argc, char *argv[])
  std::cout << std::endl << "The identity matrix (I)" << std::endl << std::endl;
  I.output();
  
+ // ----------------------------------------------------------
+ // Matrix from vector
+ // ----------------------------------------------------------
  // Create an array to initialise another matrix with it
  double *matrix_pt = new double[n_rows*n_columns];
  
@@ -38,21 +44,35 @@ int main(int argc, char *argv[])
       }
      else 
       {
-       matrix_pt[i*n_columns+j] = j;
+       // Get the distance to the diagonal
+       matrix_pt[i*n_columns+j] = i;
       }
     }
   }
- 
- // Now create a new CCMatrix object using the A matrix
+
+ // ---------------------------------------
+ // Create the matrix from the vector data
+ // ---------------------------------------
  CCMatrix B(matrix_pt, n_rows, n_columns);
  
- std::cout << std::endl << "Another matrix" << std::endl << std::endl;
+ std::cout << std::endl << "Matrix created from vector" << std::endl << std::endl;
  B.output();
- 
- // Result matrix
+
+ // ----------------------------------------------------------
+ // Create a matrix where to store results
+ // ----------------------------------------------------------
+ // Solution matrix
  CCMatrix C(n_rows, n_columns);
+
+ std::cout << std::endl << ""
+           << "------------------------------------------------------------------------------"
+           << "Matrix operations\n"
+           << "------------------------------------------------------------------------------"
+           << std::endl;
  
- // Add up the matrices (I+B)
+ // --------------------------------------
+ // Sum of matrices C = I + B
+ // --------------------------------------
  for (unsigned i = 0; i < n_rows; i++)
   {
    for (unsigned j = 0; j < n_columns; j++)
@@ -61,12 +81,13 @@ int main(int argc, char *argv[])
     }
   }
  
- std::cout << std::endl << "The addition of the matrices is:"
+ std::cout << std::endl << "The sum of the matrices is:"
            << std::endl << std::endl;
  C.output();
- 
- // Multiply the matrices
- 
+
+ // --------------------------------------
+ // Matrix multiplication C = I * B
+ // -------------------------------------- 
  // Zeroe the result matrix
  for (unsigned i = 0; i < n_rows; i++)
   {
@@ -91,9 +112,108 @@ int main(int argc, char *argv[])
            << std::endl << std::endl;
  C.output();
  
+ // ##############################################################################
+ // Now do the same operations but using operator overloading
+ // ##############################################################################
+ std::cout << std::endl << ""
+           << "##############################################################################\n"
+           << "Now do the same operations but using operator overloading\n"
+           << "##############################################################################"
+           << std::endl;
+ // --------------------------------------
+ // Sum of matrices C = I + B
+ // --------------------------------------
+ C = I + B;
+ 
+ std::cout << std::endl << "The sum of the matrices is:"
+           << std::endl << std::endl;
+ C.output();
+
+ // --------------------------------------
+ // Matrix multiplication C = I * B
+ // --------------------------------------
+ C = I * B;
+ 
+ std::cout << std::endl << "The multiplication of the matrices is:"
+           << std::endl << std::endl;
+ C.output();
+ 
+ // -----------------------------------------------------------------------------
+ // Create a non square matrix
+ // -----------------------------------------------------------------------------
+ const unsigned long n_rows_A = 5;
+ const unsigned long n_columns_A = 10;
+ double *matrix_A_pt = new double[n_rows_A*n_columns_A];
+ 
+ // Add some data to the array
+ for (unsigned i = 0; i < n_rows_A; i++)
+  {
+   for (unsigned j = 0; j < n_columns_A; j++)
+    {
+     if (i==j)
+      {
+       matrix_A_pt[i*n_columns_A+j] = i;
+      }
+     else 
+      {
+       // Get the distance to the diagonal
+       matrix_A_pt[i*n_columns_A+j] = i;
+      }
+    }
+  }
+ // Create the non square matrix
+ CCMatrix A(matrix_A_pt, n_rows_A, n_columns_A);
+ std::cout << std::endl << "Non square matrix"
+           << std::endl << std::endl;
+ A.output();
+ 
+ // -----------------------------------------------------------------------------
+ // Create a vector to multiply with the non square matrix
+ // -----------------------------------------------------------------------------
+ const unsigned long n_rows_x = 10;
+ const unsigned long n_columns_x = 1;
+ double *matrix_x_pt = new double[n_rows_x*n_columns_x];
+ 
+ // Add some data to the array
+ for (unsigned i = 0; i < n_rows_x; i++)
+  {
+   for (unsigned j = 0; j < n_columns_x; j++)
+    {
+     if (i==j)
+      {
+       matrix_x_pt[i*n_columns_x+j] = i;
+      }
+     else 
+      {
+       // Get the distance to the diagonal
+       matrix_x_pt[i*n_columns_x+j] = i;
+      }
+    }
+  }
+ 
+ // Create the vector (matrix)
+ CCMatrix x(matrix_x_pt, n_rows_x, n_columns_x);
+ std::cout << std::endl << "Vector"
+           << std::endl << std::endl;
+ x.output();
+ 
+ // --------------------------------------
+ // Matrix multiplication A * x = b
+ // --------------------------------------
+ CCMatrix b(n_rows_A, n_columns_x);
+ b = A * x;
+ 
+ std::cout << std::endl << "The multiplication of the matrices is:"
+           << std::endl << std::endl;
+ b.output();
+ 
  // Free memory 
  delete [] matrix_pt;
  matrix_pt = 0;
+ delete [] matrix_A_pt;
+ matrix_A_pt = 0;
+ delete [] matrix_x_pt;
+ matrix_x_pt = 0;
  
  return 0;
  

@@ -117,8 +117,8 @@ int main(int argc, char *argv[])
  // Create an instance of the ODEs to solve
 #ifdef T_NO_MOVEMENT
  CCODEsFromTableFromXSENSMT9B *odes =
-  new CCODEsFromTableFromXSENSMT9B("./xsensMT9B/no_movement/MT9_euler_00007154_000.log",
-                                   "./xsensMT9B/no_movement/MT9_cal_00007154_000.log");
+  new CCODEsFromTableFromXSENSMT9B("./xsensMT9B/01_no_movement/MT9_euler_00007154_000.log",
+                                   "./xsensMT9B/01_no_movement/MT9_cal_00007154_000.log");
 #endif // #ifdef T_NO_MOVEMENT
 
 #ifdef T_CHARACTERISE_YAW

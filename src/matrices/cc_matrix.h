@@ -18,22 +18,38 @@ class CCMatrix : public virtual ACMatrix
  CCMatrix();
  
  // Constructor to create an n X n zero matrix
- CCMatrix(const unsigned n);
+ CCMatrix(const unsigned long n);
  
  // Constructor to create an m X n zero matrix
- CCMatrix(const unsigned m, const unsigned n);
+ CCMatrix(const unsigned long m, const unsigned long n);
  
  // Constructor where we pass the data for the matrix of size m X n
- CCMatrix(double *matrix_pt, const unsigned m, const unsigned n);
+ CCMatrix(double *matrix_pt, const unsigned long m, const unsigned long n);
+ 
+ // Copy constructor (we require to define this if we want to use
+ // operators overloading as sum and assignment)
+ CCMatrix(const CCMatrix &copy);
  
  // Destructor
  virtual ~CCMatrix();
  
+ // Add operator
+ CCMatrix operator+(const CCMatrix &copy);
+ 
+ // Substraction operator
+ CCMatrix operator-(const CCMatrix &copy);
+ 
+ // Multiplication operator
+ CCMatrix operator*(const CCMatrix &copy);
+ 
+ // Assignment operator
+ CCMatrix& operator=(const CCMatrix &copy);
+ 
  // Transforms the input vector to a matrix class type (virtual such
  // that each derived class has to implement it)
  void set_matrix(const double *matrix_pt,
-                 const unsigned m,
-                 const unsigned n);
+                 const unsigned long m,
+                 const unsigned long n);
  
  // Clean up for any dynamically stored data
  void clean_up();
@@ -41,14 +57,29 @@ class CCMatrix : public virtual ACMatrix
  // Free allocated memory for matrix
  void free_memory_for_matrix();
  
+ // Performs sum of matrices
+ void add_matrix(const CCMatrix &matrix, const CCMatrix &solution_matrix);
+ 
+ // Performs substraction of matrices
+ void substract_matrix(const CCMatrix &matrix, const CCMatrix &solution_matrix);
+ 
+ // Performs multiplication of matrices
+ void multiply_by_matrix(const CCMatrix &right_matrix, const CCMatrix &solution_matrix);
+ 
+ // Computes the transpose and store it in the solution matrix
+ void transpose(const CCMatrix &solution_matrix);
+  
  // Get the specified value from the matrix (read-only)
- const double value(const unsigned i, const unsigned j) const;
+ const double value(const unsigned long i, const unsigned long j) const;
  
  // Set values in the matrix (write version)
- double &value(const unsigned i, const unsigned j);
+ double &value(const unsigned long i, const unsigned long j);
  
  // Output the matrix
  void output();
+ 
+ // Get access to the Matrix_pt
+ inline double *matrix_pt() const {return Matrix_pt;}
  
  protected:
  
@@ -57,17 +88,6 @@ class CCMatrix : public virtual ACMatrix
  
  // The matrix
  double *Matrix_pt;
- 
- private:
- 
- // Copy constructor (we do not want this class to be copiable). Check
- // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CCMatrix(const CCMatrix &copy);
- 
- // Assignment operator (we do not want this class to be
- // copiable. Check
- // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CCMatrix& operator=(const CCMatrix &copy);
  
 };
 

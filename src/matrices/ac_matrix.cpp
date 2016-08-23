@@ -13,7 +13,7 @@ ACMatrix::ACMatrix()
 // ===================================================================
 // Constructor to create an n X n zero matrix
 // ===================================================================
-ACMatrix::ACMatrix(const unsigned n)
+ACMatrix::ACMatrix(const unsigned long n)
  : NRows(n), NColumns(n), Is_empty(true), Delete_matrix(true)
 { }
  
@@ -21,7 +21,7 @@ ACMatrix::ACMatrix(const unsigned n)
 // ===================================================================
 // Constructor to create an m X n zero matrix
 // ===================================================================
-ACMatrix::ACMatrix(const unsigned m, const unsigned n)
+ACMatrix::ACMatrix(const unsigned long m, const unsigned long n)
  : NRows(n), NColumns(m), Is_empty(true), Delete_matrix(true)
 { }
 
