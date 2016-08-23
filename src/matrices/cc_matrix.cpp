@@ -98,6 +98,64 @@ CCMatrix& CCMatrix::operator=(const CCMatrix &source_matrix)
 }
 
 // ===================================================================
+// += operator
+// ===================================================================
+CCMatrix& CCMatrix::operator+=(const CCMatrix &matrix)
+{
+ // Check whether the dimensions of the matrices are the same
+ const unsigned long n_rows_input_matrix = matrix.nrows();
+ const unsigned long n_columns_input_matrix = matrix.ncolumns();
+ const unsigned long n_rows = this->NRows;
+ const unsigned long n_columns = this->NColumns;
+ if (n_rows != n_rows_input_matrix || n_columns!= n_columns_input_matrix)
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "The dimension of the matrices is not the same:\n"
+                 << "dim(matrix) = (" << n_rows_input_matrix << ", "
+                 << n_columns_input_matrix << ")\n"
+                 << "dim(this) = (" << n_rows << ", " << n_columns
+                 << ")\n" << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ // Call the method to perform the addition
+ add_matrix(matrix, *this);
+ // Return the solution matrix
+ return *this;
+}
+
+// ===================================================================
+// -= operator
+// ===================================================================
+CCMatrix& CCMatrix::operator-=(const CCMatrix &matrix)
+{
+  // Check whether the dimensions of the matrices are the same
+ const unsigned long n_rows_input_matrix = matrix.nrows();
+ const unsigned long n_columns_input_matrix = matrix.ncolumns();
+ const unsigned long n_rows = this->NRows;
+ const unsigned long n_columns = this->NColumns;
+ if (n_rows != n_rows_input_matrix || n_columns!= n_columns_input_matrix)
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "The dimension of the matrices is not the same:\n"
+                 << "dim(matrix) = (" << n_rows_input_matrix << ", "
+                 << n_columns_input_matrix << ")\n"
+                 << "dim(this) = (" << n_rows << ", " << n_columns
+                 << ")\n" << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ // Call the method to perform the addition
+ substract_matrix(matrix, *this);
+ // Return the solution matrix
+ return *this; 
+}
+
+// ===================================================================
 // Add operator
 // ===================================================================
 CCMatrix CCMatrix::operator+(const CCMatrix &matrix)
@@ -311,7 +369,7 @@ void CCMatrix::add_matrix(const CCMatrix &matrix, const CCMatrix &solution_matri
 // ===================================================================
 void CCMatrix::substract_matrix(const CCMatrix &matrix, const CCMatrix &solution_matrix)
 {
-  // Check whether the dimensions of the matrices are the same
+ // Check whether the dimensions of the matrices are the same
  const unsigned long n_rows_input_matrix = matrix.nrows();
  const unsigned long n_columns_input_matrix = matrix.ncolumns();
  const unsigned long n_rows = this->NRows;
@@ -392,31 +450,46 @@ void CCMatrix::multiply_by_matrix(const CCMatrix &right_matrix, const CCMatrix &
       }
     }
   }
-   
+ 
 }
 
 // ===================================================================
 // Computes the transpose and store in the solution matrix
 // ===================================================================
-void CCMatrix::transpose(const CCMatrix &solution_matrix)
+void CCMatrix::transpose(const CCMatrix &transpose_matrix)
 {
- // Get the dimensions of the matrix
- const unsigned n_rows = this->NRows;
- const unsigned n_columns = this->NColumns;
- // Create a temporary matrix and copy the data there
- double *tmp_matrix_pt = new double[n_rows*n_columns];
- memcpy(tmp_matrix_pt, Matrix_pt, n_rows*n_columns*sizeof(double));
- // Loop and fill the matrix
+ // Check whether the dimensions of the matrices allow for transpose
+ const unsigned long n_rows_transpose_matrix = transpose_matrix.nrows();
+ const unsigned long n_columns_transpose_matrix = transpose_matrix.ncolumns();
+ const unsigned long n_rows = this->NRows;
+ const unsigned long n_columns = this->NColumns;
+ if (n_rows != n_columns_transpose_matrix || n_columns!= n_rows_transpose_matrix)
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "The dimension of the matrices does not allow for\n"
+                 << "transpose operation.\n"
+                 << "dims(transpose_matrix) = (" << n_rows_transpose_matrix
+                 << ", " << n_columns_transpose_matrix << ")\n"
+                 << "dim(this) = (" << n_rows << ", " << n_columns
+                 << ")\n" << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+ // Get a pointer to the matrix structure of the solution CCMatrix
+ double *transposed_matrix_pt = transpose_matrix.matrix_pt();
  for (unsigned i = 0; i < n_rows; i++)
   {
    for (unsigned j = 0; j < n_columns; j++)
     {    
-     Matrix_pt[j*n_rows+i] = tmp_matrix_pt[i*n_columns+j];
+     transposed_matrix_pt[j*n_rows+i] = Matrix_pt[i*n_columns+j];
     }
   }
- // Change the number of rows and columns of the matrix
- this->NRows = n_columns;
- this->NColumns = n_rows;
+ // Change the number of rows and columns of tehe matrix
+ this->NRows = n_rows_transpose_matrix;
+ this->NColumns = n_columns_transpose_matrix;
 }
 
 // ===================================================================

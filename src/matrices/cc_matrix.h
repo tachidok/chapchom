@@ -33,18 +33,24 @@ class CCMatrix : public virtual ACMatrix
  // Destructor
  virtual ~CCMatrix();
  
- // Add operator
- CCMatrix operator+(const CCMatrix &copy);
+ // += operator
+ CCMatrix& operator+=(const CCMatrix &matrix);
  
- // Substraction operator
- CCMatrix operator-(const CCMatrix &copy);
- 
- // Multiplication operator
- CCMatrix operator*(const CCMatrix &copy);
+ // -= operator
+ CCMatrix& operator-=(const CCMatrix &matrix);
  
  // Assignment operator
- CCMatrix& operator=(const CCMatrix &copy);
+ CCMatrix& operator=(const CCMatrix &source_matrix);
  
+ // Add operator
+ CCMatrix operator+(const CCMatrix &matrix);
+ 
+ // Substraction operator
+ CCMatrix operator-(const CCMatrix &matrix);
+ 
+ // Multiplication operator
+ CCMatrix operator*(const CCMatrix &right_matrix);
+  
  // Transforms the input vector to a matrix class type (virtual such
  // that each derived class has to implement it)
  void set_matrix(const double *matrix_pt,
@@ -67,7 +73,7 @@ class CCMatrix : public virtual ACMatrix
  void multiply_by_matrix(const CCMatrix &right_matrix, const CCMatrix &solution_matrix);
  
  // Computes the transpose and store it in the solution matrix
- void transpose(const CCMatrix &solution_matrix);
+ void transpose(const CCMatrix &transpose_matrix);
   
  // Get the specified value from the matrix (read-only)
  const double value(const unsigned long i, const unsigned long j) const;

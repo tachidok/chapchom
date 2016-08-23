@@ -63,10 +63,10 @@ int main(int argc, char *argv[])
  // ----------------------------------------------------------
  // Solution matrix
  CCMatrix C(n_rows, n_columns);
-
- std::cout << std::endl << ""
+ 
+ std::cout << std::endl
            << "------------------------------------------------------------------------------"
-           << "Matrix operations\n"
+           << std::endl << "Matrix operations\n"
            << "------------------------------------------------------------------------------"
            << std::endl;
  
@@ -206,6 +206,15 @@ int main(int argc, char *argv[])
  std::cout << std::endl << "The multiplication of the matrices is:"
            << std::endl << std::endl;
  b.output();
+
+ // --------------------------------------------------
+ // Apply transpose
+ // --------------------------------------------------
+ CCMatrix b_t(b.ncolumns(), b.nrows());
+ b.transpose(b_t);
+ std::cout << std::endl << "The transposed matrix:"
+           << std::endl << std::endl;
+ b_t.output();
  
  // Free memory 
  delete [] matrix_pt;
