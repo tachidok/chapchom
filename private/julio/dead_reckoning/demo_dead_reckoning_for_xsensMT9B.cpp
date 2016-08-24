@@ -11,10 +11,12 @@
 #include "cc_odes_from_table_from_xsensMT9B.h"
 
 #define DEBUG
-#define T_NO_MOVEMENT
+//#define T_NO_MOVEMENT
 //#define T_CHARACTERISE_YAW
 //#define T_CHARACTERISE_YAW2
-//#define T_TEST1
+//#define T_ELLIPSE_MOVEMENT
+//#define T_CHARACTERISE_YAW_HALF_HOUR
+#define T_CHARACTERISE_TWO_HOURS
 
 void fill_rotation_matrices(std::vector<std::vector<double> > &R,
                             std::vector<std::vector<double> > &R_t,
@@ -68,7 +70,7 @@ void multiply_matrix_times_vector(std::vector<std::vector<double> > &A,
   {
    // Error message
    std::ostringstream error_message;
-   error_message << "We can not muliply, the input matrix has dimension ("
+   error_message << "We can not multiply, the input matrix has dimension ("
                  << n_rows_A << ", " << n_cols_A << ")" << std::endl;
    error_message << "The input vector has dimension dimension ("
                  << n_rows_b << ", 1)" << std::endl;
@@ -123,22 +125,34 @@ int main(int argc, char *argv[])
 
 #ifdef T_CHARACTERISE_YAW
  CCODEsFromTableFromXSENSMT9B *odes =
-  new CCODEsFromTableFromXSENSMT9B("./xsensMT9B/characterise_yaw_drift/MT9_euler_00007154_000.log",
-                                   "./xsensMT9B/characterise_yaw_drift/MT9_cal_00007154_000.log");
+  new CCODEsFromTableFromXSENSMT9B("./xsensMT9B/03_characterise_yaw_drift/MT9_euler_00007154_000.log",
+                                   "./xsensMT9B/03_characterise_yaw_drift/MT9_cal_00007154_000.log");
 #endif // #ifdef T_CHARACTERISE_YAW
 
 #ifdef T_CHARACTERISE_YAW2
  CCODEsFromTableFromXSENSMT9B *odes =
-  new CCODEsFromTableFromXSENSMT9B("./xsensMT9B/characterise_yaw_drift2/MT9_euler_00007154_000.log",
-                                   "./xsensMT9B/characterise_yaw_drift2/MT9_cal_00007154_000.log");
+  new CCODEsFromTableFromXSENSMT9B("./xsensMT9B/04_characterise_yaw_drift2/MT9_euler_00007154_000.log",
+                                   "./xsensMT9B/04_characterise_yaw_drift2/MT9_cal_00007154_000.log");
 #endif // #ifdef T_CHARACTERISE_YAW2
  
-#ifdef T_TEST1
+#ifdef T_ELLIPSE_MOVEMENT
  CCODEsFromTableFromXSENSMT9B *odes =
-  new CCODEsFromTableFromXSENSMT9B("./xsensMT9B/test1/MT9_euler_00007154_000.log",
-                                   "./xsensMT9B/test1/MT9_cal_00007154_000.log");
-#endif // #ifdef T_TEST1
+  new CCODEsFromTableFromXSENSMT9B("./xsensMT9B/02_test_ellipse_movement/MT9_euler_00007154_000.log",
+                                   "./xsensMT9B/02_test_ellipse_movement/MT9_cal_00007154_000.log");
+#endif // #ifdef T_ELLIPSE_MOVEMENT
+ 
+#ifdef T_CHARACTERISE_YAW_HALF_HOUR
+ CCODEsFromTableFromXSENSMT9B *odes =
+  new CCODEsFromTableFromXSENSMT9B("./xsensMT9B/06_characterise_yaw_drift_0.5hrs/MT9_euler_00007154_001.log",
+                                   "./xsensMT9B/06_characterise_yaw_drift_0.5hrs/MT9_cal_00007154_001.log");
+#endif // #ifdef T_CHARACTERISE_YAW_HALF_HOUR
 
+#ifdef T_CHARACTERISE_TWO_HOURS
+ CCODEsFromTableFromXSENSMT9B *odes =
+  new CCODEsFromTableFromXSENSMT9B("./xsensMT9B/07_characterise_yaw_drift_2hrs/MT9_euler_00007154_000.log",
+                                   "./xsensMT9B/07_characterise_yaw_drift_2hrs/MT9_cal_00007154_000.log");
+#endif // #ifdef T_CHARACTERISE_TWO_HOURS
+ 
  // Create the factory for the methods
  CCFactoryIntegrationMethod *factory_integration_methods =
   new CCFactoryIntegrationMethod();
@@ -233,8 +247,7 @@ int main(int argc, char *argv[])
 			  CHAPCHOM_CURRENT_FUNCTION,
 			  CHAPCHOM_EXCEPTION_LOCATION);
   }
-
-#ifdef T_CHARACTERISE_YAW
+ 
  char file_drift_yaw_name[100];
  sprintf(file_drift_yaw_name, "./RESLT/ddrift_yaw.dat");
  FILE *file_drift_yaw_pt = fopen(file_drift_yaw_name, "w");
@@ -248,7 +261,6 @@ int main(int argc, char *argv[])
 			  CHAPCHOM_CURRENT_FUNCTION,
 			  CHAPCHOM_EXCEPTION_LOCATION);
   }
-#endif // #ifdef T_CHARACTERISE_YAW
  
  char file_velocity_name[100];
  sprintf(file_velocity_name, "./RESLT/velocity.dat");
@@ -314,14 +326,25 @@ int main(int argc, char *argv[])
 #endif // #ifdef T_CHARACTERISE_YAW
 
 #ifdef T_CHARACTERISE_YAW2
- const double t_initial = 6.219;
+ const double t_initial = 22.195;
  const double t_final = 1065.0;
 #endif // #ifdef T_CHARACTERISE_YAW2
  
-#ifdef T_TEST1
+#ifdef T_ELLIPSE_MOVEMENT
  const double t_initial = 25.0;
  const double t_final = 103.0;
-#endif // #ifdef T_TEST1
+#endif // #ifdef T_ELLIPSE_MOVEMENT
+ 
+#ifdef T_CHARACTERISE_YAW_HALF_HOUR
+ const double t_initial = 3.52;
+ const double t_final = 2053.0;
+#endif // #ifdef T_CHARACTERISE_YAW_HALF_HOUR
+ 
+#ifdef T_CHARACTERISE_TWO_HOURS
+ const double t_initial = 5.617;
+ const double t_final = 7070.0;
+#endif // #ifdef T_CHARACTERISE_TWO_HOURS
+ 
  //const double t_final = 100;
  // Set the number of steps per second
  const double n_steps_per_second = 257.0; // 257 measeurements per second (original number of measurements)
@@ -372,9 +395,7 @@ int main(int argc, char *argv[])
            << " z-pos: " << y[0][4] << " z-vel: " << y[0][5]
            << " roll: " << y[0][6] << " pitch: " << y[0][7] << " yaw: " << y[0][8] << std::endl;
  
-#ifdef T_CHARACTERISE_YAW
  double ddrift_yaw = 0.0;
-#endif
  
  // Bias yaw per step
  const double bias_yaw = -0.95 * 180.0/M_PI;
@@ -464,10 +485,10 @@ int main(int argc, char *argv[])
  // Raw magnetometers
  fprintf(file_raw_magnetometers_pt, "%lf %lf %lf %lf\n", t, magnetometer[0], magnetometer[1], magnetometer[2]);
  //fprintf(file_raw_magnetometers_pt, "%lf %lf %lf %lf\n", t, mag_proc[0], mag_proc[1], mag_proc[2]);
-#ifdef T_CHARACTERISE_YAW
+ 
  // ddrift yaw
  fprintf(file_drift_yaw_pt, "%lf 0.0 0.0 %lf\n", t, ddrift_yaw);
-#endif // #ifdef T_CHARACTERISE_YAW
+ 
  // Velocity
  fprintf(file_velocity_pt, "%lf %lf %lf %lf\n", t, y[0][1], y[0][3], y[0][5]);
  // Position
@@ -483,9 +504,7 @@ int main(int argc, char *argv[])
    // Update data
    for (unsigned j = 0; j < n_odes; j++)
     {
-#ifdef T_CHARACTERISE_YAW
      ddrift_yaw = (y[1][j] - y[0][j]) / h;
-#endif // #ifdef T_CHARACTERISE_YAW
      y[0][j] = y[1][j];
     }
    // Update time
@@ -568,10 +587,10 @@ int main(int argc, char *argv[])
    // Raw magnetometers
    fprintf(file_raw_magnetometers_pt, "%lf %lf %lf %lf\n", t, magnetometer[0], magnetometer[1], magnetometer[2]);
    //fprintf(file_raw_magnetometers_pt, "%lf %lf %lf %lf\n", t, mag_proc[0], mag_proc[1], mag_proc[2]);
-#ifdef T_CHARACTERISE_YAW
+   
    // ddrift yaw
    fprintf(file_drift_yaw_pt, "%lf 0.0 0.0 %lf\n", t, ddrift_yaw);
-#endif // #ifdef T_CHARACTERISE_YAW
+   
    // Velocity
    fprintf(file_velocity_pt, "%lf %lf %lf %lf\n", t, y[0][1], y[0][3], y[0][5]);
    // Position
@@ -587,9 +606,7 @@ int main(int argc, char *argv[])
  fclose(file_roll_pitch_yaw_pt);
  fclose(file_roll_pitch_yaw_from_acc_pt);
  fclose(file_raw_magnetometers_pt);
-#ifdef T_CHARACTERISE_YAW
  fclose(file_drift_yaw_pt);
-#endif // #ifdef T_CHARACTERISE_YAW
  fclose(file_velocity_pt);
  fclose(file_position_pt);
  
