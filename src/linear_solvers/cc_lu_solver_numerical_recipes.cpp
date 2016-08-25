@@ -3,7 +3,7 @@
 // ludcmp() and lubksb() from numerical recipes to perform the LU
 // decomposition and back-substitution, respectively.
 
-#include "CCLUSolverNumericalRecipes.h"
+#include "cc_lu_solver_numerical_recipes.h"
 
 // ===================================================================
 // Empty constructor
@@ -15,8 +15,8 @@ CCLUSolverNumericalRecipes::CCLUSolverNumericalRecipes()
 // ===================================================================
 // Constructor where we specify the matrix A of size m X n
 // ===================================================================
-CCLUSolverNumericalRecipes::CCLUSolverNumericalRecipes(ACMatrix *_A_pt)
- : ACLinearSolver(_A_pt),
+CCLUSolverNumericalRecipes::CCLUSolverNumericalRecipes(const CCMatrix &A)
+ : ACLinearSolver(A),
    Resolve_enabled(false) { }
 
 // ===================================================================
@@ -29,15 +29,15 @@ CCLUSolverNumericalRecipes::~CCLUSolverNumericalRecipes() { }
 // side b and the x vector where the result is returned. We assume
 // that the input/output vectors have the correct dimensions (size n).
 // ===================================================================
-void CCLUSolverNumericalRecipes::solve(ACMatrix *_A_pt,
-                                       ACMatrix *_b_pt,
-                                       ACMatrix *_x_pt)
+void CCLUSolverNumericalRecipes::solve(const CCMatrix &A,
+                                       const CCMatrix &b,
+                                       CCMatrix &x)
 {
  // Set the matrix and its size
- set_matrix_A(_A_pt);
+ set_matrix_A(A);
  
  // Solve
- solve(_b_pt, _x_pt);
+ solve(b, x);
  
 }
 
@@ -47,7 +47,7 @@ void CCLUSolverNumericalRecipes::solve(ACMatrix *_A_pt,
 // returned. We assume that the input/output vectors have the correct
 // dimensions (size n).
 // ===================================================================
-void CCLUSolverNumericalRecipes::solve(ACMatrix *_b_pt, ACMatrix *_x_pt)
+void CCLUSolverNumericalRecipes::solve(const CCMatrix &b, CCMatrix &x)
 {
  // We can only call solve if the matrix A has been set
  if (Matrix_A_has_been_set)
@@ -56,8 +56,21 @@ void CCLUSolverNumericalRecipes::solve(ACMatrix *_b_pt, ACMatrix *_x_pt)
    factorise();
    
    // ... and do back substitution
-   back_substitution(_b_pt, _x_pt);
+   back_substitution(b, x);
    
+  }
+ else
+  {
+   // Error message
+   std:ostringstream error_message;
+   error_message << "You have not specific any matrix for the system of\n"
+                 << "equations. Set one matrix first by calling the/"
+                 << "set_matrix() method or use the solve() method where\n"
+                 << "you can specify the matrix associated to the system\n"
+                 << "of equations." << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
   }
  
 }
@@ -68,14 +81,23 @@ void CCLUSolverNumericalRecipes::solve(ACMatrix *_b_pt, ACMatrix *_x_pt)
 // and the x vector where the result is returned. We assume that the
 // input/output vectors have the correct dimensions (size n).
 // ===================================================================
-void CCLUSolverNumericalRecipes::resolve(ACMatrix *_b_pt, ACMatrix *_x_pt)
+void CCLUSolverNumericalRecipes::resolve(const CCMatrix &b, CCMatrix &x)
 {
  // We can only do back-substitution if a matrix has been
  // factorised
  if (Resolve_enabled)
   {
    // Do the back substitution
-   back_substitution(_b_pt, _x_pt);
+   back_substitution(b, x);
+  }
+  else
+  {
+   // Error message
+   std:ostringstream error_message;
+   error_message << "Resolve is not enabled.\n" << std::endl;
+   throw ChapchomLibError(error_message.str(),
+			  CHAPCHOM_CURRENT_FUNCTION,
+			  CHAPCHOM_EXCEPTION_LOCATION);
   }
  
 }
@@ -84,10 +106,10 @@ void CCLUSolverNumericalRecipes::resolve(ACMatrix *_b_pt, ACMatrix *_x_pt)
 // Performs LU factorisation of the input matrix, the factorisation is
 // internally stored such that it can be re-used when calling resolve
 // ===================================================================
-void CCLUSolverNumericalRecipes::factorise(ACMatrix *_A_pt)
+void CCLUSolverNumericalRecipes::factorise(const CCMatrix &A)
 {
  // Set the matrix and its size
- set_matrix_A(_A_pt);
+ set_matrix_A(A);
  
  // Factorise
  factorise();
@@ -105,8 +127,8 @@ void CCLUSolverNumericalRecipes::factorise()
  
  // Check that we are working with an square matrix, otherwise this
  // will not work
- const unsigned long nrows = A_pt->nrows();
- const unsigned long ncolumns = A_pt->ncolumns();
+ const unsigned long nrows = A.nrows();
+ const unsigned long ncolumns = A.ncolumns();
  if (nrows!=ncolumns)
   {
    // Error message
@@ -136,7 +158,7 @@ void CCLUSolverNumericalRecipes::factorise()
   {
    for (unsigned j = 0; j < ncolumns; j++)
     {
-     lu_a[i][j] = A_pt->get_value(i,j);
+     lu_a[i][j] = A(i,j);
     }
   }
  
@@ -152,17 +174,17 @@ void CCLUSolverNumericalRecipes::factorise()
 // ===================================================================
 // Performs the back substitution with the LU decomposed matrix
 // ===================================================================
-void CCLUSolverNumericalRecipes::back_substitution(ACMatrix *_b_pt,
-                                                   ACMatrix *_x_pt)
+void CCLUSolverNumericalRecipes::back_substitution(const CCMatrix &b,
+                                                   CCMatrix &x_output)
 {
  // Prepare the data to call lubksb()
  
  // The size of the right-hand side
- const unsigned n_rows = _b_pt->nrows();
+ const unsigned n_rows = b.nrows();
  
  // Number of right hand sizes (same as the number of output
  // x-vectors)
- const unsigned n_rhs = _b_pt->ncolumns();
+ const unsigned n_rhs = b.ncolumns();
  
  // The solution vector size n x 1 (Numerical Recipes definition)
  Vec_DP x(n_rows);
@@ -172,16 +194,16 @@ void CCLUSolverNumericalRecipes::back_substitution(ACMatrix *_b_pt,
   {
    for (unsigned i = 0; i < n_rows; i++)
     {
-     x[i] = _b_pt->get_value(i,j);
+     x[i] = b(i,j);
     }
    
    // Back-substitution
-   NR::lubksb(lu_a, lu_indx, x);
+   NR::lubksb(lu_a, *lu_indx, x);
    
    // Copy the solution into the output vector
    for (unsigned i = 0; i < n_rows; i++)
     {
-     x_pt->set_value(i, j, x[i]);
+     x_output(i, j) =  x[i];
     }
    
   }

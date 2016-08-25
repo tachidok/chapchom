@@ -59,7 +59,7 @@ AUX_SOURCE_DIRECTORY(src/integration src_lib_integration)
 #SET(src_lib_NumericalRecipes lubksb	ludcmp)
 
 # setting sources and main file
-SET(sources ${src_lib_general} ${src_lib_matrices} ${src_lib_linear_solves} ${src_lib_odes} ${src_lib_interpolation} ${src_lib_integration})
+SET(sources ${src_lib_general} ${src_lib_matrices} ${src_lib_linear_solvers} ${src_lib_odes} ${src_lib_interpolation} ${src_lib_integration})
 #SET(main_source CCncrtSolver)
 
 #SET_TARGET_PROPERTIES(${PROJECT_NAME} LIBRARY_OUTPUT_DIRECTORY ../lib)

@@ -10,7 +10,8 @@
 // The odes
 #include "cc_odes_from_table_from_xsensMT9B.h"
 
-#define DEBUG
+//#define DEBUG
+
 //#define T_NO_MOVEMENT
 //#define T_CHARACTERISE_YAW
 //#define T_CHARACTERISE_YAW2
@@ -342,7 +343,9 @@ int main(int argc, char *argv[])
  
 #ifdef T_CHARACTERISE_TWO_HOURS
  const double t_initial = 5.617;
- const double t_final = 7070.0;
+ const double t_test_final = 60.0 * 60.0 + 60.0 * 60.0;
+ const double t_final = t_initial + t_test_final;
+ //const double t_final = 7070.0;
 #endif // #ifdef T_CHARACTERISE_TWO_HOURS
  
  //const double t_final = 100;

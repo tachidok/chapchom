@@ -8,10 +8,10 @@
 #ifndef CCLUSOLVER_H
 #define CCLUSOLVER_H
 
-#include "ACLinearSolver.h"
+#include "ac_linear_solver.h"
 
 // The LU factorisation and back-substitution from Numerical Recipes
-#include "../../external_src/NumericalRecipes/nr.h"
+#include "../../external_src/numerical_recipes/nr.h"
 
 // A concrete class for solving a linear system of equations. This
 // class uses the methods ludcmp() and lubksb() from numerical recipes
@@ -26,7 +26,7 @@ class CCLUSolverNumericalRecipes : public virtual ACLinearSolver
  CCLUSolverNumericalRecipes();
  
  // Constructor where we specify the matrix A
- CCLUSolverNumericalRecipes(ACMatrix *_A_pt);
+ CCLUSolverNumericalRecipes(const CCMatrix &A);
  
  // Empty destructor
  ~CCLUSolverNumericalRecipes();
@@ -35,24 +35,24 @@ class CCLUSolverNumericalRecipes : public virtual ACLinearSolver
  // right-hand side b and the x vector where the result is
  // returned. We assume that the input/output vectors have the correct
  // dimensions (size n).
- void solve(ACMatrix *_A_pt, ACMatrix *_b_pt, ACMatrix *_x_pt);
+ void solve(const CCMatrix &A, const CCMatrix &b, CCMatrix &x);
  
  // Solve a system of equations with the already stored matrix A. We
  // specify the right-hand side b and the x vector where the result is
  // returned. We assume that the input/output vectors have the correct
  // dimensions (size n).
- void solve(ACMatrix *_b_pt, ACMatrix *_x_pt);
+ void solve(const CCMatrix &b, CCMatrix &x);
  
  // Re-solve a system of equations with the already stored matrix
  // A. Reusing the LU decomposition. We specify the right-hand side b
  // and the x vector where the result is returned. We assume that the
  // input/output vectors have the correct dimensions (size n).
- void resolve(ACMatrix *_b_pt, ACMatrix *_x_pt);
- 
+ void resolve(const CCMatrix &b, CCMatrix &x);
+  
  // Performs LU factorisation of the input matrix, the factorisation
  // is internally stored such that it can be re-used when calling
  // resolve
- void factorise(ACMatrix *_A_pt);
+ void factorise(const CCMatrix &A);
  
  // Performs LU factorisation of already stored matrix A, the
  // factorisation is internally stored such that it can be re-used
@@ -60,7 +60,7 @@ class CCLUSolverNumericalRecipes : public virtual ACLinearSolver
  void factorise();
  
  // Performs the back substitution with the LU decomposed matrix
- void back_substitution(ACMatrix *_b_pt, ACMatrix *_x_pt);
+ void back_substitution(const CCMatrix &b, CCMatrix &x);
  
  protected:
  
