@@ -27,6 +27,11 @@ OptionRead()
 #====================================================================
 build_dir=build
 lib_dir=lib
+include_dir=include
+src_dir=src
+external_src_dir=external_src
+
+lib_ext=*
 lib_name=chapchom
 
 #====================================================================
@@ -103,7 +108,11 @@ debug_or_release=`OptionRead`
 	
 echo ""
 echo ""
+echo "============================================================= "
 echo "Building the " $lib_type "/" $lib_version " version of the library ..."
+echo "============================================================= "
+echo ""
+echo ""
 
 #====================================================================
 # Calling CMake
@@ -112,8 +121,56 @@ echo "Building the " $lib_type "/" $lib_version " version of the library ..."
 cmake ../ -Dlib_type=$lib_type -DCMAKE_BUILD_TYPE=$lib_version
 make clean
 make
-cp lib$lib_name$lib_ext ../$lib_dir
-echo "Done"
+
+echo ""
+echo ""
+echo "============================================================= "
+echo "Done CMake"
+echo "============================================================= "
+
+#====================================================================
+# Copy library into lib folder
+#====================================================================
+cd ..
+cp $build_dir/lib$lib_name$lib_ext ./$lib_dir
+
+#====================================================================
+# Copying include files ...
+#====================================================================
+
+echo ""
+echo ""
+echo "============================================================= "
+
+echo "Copying include files"
+if (test -d $include_dir); then 
+	echo "Cleaning up ..."
+	cd $include_dir
+	rm $include_dir -r *
+	cd ..
+else
+	mkdir $include_dir
+fi
+
+mkdir $include_dir/linear_solvers
+mkdir $include_dir/general
+mkdir $include_dir/integration
+mkdir $include_dir/interpolation
+mkdir $include_dir/matrices
+mkdir $include_dir/odes
+mkdir -p $include_dir/$external_src_dir/numerical_recipes
+
+cp $src_dir/linear_solvers/*.h $include_dir/linear_solvers/
+cp $src_dir/general/*.h $include_dir/general/
+cp $src_dir/integration/*.h $include_dir/integration/
+cp $src_dir/interpolation/*.h $include_dir/interpolation/
+cp $src_dir/matrices/*.h $include_dir/matrices/
+cp $src_dir/odes/*.h $include_dir/odes/
+cp $external_src_dir/numerical_recipes/*.h $include_dir/$external_src_dir/numerical_recipes/
+
+echo "Include directory created"
+echo "============================================================= "
+echo ""
 
 #====================================================================
 # Finishing up !!!
@@ -124,9 +181,9 @@ cd ..
 echo ""
 echo "============================================================= "
 echo ""
-echo "Finishing library built process (autogen.sh has finished!)"
+echo "Finishing library built process ... (autogen.sh has finished!)"
 echo "If you can't spot any error messages above this, the" 
-echo "multirate library should now be ready to use... " 
+echo $lib_name " library should now be ready to use... " 
 echo " "
 echo "Please contact the developers if you encountered any"
 echo "building problem!"

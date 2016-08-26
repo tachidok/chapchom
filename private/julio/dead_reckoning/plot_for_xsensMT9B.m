@@ -4,13 +4,13 @@
 %MT9all = importfileMT9raw('xsensMT9B/no_movement/MT9_cal_00007154_000.log', 1, 18273);
 
 % 76 secs. with 257 data per second (no movement)
-% MT9euler = importfileMT9euler('xsensMT9B/01_no_movement/MT9_euler_00007154_000.log', 1, 18148);
-% MT9all = importfileMT9raw('xsensMT9B/01_no_movement/MT9_cal_00007154_000.log', 1, 18148);
-% my_roll_pitch_yaw = importfile_my_roll_pitch_yaw('RESLT/roll_pitch_yaw.dat', 1, 19533);
-% my_roll_pitch_yaw_from_acc = importfile_my_roll_pitch_yaw_from_acc('RESLT/roll_pitch_yaw_from_acc.dat', 1, 19533);
-% inertial_acceleration = importfile_inertial_acceleration_xsensMT9B('RESLT/inertial_accelerations.dat', 1, 19533);
-% my_position = importfile_positionxsensMT9B('RESLT/position.dat', 1, 19533);
-% rawmagnetometers = importfile_raw_magnetometers('RESLT/raw_magnetometers.dat', 1, 19533);
+MT9euler = importfileMT9euler('xsensMT9B/01_no_movement/MT9_euler_00007154_000.log', 1, 18148);
+MT9all = importfileMT9raw('xsensMT9B/01_no_movement/MT9_cal_00007154_000.log', 1, 18148);
+my_roll_pitch_yaw = importfile_my_roll_pitch_yaw('RESLT/roll_pitch_yaw.dat', 1, 19533);
+my_roll_pitch_yaw_from_acc = importfile_my_roll_pitch_yaw_from_acc('RESLT/roll_pitch_yaw_from_acc.dat', 1, 19533);
+inertial_acceleration = importfile_inertial_acceleration_xsensMT9B('RESLT/inertial_accelerations.dat', 1, 19533);
+my_position = importfile_positionxsensMT9B('RESLT/position.dat', 1, 19533);
+rawmagnetometers = importfile_raw_magnetometers('RESLT/raw_magnetometers.dat', 1, 19533);
 
 % 82 secs. with 257 data per second (characterise yaw drift)
 % MT9euler = importfileMT9euler('xsensMT9B/03_characterise_yaw_drift/MT9_euler_00007154_000.log', 2188, 20993);
@@ -60,6 +60,15 @@
 % my_position = importfile_positionxsensMT9B('RESLT/position.dat', 1, 1816991);
 
 %% Characterising drift
+% 1 secs with 257 data per second
+MT9euler = importfileMT9euler('xsensMT9B/07_characterise_yaw_drift_2hrs/MT9_euler_00007154_000.log', 1, 251);
+MT9all = importfileMT9raw('xsensMT9B/07_characterise_yaw_drift_2hrs/MT9_cal_00007154_000.log', 1, 251);
+my_roll_pitch_yaw = importfile_my_roll_pitch_yaw('data_to_characterise_drift/01sec/roll_pitch_yaw.dat', 1702);
+my_roll_pitch_yaw_from_acc = importfile_my_roll_pitch_yaw_from_acc('data_to_characterise_drift/01sec/roll_pitch_yaw_from_acc.dat', 1, 1702);
+inertial_acceleration = importfile_inertial_acceleration_xsensMT9B('data_to_characterise_drift/01sec/inertial_accelerations.dat', 1, 1702);
+my_ddrift_yaw = importfile_my_roll_pitch_yaw('data_to_characterise_drift/01sec/ddrift_yaw.dat', 1, 1702);
+my_position = importfile_positionxsensMT9B('data_to_characterise_drift/01sec/position.dat', 1, 1702);
+
 % 5 secs with 257 data per second
 MT9euler = importfileMT9euler('xsensMT9B/07_characterise_yaw_drift_2hrs/MT9_euler_00007154_000.log', 1, 1281);
 MT9all = importfileMT9raw('xsensMT9B/07_characterise_yaw_drift_2hrs/MT9_cal_00007154_000.log', 1, 1281);
@@ -212,7 +221,7 @@ plot(my_roll_pitch_yaw_from_acc(:,1), my_roll_pitch_yaw_from_acc(:,2)*180.0/pi, 
 title('Euler angle [roll]')
 xlabel('Time (s)')
 ylabel('\phi (degrees)')
-legend('Solution', 'Gyroscope and accelerometer fusion', 'Angle from accelerometer', 'Location', 'NorthWest')
+legend('Angle from accelerometer', 'Gyroscope and accelerometer fusion', 'Solution', 'Location', 'NorthWest')
 
 % Original vs processed pitch
 figure
@@ -221,7 +230,7 @@ plot(my_roll_pitch_yaw_from_acc(:,1), my_roll_pitch_yaw_from_acc(:,3)*180.0/pi, 
 title('Euler angle [pitch]')
 xlabel('Time(s)')
 ylabel('\theta (degrees)')
-legend('Solution', 'Gyroscope and accelerometer fusion', 'Angle from accelerometer', 'Location', 'NorthWest')
+legend('Angle from accelerometer', 'Gyroscope and accelerometer fusion', 'Solution', 'Location', 'NorthWest')
 
 % Original vs processed rollacc_angles[2] = atan2(acc[0], sqrt(acc[0]*acc[0]+acc[1]*acc[1]+acc[2]*acc[2]));
 figure
@@ -230,7 +239,7 @@ plot(my_roll_pitch_yaw_from_acc(:,1), my_roll_pitch_yaw_from_acc(:,4)*180.0/pi, 
 title('Euler angle [yaw]')
 xlabel('Time(s)')
 ylabel('\psi (degrees)')
-legend('Solution', 'Gyroscope and accelerometer fusion', 'Angle from accelerometer', 'Location', 'NorthWest')
+legend('Angle from accelerometer', 'Gyroscope and accelerometer fusion', 'Solution', 'Location', 'NorthWest')
 
 %% ddrift yaw
 figure

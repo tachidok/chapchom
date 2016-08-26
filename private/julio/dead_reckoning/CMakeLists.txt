@@ -1,6 +1,6 @@
 
 # Check for cmake minimum required
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 #Project name (this case library's name)
 PROJECT(${example_name})
@@ -13,14 +13,11 @@ IF(NOT CMAKE_BUILD_TYPE)
 	SET(CMAKE_BUILD_TYPE "Debug")
 ENDIF()
 
-#Set include path
-#SET(include_dirs ../../src)
-
 #Adding include directories
-INCLUDE_DIRECTORIES(../../../src)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../../../include)
 
 #Adding link directories
-LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../../lib)
+LINK_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../../../lib)
 
 #Adding library's sources
 #SET(src_files cc_odes_from_table_based_on_velocity)
