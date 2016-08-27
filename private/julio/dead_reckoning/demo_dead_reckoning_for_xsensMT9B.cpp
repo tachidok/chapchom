@@ -114,7 +114,7 @@ void multiply_matrix_times_vector(std::vector<std::vector<double> > &A,
 }
 
 int main(int argc, char *argv[])
-{
+{ 
  // -----------------------------------------------------------------
  // Instantiation of the problem
  // -----------------------------------------------------------------

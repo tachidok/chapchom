@@ -6,13 +6,16 @@
 
 int main(int argc, char *argv[])
 {
+ /// Setup terminate helper
+ TerminateHelper::setup();
+ 
  // Show matrix manipulation for addition, multiplication and
  // transpose
  
  // Size of the matrix (number of rows and columns)
  const unsigned long n_rows = 10;
  const unsigned long n_columns = 10;
-
+ 
  // ----------------------------------------------------------
  // Identity matrix
  // ----------------------------------------------------------

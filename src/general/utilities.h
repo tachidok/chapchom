@@ -17,6 +17,29 @@ namespace BrokenCopy
  extern void broken_copy(const std::string& class_name);
 }
 
+//=======================================================================
+/// Helper namespace for set_terminate function -- used to spawn
+/// messages from uncaught errors (their destructor may not be called)
+///=======================================================================
+namespace TerminateHelper
+{
+ /// Setup terminate helper
+ extern void setup();
+
+ /// \short Suppress error messages (e.g. because error has been caught)
+ extern void suppress_exception_error_messages();
+
+ /// Function to spawn messages from uncaught errors
+ extern void spawn_errors_from_uncaught_errors();
+
+ /// Stream to output error messages
+ extern std::ostream* Error_message_stream_pt;
+
+ /// String stream that records the error message
+ extern std::stringstream* Exception_stringstream_pt;
+
+}
+
 //=====================================================================
 /// Run-time exception handling  (error and warning).
 ///
@@ -142,5 +165,47 @@ class ChapchomLibWarning : public ChapchomLibException
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
+
+//=======================================================================
+/// Wrapper to a stream and an output modifier used to control the
+/// "info" output from chapchom. Its instantiation can be used like
+/// std::cout.
+//=======================================================================
+class ChapchomInfo
+{
+
+private:
+
+ ///Pointer to the output stream -- defaults to std::cout
+ std::ostream *Stream_pt;
+
+public:
+
+ ///\short Set default values for the output stream (cout)
+ ///and modifier (no modification)
+ ChapchomInfo();
+ 
+ ///\short Overload the << operator, writing output to the stream addressed by
+ ///Stream_pt and calling the function defined by the object addressed by
+ ///Output_modifier_pt
+ template<class _Tp>
+  std::ostream &operator<<(_Tp argument);
+ 
+ ///Access function for the stream pointer
+ std::ostream* &stream_pt() {return Stream_pt;}
+ 
+ ///Overload insertor to handle stream modifiers
+ std::ostream &operator<<(std::ostream& (*f)(std::ostream &))
+  {
+   return f(*Stream_pt);
+  }
+ 
+};
+
+//========================================================================
+// Single (global) instantiation of the ChapchomInfo object -- this
+// is used throughout the library as a "replacement" for std::cout
+//========================================================================
+extern ChapchomInfo champchom_info;
 
 #endif // #ifndef UTILITIES_H

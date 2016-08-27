@@ -52,6 +52,42 @@ namespace BrokenCopy
 
 }
 
+//=======================================================================
+/// Helper namespace for set_terminate function -- used to spawn
+/// messages from uncaught errors
+///=======================================================================
+namespace TerminateHelper
+{
+
+ /// Setup terminate helper
+ void setup()
+ {
+  if (Exception_stringstream_pt!=0) delete Exception_stringstream_pt;
+  Exception_stringstream_pt=new std::stringstream;
+  std::set_terminate(spawn_errors_from_uncaught_errors);
+ }
+
+ /// \short Flush string stream of error messages (call when error has been
+ /// caught)
+ void suppress_exception_error_messages()
+ {
+  delete Exception_stringstream_pt;
+  Exception_stringstream_pt=new std::stringstream;
+ }
+
+ /// Function to spawn messages from uncaught errors
+ void spawn_errors_from_uncaught_errors()
+ {
+  (*Error_message_stream_pt) << (*Exception_stringstream_pt).str();
+ }
+
+ /// Stream to output error messages
+ std::ostream* Error_message_stream_pt=&std::cerr;
+
+ /// String stream that records the error message
+ std::stringstream* Exception_stringstream_pt=0;
+}
+
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
@@ -115,6 +151,11 @@ ChapchomLibException::ChapchomLibException(const std::string &error_description,
  for(unsigned i=0;i<output_width;i++) {(*Exception_string_stream_pt) << "=";}
  (*Exception_string_stream_pt) << std::endl << std::endl;
  
+ // Copy message to stream in terminate helper in case the message
+ // doesn't get caught and/or doesn/t make it to the destructor
+ (*TerminateHelper::Exception_stringstream_pt)<<
+  (*Exception_string_stream_pt).str();
+ 
 }
 
 //========================================================================
@@ -137,9 +178,9 @@ ChapchomLibException::~ChapchomLibException() throw()
 std::ostream *ChapchomLibError::Stream_pt = &std::cerr;
 
 //=======================================================================
-/// Default output width for ChapchomLibErrors (70)
+/// Default output width for ChapchomLibErrors (80)
 //=======================================================================
-unsigned ChapchomLibError::Output_width = 70;
+unsigned ChapchomLibError::Output_width = 80;
 
 //=======================================================================
 /// Default output stream for ChapchomLibWarnings (cerr)
@@ -147,12 +188,29 @@ unsigned ChapchomLibError::Output_width = 70;
 std::ostream *ChapchomLibWarning::Stream_pt = &std::cerr;
 
 //=======================================================================
-/// Default output width for ChapchomLibWarnings (70)
+/// Default output width for ChapchomLibWarnings (80)
 //=======================================================================
-unsigned ChapchomLibWarning::Output_width = 70;
-
-
+unsigned ChapchomLibWarning::Output_width = 80;
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
+
+//=======================================================================
+// Set default values for the output stream (cout) and modifier (no
+// modification)
+// =======================================================================
+ChapchomInfo::ChapchomInfo() : Stream_pt(&std::cout)
+ { }
+
+// =======================================================================
+// Overload the << operator, writing output to the stream addressed by
+// Stream_pt and calling the function defined by the object addressed
+// by Output_modifier_pt
+// =======================================================================
+template<class _Tp>
+std::ostream &ChapchomInfo::operator<<(_Tp argument)
+{
+ *Stream_pt << argument;
+ return (*Stream_pt);
+}
