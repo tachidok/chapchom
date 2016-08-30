@@ -66,6 +66,7 @@
 #include <fstream>
 #include <sstream>
 
+// Own chapchom definitions
 #include "definitions.h"
 
 #endif // #ifndef COMMON_INCLUDES_H

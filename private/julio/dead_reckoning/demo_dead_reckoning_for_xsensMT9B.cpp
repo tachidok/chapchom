@@ -1,6 +1,11 @@
 #include <iostream>
 #include <cmath>
 
+// Include general/common includes, utilities and initialisation
+#include "../../../src/general/common_includes.h"
+#include "../../../src/general/utilities.h"
+#include "../../../src/general/initialise.h"
+
 // The required classes to solve Initial Value Problems (IVP)
 // The factory to create the integration method
 #include "../../../src/integration/cc_factory_integration_method.h"
@@ -114,7 +119,10 @@ void multiply_matrix_times_vector(std::vector<std::vector<double> > &A,
 }
 
 int main(int argc, char *argv[])
-{ 
+{
+ // Initialise chapcom
+ initialise_chapchom();
+ 
  // -----------------------------------------------------------------
  // Instantiation of the problem
  // -----------------------------------------------------------------
@@ -672,6 +680,9 @@ int main(int argc, char *argv[])
  delete odes;
  odes = 0;
  
- std::cout << "[DONE]" << std::endl;
+ // Finalise chapcom
+ finalise_chapchom();
+
+ return 0;
  
 }

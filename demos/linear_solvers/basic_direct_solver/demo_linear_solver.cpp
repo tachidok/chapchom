@@ -1,6 +1,11 @@
 #include <iostream>
 #include <cmath>
 
+// Include general/common includes, utilities and initialisation
+#include "../../../src/general/common_includes.h"
+#include "../../../src/general/utilities.h"
+#include "../../../src/general/initialise.h"
+
 // The class to solve linear systems using numerical recipes
 // implementation
 #include "../../../src/linear_solvers/cc_lu_solver_numerical_recipes.h"
@@ -11,6 +16,9 @@
 
 int main(int argc, char *argv[])
 {
+ // Initialise chapcom
+ initialise_chapchom();
+  
  // Create a matrix
  const unsigned nrows = 10;
  
@@ -44,6 +52,9 @@ int main(int argc, char *argv[])
  
  delete linear_solver_pt;
  linear_solver_pt = 0;
+ 
+ // Finalise chapcom
+ finalise_chapchom(); 
  
  return 0;
  

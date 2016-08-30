@@ -1,13 +1,20 @@
 #include <iostream>
 #include <cmath>
 
+// Include general/common includes, utilities and initialisation
+#include "../../../src/general/common_includes.h"
+#include "../../../src/general/utilities.h"
+#include "../../../src/general/initialise.h"
+
 // The class to create a matrix
 #include "../../../src/matrices/cc_matrix.h"
 
+using namespace chapchom;
+
 int main(int argc, char *argv[])
 {
- /// Setup terminate helper
- TerminateHelper::setup();
+ // Initialise chapcom
+ initialise_chapchom();
  
  // Show matrix manipulation for addition, multiplication and
  // transpose
@@ -226,6 +233,9 @@ int main(int argc, char *argv[])
  matrix_A_pt = 0;
  delete [] matrix_x_pt;
  matrix_x_pt = 0;
+ 
+ // Finalise chapcom
+ finalise_chapchom();
  
  return 0;
  
