@@ -181,9 +181,9 @@ namespace chapchom
  std::ostream *ChapchomLibError::Stream_pt = &std::cerr;
 
  //=======================================================================
- /// Default output width for ChapchomLibErrors (80)
+ /// Default output width for ChapchomLibErrors (70)
  //=======================================================================
- unsigned ChapchomLibError::Output_width = 80;
+ unsigned ChapchomLibError::Output_width = 70;
 
  //=======================================================================
  /// Default output stream for ChapchomLibWarnings (cerr)
@@ -191,9 +191,9 @@ namespace chapchom
  std::ostream *ChapchomLibWarning::Stream_pt = &std::cerr;
 
  //=======================================================================
- /// Default output width for ChapchomLibWarnings (80)
+ /// Default output width for ChapchomLibWarnings (70)
  //=======================================================================
- unsigned ChapchomLibWarning::Output_width = 80;
+ unsigned ChapchomLibWarning::Output_width = 70;
 
  ////////////////////////////////////////////////////////////////////////
  ////////////////////////////////////////////////////////////////////////
@@ -217,5 +217,11 @@ namespace chapchom
   *Stream_pt << argument;
   return (*Stream_pt);
  }
-
+ 
+ //========================================================================
+ // Single (global) instantiation of the ChapchomOutput object -- this
+ // is used throughout the library as a "replacement" for std::cout
+ //========================================================================
+ ChapchomOutput chapchom_output;
+ 
 }

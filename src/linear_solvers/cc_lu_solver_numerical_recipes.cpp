@@ -5,208 +5,212 @@
 
 #include "cc_lu_solver_numerical_recipes.h"
 
-// ===================================================================
-// Empty constructor
-// ===================================================================
-CCLUSolverNumericalRecipes::CCLUSolverNumericalRecipes()
- : ACLinearSolver(),
-   Resolve_enabled(false) { }
-
-// ===================================================================
-// Constructor where we specify the matrix A of size m X n
-// ===================================================================
-CCLUSolverNumericalRecipes::CCLUSolverNumericalRecipes(const CCMatrix &A)
- : ACLinearSolver(A),
-   Resolve_enabled(false) { }
-
-// ===================================================================
-// Empty destructor
-// ===================================================================
-CCLUSolverNumericalRecipes::~CCLUSolverNumericalRecipes() { }
-
-// ===================================================================
-// Solve a system of equations with input A. We specify the right-hand
-// side b and the x vector where the result is returned. We assume
-// that the input/output vectors have the correct dimensions (size n).
-// ===================================================================
-void CCLUSolverNumericalRecipes::solve(const CCMatrix &A,
-                                       const CCMatrix &b,
-                                       CCMatrix &x)
+namespace chapchom
 {
- // Set the matrix and its size
- set_matrix_A(A);
- 
- // Solve
- solve(b, x);
- 
-}
 
-// ===================================================================
-// Solve a system of equations with the already stored matrix A. We
-// specify the right-hand side b and the x vector where the result is
-// returned. We assume that the input/output vectors have the correct
-// dimensions (size n).
-// ===================================================================
-void CCLUSolverNumericalRecipes::solve(const CCMatrix &b, CCMatrix &x)
-{
- // We can only call solve if the matrix A has been set
- if (Matrix_A_has_been_set)
-  {     
-   // Factorise
-   factorise();
+ // ===================================================================
+ // Empty constructor
+ // ===================================================================
+ CCLUSolverNumericalRecipes::CCLUSolverNumericalRecipes()
+  : ACLinearSolver(),
+    Resolve_enabled(false) { }
+
+ // ===================================================================
+ // Constructor where we specify the matrix A of size m X n
+ // ===================================================================
+ CCLUSolverNumericalRecipes::CCLUSolverNumericalRecipes(const CCMatrix &A)
+  : ACLinearSolver(A),
+    Resolve_enabled(false) { }
+
+ // ===================================================================
+ // Empty destructor
+ // ===================================================================
+ CCLUSolverNumericalRecipes::~CCLUSolverNumericalRecipes() { }
+
+ // ===================================================================
+ // Solve a system of equations with input A. We specify the right-hand
+ // side b and the x vector where the result is returned. We assume
+ // that the input/output vectors have the correct dimensions (size n).
+ // ===================================================================
+ void CCLUSolverNumericalRecipes::solve(const CCMatrix &A,
+                                        const CCMatrix &b,
+                                        CCMatrix &x)
+ {
+  // Set the matrix and its size
+  set_matrix_A(A);
+ 
+  // Solve
+  solve(b, x);
+ 
+ }
+
+ // ===================================================================
+ // Solve a system of equations with the already stored matrix A. We
+ // specify the right-hand side b and the x vector where the result is
+ // returned. We assume that the input/output vectors have the correct
+ // dimensions (size n).
+ // ===================================================================
+ void CCLUSolverNumericalRecipes::solve(const CCMatrix &b, CCMatrix &x)
+ {
+  // We can only call solve if the matrix A has been set
+  if (Matrix_A_has_been_set)
+   {     
+    // Factorise
+    factorise();
    
-   // ... and do back substitution
-   back_substitution(b, x);
+    // ... and do back substitution
+    back_substitution(b, x);
    
-  }
- else
-  {
-   // Error message
-   std:ostringstream error_message;
-   error_message << "You have not specific any matrix for the system of\n"
-                 << "equations. Set one matrix first by calling the/"
-                 << "set_matrix() method or use the solve() method where\n"
-                 << "you can specify the matrix associated to the system\n"
-                 << "of equations." << std::endl;
-   throw ChapchomLibError(error_message.str(),
-			  CHAPCHOM_CURRENT_FUNCTION,
-			  CHAPCHOM_EXCEPTION_LOCATION);
-  }
- 
-}
-
-// ===================================================================
-// Re-solve a system of equations with the already stored matrix
-// A. Reusing the LU decomposition. We specify the right-hand side b
-// and the x vector where the result is returned. We assume that the
-// input/output vectors have the correct dimensions (size n).
-// ===================================================================
-void CCLUSolverNumericalRecipes::resolve(const CCMatrix &b, CCMatrix &x)
-{
- // We can only do back-substitution if a matrix has been
- // factorised
- if (Resolve_enabled)
-  {
-   // Do the back substitution
-   back_substitution(b, x);
-  }
+   }
   else
-  {
-   // Error message
+   {
+    // Error message
    std:ostringstream error_message;
-   error_message << "Resolve is not enabled.\n" << std::endl;
-   throw ChapchomLibError(error_message.str(),
-			  CHAPCHOM_CURRENT_FUNCTION,
-			  CHAPCHOM_EXCEPTION_LOCATION);
-  }
+    error_message << "You have not specific any matrix for the system of\n"
+                  << "equations. Set one matrix first by calling the/"
+                  << "set_matrix() method or use the solve() method where\n"
+                  << "you can specify the matrix associated to the system\n"
+                  << "of equations." << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
  
-}
+ }
 
-// ===================================================================
-// Performs LU factorisation of the input matrix, the factorisation is
-// internally stored such that it can be re-used when calling resolve
-// ===================================================================
-void CCLUSolverNumericalRecipes::factorise(const CCMatrix &A)
-{
- // Set the matrix and its size
- set_matrix_A(A);
- 
- // Factorise
- factorise();
- 
-}
-
-// ===================================================================
-// Performs LU factorisation of already stored matrix A, the
-// factorisation is internally stored such that it can be re-used when
-// calling resolve
-// ===================================================================
-void CCLUSolverNumericalRecipes::factorise()
-{
- // Prepare the matrix to call ludcmp() from Numerical Recipes
- 
- // Check that we are working with an square matrix, otherwise this
- // will not work
- const unsigned long nrows = A.nrows();
- const unsigned long ncolumns = A.ncolumns();
- if (nrows!=ncolumns)
-  {
-   // Error message
+ // ===================================================================
+ // Re-solve a system of equations with the already stored matrix
+ // A. Reusing the LU decomposition. We specify the right-hand side b
+ // and the x vector where the result is returned. We assume that the
+ // input/output vectors have the correct dimensions (size n).
+ // ===================================================================
+ void CCLUSolverNumericalRecipes::resolve(const CCMatrix &b, CCMatrix &x)
+ {
+  // We can only do back-substitution if a matrix has been
+  // factorised
+  if (Resolve_enabled)
+   {
+    // Do the back substitution
+    back_substitution(b, x);
+   }
+  else
+   {
+    // Error message
    std:ostringstream error_message;
-   error_message << "The matrix is not square." << std::endl
-		 << "The matrix is of size: " << nrows << " x "
-		 << ncolumns << std::endl;
-   throw ChapchomLibError(error_message.str(),
-			  CHAPCHOM_CURRENT_FUNCTION,
-			  CHAPCHOM_EXCEPTION_LOCATION);
-  }
+    error_message << "Resolve is not enabled.\n" << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
  
- // The matrix used as input and output, after calling ludcmp it has
- // the LU factorisation
- Mat_DP lu_a(nrows, ncolumns);
- 
- // Output vector of size n x 1 that records the row permutations
- // performed by partial pivoting.
- Vec_INT lu_indx(nrows);
- 
- // An output indicating whether the number of rows interchanges was
- // even or odd (+1 or -1, respectively)
- DP dummy;
- 
- // Copy the matrix A to the representation required by ludcmp()
- for (unsigned i = 0; i < nrows; i++)
-  {
-   for (unsigned j = 0; j < ncolumns; j++)
-    {
-     lu_a[i][j] = A(i,j);
-    }
-  }
- 
- // Do the factorisation
- NR::ludcmp(lu_a, lu_indx, dummy);
- 
- // Set the flag to indicate that resolve is enabled since we have
- // computed the LU decomposition
- Resolve_enabled = true; 
- 
-}
+ }
 
-// ===================================================================
-// Performs the back substitution with the LU decomposed matrix
-// ===================================================================
-void CCLUSolverNumericalRecipes::back_substitution(const CCMatrix &b,
-                                                   CCMatrix &x_output)
-{
- // Prepare the data to call lubksb()
+ // ===================================================================
+ // Performs LU factorisation of the input matrix, the factorisation is
+ // internally stored such that it can be re-used when calling resolve
+ // ===================================================================
+ void CCLUSolverNumericalRecipes::factorise(const CCMatrix &A)
+ {
+  // Set the matrix and its size
+  set_matrix_A(A);
  
- // The size of the right-hand side
- const unsigned n_rows = b.nrows();
+  // Factorise
+  factorise();
  
- // Number of right hand sizes (same as the number of output
- // x-vectors)
- const unsigned n_rhs = b.ncolumns();
- 
- // The solution vector size n x 1 (Numerical Recipes definition)
- Vec_DP x(n_rows);
- 
- // Copy the right-hand side into the solution vectors
- for (unsigned j = 0; j < n_rhs; j++)
-  {
-   for (unsigned i = 0; i < n_rows; i++)
-    {
-     x[i] = b(i,j);
-    }
-   
-   // Back-substitution
-   NR::lubksb(lu_a, *lu_indx, x);
-   
-   // Copy the solution into the output vector
-   for (unsigned i = 0; i < n_rows; i++)
-    {
-     x_output(i, j) =  x[i];
-    }
-   
-  }
- 
-}
+ }
 
+ // ===================================================================
+ // Performs LU factorisation of already stored matrix A, the
+ // factorisation is internally stored such that it can be re-used when
+ // calling resolve
+ // ===================================================================
+ void CCLUSolverNumericalRecipes::factorise()
+ {
+  // Prepare the matrix to call ludcmp() from Numerical Recipes
+ 
+  // Check that we are working with an square matrix, otherwise this
+  // will not work
+  const unsigned long nrows = A.nrows();
+  const unsigned long ncolumns = A.ncolumns();
+  if (nrows!=ncolumns)
+   {
+    // Error message
+   std:ostringstream error_message;
+    error_message << "The matrix is not square." << std::endl
+                  << "The matrix is of size: " << nrows << " x "
+                  << ncolumns << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+ 
+  // The matrix used as input and output, after calling ludcmp it has
+  // the LU factorisation
+  Mat_DP lu_a(nrows, ncolumns);
+ 
+  // Output vector of size n x 1 that records the row permutations
+  // performed by partial pivoting.
+  Vec_INT lu_indx(nrows);
+ 
+  // An output indicating whether the number of rows interchanges was
+  // even or odd (+1 or -1, respectively)
+  DP dummy;
+ 
+  // Copy the matrix A to the representation required by ludcmp()
+  for (unsigned i = 0; i < nrows; i++)
+   {
+    for (unsigned j = 0; j < ncolumns; j++)
+     {
+      lu_a[i][j] = A(i,j);
+     }
+   }
+ 
+  // Do the factorisation
+  NR::ludcmp(lu_a, lu_indx, dummy);
+ 
+  // Set the flag to indicate that resolve is enabled since we have
+  // computed the LU decomposition
+  Resolve_enabled = true; 
+ 
+ }
+
+ // ===================================================================
+ // Performs the back substitution with the LU decomposed matrix
+ // ===================================================================
+ void CCLUSolverNumericalRecipes::back_substitution(const CCMatrix &b,
+                                                    CCMatrix &x_output)
+ {
+  // Prepare the data to call lubksb()
+ 
+  // The size of the right-hand side
+  const unsigned n_rows = b.nrows();
+ 
+  // Number of right hand sizes (same as the number of output
+  // x-vectors)
+  const unsigned n_rhs = b.ncolumns();
+ 
+  // The solution vector size n x 1 (Numerical Recipes definition)
+  Vec_DP x(n_rows);
+ 
+  // Copy the right-hand side into the solution vectors
+  for (unsigned j = 0; j < n_rhs; j++)
+   {
+    for (unsigned i = 0; i < n_rows; i++)
+     {
+      x[i] = b(i,j);
+     }
+   
+    // Back-substitution
+    NR::lubksb(lu_a, *lu_indx, x);
+   
+    // Copy the solution into the output vector
+    for (unsigned i = 0; i < n_rows; i++)
+     {
+      x_output(i, j) =  x[i];
+     }
+   
+   }
+ 
+ }
+
+}

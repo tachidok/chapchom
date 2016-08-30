@@ -203,13 +203,13 @@ namespace chapchom
    }
  
  };
-
+ 
  //========================================================================
  // Single (global) instantiation of the ChapchomOutput object -- this
  // is used throughout the library as a "replacement" for std::cout
  //========================================================================
  extern ChapchomOutput chapchom_output;
-
-}
+ 
+} 
  
 #endif // #ifndef UTILITIES_H
