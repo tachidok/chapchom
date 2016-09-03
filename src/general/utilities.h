@@ -168,31 +168,42 @@ namespace chapchom
  ////////////////////////////////////////////////////////////////////////
  ////////////////////////////////////////////////////////////////////////
  ////////////////////////////////////////////////////////////////////////
-
+ 
  //========================================================================
  // Wrapper to a stream and an output modifier used to control the
  // output from chapchom. Its instantiation can be used like std::cout.
  // =======================================================================
  class ChapchomOutput
  {
-
+  
  private:
-
+  
   ///Pointer to the output stream -- defaults to std::cout
   std::ostream *Stream_pt;
-
+  
  public:
-
+  
   ///\short Set default values for the output stream (cout)
   ///and modifier (no modification)
   ChapchomOutput();
- 
+  
+#if 0
   ///\short Overload the << operator, writing output to the stream addressed by
   ///Stream_pt and calling the function defined by the object addressed by
   ///Output_modifier_pt
   template<class _Tp>
    std::ostream &operator<<(_Tp argument);
- 
+#endif // #if 0
+  
+#if 1
+  template<class _Tp>
+   std::ostream &operator<<(_Tp argument)
+   {
+    *Stream_pt << argument;
+    return (*Stream_pt);
+   }
+#endif // #if 1
+  
   ///Access function for the stream pointer
   std::ostream* &stream_pt() {return Stream_pt;}
  

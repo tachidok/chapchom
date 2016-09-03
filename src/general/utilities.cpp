@@ -206,6 +206,7 @@ namespace chapchom
  ChapchomOutput::ChapchomOutput() : Stream_pt(&std::cout)
  { }
 
+#if 0
  // =======================================================================
  // Overload the << operator, writing output to the stream addressed by
  // Stream_pt and calling the function defined by the object addressed
@@ -217,6 +218,7 @@ namespace chapchom
   *Stream_pt << argument;
   return (*Stream_pt);
  }
+#endif // #if 0
  
  //========================================================================
  // Single (global) instantiation of the ChapchomOutput object -- this

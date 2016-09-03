@@ -15,6 +15,8 @@
 // The odes
 #include "cc_odes_from_table_from_xsensMT9B.h"
 
+using namespace chapchom;
+
 //#define DEBUG
 
 //#define T_NO_MOVEMENT
@@ -83,8 +85,8 @@ void multiply_matrix_times_vector(std::vector<std::vector<double> > &A,
    error_message << "The input vector has dimension dimension ("
                  << n_rows_b << ", 1)" << std::endl;
    throw ChapchomLibError(error_message.str(),
-			  CHAPCHOM_CURRENT_FUNCTION,
-			  CHAPCHOM_EXCEPTION_LOCATION);   
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);   
   }
  
  // Get the size of the output vector
@@ -99,8 +101,8 @@ void multiply_matrix_times_vector(std::vector<std::vector<double> > &A,
    error_message << "The output vector has dimension dimension ("
                  << n_rows_x << ", 1)" << std::endl;
    throw ChapchomLibError(error_message.str(),
-			  CHAPCHOM_CURRENT_FUNCTION,
-			  CHAPCHOM_EXCEPTION_LOCATION);   
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);   
   }
  
  // Clear the vector x
@@ -117,7 +119,7 @@ void multiply_matrix_times_vector(std::vector<std::vector<double> > &A,
   } // for (i < n_rows_A)
  
 }
-
+ 
 int main(int argc, char *argv[])
 {
  // Initialise chapcom
@@ -197,10 +199,10 @@ int main(int argc, char *argv[])
    // Error message
    std::ostringstream error_message;
    error_message << "Could not create the file [" << file_raw_accelerations_name << "]"
-		 << std::endl;
+                 << std::endl;
    throw ChapchomLibError(error_message.str(),
-			  CHAPCHOM_CURRENT_FUNCTION,
-			  CHAPCHOM_EXCEPTION_LOCATION);
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
   }
  
  char file_inertial_accelerations_name[100];
@@ -211,10 +213,10 @@ int main(int argc, char *argv[])
    // Error message
    std::ostringstream error_message;
    error_message << "Could not create the file [" << file_inertial_accelerations_name << "]"
-		 << std::endl;
+                 << std::endl;
    throw ChapchomLibError(error_message.str(),
-			  CHAPCHOM_CURRENT_FUNCTION,
-			  CHAPCHOM_EXCEPTION_LOCATION);
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
   }
  
  char file_roll_pitch_yaw_name[100];
@@ -225,10 +227,10 @@ int main(int argc, char *argv[])
    // Error message
    std::ostringstream error_message;
    error_message << "Could not create the file [" << file_roll_pitch_yaw_name << "]"
-		 << std::endl;
+                 << std::endl;
    throw ChapchomLibError(error_message.str(),
-			  CHAPCHOM_CURRENT_FUNCTION,
-			  CHAPCHOM_EXCEPTION_LOCATION);
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
   }
  
  char file_roll_pitch_yaw_from_acc_name[100];
@@ -239,10 +241,10 @@ int main(int argc, char *argv[])
    // Error message
    std::ostringstream error_message;
    error_message << "Could not create the file [" << file_roll_pitch_yaw_from_acc_name << "]"
-		 << std::endl;
+                 << std::endl;
    throw ChapchomLibError(error_message.str(),
-			  CHAPCHOM_CURRENT_FUNCTION,
-			  CHAPCHOM_EXCEPTION_LOCATION);
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
   }
  
  char file_raw_magnetometers_name[100];
@@ -253,10 +255,10 @@ int main(int argc, char *argv[])
    // Error message
    std::ostringstream error_message;
    error_message << "Could not create the file [" << file_raw_magnetometers_name << "]"
-		 << std::endl;
+                 << std::endl;
    throw ChapchomLibError(error_message.str(),
-			  CHAPCHOM_CURRENT_FUNCTION,
-			  CHAPCHOM_EXCEPTION_LOCATION);
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
   }
  
  char file_drift_yaw_name[100];
@@ -267,10 +269,10 @@ int main(int argc, char *argv[])
    // Error message
    std::ostringstream error_message;
    error_message << "Could not create the file [" << file_drift_yaw_name << "]"
-		 << std::endl;
+                 << std::endl;
    throw ChapchomLibError(error_message.str(),
-			  CHAPCHOM_CURRENT_FUNCTION,
-			  CHAPCHOM_EXCEPTION_LOCATION);
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
   }
  
  char file_velocity_name[100];
@@ -281,10 +283,10 @@ int main(int argc, char *argv[])
    // Error message
    std::ostringstream error_message;
    error_message << "Could not create the file [" << file_velocity_name << "]"
-		 << std::endl;
+                 << std::endl;
    throw ChapchomLibError(error_message.str(),
-			  CHAPCHOM_CURRENT_FUNCTION,
-			  CHAPCHOM_EXCEPTION_LOCATION);
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
   }
  
  char file_position_name[100];
@@ -295,10 +297,10 @@ int main(int argc, char *argv[])
    // Error message
    std::ostringstream error_message;
    error_message << "Could not create the file [" << file_position_name << "]"
-		 << std::endl;
+                 << std::endl;
    throw ChapchomLibError(error_message.str(),
-			  CHAPCHOM_CURRENT_FUNCTION,
-			  CHAPCHOM_EXCEPTION_LOCATION);
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
   }
 
 #ifdef T_GET_YAW_DRIFT
@@ -310,10 +312,10 @@ int main(int argc, char *argv[])
    // Error message
    std::ostringstream error_message;
    error_message << "Could not create the file [" << file_get_yaw_name << "]"
-		 << std::endl;
+                 << std::endl;
    throw ChapchomLibError(error_message.str(),
-			  CHAPCHOM_CURRENT_FUNCTION,
-			  CHAPCHOM_EXCEPTION_LOCATION);
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
   }
 #endif // #ifdef T_GET_YAW_DRIFT
  
@@ -326,10 +328,10 @@ int main(int argc, char *argv[])
    // Error message
    std::ostringstream error_message;
    error_message << "Could not create the file [" << file_DEBUG_name << "]"
-		 << std::endl;
+                 << std::endl;
    throw ChapchomLibError(error_message.str(),
-			  CHAPCHOM_CURRENT_FUNCTION,
-			  CHAPCHOM_EXCEPTION_LOCATION);
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
   }
 #endif // #ifdef DEBUG
  
