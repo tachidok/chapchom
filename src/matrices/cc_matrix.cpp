@@ -9,8 +9,9 @@ namespace chapchom
  // ===================================================================
  // Empty constructor
  // ===================================================================
- CCMatrix::CCMatrix() 
-  : ACMatrix()
+ template<class T>
+ CCMatrix<T>::CCMatrix<T>() 
+  : ACMatrix<T>()
  {
   // Set the pointer to the matrix to NULL
   Matrix_pt = 0;
@@ -19,17 +20,19 @@ namespace chapchom
  // ===================================================================
  // Constructor to create an n X n zero matrix
  // ===================================================================
- CCMatrix::CCMatrix(const unsigned long n)
-  : ACMatrix(n)
+ template<class T>
+ CCMatrix<T>::CCMatrix<T>(const unsigned long n)
+ : ACMatrix<T>(n)
  { 
   create_zero_matrix();
  }
-
+ 
  // ===================================================================
  // Constructor to create a zero matrix
  // ===================================================================
- CCMatrix::CCMatrix(const unsigned long m, const unsigned long n)
-  : ACMatrix(m, n)
+ template<class T>
+ CCMatrix<T>::CCMatrix<T>(const unsigned long m, const unsigned long n)
+  : ACMatrix<T>(m, n)
  {  
   create_zero_matrix();
  }
@@ -37,20 +40,22 @@ namespace chapchom
  // ===================================================================
  // Constructor where we pass the data for the matrix of size m X n
  // ===================================================================
- CCMatrix::CCMatrix(double *matrix_pt,
-                    const unsigned long m,
-                    const unsigned long n)
-  : ACMatrix(m, n)
+ template<class T>
+ CCMatrix<T>::CCMatrix<T>(T *matrix_pt,
+                          const unsigned long m,
+                          const unsigned long n)
+ : ACMatrix<T>(m, n)
  {
   // Copy the data from the input vector to the Matrix_pt vector
   set_matrix(matrix_pt, m, n);
  }
-
+ 
  // ===================================================================
  // Copy constructor
  // ===================================================================
- CCMatrix::CCMatrix(const CCMatrix &copy)
-  : ACMatrix(copy.nrows(), copy.ncolumns())
+ template<class T>
+ CCMatrix<T>::CCMatrix<T>(const CCMatrix &copy)
+  : ACMatrix<T>(copy.nrows(), copy.ncolumns())
  {
   // Copy the data from the input vector to the Matrix_pt vector
   set_matrix(copy.matrix_pt(), NRows, NColumns);
@@ -59,7 +64,8 @@ namespace chapchom
  // ===================================================================
  // Empty destructor
  // ===================================================================
- CCMatrix::~CCMatrix()
+ template<class T>
+ CCMatrix<T>::~CCMatrix<T>()
  {
   // Deallocate memory
   clean_up();
@@ -68,7 +74,8 @@ namespace chapchom
  // ===================================================================
  // Assignment operator
  // ===================================================================
- CCMatrix& CCMatrix::operator=(const CCMatrix &source_matrix)
+ template<class T>
+ CCMatrix<T>& CCMatrix<T>::operator=(const CCMatrix<T> &source_matrix)
  {
   // Check whether the dimensions of the matrices are the same
   const unsigned long n_rows_source_matrix = source_matrix.nrows();
@@ -90,7 +97,7 @@ namespace chapchom
    }
  
   // Copy the matrix (an element by element copy, uff!!)
-  std::memcpy(Matrix_pt, source_matrix.matrix_pt(), n_rows*n_columns*sizeof(double));
+  std::memcpy(Matrix_pt, source_matrix.matrix_pt(), n_rows*n_columns*sizeof(T));
  
   // Mark the matrix as having elements
   Is_empty = false;
@@ -103,7 +110,8 @@ namespace chapchom
  // ===================================================================
  // += operator
  // ===================================================================
- CCMatrix& CCMatrix::operator+=(const CCMatrix &matrix)
+ template<class T>
+ CCMatrix<T>& CCMatrix<T>::operator+=(const CCMatrix<T> &matrix)
  {
   // Check whether the dimensions of the matrices are the same
   const unsigned long n_rows_input_matrix = matrix.nrows();
@@ -132,7 +140,8 @@ namespace chapchom
  // ===================================================================
  // -= operator
  // ===================================================================
- CCMatrix& CCMatrix::operator-=(const CCMatrix &matrix)
+ template<class T>
+ CCMatrix<T>& CCMatrix<T>::operator-=(const CCMatrix<T> &matrix)
  {
   // Check whether the dimensions of the matrices are the same
   const unsigned long n_rows_input_matrix = matrix.nrows();
@@ -161,7 +170,8 @@ namespace chapchom
  // ===================================================================
  // Add operator
  // ===================================================================
- CCMatrix CCMatrix::operator+(const CCMatrix &matrix)
+ template<class T>
+ CCMatrix<T> CCMatrix<T>::operator+(const CCMatrix<T> &matrix)
  {
   // Check whether the dimensions of the matrices are the same
   const unsigned long n_rows_input_matrix = matrix.nrows();
@@ -182,7 +192,7 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   // Create a zero matrix where to store the result
-  CCMatrix solution(n_rows, n_columns);
+  CCMatrix<T> solution(n_rows, n_columns);
   // Call the method to perform the addition
   add_matrix(matrix, solution);
   // Return the solution matrix
@@ -192,7 +202,8 @@ namespace chapchom
  // ===================================================================
  // Substraction operator
  // ===================================================================
- CCMatrix CCMatrix::operator-(const CCMatrix &matrix)
+ template<class T>
+ CCMatrix<T> CCMatrix<T>::operator-(const CCMatrix<T> &matrix)
  {
   // Check whether the dimensions of the matrices are the same
   const unsigned long n_rows_input_matrix = matrix.nrows();
@@ -213,7 +224,7 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   // Create a zero matrix where to store the result
-  CCMatrix solution(n_rows, n_columns);
+  CCMatrix<T> solution(n_rows, n_columns);
   // Call the method to perform the addition
   substract_matrix(matrix, solution);
   return solution;
@@ -222,7 +233,8 @@ namespace chapchom
  // ===================================================================
  // Multiplication operator
  // ===================================================================
- CCMatrix CCMatrix::operator*(const CCMatrix &right_matrix)
+ template<class T>
+ CCMatrix<T> CCMatrix<T>::operator*(const CCMatrix<T> &right_matrix)
  {
   // Check whether the dimensions of the matrices allow for
   // multiplication
@@ -246,7 +258,7 @@ namespace chapchom
    }
  
   // Create a zero matrix where to store the result
-  CCMatrix solution(n_rows_left_matrix, n_columns_right_matrix);
+  CCMatrix<T> solution(n_rows_left_matrix, n_columns_right_matrix);
   // Perform the multiplication
   multiply_by_matrix(right_matrix, solution);
   // Return the solution matrix
@@ -257,9 +269,10 @@ namespace chapchom
  // Transforms the input vector to a matrix class type (virtual such
  // that each derived class has to implement it)
  // ===================================================================
- void CCMatrix::set_matrix(const double *matrix_pt,
-                           const unsigned long m,
-                           const unsigned long n)
+ template<class T>
+ void CCMatrix<T>::set_matrix(const T *matrix_pt,
+                              const unsigned long m,
+                              const unsigned long n)
  {
   // Clean any possible previously allocated memory
   clean_up();
@@ -272,19 +285,20 @@ namespace chapchom
   Matrix_pt = 0;
  
   // Allocate memory for the matrix
-  Matrix_pt = new double[m*n];
+  Matrix_pt = new T[m*n];
   // Copy the matrix (an element by element copy, uff!!)
-  std::memcpy(Matrix_pt, matrix_pt, m*n*sizeof(double));
- 
+  std::memcpy(Matrix_pt, matrix_pt, m*n*sizeof(T));
+  
   // Mark the matrix as having elements
   Is_empty = false;
- 
+  
  }
-
+ 
  // ===================================================================
  // Clean up for any dynamically stored data
  // ===================================================================
- void CCMatrix::clean_up()
+ template<class T>
+ void CCMatrix<T>::clean_up()
  {
   // Check whether the Matrix has elements
   if (!Is_empty)
@@ -300,6 +314,7 @@ namespace chapchom
  // ===================================================================
  // Free allocated memory for matrix
  // ===================================================================
+ template<class T>
  void CCMatrix::free_memory_for_matrix()
  {
   // Is the matrix allowed for deletion. If this method is called from
@@ -330,7 +345,8 @@ namespace chapchom
  // ===================================================================
  // Performs sum of matrices
  // ===================================================================
- void CCMatrix::add_matrix(const CCMatrix &matrix, const CCMatrix &solution_matrix)
+ template<class T>
+ void CCMatrix<T>::add_matrix(const CCMatrix<T> &matrix, const CCMatrix<T> &solution_matrix)
  { 
   // Check whether the dimensions of the matrices are the same
   const unsigned long n_rows_input_matrix = matrix.nrows();
@@ -352,9 +368,9 @@ namespace chapchom
    }
  
   // Get the matrix pointer of the solution matrix
-  double *solution_matrix_pt = solution_matrix.matrix_pt();
+  T *solution_matrix_pt = solution_matrix.matrix_pt();
   // Get the matrix pointer of the input matrix
-  double *matrix_pt = matrix.matrix_pt();
+  T *matrix_pt = matrix.matrix_pt();
   // Perform the addition
   for (unsigned long i = 0; i < n_rows; i++)
    {
@@ -370,7 +386,8 @@ namespace chapchom
  // ===================================================================
  // Performs substraction of matrices
  // ===================================================================
- void CCMatrix::substract_matrix(const CCMatrix &matrix, const CCMatrix &solution_matrix)
+ template<class T>
+ void CCMatrix<T>::substract_matrix(const CCMatrix<T> &matrix, const CCMatrix<T> &solution_matrix)
  {
   // Check whether the dimensions of the matrices are the same
   const unsigned long n_rows_input_matrix = matrix.nrows();
@@ -392,9 +409,9 @@ namespace chapchom
    }
  
   // Get the matrix pointer of the solution matrix
-  double *solution_matrix_pt = solution_matrix.matrix_pt();
+  T *solution_matrix_pt = solution_matrix.matrix_pt();
   // Get the matrix pointer of the input matrix
-  double *matrix_pt = matrix.matrix_pt();
+  T *matrix_pt = matrix.matrix_pt();
   // Perform the addition
   for (unsigned long i = 0; i < n_rows; i++)
    {
@@ -410,7 +427,8 @@ namespace chapchom
  // ===================================================================
  // Performs multiplication of matrices
  // ===================================================================
- void CCMatrix::multiply_by_matrix(const CCMatrix &right_matrix, const CCMatrix &solution_matrix)
+ template<class T>
+ void CCMatrix<T>::multiply_by_matrix(const CCMatrix<T> &right_matrix, const CCMatrix<T> &solution_matrix)
  {
   // Check whether the dimensions of the matrices allow for
   // multiplication
@@ -434,9 +452,9 @@ namespace chapchom
    }
  
   // Get the matrix pointer of the solution matrix
-  double *solution_matrix_pt = solution_matrix.matrix_pt();
+  T *solution_matrix_pt = solution_matrix.matrix_pt();
   // Get the matrix pointer of the right matrix
-  double *right_matrix_pt = right_matrix.matrix_pt();
+  T *right_matrix_pt = right_matrix.matrix_pt();
   // Perform the multiplication
   for (unsigned long i = 0; i < n_rows_left_matrix; i++)
    {
@@ -459,7 +477,8 @@ namespace chapchom
  // ===================================================================
  // Computes the transpose and store in the solution matrix
  // ===================================================================
- void CCMatrix::transpose(const CCMatrix &transpose_matrix)
+ template<class T>
+ void CCMatrix<T>::transpose(const CCMatrix<T> &transpose_matrix)
  {
   // Check whether the dimensions of the matrices allow for transpose
   const unsigned long n_rows_transpose_matrix = transpose_matrix.nrows();
@@ -482,7 +501,7 @@ namespace chapchom
    }
  
   // Get a pointer to the matrix structure of the solution CCMatrix
-  double *transposed_matrix_pt = transpose_matrix.matrix_pt();
+  T *transposed_matrix_pt = transpose_matrix.matrix_pt();
   for (unsigned i = 0; i < n_rows; i++)
    {
     for (unsigned j = 0; j < n_columns; j++)
@@ -498,7 +517,8 @@ namespace chapchom
  // ===================================================================
  // Get the specified value from the matrix (read-only)
  // ===================================================================
- const double CCMatrix::value(const unsigned long i, const unsigned long j) const
+ template<class T>
+ const T CCMatrix<T>::value(const unsigned long i, const unsigned long j) const
  {
   // TODO: Julio - Implement range check access
   // Return the value at row i and column j
@@ -508,7 +528,8 @@ namespace chapchom
  // ===================================================================
  // Set values in the matrix (write version)
  // ===================================================================
- double &CCMatrix::value(const unsigned long i, const unsigned long j)
+ template<class T>
+ T &CCMatrix<T>::value(const unsigned long i, const unsigned long j)
  {
   // TODO: Julio - Implement range check access
   // Return the value at row i and column j
@@ -516,7 +537,8 @@ namespace chapchom
  }
 
  // Output the matrix
- void CCMatrix::output()
+ template<class T>
+ void CCMatrix<T>::output()
  {
   if (Is_empty)
    {
@@ -544,19 +566,20 @@ namespace chapchom
  // ===================================================================
  // Creates a zero matrix with the given rows and columns
  // ===================================================================
- void CCMatrix::create_zero_matrix()
+ template<class T>
+ void CCMatrix<T>::create_zero_matrix()
  {
   // Delete any possible stored matrix
   clean_up();
  
   // Allocate memory for the matrix
-  Matrix_pt = new double[NRows*NColumns];
+  Matrix_pt = new T[NRows*NColumns];
  
   // ... and set the matrix to zero
-  std::memset(Matrix_pt, 0, sizeof(double*)*NColumns*NRows);
+  std::memset(Matrix_pt, 0, sizeof(T*)*NColumns*NRows);
  
   // Mark the matrix as having elements
   Is_empty = false;
  }
-
+ 
 }

@@ -18,6 +18,7 @@ namespace chapchom
  // doubles and complexes
 
  // Abstract class to represent matrices
+ template<class T>
  class ACMatrix
  {
 
@@ -34,10 +35,10 @@ namespace chapchom
   
   // Destructor
   virtual ~ACMatrix();
- 
+  
   // Transforms the input vector to a matrix class type (virtual such
   // that each derived class has to implement it)
-  virtual void set_matrix(const double *matrix_pt,
+  virtual void set_matrix(const T *matrix_pt,
                           const unsigned long m,
                           const unsigned long n) = 0;
  
@@ -46,29 +47,29 @@ namespace chapchom
  
   // Free allocated memory for matrix
   virtual void free_memory_for_matrix() = 0;
- 
+  
   // Get the specified value from the matrix (read-only)
-  virtual const double value(const unsigned long i, const unsigned long j) const = 0;
- 
+  virtual const T value(const unsigned long i, const unsigned long j) const = 0;
+  
   // Set values in the matrix (write version)
-  virtual double &value(const unsigned long i, const unsigned long j) = 0;
+  virtual T &value(const unsigned long i, const unsigned long j) = 0;
  
   // Get the specified value from the matrix
-  inline double get_value(const unsigned long i, const unsigned long j) const
+  inline T get_value(const unsigned long i, const unsigned long j) const
   {return value(i,j);}
  
   // Set values in the matrix
-  inline void set_value(const unsigned long i, const unsigned long j, double v)
+  inline void set_value(const unsigned long i, const unsigned long j, T v)
   {value(i, j) = v;}
  
   /// Get access using brackets as matrix(i,j). Read-only version
-  inline virtual double operator()(const unsigned long &i, 
-                                   const unsigned long &j) const
+  inline virtual T operator()(const unsigned long &i, 
+                              const unsigned long &j) const
   {return value(i, j);}
  
   /// Get access using brackets as matrix(i,j). Read-write version
-  inline virtual double &operator()(const unsigned long &i, 
-                                    const unsigned long &j)
+  inline virtual T &operator()(const unsigned long &i, 
+                               const unsigned long &j)
   {return value(i,j);}
  
   // Output the matrix

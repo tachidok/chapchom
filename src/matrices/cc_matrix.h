@@ -12,7 +12,8 @@ namespace chapchom
 {
 
  // Concrete class to represent matrices
- class CCMatrix : public virtual ACMatrix
+ template<class T>
+ class CCMatrix : public virtual ACMatrix<T>
  {
 
  public:
@@ -27,7 +28,7 @@ namespace chapchom
   CCMatrix(const unsigned long m, const unsigned long n);
  
   // Constructor where we pass the data for the matrix of size m X n
-  CCMatrix(double *matrix_pt, const unsigned long m, const unsigned long n);
+  CCMatrix(T *matrix_pt, const unsigned long m, const unsigned long n);
  
   // Copy constructor (we require to define this if we want to use
   // operators overloading as sum and assignment)
@@ -56,7 +57,7 @@ namespace chapchom
   
   // Transforms the input vector to a matrix class type (virtual such
   // that each derived class has to implement it)
-  void set_matrix(const double *matrix_pt,
+  void set_matrix(const T *matrix_pt,
                   const unsigned long m,
                   const unsigned long n);
  
@@ -79,16 +80,16 @@ namespace chapchom
   void transpose(const CCMatrix &transpose_matrix);
   
   // Get the specified value from the matrix (read-only)
-  const double value(const unsigned long i, const unsigned long j) const;
+  const T value(const unsigned long i, const unsigned long j) const;
  
   // Set values in the matrix (write version)
-  double &value(const unsigned long i, const unsigned long j);
+  T &value(const unsigned long i, const unsigned long j);
  
   // Output the matrix
   void output();
  
   // Get access to the Matrix_pt
-  inline double *matrix_pt() const {return Matrix_pt;}
+  inline T *matrix_pt() const {return Matrix_pt;}
  
  protected:
  
@@ -96,10 +97,10 @@ namespace chapchom
   void create_zero_matrix();
  
   // The matrix
-  double *Matrix_pt;
- 
+  T *Matrix_pt;
+  
  };
-
-}
  
+}
+
 #endif // #ifndef CCMATRIX_H
