@@ -1,7 +1,7 @@
 // IN THIS FILE: Implementation of a concrete class to represent
 // matrices. This is the simplest implementation
 
-#include "cc_matrix.h"
+#include "cc_matrix.tpl.h"
 
 namespace chapchom
 {
@@ -10,7 +10,7 @@ namespace chapchom
  // Empty constructor
  // ===================================================================
  template<class T>
- CCMatrix<T>::CCMatrix<T>() 
+ CCMatrix<T>::CCMatrix() 
   : ACMatrix<T>()
  {
   // Set the pointer to the matrix to NULL
@@ -21,7 +21,7 @@ namespace chapchom
  // Constructor to create an n X n zero matrix
  // ===================================================================
  template<class T>
- CCMatrix<T>::CCMatrix<T>(const unsigned long n)
+ CCMatrix<T>::CCMatrix(const unsigned long n)
  : ACMatrix<T>(n)
  { 
   create_zero_matrix();
@@ -31,7 +31,7 @@ namespace chapchom
  // Constructor to create a zero matrix
  // ===================================================================
  template<class T>
- CCMatrix<T>::CCMatrix<T>(const unsigned long m, const unsigned long n)
+ CCMatrix<T>::CCMatrix(const unsigned long m, const unsigned long n)
   : ACMatrix<T>(m, n)
  {  
   create_zero_matrix();
@@ -41,9 +41,9 @@ namespace chapchom
  // Constructor where we pass the data for the matrix of size m X n
  // ===================================================================
  template<class T>
- CCMatrix<T>::CCMatrix<T>(T *matrix_pt,
-                          const unsigned long m,
-                          const unsigned long n)
+ CCMatrix<T>::CCMatrix(T *matrix_pt,
+                       const unsigned long m,
+                       const unsigned long n)
  : ACMatrix<T>(m, n)
  {
   // Copy the data from the input vector to the Matrix_pt vector
@@ -54,18 +54,18 @@ namespace chapchom
  // Copy constructor
  // ===================================================================
  template<class T>
- CCMatrix<T>::CCMatrix<T>(const CCMatrix &copy)
+ CCMatrix<T>::CCMatrix(const CCMatrix<T> &copy)
   : ACMatrix<T>(copy.nrows(), copy.ncolumns())
  {
   // Copy the data from the input vector to the Matrix_pt vector
-  set_matrix(copy.matrix_pt(), NRows, NColumns);
+  set_matrix(copy.matrix_pt(), this->NRows, this->NColumns);
  }
 
  // ===================================================================
  // Empty destructor
  // ===================================================================
  template<class T>
- CCMatrix<T>::~CCMatrix<T>()
+ CCMatrix<T>::~CCMatrix()
  {
   // Deallocate memory
   clean_up();
@@ -100,7 +100,7 @@ namespace chapchom
   std::memcpy(Matrix_pt, source_matrix.matrix_pt(), n_rows*n_columns*sizeof(T));
  
   // Mark the matrix as having elements
-  Is_empty = false;
+  this->Is_empty = false;
  
   // Return this (de-referenced pointer)
   return *this;
@@ -278,8 +278,8 @@ namespace chapchom
   clean_up();
  
   // Set the number of rows and columns
-  NRows = m;
-  NColumns = n;
+  this->NRows = m;
+  this->NColumns = n;
  
   // Set the pointer to the matrix to NULL
   Matrix_pt = 0;
@@ -290,7 +290,7 @@ namespace chapchom
   std::memcpy(Matrix_pt, matrix_pt, m*n*sizeof(T));
   
   // Mark the matrix as having elements
-  Is_empty = false;
+  this->Is_empty = false;
   
  }
  
@@ -301,10 +301,10 @@ namespace chapchom
  void CCMatrix<T>::clean_up()
  {
   // Check whether the Matrix has elements
-  if (!Is_empty)
+  if (!this->Is_empty)
    {
     // Make the matrix as deleteable
-    Delete_matrix = true;
+    this->Delete_matrix = true;
     // Free the memory allocated for the matrix
     free_memory_for_matrix();
    }
@@ -315,18 +315,18 @@ namespace chapchom
  // Free allocated memory for matrix
  // ===================================================================
  template<class T>
- void CCMatrix::free_memory_for_matrix()
+ void CCMatrix<T>::free_memory_for_matrix()
  {
   // Is the matrix allowed for deletion. If this method is called from
   // an external source we need to check whether the matrix has been
   // marked for deletion
-  if (Delete_matrix)
+  if (this->Delete_matrix)
    {
     delete Matrix_pt;
     Matrix_pt = 0; 
    
     // Mark the matrix as empty
-    Is_empty=true;
+    this->Is_empty=true;
    
    } // if (Delete_matrix)
   else
@@ -522,7 +522,7 @@ namespace chapchom
  {
   // TODO: Julio - Implement range check access
   // Return the value at row i and column j
-  return Matrix_pt[i*NColumns+j];
+  return Matrix_pt[i*this->NColumns+j];
  }
 
  // ===================================================================
@@ -533,14 +533,14 @@ namespace chapchom
  {
   // TODO: Julio - Implement range check access
   // Return the value at row i and column j
-  return Matrix_pt[i*NColumns+j];
+  return Matrix_pt[i*this->NColumns+j];
  }
 
  // Output the matrix
  template<class T>
  void CCMatrix<T>::output()
  {
-  if (Is_empty)
+  if (this->Is_empty)
    {
     // Error message
     std::ostringstream error_message;
@@ -551,11 +551,11 @@ namespace chapchom
    }
   else
    {
-    for (unsigned long i = 0; i < NRows; i++)
+    for (unsigned long i = 0; i < this->NRows; i++)
      {
-      for (unsigned long j = 0; j < NColumns; j++)
+      for (unsigned long j = 0; j < this->NColumns; j++)
        {
-        std::cout << Matrix_pt[i*NColumns+j] << " ";
+        std::cout << Matrix_pt[i*this->NColumns+j] << " ";
        }
       std::cout << std::endl;
      }
@@ -573,13 +573,13 @@ namespace chapchom
   clean_up();
  
   // Allocate memory for the matrix
-  Matrix_pt = new T[NRows*NColumns];
+  Matrix_pt = new T[this->NRows*this->NColumns];
  
   // ... and set the matrix to zero
-  std::memset(Matrix_pt, 0, sizeof(T*)*NColumns*NRows);
+  std::memset(Matrix_pt, 0, sizeof(T*)*this->NColumns*this->NRows);
  
   // Mark the matrix as having elements
-  Is_empty = false;
+  this->Is_empty = false;
  }
  
 }

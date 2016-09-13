@@ -23,10 +23,10 @@ using namespace chapchom;
 //#define T_CHARACTERISE_YAW
 //#define T_CHARACTERISE_YAW2
 //#define T_ELLIPSE_MOVEMENT
-//#define T_CHARACTERISE_YAW_HALF_HOUR
-#define T_CHARACTERISE_TWO_HOURS
+#define T_CHARACTERISE_YAW_HALF_HOUR
+//#define T_CHARACTERISE_TWO_HOURS
 
-#define T_GET_YAW_DRIFT
+//#define T_GET_YAW_DRIFT
 
 void fill_rotation_matrices(std::vector<std::vector<double> > &R,
                             std::vector<std::vector<double> > &R_t,
@@ -438,6 +438,10 @@ int main(int argc, char *argv[])
  //double yaw_correction = 0.001745278 * M_PI / 180.0;
  //double yaw_correction = 0.003696498 * M_PI / 180.0;
  //double yaw_correction = (5.0 * 180.0/M_PI) / n_steps_per_second;
+ double yaw_correction = 0.013089969/n_steps_per_second; // 0.75 degreess per second
+ //double yaw_correction = 0.013089969/n_steps_per_second;
+ //double yaw_correction = 0.006544985/n_steps_per_second; // 0.01 degreess per second
+ //double yaw_correction = 0.0;
  
  // -------------------------------------------------------------------
  // Apply complementary filter
@@ -468,16 +472,16 @@ int main(int argc, char *argv[])
  mag_proc[0] = atan2(magnetometer[1], magnetometer[2]);
  mag_proc[1] = atan2(-magnetometer[0], sqrt(magnetometer[1]*magnetometer[1]+magnetometer[2]*magnetometer[2]));
  mag_proc[2] = atan2(magnetometer[2], sqrt(magnetometer[0]*magnetometer[0]+magnetometer[2]*magnetometer[2]));
-
+ 
  // Correction for yaw
  //yaw_correction = ddrift_yaw;
  
  // Update filtered Euler angles
  y[0][6] = alpha * y[0][6] + (1.0 - alpha) * acc_angles[0];
  y[0][7] = alpha * y[0][7] + (1.0 - alpha) * acc_angles[1];
- //y[0][8]+= yaw_correction;
+ y[0][8]+= yaw_correction;
  //y[0][8] = alpha_yaw * y[0][8];// + (1.0 - alpha) * yaw_correction;
- //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * yaw_correction;
+ //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * (y[0][8] + yaw_correction);
  //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * acc_angles[2];
  //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * magnetometer[1];
  
@@ -597,8 +601,9 @@ int main(int argc, char *argv[])
    // Update filtered Euler angles
    y[0][6] = alpha * y[0][6] + (1.0 - alpha) * acc_angles[0];
    y[0][7] = alpha * y[0][7] + (1.0 - alpha) * acc_angles[1];
-   //y[0][8]+= yaw_correction;
+   y[0][8]+= yaw_correction;
    //y[0][8] = alpha_yaw * y[0][8];// + (1.0 - alpha) * yaw_correction;
+   //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * (y[0][8] + yaw_correction);
    //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * yaw_correction;
    //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * acc_angles[2];
    //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * magnetometer[1];

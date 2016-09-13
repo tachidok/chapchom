@@ -26,7 +26,8 @@ int main(int argc, char *argv[])
  // ----------------------------------------------------------
  // Identity matrix
  // ----------------------------------------------------------
- CCMatrix I(n_rows, n_columns);
+ // Instantiate double type matrices
+ CCMatrix<double> I(n_rows, n_columns);
  
  // Feed some data to the matrix (the identity)
  for (unsigned i = 0; i < n_rows; i++)
@@ -63,7 +64,7 @@ int main(int argc, char *argv[])
  // ---------------------------------------
  // Create the matrix from the vector data
  // ---------------------------------------
- CCMatrix B(matrix_pt, n_rows, n_columns);
+ CCMatrix<double> B(matrix_pt, n_rows, n_columns);
  
  std::cout << std::endl << "Matrix created from vector" << std::endl << std::endl;
  B.output();
@@ -72,7 +73,7 @@ int main(int argc, char *argv[])
  // Create a matrix where to store results
  // ----------------------------------------------------------
  // Solution matrix
- CCMatrix C(n_rows, n_columns);
+ CCMatrix<double> C(n_rows, n_columns);
  
  std::cout << std::endl
            << "------------------------------------------------------------------------------"
@@ -172,7 +173,7 @@ int main(int argc, char *argv[])
     }
   }
  // Create the non square matrix
- CCMatrix A(matrix_A_pt, n_rows_A, n_columns_A);
+ CCMatrix<double> A(matrix_A_pt, n_rows_A, n_columns_A);
  std::cout << std::endl << "Non square matrix"
            << std::endl << std::endl;
  A.output();
@@ -202,7 +203,7 @@ int main(int argc, char *argv[])
   }
  
  // Create the vector (matrix)
- CCMatrix x(matrix_x_pt, n_rows_x, n_columns_x);
+ CCMatrix<double> x(matrix_x_pt, n_rows_x, n_columns_x);
  std::cout << std::endl << "Vector"
            << std::endl << std::endl;
  x.output();
@@ -210,7 +211,7 @@ int main(int argc, char *argv[])
  // --------------------------------------
  // Matrix multiplication A * x = b
  // --------------------------------------
- CCMatrix b(n_rows_A, n_columns_x);
+ CCMatrix<double> b(n_rows_A, n_columns_x);
  b = A * x;
  
  std::cout << std::endl << "The multiplication of the matrices is:"
@@ -220,7 +221,7 @@ int main(int argc, char *argv[])
  // --------------------------------------------------
  // Apply transpose
  // --------------------------------------------------
- CCMatrix b_t(b.ncolumns(), b.nrows());
+ CCMatrix<double> b_t(b.ncolumns(), b.nrows());
  b.transpose(b_t);
  std::cout << std::endl << "The transposed matrix:"
            << std::endl << std::endl;

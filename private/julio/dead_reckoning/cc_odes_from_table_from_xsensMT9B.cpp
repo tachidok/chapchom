@@ -17,12 +17,12 @@ namespace chapchom
   Loaded_table = false;
   // Initialise the number of data in the Table
   //N_data_in_table = 0;
-  //N_data_in_table = 18273; // no movement
+  N_data_in_table = 18273; // no movement
   //N_data_in_table = 21162; // characterise yaw drift
   //N_data_in_table = 266959; // characterise yaw drift2
   //N_data_in_table = 20076; // ellipse movement
   //N_data_in_table = 524668; // characterise yaw drift half hour
-  N_data_in_table = 1808483; // characterise yaw two hours
+  //N_data_in_table = 1808483; // characterise yaw two hours
  
   // Create the interpolator
   interpolator_pt = new CCNewtonInterpolator();

@@ -3,7 +3,7 @@
 // ludcmp() and lubksb() from numerical recipes to perform the LU
 // decomposition and back-substitution, respectively.
 
-#include "cc_lu_solver_numerical_recipes.h"
+#include "cc_lu_solver_numerical_recipes.tpl.h"
 
 namespace chapchom
 {
@@ -11,30 +11,34 @@ namespace chapchom
  // ===================================================================
  // Empty constructor
  // ===================================================================
- CCLUSolverNumericalRecipes::CCLUSolverNumericalRecipes()
-  : ACLinearSolver(),
+ template<class T>
+ CCLUSolverNumericalRecipes<T>::CCLUSolverNumericalRecipes()
+  : ACLinearSolver<T>(),
     Resolve_enabled(false) { }
 
  // ===================================================================
  // Constructor where we specify the matrix A of size m X n
  // ===================================================================
- CCLUSolverNumericalRecipes::CCLUSolverNumericalRecipes(const CCMatrix &A)
-  : ACLinearSolver(A),
+ template<class T>
+ CCLUSolverNumericalRecipes<T>::CCLUSolverNumericalRecipes(const CCMatrix<T> &A)
+  : ACLinearSolver<T>(A),
     Resolve_enabled(false) { }
 
  // ===================================================================
  // Empty destructor
  // ===================================================================
- CCLUSolverNumericalRecipes::~CCLUSolverNumericalRecipes() { }
+ template<class T>
+ CCLUSolverNumericalRecipes<T>::~CCLUSolverNumericalRecipes() { }
 
  // ===================================================================
  // Solve a system of equations with input A. We specify the right-hand
  // side b and the x vector where the result is returned. We assume
  // that the input/output vectors have the correct dimensions (size n).
  // ===================================================================
- void CCLUSolverNumericalRecipes::solve(const CCMatrix &A,
-                                        const CCMatrix &b,
-                                        CCMatrix &x)
+ template<class T>
+ void CCLUSolverNumericalRecipes<T>::solve(const CCMatrix<T> &A,
+                                           const CCMatrix<T> &b,
+                                           CCMatrix<T> &x)
  {
   // Set the matrix and its size
   set_matrix_A(A);
@@ -50,10 +54,12 @@ namespace chapchom
  // returned. We assume that the input/output vectors have the correct
  // dimensions (size n).
  // ===================================================================
- void CCLUSolverNumericalRecipes::solve(const CCMatrix &b, CCMatrix &x)
+ template<class T>
+ void CCLUSolverNumericalRecipes<T>::solve(const CCMatrix<T> &b,
+                                           CCMatrix<T> &x)
  {
   // We can only call solve if the matrix A has been set
-  if (Matrix_A_has_been_set)
+  if (this->Matrix_A_has_been_set)
    {     
     // Factorise
     factorise();
@@ -84,7 +90,9 @@ namespace chapchom
  // and the x vector where the result is returned. We assume that the
  // input/output vectors have the correct dimensions (size n).
  // ===================================================================
- void CCLUSolverNumericalRecipes::resolve(const CCMatrix &b, CCMatrix &x)
+ template<class T>
+ void CCLUSolverNumericalRecipes<T>::resolve(const CCMatrix<T> &b,
+                                             CCMatrix<T> &x)
  {
   // We can only do back-substitution if a matrix has been
   // factorised
@@ -109,7 +117,8 @@ namespace chapchom
  // Performs LU factorisation of the input matrix, the factorisation is
  // internally stored such that it can be re-used when calling resolve
  // ===================================================================
- void CCLUSolverNumericalRecipes::factorise(const CCMatrix &A)
+ template<class T>
+ void CCLUSolverNumericalRecipes<T>::factorise(const CCMatrix<T> &A)
  {
   // Set the matrix and its size
   set_matrix_A(A);
@@ -124,14 +133,15 @@ namespace chapchom
  // factorisation is internally stored such that it can be re-used when
  // calling resolve
  // ===================================================================
- void CCLUSolverNumericalRecipes::factorise()
+ template<class T>
+ void CCLUSolverNumericalRecipes<T>::factorise()
  {
   // Prepare the matrix to call ludcmp() from Numerical Recipes
  
   // Check that we are working with an square matrix, otherwise this
   // will not work
-  const unsigned long nrows = A.nrows();
-  const unsigned long ncolumns = A.ncolumns();
+  const unsigned long nrows = this->A.nrows();
+  const unsigned long ncolumns = this->A.ncolumns();
   if (nrows!=ncolumns)
    {
     // Error message
@@ -161,7 +171,7 @@ namespace chapchom
    {
     for (unsigned j = 0; j < ncolumns; j++)
      {
-      lu_a[i][j] = A(i,j);
+      lu_a[i][j] = this->A(i,j);
      }
    }
  
@@ -177,8 +187,9 @@ namespace chapchom
  // ===================================================================
  // Performs the back substitution with the LU decomposed matrix
  // ===================================================================
- void CCLUSolverNumericalRecipes::back_substitution(const CCMatrix &b,
-                                                    CCMatrix &x_output)
+ template<class T>
+ void CCLUSolverNumericalRecipes<T>::back_substitution(const CCMatrix<T> &b,
+                                                       CCMatrix<T> &x_output)
  {
   // Prepare the data to call lubksb()
  

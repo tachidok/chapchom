@@ -23,14 +23,14 @@ rawmagnetometers = importfile_raw_magnetometers('RESLT/raw_magnetometers.dat', 1
 % rawmagnetometers = importfile_raw_magnetometers('RESLT/raw_magnetometers.dat', 1, 21075);
 
 % 17 mins. with 257 data per second (characterise yaw drift2)
-% MT9euler = importfileMT9euler('xsensMT9B/04_characterise_yaw_drift2/MT9_euler_00007154_000.log', 1, 266959);
-% MT9all = importfileMT9raw('xsensMT9B/04_characterise_yaw_drift2/MT9_cal_00007154_000.log', 1, 266959);
-% my_roll_pitch_yaw = importfile_my_roll_pitch_yaw('RESLT/roll_pitch_yaw.dat', 1, 273707);
-% my_roll_pitch_yaw_from_acc = importfile_my_roll_pitch_yaw_from_acc('RESLT/roll_pitch_yaw_from_acc.dat', 1, 273707);
-% inertial_acceleration = importfile_inertial_acceleration_xsensMT9B('RESLT/inertial_accelerations.dat', 1, 273707);
-% my_ddrift_yaw = importfile_my_roll_pitch_yaw('RESLT/ddrift_yaw.dat', 1, 273707);
-% my_position = importfile_positionxsensMT9B('RESLT/position.dat', 1, 273707);
-% rawmagnetometers = importfile_raw_magnetometers('RESLT/raw_magnetometers.dat', 1, 273707);
+MT9euler = importfileMT9euler('xsensMT9B/04_characterise_yaw_drift2/MT9_euler_00007154_000.log', 1, 266959);
+MT9all = importfileMT9raw('xsensMT9B/04_characterise_yaw_drift2/MT9_cal_00007154_000.log', 1, 266959);
+my_roll_pitch_yaw = importfile_my_roll_pitch_yaw('RESLT/roll_pitch_yaw.dat', 1, 273707);
+my_roll_pitch_yaw_from_acc = importfile_my_roll_pitch_yaw_from_acc('RESLT/roll_pitch_yaw_from_acc.dat', 1, 273707);
+inertial_acceleration = importfile_inertial_acceleration_xsensMT9B('RESLT/inertial_accelerations.dat', 1, 273707);
+my_ddrift_yaw = importfile_my_roll_pitch_yaw('RESLT/ddrift_yaw.dat', 1, 273707);
+my_position = importfile_positionxsensMT9B('RESLT/position.dat', 1, 273707);
+rawmagnetometers = importfile_raw_magnetometers('RESLT/raw_magnetometers.dat', 1, 273707);
 
 % x secs. with 257 data per second (ellipse movement)
 % MT9euler = importfileMT9euler('xsensMT9B/02_test_ellipse_movement/MT9_euler_00007154_000.log', 1, 20076);
@@ -42,13 +42,13 @@ rawmagnetometers = importfile_raw_magnetometers('RESLT/raw_magnetometers.dat', 1
 % my_position = importfile_positionxsensMT9B('RESLT/position.dat', 1, 26472);
 
 % half hour with 257 data per second
-% MT9euler = importfileMT9euler('xsensMT9B/06_characterise_yaw_drift_0.5hrs/MT9_euler_00007154_001.log', 1, 524668);
-% MT9all = importfileMT9raw('xsensMT9B/06_characterise_yaw_drift_0.5hrs/MT9_cal_00007154_001.log', 1, 524668);
-% my_roll_pitch_yaw = importfile_my_roll_pitch_yaw('RESLT/roll_pitch_yaw.dat', 1, 527622);
-% my_roll_pitch_yaw_from_acc = importfile_my_roll_pitch_yaw_from_acc('RESLT/roll_pitch_yaw_from_acc.dat', 1, 527622);
-% inertial_acceleration = importfile_inertial_acceleration_xsensMT9B('RESLT/inertial_accelerations.dat', 1, 527622);
-% my_ddrift_yaw = importfile_my_roll_pitch_yaw('RESLT/ddrift_yaw.dat', 1, 527622);
-% my_position = importfile_positionxsensMT9B('RESLT/position.dat', 1, 527622);
+MT9euler = importfileMT9euler('xsensMT9B/06_characterise_yaw_drift_0.5hrs/MT9_euler_00007154_001.log', 1, 524668);
+MT9all = importfileMT9raw('xsensMT9B/06_characterise_yaw_drift_0.5hrs/MT9_cal_00007154_001.log', 1, 524668);
+my_roll_pitch_yaw = importfile_my_roll_pitch_yaw('RESLT/roll_pitch_yaw.dat', 1, 527622);
+my_roll_pitch_yaw_from_acc = importfile_my_roll_pitch_yaw_from_acc('RESLT/roll_pitch_yaw_from_acc.dat', 1, 527622);
+inertial_acceleration = importfile_inertial_acceleration_xsensMT9B('RESLT/inertial_accelerations.dat', 1, 527622);
+my_ddrift_yaw = importfile_my_roll_pitch_yaw('RESLT/ddrift_yaw.dat', 1, 527622);
+my_position = importfile_positionxsensMT9B('RESLT/position.dat', 1, 527622);
 
 % 2 hours with 257 data per second
 % MT9euler = importfileMT9euler('xsensMT9B/07_characterise_yaw_drift_2hrs/MT9_euler_00007154_000.log', 1, 1808483);

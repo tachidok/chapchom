@@ -2,7 +2,7 @@
 // systems of equations, this class is inhereted by any concrete
 // implementations of linear solvers
 
-#include "ac_linear_solver.h"
+#include "ac_linear_solver.tpl.h"
 
 namespace chapchom
 {
@@ -10,14 +10,16 @@ namespace chapchom
  // ===================================================================
  // Constructor
  // ===================================================================
- ACLinearSolver::ACLinearSolver() 
+ template<class T>
+ ACLinearSolver<T>::ACLinearSolver() 
   : Matrix_A_has_been_set(false)
  { }
 
  // ===================================================================
  // Constructor where we specify the matrix A of size m X n
  // ===================================================================
- ACLinearSolver::ACLinearSolver(const CCMatrix &matrix)
+ template<class T>
+ ACLinearSolver<T>::ACLinearSolver(const CCMatrix<T> &matrix)
  {
   // Set matrix A
   A = matrix;
@@ -29,7 +31,8 @@ namespace chapchom
  // ===================================================================
  // Empty destructor
  // ===================================================================
- ACLinearSolver::~ACLinearSolver()
+ template<class T>
+ ACLinearSolver<T>::~ACLinearSolver()
  {
   // Deallocate memory
   clean_up();
@@ -38,7 +41,8 @@ namespace chapchom
  // ===================================================================
  // Set the matrix A
  // ===================================================================
- void ACLinearSolver::set_matrix_A(const CCMatrix &matrix)
+ template<class T>
+ void ACLinearSolver<T>::set_matrix_A(const CCMatrix<T> &matrix)
  {
   // First clean any other previously stored matrix
   clean_up();
@@ -53,7 +57,8 @@ namespace chapchom
  // ===================================================================
  // Clean up for any dynamically stored data
  // ===================================================================
- void ACLinearSolver::clean_up()
+ template<class T>
+ void ACLinearSolver<T>::clean_up()
  {
   // Check whether the matrix has been set
   if (Matrix_A_has_been_set)
