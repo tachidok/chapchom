@@ -41,7 +41,7 @@ namespace chapchom
                                            CCMatrix<T> &x)
  {
   // Set the matrix and its size
-  set_matrix_A(A);
+  this->set_matrix_A(A);
  
   // Solve
   solve(b, x);

@@ -9,50 +9,43 @@
 // The class to solve linear systems using numerical recipes
 // implementation
 #include "../../../src/linear_solvers/cc_lu_solver_numerical_recipes.h"
-// The class to represent matrices in CHAPCHOM
 
-// TODO. Do the same example but using the matrix representation of
-// chapchom
+using namespace chapchom;
 
 int main(int argc, char *argv[])
 {
  // Initialise chapcom
  initialise_chapchom();
+ 
+ // Create an square matrix
+ const unsigned n_rows = 10;
+ const unsigned n_cols = n_rows;
+ 
+ double *vector_data_A = new double[n_rows*n_cols];
+ double *vector_data_b = new double[n_rows];
+ 
+ // Transform the "vectors" to matrices
+ // The matrix A
+ CCMatrix<double> A(n_rows, n_cols);
+ A.set_matrix(vector_data_A, n_rows, n_cols);
+ 
+ // The right hand side vector
+ CCMatrix<double> b(n_rows, 1);
   
- // Create a matrix
- const unsigned nrows = 10;
- 
- double **A = new double*[nrows];
- for (unsigned i = 0; i < nrows; i++)
-  {
-   A[i] = new double[nrows];
-  }
- 
- double **b = new double*[nrows];
- for (unsigned i = 0; i < nrows; i++)
-  {
-   b[i] = new double[1];
-  }
- 
  // Create a linear solver with the matrix A (pass it size)
  //ACLinearSolver *linear_solver_pt = new CCLUSolverNumericalRecipes(A, n, n);
- ACLinearSolver *linear_solver_pt = new CCLUSolverNumericalRecipes();
+ CCLUSolverNumericalRecipes<double> linear_solver;
+ 
+ // The solution vector
+ CCMatrix<double> sol(n_cols, 1);
+ 
+ // Solve the system of equations
+ linear_solver.solve(A, b, sol);
  
  // Free memory
- for (unsigned i = 0; i < nrows; i++)
-  {
-   delete A[i];
-   delete b[i];
-  }
- delete [] A;
- A = 0;
- 
- delete [] b;
- b = 0;
- 
- delete linear_solver_pt;
- linear_solver_pt = 0;
- 
+ delete [] vector_data_A;
+ delete [] vector_data_b;
+  
  // Finalise chapcom
  finalise_chapchom(); 
  
