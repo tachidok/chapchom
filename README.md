@@ -1,19 +1,15 @@
 # Welcome !!!
 
 ### What the project is?
-
 We intend to develop a **Parallel-Pattern-Object-Oriented numerical
 library** with aims to solve PDE's by the Finite Element Method and
 Mesh Free Methods.
 
 ### How to configure it?
-
-Creating the CMake files :construction:, it will be added soon (cause
-it is a really pain to compile every file with the common g++ -Wall
-... you know)
+Run the script _autogen.sh_ in the main folder and follow the instructions
+on screen to configure the library.
 
 #### What you need to have it working and running nicely?
-
 * A C++ compiler - with MPI support to use parallel features.
 
 * CMake - to configure and install.
@@ -41,18 +37,22 @@ Mmm ... that is something we need to carefully think about.
 
 ### How to contribute
 
-During the initial stage contributions are only allowed by a selected
-number of people, but once we have something intereseting to share
-with you we will make it open to the public. Please check continuously
-for updates or contact the developers by email (I guess the email is
-somewhere listed in the gitHub page ... or not).
+Once we have something intereseting to share with you we will  make the
+project public. Please check continuously for updates or contact the
+developers :envelope: (tachidok.at.gmail.com).
 
-#### Notes for contributors Please check the documentation for
-anything you need to set-up your account, get a copy of the latest
-development and start submitting your amazing contributions ....
+#### Notes for contributors
+Please check the documentation for anything you need to set-up your account,
+get a copy of the latest development and start submitting your contributions ....
 
-### When did this start?
+### Facts
 
+#### How many developers are currently working on the library
+At Tuesdat, 13 Sept 2016 there is one and only one developer :no_mouth:
+
+:construction: :construction: :construction: :construction: :construction:
+
+#### When did this start?
 This project was initially uploaded to GitHub at Friday, 11 March 2016
 :smile:
 
