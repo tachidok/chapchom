@@ -11,6 +11,7 @@ my_roll_pitch_yaw_from_acc = importfile_my_roll_pitch_yaw_from_acc('RESLT/roll_p
 inertial_acceleration = importfile_inertial_acceleration_xsensMT9B('RESLT/inertial_accelerations.dat', 1, 19533);
 my_position = importfile_positionxsensMT9B('RESLT/position.dat', 1, 19533);
 rawmagnetometers = importfile_raw_magnetometers('RESLT/raw_magnetometers.dat', 1, 19533);
+yaw_error= importfile_yaw_error('RESLT/yaw_error.dat', 1, 19533);
 
 % 82 secs. with 257 data per second (characterise yaw drift)
 % MT9euler = importfileMT9euler('xsensMT9B/03_characterise_yaw_drift/MT9_euler_00007154_000.log', 2188, 20993);
@@ -49,6 +50,7 @@ my_roll_pitch_yaw_from_acc = importfile_my_roll_pitch_yaw_from_acc('RESLT/roll_p
 inertial_acceleration = importfile_inertial_acceleration_xsensMT9B('RESLT/inertial_accelerations.dat', 1, 527622);
 my_ddrift_yaw = importfile_my_roll_pitch_yaw('RESLT/ddrift_yaw.dat', 1, 527622);
 my_position = importfile_positionxsensMT9B('RESLT/position.dat', 1, 527622);
+yaw_error= importfile_yaw_error('RESLT/yaw_error.dat', 1, 527622);
 
 % 2 hours with 257 data per second
 % MT9euler = importfileMT9euler('xsensMT9B/07_characterise_yaw_drift_2hrs/MT9_euler_00007154_000.log', 1, 1808483);
@@ -240,6 +242,14 @@ title('Euler angle [yaw]')
 xlabel('Time(s)')
 ylabel('\psi (degrees)')
 legend('Angle from accelerometer', 'Gyroscope and accelerometer fusion', 'Solution', 'Location', 'NorthWest')
+
+%% yaw error
+figure
+plot(yaw_error(:,1), yaw_error(:, 2)*180.0/pi, 'b')
+title('Yaw error')
+xlabel('Time(s)')
+ylabel('Error (degrees)')
+legend('Yaw error', 'Location', 'NorthWest')
 
 %% ddrift yaw
 figure

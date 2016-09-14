@@ -17,11 +17,11 @@ namespace chapchom
   Loaded_table = false;
   // Initialise the number of data in the Table
   //N_data_in_table = 0;
-  N_data_in_table = 18273; // no movement
+  //N_data_in_table = 18273; // no movement
   //N_data_in_table = 21162; // characterise yaw drift
   //N_data_in_table = 266959; // characterise yaw drift2
   //N_data_in_table = 20076; // ellipse movement
-  //N_data_in_table = 524668; // characterise yaw drift half hour
+  N_data_in_table = 524668; // characterise yaw drift half hour
   //N_data_in_table = 1808483; // characterise yaw two hours
  
   // Create the interpolator
@@ -338,9 +338,69 @@ namespace chapchom
     euler_angles[1] = Table_pitch[i_exact] * (M_PI / 180.0);
     euler_angles[2] = Table_yaw[i_exact] * (M_PI / 180.0);
    }
- 
+  
  }
-
+ 
+ // ===================================================================
+ // Get yaw correction as a function of time and the number of steps
+ // per second
+ // ===================================================================
+ const double CCODEsFromTableFromXSENSMT9B::get_yaw_correction(const double t,
+                                                               const double n_steps_per_second)
+ {
+  // Check in which interval is "t"
+  if (t >= 0 && t < 30.0)
+   {
+    return 2.0 * 0.006544985/n_steps_per_second; // 0.75 degreess per second
+    //0.013089969/n_steps_per_second;
+   }
+  else if (t >= 30.0 && t < 60.0)
+   {
+    return 2.2 * 0.006544985/n_steps_per_second; // 0.75 degreess per second
+    //0.013089969/n_steps_per_second;
+   }
+  else
+   {
+    return 2.5 * 0.006544985/n_steps_per_second; // 0.75 degreess per second
+   }
+ }
+ 
+#if 0
+ // ===================================================================
+ // Get yaw correction as a function of time and the number of steps
+ // per second
+ // ===================================================================
+ const double CCODEsFromTableFromXSENSMT9B::get_yaw_correction(const double t,
+                                                               const double n_steps_per_second)
+ {
+  // Check in which interval is "t"
+  if (t >= 0 && t < 10.0)
+   {
+    return 0.006544985/n_steps_per_second; // 0.00011 degreess per second
+   }
+  else if (t >= 10.0 && t < 30.0)
+   {
+    return 1.2 * 0.006544985/n_steps_per_second; // 0.00013 degreess per second
+   }
+  else if (t >= 30.0 && t < 60.0)
+   {
+    return 1.6 * 0.006544985/n_steps_per_second; // 0.00018 degreess per second
+   }
+  //else if (t >= 60.0 && t < 60.0*10.0)
+  // {
+  //  return 0.5 * 0.006544985/n_steps_per_second; // 0.00018 degreess per second
+  // }
+  else
+   {
+    return 2.0 * 0.006544985/n_steps_per_second; // 0.75 degreess per second
+    //0.013089969/n_steps_per_second;
+   }
+  //   {
+  //    return 0.013089969/n_steps_per_second; // 0.75 degreess per second
+  //   }
+ }
+#endif // #if 0
+ 
  // ===================================================================
  /// Fills the matrix that performs the transformation from angular
  /// velocities to Euler-rates

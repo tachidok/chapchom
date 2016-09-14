@@ -143,10 +143,10 @@ echo ""
 echo "============================================================= "
 
 echo "Copying include files"
-if (test -d $include_dir); then 
+if (test -d  $include_dir); then 
 	echo "Cleaning up ..."
 	cd $include_dir
-	rm $include_dir -r *
+	rm -r *
 	cd ..
 else
 	mkdir $include_dir

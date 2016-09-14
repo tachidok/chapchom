@@ -318,6 +318,20 @@ int main(int argc, char *argv[])
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
 #endif // #ifdef T_GET_YAW_DRIFT
+
+ char file_yaw_error[100];
+ sprintf(file_yaw_error, "./RESLT/yaw_error.dat");
+ FILE *file_yaw_error_pt = fopen(file_yaw_error, "w");
+ if (file_yaw_error_pt == 0)
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_yaw_error << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
  
 #ifdef DEBUG
  char file_DEBUG_name[100];
@@ -420,16 +434,20 @@ int main(int argc, char *argv[])
  y[0][7] = 0.0 * M_PI / 180.0; // Initial pitch
  y[0][8] = 0.0 * M_PI / 180.0; // Initial yaw
  
+ // Get the error in yaw
+ double yaw_error = euler_angles[2] - y[0][8];
+ 
  // Output the initial data to screen
  std::cout << "t: " << t
            << " x-pos: " << y[0][0] << " x-vel: " << y[0][1]
            << " y-pos: " << y[0][2] << " y-vel: " << y[0][3]
            << " z-pos: " << y[0][4] << " z-vel: " << y[0][5]
-           << " roll: " << y[0][6] << " pitch: " << y[0][7] << " yaw: " << y[0][8] << std::endl;
+           << " roll: " << y[0][6] << " pitch: " << y[0][7] << " yaw: " << y[0][8]
+           << " yaw-error: " << yaw_error << std::endl;
  
  double ddrift_yaw = 0.0;
  
- // Bias yaw per step
+ // Get yaw correction
  //const double bias_yaw = -0.95 * 180.0/M_PI;
  //double yaw_correction = (-1.0 * bias_yaw) / n_steps_per_second;
  //double yaw_correction = 0.75 / n_steps_per_second;
@@ -438,10 +456,11 @@ int main(int argc, char *argv[])
  //double yaw_correction = 0.001745278 * M_PI / 180.0;
  //double yaw_correction = 0.003696498 * M_PI / 180.0;
  //double yaw_correction = (5.0 * 180.0/M_PI) / n_steps_per_second;
- double yaw_correction = 0.013089969/n_steps_per_second; // 0.75 degreess per second
+ //double yaw_correction = 0.013089969/n_steps_per_second; // 0.75 degreess per second
  //double yaw_correction = 0.013089969/n_steps_per_second;
  //double yaw_correction = 0.006544985/n_steps_per_second; // 0.01 degreess per second
  //double yaw_correction = 0.0;
+ double yaw_correction = odes->get_yaw_correction(t, n_steps_per_second);
  
  // -------------------------------------------------------------------
  // Apply complementary filter
@@ -541,6 +560,9 @@ int main(int argc, char *argv[])
  // ddrift yaw
  fprintf(file_drift_yaw_pt, "%lf 0.0 0.0 %lf\n", t, ddrift_yaw);
  
+ // yaw error
+ fprintf(file_yaw_error_pt, "%lf %lf\n", t, yaw_error);
+ 
  // Velocity
  fprintf(file_velocity_pt, "%lf %lf %lf %lf\n", t, y[0][1], y[0][3], y[0][5]);
  // Position
@@ -561,11 +583,15 @@ int main(int argc, char *argv[])
     }
    // Update time
    t+=h;
+   
+   yaw_error = euler_angles[2] - y[0][8];
+   
    std::cout << "t: " << t
              << " x-pos: " << y[0][0] << " x-vel: " << y[0][1]
              << " y-pos: " << y[0][2] << " y-vel: " << y[0][3]
              << " z-pos: " << y[0][4] << " z-vel: " << y[0][5]
-             << " roll: " << y[0][6] << " pitch: " << y[0][7] << " yaw: " << y[0][8] << std::endl;
+             << " roll: " << y[0][6] << " pitch: " << y[0][7] << " yaw: " << y[0][8]
+             << " yaw-error: " << yaw_error << std::endl;
    
    // Get the accelerometers readings from the Table
    odes->get_sensors_lecture(t, acc, dtheta, magnetometer, euler_angles);
@@ -597,6 +623,9 @@ int main(int argc, char *argv[])
    
    // Correction for yaw
    //yaw_correction = ddrift_yaw;
+   
+   // Update yaw correcion
+   yaw_correction = odes->get_yaw_correction(t, n_steps_per_second);
    
    // Update filtered Euler angles
    y[0][6] = alpha * y[0][6] + (1.0 - alpha) * acc_angles[0];
@@ -654,6 +683,9 @@ int main(int argc, char *argv[])
    // ddrift yaw
    fprintf(file_drift_yaw_pt, "%lf 0.0 0.0 %lf\n", t, ddrift_yaw);
    
+   // yaw error
+   fprintf(file_yaw_error_pt, "%lf %lf\n", t, yaw_error);
+   
    // Velocity
    fprintf(file_velocity_pt, "%lf %lf %lf %lf\n", t, y[0][1], y[0][3], y[0][5]);
    // Position
@@ -676,7 +708,9 @@ int main(int argc, char *argv[])
 #ifdef T_GET_YAW_DRIFT
  fclose(file_get_yaw_pt);
 #endif // #ifdef T_GET_YAW_DRIFT
-  
+ 
+ fclose(file_yaw_error_pt);
+ 
 #ifdef DEBUG
  fclose(file_DEBUG_pt);
 #endif // #ifdef DEBUG

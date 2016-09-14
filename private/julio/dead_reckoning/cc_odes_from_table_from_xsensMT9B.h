@@ -41,7 +41,12 @@ namespace chapchom
                            std::vector<double> &gyro,
                            std::vector<double> &mag,
                            std::vector<double> &euler_angles);
- 
+  
+  // Get yaw correction as a function of time and the number of steps
+  // per second
+  const double get_yaw_correction(const double t,
+                                  const double n_steps_per_second);
+  
   /// Fills the matrix that performs the transformation from angular
   /// velocities to Euler-rates
   void fill_angular_velocities_to_euler_rates_matrix(std::vector<std::vector<double> > &A,
