@@ -65,9 +65,13 @@ int main(int argc, char *argv[])
  // Create the matrix from the vector data
  // ---------------------------------------
  CCMatrix<double> B(matrix_pt, n_rows, n_columns);
+ CCMatrix<double> B_t = B.transpose();
  
  std::cout << std::endl << "Matrix created from vector" << std::endl << std::endl;
  B.output();
+
+ std::cout << std::endl << "Matrix tranposed" << std::endl << std::endl;
+ B_t.print();
 
  // ----------------------------------------------------------
  // Create a matrix where to store results

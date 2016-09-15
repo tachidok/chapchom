@@ -498,6 +498,21 @@ namespace chapchom
  }
 
  // ===================================================================
+ // Computes the transpose and returns it
+ // ===================================================================
+ template<class T>
+ CCMatrix<T> CCMatrix<T>::transpose()
+ {
+  // Create a matrix where to store the transposed one
+  CCMatrix<T> tranposed_matrix(this->nrows(), this->ncolumns());
+  // Perfomr the tranpose operation
+  this->transpose(tranposed_matrix);
+  // Return a new object with the tranposed matrix
+  return tranposed_matrix;
+  
+ }
+ 
+ // ===================================================================
  // Get the specified value from the matrix (read-only)
  // ===================================================================
  template<class T>

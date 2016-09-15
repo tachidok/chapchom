@@ -42,10 +42,10 @@ namespace chapchom
  
   // -= operator
   CCMatrix& operator-=(const CCMatrix &matrix);
- 
+  
   // Assignment operator
   CCMatrix& operator=(const CCMatrix &source_matrix);
- 
+  
   // Add operator
   CCMatrix operator+(const CCMatrix &matrix);
  
@@ -76,12 +76,15 @@ namespace chapchom
   // Performs multiplication of matrices
   void multiply_by_matrix(const CCMatrix &right_matrix, const CCMatrix &solution_matrix);
  
-  // Computes the transpose and store it in the solution matrix
+  // Computes the transpose and store it in the transpose matrix
   void transpose(const CCMatrix &transpose_matrix);
+  
+  // Computes the transpose and returns it
+  CCMatrix transpose();
   
   // Get the specified value from the matrix (read-only)
   const T value(const unsigned long i, const unsigned long j) const;
- 
+  
   // Set values in the matrix (write version)
   T &value(const unsigned long i, const unsigned long j);
  
