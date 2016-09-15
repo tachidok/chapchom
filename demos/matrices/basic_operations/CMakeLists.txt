@@ -7,6 +7,9 @@ PROJECT(${example_name})
 #SET(${PROJET_NAME}_MINOR_VERSION 0)
 #SET(${PROJET_NAME}_PATCH_LEVEL 0)
 
+# Include testing (this function already calls enable_testing())
+include(CTest)
+
 #set default cmake build type to Debug (None Debug Release RelWithDebInfo MinSizeRel)
 IF(NOT CMAKE_BUILD_TYPE)
 	SET(CMAKE_BUILD_TYPE "Debug")
@@ -26,3 +29,9 @@ SET(main_source demo_matrix_basic_operations)
 
 ADD_EXECUTABLE(${PROJECT_NAME} ${main_source})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} chapchom)
+
+# ===========================================
+# Do tests
+# ===========================================
+# Run the application to check it works
+add_test (TEST_check_it_runs ${main_source})
