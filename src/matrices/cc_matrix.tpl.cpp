@@ -80,28 +80,11 @@ namespace chapchom
   // Check whether the dimensions of the matrices are the same
   const unsigned long n_rows_source_matrix = source_matrix.nrows();
   const unsigned long n_columns_source_matrix = source_matrix.ncolumns();
-  const unsigned long n_rows = this->NRows;
-  const unsigned long n_columns = this->NColumns;
-  if (n_rows != n_rows_source_matrix || n_columns != n_columns_source_matrix)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "The dimension of the matrices is not the same:\n"
-                  << "dim(source_matrix) = (" << n_rows_source_matrix << ", "
-                  << n_columns_source_matrix << ")\n"
-                  << "dim(this) = (" << n_rows << ", " << n_columns
-                  << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
- 
-  // Copy the matrix (an element by element copy, uff!!)
-  std::memcpy(Matrix_pt, source_matrix.matrix_pt(), n_rows*n_columns*sizeof(T));
- 
-  // Mark the matrix as having elements
-  this->Is_empty = false;
- 
+  
+  set_matrix(source_matrix.matrix_pt(),
+             n_rows_source_matrix,
+             n_columns_source_matrix);
+  
   // Return this (de-referenced pointer)
   return *this;
  

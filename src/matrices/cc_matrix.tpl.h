@@ -87,7 +87,10 @@ namespace chapchom
  
   // Output the matrix
   void output();
- 
+  
+  // Print the matrix (call print)
+  inline void print() {output();}
+  
   // Get access to the Matrix_pt
   inline T *matrix_pt() const {return Matrix_pt;}
  

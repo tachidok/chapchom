@@ -60,7 +60,36 @@ namespace chapchom
  {
   // We can only call solve if the matrix A has been set
   if (this->Matrix_A_has_been_set)
-   {     
+   {
+    // Check correct size of the matrix, right hand side and solution
+    // vector    
+    if (this->A.ncolumns() != b.nrows())
+     {
+      // Error message
+      std::ostringstream error_message;
+      error_message << "The number of columns of the matrix and the number "
+                    << "of rows of the rhs vector are not the same:\n"
+                    << "A.ncolumns() = (" << this->A.ncolumns() << ")\n"
+                    << "b.nrows() = (" << b.nrows() << ")\n" << std::endl;
+      throw ChapchomLibError(error_message.str(),
+                             CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
+     }
+    else if (this->A.nrows() != x.nrows())
+     {
+      // Error message
+      std::ostringstream error_message;
+      error_message << "The number of rows of the matrix and the number "
+                    << "of rows of the solution vector are not the same:\n"
+                    << "A.nrows() = (" << this->A.nrows() << ")\n"
+                    << "x.nrows() = (" << x.nrows() << ")\n" << std::endl;
+      throw ChapchomLibError(error_message.str(),
+                             CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
+     }
+    // The case for the same number of columns on the rhs vector and
+    // the solution vector is tested in the back_substition() method
+    
     // Factorise
     factorise();
    
@@ -140,15 +169,15 @@ namespace chapchom
  
   // Check that we are working with an square matrix, otherwise this
   // will not work
-  const unsigned long nrows = this->A.nrows();
-  const unsigned long ncolumns = this->A.ncolumns();
-  if (nrows!=ncolumns)
+  const unsigned long n_rows = this->A.nrows();
+  const unsigned long n_columns = this->A.ncolumns();
+  if (n_rows!=n_columns)
    {
     // Error message
    std:ostringstream error_message;
     error_message << "The matrix is not square." << std::endl
-                  << "The matrix is of size: " << nrows << " x "
-                  << ncolumns << std::endl;
+                  << "The matrix is of size: " << n_rows << " x "
+                  << n_columns << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -156,28 +185,30 @@ namespace chapchom
  
   // The matrix used as input and output, after calling ludcmp it has
   // the LU factorisation
-  Mat_DP lu_a(nrows, ncolumns);
- 
+  lu_a = new Mat_DP(this->A.matrix_pt(), n_rows, n_columns);
+  
   // Output vector of size n x 1 that records the row permutations
   // performed by partial pivoting.
-  Vec_INT lu_indx(nrows);
- 
+  lu_indx = new Vec_INT(n_rows);
+  
   // An output indicating whether the number of rows interchanges was
   // even or odd (+1 or -1, respectively)
   DP dummy;
- 
+  
+#if 0
   // Copy the matrix A to the representation required by ludcmp()
   for (unsigned i = 0; i < nrows; i++)
    {
     for (unsigned j = 0; j < ncolumns; j++)
      {
-      lu_a[i][j] = this->A(i,j);
+      *(*(lu_a)[i])[j] = this->A(i,j);
      }
    }
- 
+#endif // #if 0
+  
   // Do the factorisation
-  NR::ludcmp(lu_a, lu_indx, dummy);
- 
+  NR::ludcmp(*lu_a, *lu_indx, dummy);
+  
   // Set the flag to indicate that resolve is enabled since we have
   // computed the LU decomposition
   Resolve_enabled = true; 
@@ -199,7 +230,21 @@ namespace chapchom
   // Number of right hand sizes (same as the number of output
   // x-vectors)
   const unsigned n_rhs = b.ncolumns();
- 
+  
+  if (b.ncolumns() != x_output.ncolumns())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The number of columns of the rhs vector and the number "
+                  << "of columns of the solution vector are not the same:\n"
+                  << "n_rhs = (" << n_rhs << ")\n"
+                  << "x_output.ncolumns() = (" << x_output.ncolumns() << ")\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
   // The solution vector size n x 1 (Numerical Recipes definition)
   Vec_DP x(n_rows);
  
@@ -212,7 +257,7 @@ namespace chapchom
      }
    
     // Back-substitution
-    NR::lubksb(lu_a, *lu_indx, x);
+    NR::lubksb(*lu_a, *lu_indx, x);
    
     // Copy the solution into the output vector
     for (unsigned i = 0; i < n_rows; i++)

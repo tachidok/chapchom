@@ -71,12 +71,15 @@ namespace chapchom
   inline virtual T &operator()(const unsigned long &i, 
                                const unsigned long &j)
   {return value(i,j);}
- 
+  
   // Output the matrix
   // TODO Implement output to file version
   //virtual void output(std::string &filename = 0) = 0;
   virtual void output() = 0;
- 
+  
+  // Output the matrix
+  virtual void print() = 0;
+  
   // Return the number of rows of the matrix
   const unsigned long nrows() const {return NRows;}
  

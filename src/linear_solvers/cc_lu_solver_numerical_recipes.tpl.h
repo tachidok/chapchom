@@ -91,13 +91,13 @@ namespace chapchom
    {
     BrokenCopy::broken_assign("CCLUSolverNumericalRecipes");
    }
- 
-  // Data used for ludcmp()
-  Mat_DP lu_a;
+  
+  // Data used for ludcmp() and lubksb()
+  Mat_DP *lu_a;
   Vec_INT *lu_indx;
   
  };
-
-}
  
+}
+
 #endif // #ifndef CCLUSOLVER_H

@@ -15,7 +15,7 @@ namespace chapchom
  bool finalise_chapchom()
  {
   chapchom_output << "Finalising chapchom ..." << std::endl;
-  chapchom_output << "[DONE]" << std::endl;
+  chapchom_output << "[DONE]: Chapchom termination" << std::endl;
  }
  
 }
