@@ -34,4 +34,8 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME} chapchom)
 # Do tests
 # ===========================================
 # Run the application to check it works
-add_test (TEST_check_it_runs ${main_source})
+add_test (NAME TEST_check_it_runs
+          COMMAND ${main_source})
+#WORKING_DIRECTORY TESTS
+add_test(NAME TEST_check_it_runs_output
+         COMMAND ${CMAKE_COMMAND} -E compare_files output_correct.dat output_test.dat)

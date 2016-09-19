@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
  std::cout << std::endl << "Matrix created from vector" << std::endl << std::endl;
  B.output();
 
- std::cout << std::endl << "Matrix tranposed" << std::endl << std::endl;
+ std::cout << std::endl << "Matrix transposed" << std::endl << std::endl;
  B_t.print();
 
  // ----------------------------------------------------------
@@ -222,6 +222,10 @@ int main(int argc, char *argv[])
            << std::endl << std::endl;
  b.output();
 
+ // Output for testing
+ std::ofstream outfile("output_test.dat", std::ios_base::out);
+ b.output(outfile);
+ 
  // --------------------------------------------------
  // Apply transpose
  // --------------------------------------------------
@@ -230,6 +234,11 @@ int main(int argc, char *argv[])
  std::cout << std::endl << "The transposed matrix:"
            << std::endl << std::endl;
  b_t.output();
+ // Output for test
+ b_t.output(outfile);
+ 
+ // Close the output for test
+ outfile.close();
  
  // Free memory 
  delete [] matrix_pt;

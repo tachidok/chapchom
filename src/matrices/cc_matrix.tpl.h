@@ -51,7 +51,7 @@ namespace chapchom
  
   // Substraction operator
   CCMatrix operator-(const CCMatrix &matrix);
- 
+  
   // Multiplication operator
   CCMatrix operator*(const CCMatrix &right_matrix);
   
@@ -60,22 +60,42 @@ namespace chapchom
   void set_matrix(const T *matrix_pt,
                   const unsigned long m,
                   const unsigned long n);
- 
+  
   // Clean up for any dynamically stored data
   void clean_up();
- 
+  
   // Free allocated memory for matrix
   void free_memory_for_matrix();
- 
+  
   // Performs sum of matrices
   void add_matrix(const CCMatrix &matrix, const CCMatrix &solution_matrix);
- 
+  
   // Performs substraction of matrices
-  void substract_matrix(const CCMatrix &matrix, const CCMatrix &solution_matrix);
- 
+  void substract_matrix(const CCMatrix &matrix,
+                        const CCMatrix &solution_matrix);
+  
   // Performs multiplication of matrices
-  void multiply_by_matrix(const CCMatrix &right_matrix, const CCMatrix &solution_matrix);
- 
+  void multiply_by_matrix(const CCMatrix &right_matrix,
+                          const CCMatrix &solution_matrix);
+  
+  // Performs sum of matrices
+  friend
+   void add_matrices(const CCMatrix &matrix_one,
+                     const CCMatrix &matrix_two,
+                     const CCMatrix &solution_matrix);
+  
+  // Performs substraction of matrices
+  friend
+   void substract_matrix(const CCMatrix &matrix_one,
+                         const CCMatrix &matrix_two,
+                         const CCMatrix &solution_matrix);
+  
+  // Performs multiplication of matrices
+  friend
+   void multiply_by_matrix(const CCMatrix &left_matrix,
+                           const CCMatrix &right_matrix,
+                           const CCMatrix &solution_matrix);
+  
   // Computes the transpose and store it in the transpose matrix
   void transpose(const CCMatrix &transpose_matrix);
   
@@ -87,12 +107,12 @@ namespace chapchom
   
   // Set values in the matrix (write version)
   T &value(const unsigned long i, const unsigned long j);
- 
-  // Output the matrix
-  void output();
   
-  // Print the matrix (call print)
-  inline void print() {output();}
+  // Output the matrix
+  void output(bool output_indexes = false) const;
+  
+  // Output to file
+  void output(std::ofstream &outfile, bool output_indexes = false) const;
   
   // Get access to the Matrix_pt
   inline T *matrix_pt() const {return Matrix_pt;}

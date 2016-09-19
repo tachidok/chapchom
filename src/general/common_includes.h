@@ -63,7 +63,7 @@
 // Input/output library
 // ====================================================================
 #include <iostream> // several standard stream objects
-#include <fstream>
+#include <fstream> // functions for inputting from and outputting to files
 #include <sstream>
 
 // Own chapchom definitions
