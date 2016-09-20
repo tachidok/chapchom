@@ -43,10 +43,10 @@ namespace chapchom
  // ===================================================================
  template<class T>
  CCVector<T>::CCVector(const CCVector<T> &copy)
-  : ACVector<T>(copy.nvalues())
+  : ACVector<T>(copy.nvalues(), copy.is_transposed())
  {
   // Copy the data from the input vector to the Matrix_pt vector
-  set_matrix(copy.vector_pt(), this->NValues);
+  set_vector(copy.vector_pt(), this->NValues);
  }
  
  // ===================================================================
@@ -69,69 +69,31 @@ namespace chapchom
   const unsigned long n_values_vector = source_vector.nvalues();
   // Clean-up and set values
   set_vector(source_vector.vector_pt(), n_values_vector);
-  
+  // Set the transposed status
+  set_transpose(source_vector.is_transposed());
   // Return this (de-referenced pointer)
   return *this;
   
  }
- 
- HERE HERE HERE HERE HERE
- HERHEHREHREHREHRHERHERHERHEHREHREHRH
  
  // ===================================================================
  // += operator
  // ===================================================================
  template<class T>
  CCVector<T>& CCVector<T>::operator+=(const CCVector<T> &vector)
- {
-  // Check whether the dimensions of the vectors are the same
-  const unsigned long n_values_input_vector = vector.nvalues();
-  const unsigned long n_columns_input_matrix = matrix.ncolumns();
-  const unsigned long n_rows = this->NRows;
-  const unsigned long n_columns = this->NColumns;
-  if (n_rows != n_rows_input_matrix || n_columns!= n_columns_input_matrix)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "The dimension of the matrices is not the same:\n"
-                  << "dim(matrix) = (" << n_rows_input_matrix << ", "
-                  << n_columns_input_matrix << ")\n"
-                  << "dim(this) = (" << n_rows << ", " << n_columns
-                  << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
+ {  
   // Call the method to perform the addition
   add_matrix(matrix, *this);
   // Return the solution matrix
   return *this;
  }
-
+ 
  // ===================================================================
  // -= operator
  // ===================================================================
  template<class T>
  CCVector<T>& CCVector<T>::operator-=(const CCVector<T> &matrix)
  {
-  // Check whether the dimensions of the matrices are the same
-  const unsigned long n_rows_input_matrix = matrix.nrows();
-  const unsigned long n_columns_input_matrix = matrix.ncolumns();
-  const unsigned long n_rows = this->NRows;
-  const unsigned long n_columns = this->NColumns;
-  if (n_rows != n_rows_input_matrix || n_columns!= n_columns_input_matrix)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "The dimension of the matrices is not the same:\n"
-                  << "dim(matrix) = (" << n_rows_input_matrix << ", "
-                  << n_columns_input_matrix << ")\n"
-                  << "dim(this) = (" << n_rows << ", " << n_columns
-                  << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
   // Call the method to perform the addition
   substract_matrix(matrix, *this);
   // Return the solution matrix
@@ -235,13 +197,13 @@ namespace chapchom
   // Return the solution matrix
   return solution;
  }
-
+ 
  // ===================================================================
  // Transforms the input vector to a matrix class type (virtual such
  // that each derived class has to implement it)
  // ===================================================================
  template<class T>
- void CCVector<T>::set_matrix(const T *matrix_pt,
+ void CCVector<T>::set_vector(const T *vector_pt,
                               const unsigned long m,
                               const unsigned long n)
  {
@@ -318,26 +280,36 @@ namespace chapchom
  // ===================================================================
  template<class T>
  void CCVector<T>::add_matrix(const CCVector<T> &matrix, const CCVector<T> &solution_matrix)
- { 
-  // Check whether the dimensions of the matrices are the same
-  const unsigned long n_rows_input_matrix = matrix.nrows();
-  const unsigned long n_columns_input_matrix = matrix.ncolumns();
-  const unsigned long n_rows = this->NRows;
-  const unsigned long n_columns = this->NColumns;
-  if (n_rows != n_rows_input_matrix || n_columns!= n_columns_input_matrix)
+ {
+  // Check whether the dimensions of the vectors are the same
+  const unsigned long n_values_input_vector = vector.nvalues();
+  const unsigned long n_values_this_vector = this->nvalues();
+  if (n_values_this_vector != n_values_input_vector)
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "The dimension of the matrices is not the same:\n"
-                  << "dim(matrix) = (" << n_rows_input_matrix << ", "
-                  << n_columns_input_matrix << ")\n"
-                  << "dim(this) = (" << n_rows << ", " << n_columns
-                  << ")\n" << std::endl;
+    error_message << "The dimension of the vectors is not the same:\n"
+                  << "dim(vector) = (" << n_values_input_vector << ")\n"
+                  << "dim(this) = (" << n_values_this_vector << ")\n"
+                  << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
- 
+
+  // Check that both vectors have the same transposed status (both are
+  // columns vectors or both are row vectors)
+  if (this->is_transposed() != vector.is_transposed())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "Both vectors MUST BE either column or row vectors\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
   // Get the matrix pointer of the solution matrix
   T *solution_matrix_pt = solution_matrix.matrix_pt();
   // Get the matrix pointer of the input matrix
@@ -360,25 +332,35 @@ namespace chapchom
  template<class T>
  void CCVector<T>::substract_matrix(const CCVector<T> &matrix, const CCVector<T> &solution_matrix)
  {
-  // Check whether the dimensions of the matrices are the same
-  const unsigned long n_rows_input_matrix = matrix.nrows();
-  const unsigned long n_columns_input_matrix = matrix.ncolumns();
-  const unsigned long n_rows = this->NRows;
-  const unsigned long n_columns = this->NColumns;
-  if (n_rows != n_rows_input_matrix || n_columns!= n_columns_input_matrix)
+  // Check whether the dimensions of the vectors are the same
+  const unsigned long n_values_input_vector = vector.nvalues();
+  const unsigned long n_values_this_vector = this->nvalues();
+  if (n_values_this_vector != n_values_input_vector)
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "The dimension of the matrices is not the same:\n"
-                  << "dim(matrix) = (" << n_rows_input_matrix << ", "
-                  << n_columns_input_matrix << ")\n"
-                  << "dim(this) = (" << n_rows << ", " << n_columns
-                  << ")\n" << std::endl;
+    error_message << "The dimension of the vectors is not the same:\n"
+                  << "dim(vector) = (" << n_values_input_vector << ")\n"
+                  << "dim(this) = (" << n_values_this_vector << ")\n"
+                  << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
- 
+
+  // Check that both vectors have the same transposed status (both are
+  // columns vectors or both are row vectors)
+  if (this->is_transposed() != vector.is_transposed())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "Both vectors MUST BE either column or row vectors\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
   // Get the matrix pointer of the solution matrix
   T *solution_matrix_pt = solution_matrix.matrix_pt();
   // Get the matrix pointer of the input matrix
@@ -401,27 +383,35 @@ namespace chapchom
  template<class T>
  void CCVector<T>::multiply_by_matrix(const CCVector<T> &right_matrix, const CCVector<T> &solution_matrix)
  {
-  // Check whether the dimensions of the matrices allow for
-  // multiplication
-  const unsigned long n_rows_right_matrix = right_matrix.nrows();
-  const unsigned long n_columns_right_matrix = right_matrix.ncolumns();
-  const unsigned long n_rows_left_matrix = this->NRows;
-  const unsigned long n_columns_left_matrix = this->NColumns;
-  if (n_columns_left_matrix != n_rows_right_matrix)
+  // Check whether the dimensions of the vectors are the same
+  const unsigned long n_values_input_vector = vector.nvalues();
+  const unsigned long n_values_this_vector = this->nvalues();
+  if (n_values_this_vector != n_values_input_vector)
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "The dimension of the matrices does not allow "
-                  << "multiplication:\n"
-                  << "dim(left_matrix) = (" << n_rows_left_matrix << ", "
-                  << n_columns_left_matrix << ")\n"
-                  << "dim(right_matrix) = (" << n_rows_right_matrix << ", "
-                  << n_columns_right_matrix << ")\n" << std::endl;
+    error_message << "The dimension of the vectors is not the same:\n"
+                  << "dim(vector) = (" << n_values_input_vector << ")\n"
+                  << "dim(this) = (" << n_values_this_vector << ")\n"
+                  << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
- 
+
+  // Check that both vectors have the same transposed status (both are
+  // columns vectors or both are row vectors)
+  if (this->is_transposed() != vector.is_transposed())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "Both vectors MUST BE either column or row vectors\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
   // Get the matrix pointer of the solution matrix
   T *solution_matrix_pt = solution_matrix.matrix_pt();
   // Get the matrix pointer of the right matrix
@@ -449,7 +439,7 @@ namespace chapchom
  // Computes the transpose and store in the solution matrix
  // ===================================================================
  template<class T>
- void CCVector<T>::transpose(const CCVector<T> &transpose_matrix)
+ void CCVector<T>::transpose(const CCVector<T> &transposed_matrix)
  {
   // Check whether the dimensions of the matrices allow for transpose
   const unsigned long n_rows_transpose_matrix = transpose_matrix.nrows();
@@ -593,6 +583,44 @@ namespace chapchom
  
   // Mark the matrix as having elements
   this->Is_empty = false;
+ }
+ 
+ // ================================================================
+ // Extra methods to work with vectors, we do not need them to be
+ // friends of the class since all their operations are performed
+ // using the class methods
+ // ================================================================
+ 
+ // Dot product of vectors
+ template<class T>
+ void dot_vectors(const CCVector<T> &vector_one, const CCVector<T> &vector_two,
+                  CCVector<T> &solution_vector)
+ {
+  TODO TODO TODO TODO TODO
+ }
+ 
+ // Addition of vectors
+ template<class T>
+ void add_vectors(const CCVector<T> &vector_one, const CCVector<T> &vector_two,
+                  CCVector<T> &solution_vector)
+ {
+  TODO TODO TODO TODO TODO
+ }
+ 
+ // Substraction of vectors
+ template<class T>
+ void substract_vectors(const CCVector<T> &vector_one, const CCVector<T> &vector_two,
+                        CCVector<T> &solution_vector)
+ {
+  TODO TODO TODO TODO TODO
+ }
+ 
+ // Performs multiplication of vectors (one by one entries)
+ template<class T>
+ void multiply_vectors(const CCVector<T> &vector_one, const CCVector<T> &vector_two,
+                       CCVector<T> &solution_vector)
+ {
+  TODO TODO TODO TODO TODO
  }
  
 }

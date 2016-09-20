@@ -93,6 +93,12 @@ namespace chapchom
    // Checks whether the matrix has been set, or allocated
    inline bool is_empty() const {return Is_empty;}
    
+   // Set matrix as having elements
+   inline void mark_as_empty() {Is_empty = true;}
+   
+   // Set matrix as no having elements
+   inline void mark_as_no_empty() {Is_empty = false;}
+   
    // Checks whether the matrix is allowed to be deleted
    inline bool delete_matrix() const {return Delete_matrix;}
    
@@ -106,14 +112,14 @@ namespace chapchom
    
    // Creates a zero matrix with the given rows and columns
    virtual void create_zero_matrix() = 0;
- 
+   
    // The size of the matrix
    unsigned long NRows;
    unsigned long NColumns;
- 
+   
    // Flag to indicate whether the matrix is empty or not
    bool Is_empty;
- 
+   
    // Flag to indicate whether to delete (free) the allocated memory
    // for the matrix. For example when the matrix is transformed to an
    // specific matrix type (Armadillo matrix, SuperLU matrix, Trilinos
@@ -121,9 +127,9 @@ namespace chapchom
    // avoid having multiple copies of it. The deletion of the matrix
    // is true by default.
    bool Delete_matrix;
- 
+   
   private:
- 
+   
    // Copy constructor (we do not want this class to be copiable). Check
    // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
    ACMatrix(const ACMatrix &copy)

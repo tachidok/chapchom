@@ -36,14 +36,14 @@ namespace chapchom
   // Destructor
   virtual ~CCVector();
   
+  // Assignment operator
+  CCVector& operator=(const CCVector &source_vector);
+  
   // += operator
   CCVector& operator+=(const CCVector &vector);
   
   // -= operator
   CCVector& operator-=(const CCVector &vector);
-  
-  // Assignment operator
-  CCVector& operator=(const CCVector &source_vector);
   
   // Add operator
   CCVector operator+(const CCVector &vector);
@@ -57,12 +57,6 @@ namespace chapchom
   // Performs dot product with the current vector
   T dot(const CCVector &right_vector);
   
-  // Friend method that allows to perform dot product of vectors
-  friend
-   T dot(const CCVector &left_vector, const CCVector &right_vector);
-  
-  ADD FRIENDS FOR ADDITION/SUBSTRACTION AND MULTIPLICATION OF VECTORS AND MATRICES
-  
   // Transforms the input vector to a vector class type (virtual such
   // that each derived class has to implement it)
   void set_vector(const T *vector_pt,
@@ -75,18 +69,21 @@ namespace chapchom
   void free_memory_for_vector();
   
   // Performs sum of vectors
-  void add_vector(const CCVector &vector, const CCVector &solution_vector);
+  void add_vector(const CCVector &vector, CCVector &solution_vector);
   
   // Performs substraction of vectors
   void substract_vector(const CCVector &vector,
-                        const CCVector &solution_vector);
+                        CCVector &solution_vector);
   
   // Performs multiplication of vectors (one by one entries)
   void multiply_by_vector(const CCVector &vector,
-                          const CCVector &solution_vector);
+                          CCVector &solution_vector);
   
   // Computes the transpose and store it in the transpose vector
-  void transpose(const CCVector &transpose_vector);
+  void transpose(CCVector &transposed_vector);
+  
+  // Transpose the vector
+  void transpose();
   
   // Get the specified value from the vector (read-only)
   const T value(const unsigned long i) const;
@@ -112,6 +109,32 @@ namespace chapchom
   T *Vector_pt;
   
  };
+ 
+ // ================================================================
+ // Extra methods to work with vectors, we do not need them to be
+ // friends of the class since all their operations are performed
+ // using the class methods
+ // ================================================================
+ 
+ // Dot product of vectors
+ template<class T>
+ void dot_vectors(const CCVector<T> &vector_one, const CCVector<T> &vector_two,
+                  CCVector<T> &solution_vector);
+ 
+ // Addition of vectors
+ template<class T>
+ void add_vectors(const CCVector<T> &vector_one, const CCVector<T> &vector_two,
+                  CCVector<T> &solution_vector);
+ 
+ // Substraction of vectors
+ template<class T>
+ void substract_vectors(const CCVector<T> &vector_one, const CCVector<T> &vector_two,
+                        CCVector<T> &solution_vector);
+ 
+ // Performs multiplication of vectors (one by one entries)
+ template<class T>
+ void multiply_vectors(const CCVector<T> &vector_one, const CCVector<T> &vector_two,
+                       CCVector<T> &solution_vector);
  
 }
 

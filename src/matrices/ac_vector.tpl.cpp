@@ -18,8 +18,9 @@ namespace chapchom
  // Constructor to create an n size zero vector
  // ===================================================================
  template<class T>
- ACVector<T>::ACVector(const unsigned long n)
-  : NValues(n), Is_tranposed(false), Is_empty(true), Delete_vector(true)
+ ACVector<T>::ACVector(const unsigned long n, bool is_transposed = false)
+  : NValues(n), Is_empty(true), Delete_vector(true),
+    Is_transposed(is_transposed)
  { }
  
  // ===================================================================

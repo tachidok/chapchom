@@ -7,6 +7,7 @@
 
 // The parent class
 #include "ac_matrix.h"
+#include "cc_vector.h"
 
 namespace chapchom
 {
@@ -36,19 +37,19 @@ namespace chapchom
  
   // Destructor
   virtual ~CCMatrix();
- 
-  // += operator
-  CCMatrix& operator+=(const CCMatrix &matrix);
- 
-  // -= operator
-  CCMatrix& operator-=(const CCMatrix &matrix);
   
   // Assignment operator
-  CCMatrix& operator=(const CCMatrix &source_matrix);
+  CCMatrix &operator=(const CCMatrix &source_matrix);
+  
+  // += operator
+  CCMatrix &operator+=(const CCMatrix &matrix);
+  
+  // -= operator
+  CCMatrix &operator-=(const CCMatrix &matrix);
   
   // Add operator
   CCMatrix operator+(const CCMatrix &matrix);
- 
+  
   // Substraction operator
   CCMatrix operator-(const CCMatrix &matrix);
   
@@ -68,39 +69,19 @@ namespace chapchom
   void free_memory_for_matrix();
   
   // Performs sum of matrices
-  void add_matrix(const CCMatrix &matrix, const CCMatrix &solution_matrix);
+  void add_matrix(const CCMatrix &matrix, CCMatrix &solution_matrix);
   
   // Performs substraction of matrices
-  void substract_matrix(const CCMatrix &matrix,
-                        const CCMatrix &solution_matrix);
+  void substract_matrix(const CCMatrix &matrix, CCMatrix &solution_matrix);
   
   // Performs multiplication of matrices
-  void multiply_by_matrix(const CCMatrix &right_matrix,
-                          const CCMatrix &solution_matrix);
-  
-  // Performs sum of matrices
-  friend
-   void add_matrices(const CCMatrix &matrix_one,
-                     const CCMatrix &matrix_two,
-                     const CCMatrix &solution_matrix);
-  
-  // Performs substraction of matrices
-  friend
-   void substract_matrix(const CCMatrix &matrix_one,
-                         const CCMatrix &matrix_two,
-                         const CCMatrix &solution_matrix);
-  
-  // Performs multiplication of matrices
-  friend
-   void multiply_by_matrix(const CCMatrix &left_matrix,
-                           const CCMatrix &right_matrix,
-                           const CCMatrix &solution_matrix);
+  void multiply_by_matrix(const CCMatrix &right_matrix, CCMatrix &solution_matrix);
   
   // Computes the transpose and store it in the transpose matrix
-  void transpose(const CCMatrix &transpose_matrix);
+  void transpose(CCMatrix &transposed_matrix);
   
-  // Computes the transpose and returns it
-  CCMatrix transpose();
+  // Transpose the matrix
+  void transpose();
   
   // Get the specified value from the matrix (read-only)
   const T value(const unsigned long i, const unsigned long j) const;
@@ -116,16 +97,53 @@ namespace chapchom
   
   // Get access to the Matrix_pt
   inline T *matrix_pt() const {return Matrix_pt;}
- 
+  
  protected:
- 
+  
   // Creates a zero matrix with the given rows and columns
   void create_zero_matrix();
- 
+  
   // The matrix
   T *Matrix_pt;
   
  };
+ 
+ // ================================================================
+ // Extra methods to work with matrices, we do not need them to be
+ // friends of the class since all their operations are performed
+ // using the class methods
+ // ================================================================
+ 
+ // Performs sum of matrices
+ template<class T>
+ void add_matrices(const CCMatrix<T> &matrix_one,
+                   const CCMatrix<T> &matrix_two,
+                   CCMatrix<T> &solution_matrix);
+ 
+ // Performs substraction of matrices
+ template<class T>
+ void substract_matrices(const CCMatrix<T> &matrix_one,
+                         const CCMatrix<T> &matrix_two,
+                         CCMatrix<T> &solution_matrix);
+ 
+ // Performs multiplication of matrices
+ template<class T>
+ void multiply_matrices(const CCMatrix<T> &left_matrix,
+                        const CCMatrix<T> &right_matrix,
+                        CCMatrix<T> &solution_matrix);
+ 
+ // ================================================================
+ // Extra methods to work with vector and matrices operations
+ // ================================================================
+ // Multiply vector by matrix
+ template<class T>
+ void multiply_vector_by_matrix(const CCVector<T> &vector, const CCMatrix<T> &matrix,
+                                CCMatrix<T> &solution_matrix);
+ 
+ // Multiply matrix by vector
+ template<class T>
+ void multiply_matrix_by_vector(const CCMatrix<T> &matrix, const CCVector<T> &vector,
+                                CCVector<T> &solution_vector);
  
 }
 

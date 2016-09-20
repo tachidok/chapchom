@@ -95,7 +95,11 @@ namespace chapchom
    // assume all vectors are created as column vectors)
    inline bool is_transposed() const {return Is_transpose;}
    
-   // Tranpose the matrix
+   // Set transposed status
+   inline bool set_transposed_status(bool status)
+   {Is_transpose = status;}
+   
+   // Transpose the matrix
    inline void transpose(){is_transpose=~is_transpose;}
    
    // Computes the transpose and store it in the transpose vector
@@ -121,12 +125,6 @@ namespace chapchom
    // The size of the vector
    unsigned long NValues;
    
-   // Is transposed vector (we assume all vectors are created as
-   // column vectors, thus this flag is set to true by default). We
-   // check this variable for all its operations such that they are
-   // valid according to the vector dimensions
-   bool Is_transposed;
-   
    // Flag to indicate whether the vector is empty or not
    bool Is_empty;
    
@@ -137,6 +135,12 @@ namespace chapchom
    // avoid having multiple copies of it. The deletion of the vector
    // is true by default.
    bool Delete_vector;
+   
+   // Is transposed vector (we assume all vectors are created as
+   // column vectors, thus this flag is set to true by default). We
+   // check this variable for all its operations such that they are
+   // valid according to the vector dimensions
+   bool Is_transposed;
    
   private:
    
