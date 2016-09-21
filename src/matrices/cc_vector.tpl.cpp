@@ -13,7 +13,7 @@ namespace chapchom
  CCVector<T>::CCVector() 
   : ACVector<T>()
  {
-  // Set the pointer to the vector to NULL
+  // Set the pointer of the vector to NULL
   Vector_pt = 0;
  }
  
@@ -21,8 +21,8 @@ namespace chapchom
  // Constructor to create an n size zero vector
  // ===================================================================
  template<class T>
- CCVector<T>::CCVector(const unsigned long n)
- : ACVector<T>(n)
+ CCVector<T>::CCVector(const unsigned long n, bool is_transposed)
+  : ACVector<T>(n, is_transposed)
  {
   create_zero_vector();
  }
@@ -31,8 +31,9 @@ namespace chapchom
  // Constructor where we pass the data for the vector of size n
  // ===================================================================
  template<class T>
- CCVector<T>::CCVector(T *vector_pt, const unsigned long n)
- : ACVector<T>(n)
+ CCVector<T>::CCVector(T *vector_pt, const unsigned long n,
+                       bool is_transposed)
+  : ACVector<T>(n, is_transposed)
  {
   // Copy the data from the input vector to the Vector_pt vector
   set_vector(vector_pt, n);
@@ -45,7 +46,7 @@ namespace chapchom
  CCVector<T>::CCVector(const CCVector<T> &copy)
   : ACVector<T>(copy.nvalues(), copy.is_transposed())
  {
-  // Copy the data from the input vector to the Matrix_pt vector
+  // Copy the data from the input vector to the Vector_pt vector
   set_vector(copy.vector_pt(), this->NValues);
  }
  
@@ -65,10 +66,8 @@ namespace chapchom
  template<class T>
  CCVector<T>& CCVector<T>::operator=(const CCVector<T> &source_vector)
  {
-  // Get the new dimension of the vector
-  const unsigned long n_values_vector = source_vector.nvalues();
   // Clean-up and set values
-  set_vector(source_vector.vector_pt(), n_values_vector);
+  set_vector(source_vector.vector_pt(), source_vector.nvalues());
   // Set the transposed status
   set_transpose(source_vector.is_transposed());
   // Return this (de-referenced pointer)
@@ -83,8 +82,8 @@ namespace chapchom
  CCVector<T>& CCVector<T>::operator+=(const CCVector<T> &vector)
  {  
   // Call the method to perform the addition
-  add_matrix(matrix, *this);
-  // Return the solution matrix
+  add_vector(vector, *this);
+  // Return the solution vector
   return *this;
  }
  
@@ -92,137 +91,156 @@ namespace chapchom
  // -= operator
  // ===================================================================
  template<class T>
- CCVector<T>& CCVector<T>::operator-=(const CCVector<T> &matrix)
+ CCVector<T>& CCVector<T>::operator-=(const CCVector<T> &vector)
  {
-  // Call the method to perform the addition
-  substract_matrix(matrix, *this);
-  // Return the solution matrix
+  // Call the method to perform the operation
+  substract_vector(vector, *this);
+  // Return the solution vector
   return *this; 
  }
-
+ 
  // ===================================================================
  // Add operator
  // ===================================================================
  template<class T>
- CCVector<T> CCVector<T>::operator+(const CCVector<T> &matrix)
+ CCVector<T> CCVector<T>::operator+(const CCVector<T> &vector)
  {
-  // Check whether the dimensions of the matrices are the same
-  const unsigned long n_rows_input_matrix = matrix.nrows();
-  const unsigned long n_columns_input_matrix = matrix.ncolumns();
-  const unsigned long n_rows = this->NRows;
-  const unsigned long n_columns = this->NColumns;
-  if (n_rows != n_rows_input_matrix || n_columns!= n_columns_input_matrix)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "The dimension of the matrices is not the same:\n"
-                  << "dim(matrix) = (" << n_rows_input_matrix << ", "
-                  << n_columns_input_matrix << ")\n"
-                  << "dim(this) = (" << n_rows << ", " << n_columns
-                  << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
-  // Create a zero matrix where to store the result
-  CCVector<T> solution(n_rows, n_columns);
+  // Create a zero vector where to store the result
+  CCVector<T> solution(this->NValues);
   // Call the method to perform the addition
-  add_matrix(matrix, solution);
-  // Return the solution matrix
+  add_vector(vector, solution);
+  // Return the solution vector
   return solution;
  }
-
+ 
  // ===================================================================
  // Substraction operator
  // ===================================================================
  template<class T>
- CCVector<T> CCVector<T>::operator-(const CCVector<T> &matrix)
+ CCVector<T> CCVector<T>::operator-(const CCVector<T> &vector)
  {
-  // Check whether the dimensions of the matrices are the same
-  const unsigned long n_rows_input_matrix = matrix.nrows();
-  const unsigned long n_columns_input_matrix = matrix.ncolumns();
-  const unsigned long n_rows = this->NRows;
-  const unsigned long n_columns = this->NColumns;
-  if (n_rows != n_rows_input_matrix || n_columns!= n_columns_input_matrix)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "The dimension of the matrices is not the same:\n"
-                  << "dim(matrix) = (" << n_rows_input_matrix << ", "
-                  << n_columns_input_matrix << ")\n"
-                  << "dim(this) = (" << n_rows << ", " << n_columns
-                  << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
-  // Create a zero matrix where to store the result
-  CCVector<T> solution(n_rows, n_columns);
-  // Call the method to perform the addition
-  substract_matrix(matrix, solution);
+  // Create a zero vector where to store the result
+  CCVector<T> solution(this->NValues);
+  // Call the method to perform the operation
+  substract_vector(vector, solution);
   return solution;
  }
 
+ HERE HERE RE-IMPLEMENT TO RETURN A MATRIX USING THE OPERATION FOR MATRIX MULTIPLICATION
+ 
  // ===================================================================
- // Multiplication operator
+ // Multiplication operator (element by element)
  // ===================================================================
  template<class T>
- CCVector<T> CCVector<T>::operator*(const CCVector<T> &right_matrix)
- {
-  // Check whether the dimensions of the matrices allow for
-  // multiplication
-  const unsigned long n_rows_right_matrix = right_matrix.nrows();
-  const unsigned long n_columns_right_matrix = right_matrix.ncolumns();
-  const unsigned long n_rows_left_matrix = this->NRows;
-  const unsigned long n_columns_left_matrix = this->NColumns;
-  if (n_columns_left_matrix != n_rows_right_matrix)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "The dimension of the matrices does not allow "
-                  << "multiplication:\n"
-                  << "dim(left_matrix) = (" << n_rows_left_matrix << ", "
-                  << n_columns_left_matrix << ")\n"
-                  << "dim(right_matrix) = (" << n_rows_right_matrix << ", "
-                  << n_columns_right_matrix << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
- 
-  // Create a zero matrix where to store the result
-  CCVector<T> solution(n_rows_left_matrix, n_columns_right_matrix);
+ CCVector<T> CCVector<T>::operator*(const CCVector<T> &vector)
+ { 
+  // Create a zero vector where to store the result
+  CCVector<T> solution(this->NValues);
   // Perform the multiplication
-  multiply_by_matrix(right_matrix, solution);
-  // Return the solution matrix
+  multiply_by_vector(vector, solution);
+  // Return the solution vector
   return solution;
  }
  
  // ===================================================================
- // Transforms the input vector to a matrix class type (virtual such
+ // Performs dot product with the current vector
+ // ===================================================================
+ template<class T>
+ T CCVector<T>::dot(const CCVector &right_vector)
+ {
+  // Check that THIS and the right vector have entries to operate
+  // with
+  if (this->Is_empty || right_vector.is_empty())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "One of the vectors to operate with has no entries\n"
+                  << "this->Is_empty = "
+                  << this->Is_empty << "\n"
+                  << "right_vector.is_empty() = "
+                  << right_vector.is_empty() << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check whether the dimensions of the vectors allow the operation
+  const unsigned long n_values_right_vector = right_vector.nvalues();
+  const unsigned long n_values_this_vector = this->nvalues();
+  if (n_values_this_vector != n_values_right_vector)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The dimension of the vectors is not the same:\n"
+                  << "dim(right_vector) = (" << n_values_right_vector << ")\n"
+                  << "dim(this) = (" << n_values_this_vector << ")\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check that THIS vector is a row vector and that the right vector
+  // is a column vector
+  if (this->is_transposed())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "THIS vector should be a row vector\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  if (!right_vector.is_transposed())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The right vector should be a column vector\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Get the vector pointer of the right vector
+  T *right_vector_pt = right_vector.vector_pt();
+  
+  // Store the dot product of the vectors
+  T dot_product = 0.0;
+  
+  // Compute the dot product
+  for (unsigned long i = 0; i < n_values_this_vector; i++)
+   {
+    dot_product+= Vector_pt[i] * right_vector_pt[i];
+   }
+  
+  return dot_product;
+  
+ }
+ 
+ // ===================================================================
+ // Transforms the input vector to a vector class type (virtual such
  // that each derived class has to implement it)
  // ===================================================================
  template<class T>
  void CCVector<T>::set_vector(const T *vector_pt,
-                              const unsigned long m,
                               const unsigned long n)
  {
   // Clean any possible previously allocated memory
   clean_up();
- 
-  // Set the number of rows and columns
-  this->NRows = m;
-  this->NColumns = n;
- 
-  // Set the pointer to the matrix to NULL
-  Matrix_pt = 0;
- 
-  // Allocate memory for the matrix
-  Matrix_pt = new T[m*n];
-  // Copy the matrix (an element by element copy, uff!!)
-  std::memcpy(Matrix_pt, matrix_pt, m*n*sizeof(T));
   
-  // Mark the matrix as having elements
+  // Set the number of values
+  this->NValues = n;
+  
+  // Allocate memory for the vector
+  Vector_pt = new T[n];
+  
+  // Copy the vector (an element by element copy, uff!!)
+  std::memcpy(Vector_pt, vector_pt, n*sizeof(T));
+  
+  // Mark the vector as having elements
   this->Is_empty = false;
   
  }
@@ -237,13 +255,18 @@ namespace chapchom
   if (!this->Is_empty)
    {
     // Mark the vector as deleteable
-    this->Delete_matrix = true;
+    this->Delete_vector = true;
     // Free the memory allocated for the vector
     free_memory_for_vector();
    }
- 
+  else // if empty
+   {
+    // Set the pointer of the vector to NULL
+    Vector_pt = 0;
+   }
+  
  }
-
+ 
  // ===================================================================
  // Free allocated memory for vector
  // ===================================================================
@@ -276,11 +299,27 @@ namespace chapchom
  }
 
  // ===================================================================
- // Performs sum of matrices
+ // Performs sum of vectors
  // ===================================================================
  template<class T>
- void CCVector<T>::add_matrix(const CCVector<T> &matrix, const CCVector<T> &solution_matrix)
+ void CCVector<T>::add_vector(const CCVector<T> &vector,
+                              CCVector<T> &solution_vector)
  {
+  // Check that THIS and the other vector have entries to operate with
+  if (this->Is_empty || vector.is_empty())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "One of the vectors to operate with has no entries\n"
+                  << "this->Is_empty = "
+                  << this->Is_empty << "\n"
+                  << "vector.is_empty() = "
+                  << vector.is_empty() << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
   // Check whether the dimensions of the vectors are the same
   const unsigned long n_values_input_vector = vector.nvalues();
   const unsigned long n_values_this_vector = this->nvalues();
@@ -296,7 +335,7 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
-
+  
   // Check that both vectors have the same transposed status (both are
   // columns vectors or both are row vectors)
   if (this->is_transposed() != vector.is_transposed())
@@ -310,28 +349,52 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Get the matrix pointer of the solution matrix
-  T *solution_matrix_pt = solution_matrix.matrix_pt();
-  // Get the matrix pointer of the input matrix
-  T *matrix_pt = matrix.matrix_pt();
+  // Get the vector pointer of the solution vector
+  T *solution_vector_pt = solution_vector.vector_pt();
+  
+  // Check whether the solution vector has allocated memory, otherwise
+  // allocate it here!!!
+  if (solution_vector.is_empty())
+   {
+    // Allocate memory for the vector
+    solution_vector_pt = new T[n_values_this_vector];
+    
+    // Mark the solution vector as having elements
+    solution_vector.mark_as_no_empty();
+   }
+  
+  // Get the vector pointer of the input vector
+  T *vector_pt = vector.vector_pt();
   // Perform the addition
-  for (unsigned long i = 0; i < n_rows; i++)
+  for (unsigned long i = 0; i < n_values_this_vector; i++)
    {
-    const unsigned long offset = i*n_columns;
-    for (unsigned long j = 0; j < n_columns; j++)
-     {
-      solution_matrix_pt[offset+j] = Matrix_pt[offset+j] + matrix_pt[offset+j];
-     }
+    solution_vector_pt[i] = Vector_pt[i] + vector_pt[i];
    }
- 
+  
  }
-
+ 
  // ===================================================================
- // Performs substraction of matrices
+ // Performs substraction of vectors
  // ===================================================================
  template<class T>
- void CCVector<T>::substract_matrix(const CCVector<T> &matrix, const CCVector<T> &solution_matrix)
+ void CCVector<T>::substract_vector(const CCVector<T> &vector,
+                                    CCVector<T> &solution_vector)
  {
+  // Check that THIS and the other vector have entries to operate with
+  if (this->Is_empty || vector.is_empty())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "One of the vectors to operate with has no entries\n"
+                  << "this->Is_empty = "
+                  << this->Is_empty << "\n"
+                  << "vector.is_empty() = "
+                  << vector.is_empty() << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
   // Check whether the dimensions of the vectors are the same
   const unsigned long n_values_input_vector = vector.nvalues();
   const unsigned long n_values_this_vector = this->nvalues();
@@ -347,7 +410,7 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
-
+  
   // Check that both vectors have the same transposed status (both are
   // columns vectors or both are row vectors)
   if (this->is_transposed() != vector.is_transposed())
@@ -361,28 +424,53 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Get the matrix pointer of the solution matrix
-  T *solution_matrix_pt = solution_matrix.matrix_pt();
-  // Get the matrix pointer of the input matrix
-  T *matrix_pt = matrix.matrix_pt();
+  // Get the vector pointer of the solution vector
+  T *solution_vector_pt = solution_vector.vector_pt();
+  
+  // Check whether the solution vector has allocated memory, otherwise
+  // allocate it here!!!
+  if (solution_vector.is_empty())
+   {
+    // Allocate memory for the vector
+    solution_vector_pt = new T[n_values_this_vector];
+    
+    // Mark the solution vector as having elements
+    solution_vector.mark_as_no_empty();
+   }
+  
+  // Get the vector pointer of the input vector
+  T *vector_pt = vector.vector_pt();
   // Perform the addition
-  for (unsigned long i = 0; i < n_rows; i++)
+  for (unsigned long i = 0; i < n_values_this_vector; i++)
    {
-    const unsigned long offset = i*n_columns;
-    for (unsigned long j = 0; j < n_columns; j++)
-     {
-      solution_matrix_pt[offset+j] = Matrix_pt[offset+j] - matrix_pt[offset+j];
-     }
+    solution_vector_pt[i] = Vector_pt[i] - vector_pt[i];
    }
- 
+  
  }
-
+ 
  // ===================================================================
- // Performs multiplication of matrices
+ // Performs multiplication of vectors (element by element)
  // ===================================================================
  template<class T>
- void CCVector<T>::multiply_by_matrix(const CCVector<T> &right_matrix, const CCVector<T> &solution_matrix)
+ void CCVector<T>::
+ multiply_element_by_element_vector(const CCVector<T> &vector,
+                                    CCVector<T> &solution_vector)
  {
+  // Check that THIS and the other vector have entries to operate with
+  if (this->Is_empty || vector.is_empty())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "One of the vectors to operate with has no entries\n"
+                  << "this->Is_empty = "
+                  << this->Is_empty << "\n"
+                  << "vector.is_empty() = "
+                  << vector.is_empty() << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
   // Check whether the dimensions of the vectors are the same
   const unsigned long n_values_input_vector = vector.nvalues();
   const unsigned long n_values_this_vector = this->nvalues();
@@ -398,7 +486,7 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
-
+  
   // Check that both vectors have the same transposed status (both are
   // columns vectors or both are row vectors)
   if (this->is_transposed() != vector.is_transposed())
@@ -412,177 +500,163 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Get the matrix pointer of the solution matrix
-  T *solution_matrix_pt = solution_matrix.matrix_pt();
-  // Get the matrix pointer of the right matrix
-  T *right_matrix_pt = right_matrix.matrix_pt();
-  // Perform the multiplication
-  for (unsigned long i = 0; i < n_rows_left_matrix; i++)
+  // Get the vector pointer of the solution vector
+  T *solution_vector_pt = solution_vector.vector_pt();
+  
+  // Check whether the solution vector has allocated memory, otherwise
+  // allocate it here!!!
+  if (solution_vector.is_empty())
    {
-    const unsigned offset_right_matrix = i * n_columns_right_matrix;
-    const unsigned offset_left_matrix = i * n_columns_left_matrix;
-    for (unsigned long j = 0; j < n_columns_right_matrix; j++)
-     {
-      // Initialise
-      solution_matrix_pt[offset_right_matrix+j] = 0;
-      for (unsigned long k = 0; k < n_columns_left_matrix; k++)
-       {
-        solution_matrix_pt[offset_right_matrix+j]+=
-         Matrix_pt[offset_left_matrix+k] * right_matrix_pt[k*n_columns_right_matrix+j];
-       }
-     }
+    // Allocate memory for the vector
+    solution_vector_pt = new T[n_values_this_vector];
+    
+    // Mark the solution vector as having elements
+    solution_vector.mark_as_no_empty();
    }
- 
- }
-
- // ===================================================================
- // Computes the transpose and store in the solution matrix
- // ===================================================================
- template<class T>
- void CCVector<T>::transpose(const CCVector<T> &transposed_matrix)
- {
-  // Check whether the dimensions of the matrices allow for transpose
-  const unsigned long n_rows_transpose_matrix = transpose_matrix.nrows();
-  const unsigned long n_columns_transpose_matrix = transpose_matrix.ncolumns();
-  const unsigned long n_rows = this->NRows;
-  const unsigned long n_columns = this->NColumns;
-  if (n_rows != n_columns_transpose_matrix || n_columns!= n_rows_transpose_matrix)
+  
+  // Get the vector pointer of the input vector
+  T *vector_pt = vector.vector_pt();
+  // Perform the addition
+  for (unsigned long i = 0; i < n_values_this_vector; i++)
    {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "The dimension of the matrices does not allow for\n"
-                  << "transpose operation.\n"
-                  << "dims(transpose_matrix) = (" << n_rows_transpose_matrix
-                  << ", " << n_columns_transpose_matrix << ")\n"
-                  << "dim(this) = (" << n_rows << ", " << n_columns
-                  << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    solution_vector_pt[i] = Vector_pt[i] * vector_pt[i];
    }
- 
-  // Get a pointer to the matrix structure of the solution CCVector
-  T *transposed_matrix_pt = transpose_matrix.matrix_pt();
-  for (unsigned i = 0; i < n_rows; i++)
-   {
-    for (unsigned j = 0; j < n_columns; j++)
-     {    
-      transposed_matrix_pt[j*n_rows+i] = Matrix_pt[i*n_columns+j];
-     }
-   }
-  // Change the number of rows and columns of tehe matrix
-  this->NRows = n_rows_transpose_matrix;
-  this->NColumns = n_columns_transpose_matrix;
- }
-
- // ===================================================================
- // Computes the transpose and returns it
- // ===================================================================
- template<class T>
- CCVector<T> CCVector<T>::transpose()
- {
-  // Create a matrix where to store the transposed one
-  CCVector<T> tranposed_matrix(this->nrows(), this->ncolumns());
-  // Perfomr the tranpose operation
-  this->transpose(tranposed_matrix);
-  // Return a new object with the tranposed matrix
-  return tranposed_matrix;
   
  }
  
  // ===================================================================
- // Get the specified value from the matrix (read-only)
+ // Computes the transpose and store in the solution vector
  // ===================================================================
  template<class T>
- const T CCVector<T>::value(const unsigned long i, const unsigned long j) const
+ void CCVector<T>::transpose(const CCVector<T> &transposed_vector)
+ {
+  // Check that THIS vector has entries to operate with
+  if (this->Is_empty)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "THIS vector has no entries to operate with\n"
+                  << "this->Is_empty = "
+                  << this->Is_empty << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Copy the vector into the tranposed vector
+  transposed_vector = (*this);
+  // .. and mark it as transposed
+  transposed_vector.transpose();
+ }
+ 
+ // ===================================================================
+ // Get the specified value from the vector (read-only)
+ // ===================================================================
+ template<class T>
+ const T CCVector<T>::value(const unsigned long i) const
+ {
+  // TODO: Julio - Implement range check access
+  // Return the value at position i
+  return Vector_pt[i];
+ }
+ 
+ // ===================================================================
+ // Set values in the vector (write version)
+ // ===================================================================
+ template<class T>
+ T &CCVector<T>::value(const unsigned long i)
  {
   // TODO: Julio - Implement range check access
   // Return the value at row i and column j
-  return Matrix_pt[i*this->NColumns+j];
+  return Vector_pt[i];
  }
 
  // ===================================================================
- // Set values in the matrix (write version)
+ // Output the vector
  // ===================================================================
  template<class T>
- T &CCVector<T>::value(const unsigned long i, const unsigned long j)
- {
-  // TODO: Julio - Implement range check access
-  // Return the value at row i and column j
-  return Matrix_pt[i*this->NColumns+j];
- }
-
- // Output the matrix
- template<class T>
- void CCVector<T>::output()
+ void CCVector<T>::output(bool output_indexes) const
  {
   if (this->Is_empty)
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "The matrix is empty" << std::endl;
+    error_message << "The vector is empty" << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   else
    {
-    for (unsigned long i = 0; i < this->NRows; i++)
+    // Check whether we should output the indexes
+    if (output_indexes)
      {
-      for (unsigned long j = 0; j < this->NColumns; j++)
+      for (unsigned long i = 0; i < this->NValues; i++)
        {
-        std::cout << Matrix_pt[i*this->NColumns+j] << " ";
-       }
+        std::cout << "(" << i << "): " << Vector_pt[i]
+                  << std::endl; 
+       } // for (i < this->NValues)
+     } // if (output_indexes)
+    else
+     {
+      for (unsigned long i = 0; i < this->NValues; i++)
+       {
+        std::cout << Vector_pt[i] << " ";
+       } // for (i < this->NValues)
       std::cout << std::endl;
-     }
+     } // else if (output_indexes)
+    
    }
- 
+  
  }
  
- // Output the matrix
+ // ===================================================================
+ // Output the vector
+ // ===================================================================
  template<class T>
- void CCVector<T>::output(std::ofstream &outfile)
+ void CCVector<T>::output(std::ofstream &outfile, bool output_indexes) const
  {
   if (this->Is_empty)
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "The matrix is empty" << std::endl;
+    error_message << "The vector is empty" << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   else
    {
-    for (unsigned long i = 0; i < this->NRows; i++)
+    // Check whether we should output the indexes
+    if (output_indexes)
      {
-      for (unsigned long j = 0; j < this->NColumns; j++)
+      for (unsigned long i = 0; i < this->NValues; i++)
        {
-        outfile << Matrix_pt[i*this->NColumns+j] << " ";
-       }
+        outfile << "(" << i << "): " << Vector_pt[i]
+                << std::endl; 
+       } // for (i < this->NValues)
+     } // if (output_indexes)
+    else
+     {
+      for (unsigned long i = 0; i < this->NValues; i++)
+       {
+        outfile << Vector_pt[i] << " ";
+       } // for (i < this->NValues)
       outfile << std::endl;
-     }
+     } // else if (output_indexes)
+    
    }
   
  }
  
  // ===================================================================
- // Creates a zero matrix with the given rows and columns
+ // Creates a zero vector with the already defined number of entries
  // ===================================================================
  template<class T>
- void CCVector<T>::create_zero_matrix()
+ void CCVector<T>::create_zero_vector()
  {
   // Delete any possible stored matrix
   clean_up();
- 
-  // Allocate memory for the matrix
-  Matrix_pt = new T[this->NRows*this->NColumns];
- 
-  // ... and set the matrix to zero
-  std::memset(Matrix_pt, 0, sizeof(T*)*this->NColumns*this->NRows);
- 
-  // Mark the matrix as having elements
-  this->Is_empty = false;
  }
  
  // ================================================================
@@ -590,37 +664,322 @@ namespace chapchom
  // friends of the class since all their operations are performed
  // using the class methods
  // ================================================================
- 
+
+ // ================================================================
  // Dot product of vectors
+ // ================================================================
  template<class T>
- void dot_vectors(const CCVector<T> &vector_one, const CCVector<T> &vector_two,
-                  CCVector<T> &solution_vector)
+ T dot_vectors(const CCVector<T> &left_vector, const CCVector<T> &right_vector)
  {
-  TODO TODO TODO TODO TODO
+  // Check that the left and the right vectors have entries to operate
+  // with
+  if (left_vector.is_empty() || right_vector.is_empty())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "One of the vectors to operate with has no entries\n"
+                  << "left_vector.is_empty() = "
+                  << left_vector.is_empty() << "\n"
+                  << "right_vector.is_empty() = "
+                  << right_vector.is_empty() << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check whether the dimensions of the vectors allow the operation
+  const unsigned long n_values_left_vector = left_vector.nvalues();
+  const unsigned long n_values_right_vector = right_vector.nvalues();
+  if (n_values_left_vector != n_values_right_vector)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The dimension of the vectors is not the same:\n"
+                  << "dim(left_vector) = (" << n_values_left_vector << ")\n"
+                  << "dim(right_vector) = (" << n_values_right_vector << ")\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check that the left vector is a row vector and that the right
+  // vector is a column vector
+  if (left_vectoris.transposed())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The left vector should be a row vector\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  if (!right_vector.is_transposed())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The right vector should be a column vector\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Get the vector pointer of the left vector
+  T *left_vector_pt = left_vector.vector_pt();
+  // Get the vector pointer of the right vector
+  T *right_vector_pt = right_vector.vector_pt();
+  
+  // Store the dot product of the vectors
+  T dot_product = 0.0;
+  
+  // Compute the dot product
+  for (unsigned long i = 0; i < n_values_left_vector; i++)
+   {
+    dot_product+= left_vector_pt[i] * right_vector_pt[i];
+   }
+  
+  return dot_product;
+  
  }
- 
+
+ // ================================================================
  // Addition of vectors
+ // ================================================================
  template<class T>
- void add_vectors(const CCVector<T> &vector_one, const CCVector<T> &vector_two,
+ void add_vectors(const CCVector<T> &vector_one,
+                  const CCVector<T> &vector_two,
                   CCVector<T> &solution_vector)
  {
-  TODO TODO TODO TODO TODO
+  // Check that the vectors have entries to operate with
+  if (vector_one.is_empty() || vector_two.is_empty())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "One of the vectors to operate with has no entries\n"
+                  << "vector_one.is_empty() = "
+                  << vector_one.is_empty() << "\n"
+                  << "vector_two.is_empty() = "
+                  << vector_two.is_empty() << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check whether the dimensions of the vectors are the same
+  const unsigned long n_values_vector_one = vector_one.nvalues();
+  const unsigned long n_values_vector_two = vector_two.nvalues();
+  if (n_values_vector_one != n_values_vector_two)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The dimension of the vectors is not the same:\n"
+                  << "dim(vector_one) = (" << n_values_vector_one << ")\n"
+                  << "dim(vector_two) = (" << n_values_vector_two << ")\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check that both vectors have the same transposed status (both are
+  // columns vectors or both are row vectors)
+  if (vector_one.is_transposed() != vector_two.is_transposed())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "Both vectors MUST BE either column or row vectors\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Get the vector pointer of the solution vector
+  T *solution_vector_pt = solution_vector.vector_pt();
+  
+  // Check whether the solution vector has allocated memory, otherwise
+  // allocate it here!!!
+  if (solution_vector.is_empty())
+   {
+    // Allocate memory for the vector
+    solution_vector_pt = new T[n_values_vector_one];
+    
+    // Mark the solution vector as having elements
+    solution_vector.mark_as_no_empty();
+   }
+  
+  // Get the vector pointer of the vector one
+  T *vector_one_pt = vector_one.vector_pt();
+  // Get the vector pointer of the vector two
+  T *vector_two_pt = vector_two.vector_pt();
+  
+  // Perform the addition
+  for (unsigned long i = 0; i < n_values_vector_one; i++)
+   {
+    solution_vector_pt[i] = vector_one_pt[i] + vector_two_pt[i];
+   }
+  
  }
- 
+
+ // ================================================================
  // Substraction of vectors
+ // ================================================================
  template<class T>
- void substract_vectors(const CCVector<T> &vector_one, const CCVector<T> &vector_two,
+ void substract_vectors(const CCVector<T> &vector_one,
+                        const CCVector<T> &vector_two,
                         CCVector<T> &solution_vector)
  {
-  TODO TODO TODO TODO TODO
+  // Check that the vectors have entries to operate with
+  if (vector_one.is_empty() || vector_two.is_empty())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "One of the vectors to operate with has no entries\n"
+                  << "vector_one.is_empty() = "
+                  << vector_one.is_empty() << "\n"
+                  << "vector_two.is_empty() = "
+                  << vector_two.is_empty() << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check whether the dimensions of the vectors are the same
+  const unsigned long n_values_vector_one = vector_one.nvalues();
+  const unsigned long n_values_vector_two = vector_two.nvalues();
+  if (n_values_vector_one != n_values_vector_two)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The dimension of the vectors is not the same:\n"
+                  << "dim(vector_one) = (" << n_values_vector_one << ")\n"
+                  << "dim(vector_two) = (" << n_values_vector_two << ")\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check that both vectors have the same transposed status (both are
+  // columns vectors or both are row vectors)
+  if (vector_one.is_transposed() != vector_two.is_transposed())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "Both vectors MUST BE either column or row vectors\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Get the vector pointer of the solution vector
+  T *solution_vector_pt = solution_vector.vector_pt();
+  
+  // Check whether the solution vector has allocated memory, otherwise
+  // allocate it here!!!
+  if (solution_vector.is_empty())
+   {
+    // Allocate memory for the vector
+    solution_vector_pt = new T[n_values_vector_one];
+    
+    // Mark the solution vector as having elements
+    solution_vector.mark_as_no_empty();
+   }
+  
+  // Get the vector pointer of the vector one
+  T *vector_one_pt = vector_one.vector_pt();
+  // Get the vector pointer of the vector two
+  T *vector_two_pt = vector_two.vector_pt();
+  
+  // Perform the substraction of vectors
+  for (unsigned long i = 0; i < n_values_vector_one; i++)
+   {
+    solution_vector_pt[i] = vector_one_pt[i] - vector_two_pt[i];
+   }
+  
  }
- 
+
+ // ================================================================
  // Performs multiplication of vectors (one by one entries)
+ // ================================================================
  template<class T>
- void multiply_vectors(const CCVector<T> &vector_one, const CCVector<T> &vector_two,
-                       CCVector<T> &solution_vector)
+ void multiply_element_by_element_vectors(const CCVector<T> &vector_one,
+                                          const CCVector<T> &vector_two,
+                                          CCVector<T> &solution_vector)
  {
-  TODO TODO TODO TODO TODO
+  // Check that the vectors have entries to operate with
+  if (vector_one.is_empty() || vector_two.is_empty())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "One of the vectors to operate with has no entries\n"
+                  << "vector_one.is_empty() = "
+                  << vector_one.is_empty() << "\n"
+                  << "vector_two.is_empty() = "
+                  << vector_two.is_empty() << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check whether the dimensions of the vectors are the same
+  const unsigned long n_values_vector_one = vector_one.nvalues();
+  const unsigned long n_values_vector_two = vector_two.nvalues();
+  if (n_values_vector_one != n_values_vector_two)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The dimension of the vectors is not the same:\n"
+                  << "dim(vector_one) = (" << n_values_vector_one << ")\n"
+                  << "dim(vector_two) = (" << n_values_vector_two << ")\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check that both vectors have the same transposed status (both are
+  // columns vectors or both are row vectors)
+  if (vector_one.is_transposed() != vector_two.is_transposed())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "Both vectors MUST BE either column or row vectors\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Get the vector pointer of the solution vector
+  T *solution_vector_pt = solution_vector.vector_pt();
+  
+  // Check whether the solution vector has allocated memory, otherwise
+  // allocate it here!!!
+  if (solution_vector.is_empty())
+   {
+    // Allocate memory for the vector
+    solution_vector_pt = new T[n_values_vector_one];
+    
+    // Mark the solution vector as having elements
+    solution_vector.mark_as_no_empty();
+   }
+  
+  // Get the vector pointer of the vector one
+  T *vector_one_pt = vector_one.vector_pt();
+  // Get the vector pointer of the vector two
+  T *vector_two_pt = vector_two.vector_pt();
+  
+  // Perform the substraction of vectors
+  for (unsigned long i = 0; i < n_values_vector_one; i++)
+   {
+    solution_vector_pt[i] = vector_one_pt[i] * vector_two_pt[i];
+   }
+  
  }
  
 }

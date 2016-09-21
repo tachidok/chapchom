@@ -13,7 +13,7 @@ namespace chapchom
  CCMatrix<T>::CCMatrix() 
   : ACMatrix<T>()
  {
-  // Set the pointer to the matrix to NULL
+  // Set the pointer of the matrix to NULL
   Matrix_pt = 0;
  }
 
@@ -23,7 +23,7 @@ namespace chapchom
  template<class T>
  CCMatrix<T>::CCMatrix(const unsigned long n)
  : ACMatrix<T>(n)
- { 
+ {
   create_zero_matrix();
  }
  
@@ -33,10 +33,10 @@ namespace chapchom
  template<class T>
  CCMatrix<T>::CCMatrix(const unsigned long m, const unsigned long n)
   : ACMatrix<T>(m, n)
- {  
+ {
   create_zero_matrix();
  }
-
+ 
  // ===================================================================
  // Constructor where we pass the data for the matrix of size m X n
  // ===================================================================
@@ -51,6 +51,33 @@ namespace chapchom
  }
  
  // ===================================================================
+ // Constructor a matrix from a CCVector
+ // ===================================================================
+ template<class T>
+ CCMatrix<T>::CCMatrix(CCVector<T> &vector)
+  : ACMatrix<T>()
+ {
+  // Get the pointer to the vector data
+  T *vector_pt = vector.vector_pt();
+  // Compute the dimension of the new matrix by checking whether the
+  // vector is transposed or not
+  unsigned long m = 0;
+  unsigned long n = 0;
+  if (vector.is_transposed()) // a row vector
+   {
+    m = 1;
+    n = vector.nvalues();
+   }
+  else // a column vector
+   {
+    m = vector.nvalues();
+    n = 1;
+   }
+  // Copy the data from the vector to the Matrix_pt vector
+  set_matrix(vector_pt, m, n);
+ }
+ 
+ // ===================================================================
  // Copy constructor
  // ===================================================================
  template<class T>
@@ -60,7 +87,7 @@ namespace chapchom
   // Copy the data from the input vector to the Matrix_pt vector
   set_matrix(copy.matrix_pt(), this->NRows, this->NColumns);
  }
-
+ 
  // ===================================================================
  // Empty destructor
  // ===================================================================
@@ -70,7 +97,7 @@ namespace chapchom
   // Deallocate memory
   clean_up();
  }
-
+ 
  // ===================================================================
  // Assignment operator
  // ===================================================================
@@ -104,7 +131,7 @@ namespace chapchom
  template<class T>
  CCMatrix<T>& CCMatrix<T>::operator-=(const CCMatrix<T> &matrix)
  {
-  // Call the method to perform the addition
+  // Call the method to perform the operation
   substract_matrix(matrix, *this);
   // Return the solution matrix
   return *this; 
@@ -117,7 +144,7 @@ namespace chapchom
  CCMatrix<T> CCMatrix<T>::operator+(const CCMatrix<T> &matrix)
  {
   // Create a zero matrix where to store the result
-  CCMatrix<T> solution(n_rows, n_columns);
+  CCMatrix<T> solution(this->NRows, this->NColumns);
   // Call the method to perform the addition
   add_matrix(matrix, solution);
   // Return the solution matrix
@@ -131,8 +158,8 @@ namespace chapchom
  CCMatrix<T> CCMatrix<T>::operator-(const CCMatrix<T> &matrix)
  {
   // Create a zero matrix where to store the result
-  CCMatrix<T> solution(n_rows, n_columns);
-  // Call the method to perform the addition
+  CCMatrix<T> solution(this->NRows, this->NColumns);
+  // Call the method to perform the operation
   substract_matrix(matrix, solution);
   return solution;
  }
@@ -144,13 +171,13 @@ namespace chapchom
  CCMatrix<T> CCMatrix<T>::operator*(const CCMatrix<T> &right_matrix)
  { 
   // Create a zero matrix where to store the result
-  CCMatrix<T> solution(n_rows_left_matrix, n_columns_right_matrix);
+  CCMatrix<T> solution(this->NRows, right_matrix.ncolumns());
   // Perform the multiplication
   multiply_by_matrix(right_matrix, solution);
   // Return the solution matrix
   return solution;
  }
-
+ 
  // ===================================================================
  // Transforms the input vector to a matrix class type (virtual such
  // that each derived class has to implement it)
@@ -169,6 +196,7 @@ namespace chapchom
   
   // Allocate memory for the matrix
   Matrix_pt = new T[m*n];
+  
   // Copy the matrix (an element by element copy, uff!!)
   std::memcpy(Matrix_pt, matrix_pt, m*n*sizeof(T));
   
@@ -190,6 +218,11 @@ namespace chapchom
     this->Delete_matrix = true;
     // Free the memory allocated for the matrix
     free_memory_for_matrix();
+   }
+  else // If empty
+   {
+    // Set the pointer of the matrix to NULL
+    Matrix_pt = 0;
    }
   
  }
@@ -229,14 +262,30 @@ namespace chapchom
  // Performs sum of matrices
  // ===================================================================
  template<class T>
- void CCMatrix<T>::add_matrix(const CCMatrix<T> &matrix, CCMatrix<T> &solution_matrix)
- { 
+ void CCMatrix<T>::add_matrix(const CCMatrix<T> &matrix,
+                              CCMatrix<T> &solution_matrix)
+ {
+  // Check that THIS and the other matrix have entries to operate with
+  if (this->Is_empty || matrix.is_empty())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "One of the matrices to operate with has no entries\n"
+                  << "this->Is_empty = "
+                  << this->Is_empty << "\n"
+                  << "matrix.is_empty() = "
+                  << matrix.is_empty() << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
   // Check whether the dimensions of the matrices are the same
   const unsigned long n_rows_input_matrix = matrix.nrows();
   const unsigned long n_columns_input_matrix = matrix.ncolumns();
   const unsigned long n_rows = this->NRows;
   const unsigned long n_columns = this->NColumns;
-  if (n_rows != n_rows_input_matrix || n_columns!= n_columns_input_matrix)
+  if (n_rows != n_rows_input_matrix || n_columns != n_columns_input_matrix)
    {
     // Error message
     std::ostringstream error_message;
@@ -253,7 +302,7 @@ namespace chapchom
   // Check whether the dimension of the solution matrix are correct
   const unsigned long n_rows_solution_matrix = solution_matrix.nrows();
   const unsigned long n_columns_solution_matrix = solution_matrix.ncolumns();
-  if (n_rows != n_rows_solution_matrix || n_columns!= n_columns_solution_matrix)
+  if (n_rows != n_rows_solution_matrix || n_columns != n_columns_solution_matrix)
    {
     // Error message
     std::ostringstream error_message;
@@ -299,14 +348,30 @@ namespace chapchom
  // Performs substraction of matrices
  // ===================================================================
  template<class T>
- void CCMatrix<T>::substract_matrix(const CCMatrix<T> &matrix, CCMatrix<T> &solution_matrix)
+ void CCMatrix<T>::substract_matrix(const CCMatrix<T> &matrix,
+                                    CCMatrix<T> &solution_matrix)
  {
+  // Check that THIS and the other matrix have entries to operate with
+  if (this->Is_empty || matrix.is_empty())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "One of the matrices to operate with has no entries\n"
+                  << "this->Is_empty = "
+                  << this->Is_empty << "\n"
+                  << "matrix.is_empty() = "
+                  << matrix.is_empty() << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
   // Check whether the dimensions of the matrices are the same
   const unsigned long n_rows_input_matrix = matrix.nrows();
   const unsigned long n_columns_input_matrix = matrix.ncolumns();
   const unsigned long n_rows = this->NRows;
   const unsigned long n_columns = this->NColumns;
-  if (n_rows != n_rows_input_matrix || n_columns!= n_columns_input_matrix)
+  if (n_rows != n_rows_input_matrix || n_columns != n_columns_input_matrix)
    {
     // Error message
     std::ostringstream error_message;
@@ -323,7 +388,7 @@ namespace chapchom
   // Check whether the dimension of the solution matrix are correct
   const unsigned long n_rows_solution_matrix = solution_matrix.nrows();
   const unsigned long n_columns_solution_matrix = solution_matrix.ncolumns();
-  if (n_rows != n_rows_solution_matrix || n_columns!= n_columns_solution_matrix)
+  if (n_rows != n_rows_solution_matrix || n_columns != n_columns_solution_matrix)
    {
     // Error message
     std::ostringstream error_message;
@@ -372,6 +437,21 @@ namespace chapchom
  void CCMatrix<T>::multiply_by_matrix(const CCMatrix<T> &right_matrix,
                                       CCMatrix<T> &solution_matrix)
  {
+  // Check that THIS and the right matrix have entries to operate with
+  if (this->Is_empty || right_matrix.is_empty())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "One of the matrices to operate with has no entries\n"
+                  << "this->Is_empty = "
+                  << this->Is_empty << "\n"
+                  << "right_matrix.is_empty() = "
+                  << right_matrix.is_empty() << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
   // Check whether the dimensions of the matrices allow for
   // multiplication
   const unsigned long n_rows_right_matrix = right_matrix.nrows();
@@ -484,6 +564,19 @@ namespace chapchom
  template<class T>
  void CCMatrix<T>::transpose()
  {
+  // Check that THIS matrix has entries to operate with
+  if (this->Is_empty)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "THIS matrix has no entries to operate with\n"
+                  << "this->Is_empty = "
+                  << this->Is_empty << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
   // Transpose itself
   this->transpose(*this);
  }
@@ -510,7 +603,9 @@ namespace chapchom
   return Matrix_pt[i*this->NColumns+j];
  }
 
+ // ===================================================================
  // Output the matrix
+ // ===================================================================
  template<class T>
  void CCMatrix<T>::output(bool output_indexes) const
  {
@@ -553,8 +648,10 @@ namespace chapchom
    }
   
  }
- 
+
+ // ===================================================================
  // Output the matrix
+ // ===================================================================
  template<class T>
  void CCMatrix<T>::output(std::ofstream &outfile,
                           bool output_indexes) const
@@ -617,13 +714,28 @@ namespace chapchom
  // ================================================================
  
  // ===================================================================
- // Performs sum of matrices (friend)
+ // Performs sum of matrices
  // ===================================================================
  template<class T>
  void add_matrices(const CCMatrix<T> &matrix_one,
                    const CCMatrix<T> &matrix_two,
                    CCMatrix<T> &solution_matrix)
  {
+  // Check that both matrices have entries to operate with
+  if (matrix_one.is_empty() || matrix_two.is_empty())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "One of the matrices to operate with has no entries\n"
+                  << "matrix_one.is_empty() = "
+                  << matrix_one.is_empty() << "\n"
+                  << "matrix_two.is_empty() = "
+                  << matrix_two.is_empty() << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
   // Check whether the dimensions of the matrices are the same
   const unsigned long n_rows_matrix_one = matrix_one.nrows();
   const unsigned long n_columns_matrix_one = matrix_one.ncolumns();
@@ -694,13 +806,28 @@ namespace chapchom
  }
  
  // ===================================================================
- // Performs substraction of matrice (friend)
+ // Performs substraction of matrices
  // ===================================================================
  template<class T>
  void substract_matrices(const CCMatrix<T> &matrix_one,
                          const CCMatrix<T> &matrix_two,
                          CCMatrix<T> &solution_matrix)
  {
+  // Check that both matrices have entries to operate with
+  if (matrix_one.is_empty() || matrix_two.is_empty())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "One of the matrices to operate with has no entries\n"
+                  << "matrix_one.is_empty() = "
+                  << matrix_one.is_empty() << "\n"
+                  << "matrix_two.is_empty() = "
+                  << matrix_two.is_empty() << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
   // Check whether the dimensions of the matrices are the same
   const unsigned long n_rows_matrix_one = matrix_one.nrows();
   const unsigned long n_columns_matrix_one = matrix_one.ncolumns();
@@ -771,13 +898,28 @@ namespace chapchom
  }
  
  // ===================================================================
- // Performs multiplication of matrices (friend)
+ // Performs multiplication of matrices
  // ===================================================================
  template<class T>
  void multiply_matrices(const CCMatrix<T> &left_matrix,
                         const CCMatrix<T> &right_matrix,
                         CCMatrix<T> &solution_matrix)
  {
+  // Check that both matrices have entries to operate with
+  if (left_matrix.is_empty() || right_matrix.is_empty())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "One of the matrices to operate with has no entries\n"
+                  << "left_matrix.is_empty() = "
+                  << left_matrix.is_empty() << "\n"
+                  << "right_matrix.is_empty() = "
+                  << right_matrix.is_empty() << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
   // Check whether the dimensions of the matrices allow for
   // multiplication
   const unsigned long n_rows_left_matrix = left_matrix.nrows();
@@ -856,11 +998,116 @@ namespace chapchom
    }
  }
  
- 
  // ================================================================
  // Extra methods to work with vector and matrices operations
  // ================================================================
- // Multiply vector by matrix
+ // Multiply vector times vector (if you want to perform dot product
+ // use the dot() method defined in the cc_vector.h file instead)
+ template<class T>
+ void multiply_vector_times_vector(const CCVector<T> &left_vector, const CCVector<T> &right_vector,
+                                   CCMatrix<T> &solution_matrix)
+ {
+  // Check that the left and the right vectors have entries to operate
+  // with
+  if (left_vector.is_empty() || right_vector.is_empty())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "One of the vectors to operate with has no entries\n"
+                  << "left_vector.is_empty() = "
+                  << left_vector.is_empty() << "\n"
+                  << "right_vector.is_empty() = "
+                  << right_vector.is_empty() << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check whether the dimensions of the vectors allow the operation
+  unsigned n_rows_left_vector = 0;
+  unsigned n_columns_left_vector = 0;
+  if (left_vector.is_transposed()) // a row vector
+   {
+    n_rows_left_vector = 1;
+    n_columns_left_vector = left_vector.nvalues();
+   }
+  else // a column vector
+   {
+    n_rows_left_vector = left_vector.nvalues();
+    n_columns_left_vector = 1;
+   }
+  
+  unsigned n_rows_right_vector = 0;
+  unsigned n_columns_right_vector = 0;
+  if (right_vector.is_transposed()) // a row vector
+   {
+    n_rows_right_vector = 1;
+    n_columns_right_vector = right_vector.nvalues();
+   }
+  else // a column vector
+   {
+    n_rows_right_vector = right_vector.nvalues();
+    n_columns_right_vector = 1;
+   }
+  
+  // Check that the dimension of the vectors allow the operation
+  if (n_columns_left_vector != n_rows_right_vector)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The dimension of the vectors does not allow "
+                  << "multiplication:\n"
+                  << "dim(left_matrix) = (" << n_rows_left_matrix << ", "
+                  << n_columns_left_matrix << ")\n"
+                  << "dim(right_matrix) = (" << n_rows_right_matrix << ", "
+                  << n_columns_right_matrix << ")\n" << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check whether the dimension of the solution matrix are correct
+  const unsigned long n_rows_solution_matrix = solution_matrix.nrows();
+  const unsigned long n_columns_solution_matrix = solution_matrix.ncolumns();
+  if (n_rows_left_vector != n_rows_solution_matrix ||
+      n_columns_right_vector != n_columns_solution_matrix)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The dimension of the solution matrix is not appropiate for\n"
+                  << "the operation:\n"
+                  << "dim(left_vector) = (" << n_rows_left_vector << ", "
+                  << n_columns_left_vector << ")\n"
+                  << "dim(right_vector) = (" << n_rows_right_vector << ", "
+                  << n_columns_right_vector << ")\n"
+                  << "dim(solution_matrix) = (" << n_rows_solution_matrix
+                  << ", " << n_columns_solution_matrix << ")\n" << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+
+  // Get both vectors and multiply them
+  T *left_vector_pt = left_vector.vector_pt();
+  T *right_vector_pt = right_vector.vector_pt();
+
+  for (unsigned i = 0; i < n_columns_left_vector; i++)
+   {
+    for (unsigned j = 0; j < n_rows_right_vector; j++)
+     {
+      
+     }
+   }
+  
+  HERE IMPLEMETING THIS FUNCTION
+    LOOK FOR JOHN LENON SONG
+   but when i see you darling is like
+   falling in love again is like starting over
+   starting over
+   
+   }
+ 
+ // Multiply vector times matrix
  template<class T>
  void multiply_vector_by_matrix(const CCVector<T> &vector, const CCMatrix<T> &matrix,
                                 CCMatrix<T> &solution_matrix)
@@ -870,7 +1117,7 @@ namespace chapchom
   HERE HERE HERE HERE HERE
  }
  
- // Multiply matrix by vector
+ // Multiply matrix times vector
  template<class T>
  void multiply_matrix_by_vector(const CCMatrix<T> &matrix, const CCVector<T> &vector,
                                 CCVector<T> &solution_vector)

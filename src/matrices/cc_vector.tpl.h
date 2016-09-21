@@ -10,105 +10,102 @@
 
 namespace chapchom
 {
-
+ 
  // Concrete class to represent vectors
  template<class T>
- class CCVector : public virtual ACVector<T>
- {
-
- public:
- 
-  // Empty constructor
-  CCVector();
-  
-  // Constructor to create an n size zero vector (we assume vectors
-  // are created as column vectors, if you require a row vector then
-  // transpose it)
-  CCVector(const unsigned long n);
-  
-  // Constructor where we pass the data for the vector of size n
-  CCVector(T *vector_pt, const unsigned long n);
-  
-  // Copy constructor (we require to define this if we want to use
-  // operators overloading as sum and assignment)
-  CCVector(const CCVector &copy);
-  
-  // Destructor
-  virtual ~CCVector();
-  
-  // Assignment operator
-  CCVector& operator=(const CCVector &source_vector);
-  
-  // += operator
-  CCVector& operator+=(const CCVector &vector);
-  
-  // -= operator
-  CCVector& operator-=(const CCVector &vector);
-  
-  // Add operator
-  CCVector operator+(const CCVector &vector);
-  
-  // Substraction operator
-  CCVector operator-(const CCVector &vector);
-  
-  // Multiplication operator (element by element)
-  CCVector operator*(const CCVector &vector);
-  
-  // Performs dot product with the current vector
-  T dot(const CCVector &right_vector);
-  
-  // Transforms the input vector to a vector class type (virtual such
-  // that each derived class has to implement it)
-  void set_vector(const T *vector_pt,
-                  const unsigned long n);
-  
-  // Clean up for any dynamically stored data
-  void clean_up();
-  
-  // Free allocated memory for vector
-  void free_memory_for_vector();
-  
-  // Performs sum of vectors
-  void add_vector(const CCVector &vector, CCVector &solution_vector);
-  
-  // Performs substraction of vectors
-  void substract_vector(const CCVector &vector,
-                        CCVector &solution_vector);
-  
-  // Performs multiplication of vectors (one by one entries)
-  void multiply_by_vector(const CCVector &vector,
-                          CCVector &solution_vector);
-  
-  // Computes the transpose and store it in the transpose vector
-  void transpose(CCVector &transposed_vector);
-  
-  // Transpose the vector
-  void transpose();
-  
-  // Get the specified value from the vector (read-only)
-  const T value(const unsigned long i) const;
-  
-  // Set values in the vector (write version)
-  T &value(const unsigned long i);
-  
-  // Output the vector
-  void output(bool output_indexes = false) const ;
-  
-  // Output to file
-  void output(std::ofstream &outfile, bool output_indexes = false) const;
-  
-  // Get access to the Vector_pt
-  inline T *vector_pt() const {return Vector_pt;}
- 
- protected:
-  
-  // Creates a zero vector with the given number of entries
-  void create_zero_vector();
-  
-  // The vector
-  T *Vector_pt;
-  
- };
+  class CCVector : public virtual ACVector<T>
+  {
+   
+  public:
+   
+   // Empty constructor
+   CCVector();
+   
+   // Constructor to create an n size zero vector (we assume vectors
+   // are created as column vectors, if you need a row vector then
+   // pass "true" as the second parameter)
+   CCVector(const unsigned long n, bool is_transposed = false);
+   
+   // Constructor where we pass the data for the vector of size n
+   CCVector(T *vector_pt, const unsigned long n, bool is_transposed = false);
+   
+   // Copy constructor (we require to define this if we want to use
+   // operators overloading as sum and assignment)
+   CCVector(const CCVector &copy);
+   
+   // Destructor
+   virtual ~CCVector();
+   
+   // Assignment operator
+   CCVector& operator=(const CCVector &source_vector);
+   
+   // += operator
+   CCVector& operator+=(const CCVector &vector);
+   
+   // -= operator
+   CCVector& operator-=(const CCVector &vector);
+   
+   // Add operator
+   CCVector operator+(const CCVector &vector);
+   
+   // Substraction operator
+   CCVector operator-(const CCVector &vector);
+   
+   // Multiplication operator (element by element)
+   CCVector operator*(const CCVector &vector);
+   
+   // Performs dot product with the current vector
+   T dot(const CCVector &right_vector);
+   
+   // Transforms the input vector to a vector class type (virtual such
+   // that each derived class has to implement it)
+   void set_vector(const T *vector_pt,
+                   const unsigned long n);
+   
+   // Clean up for any dynamically stored data
+   void clean_up();
+   
+   // Free allocated memory for vector
+   void free_memory_for_vector();
+   
+   // Performs sum of vectors
+   void add_vector(const CCVector &vector, CCVector &solution_vector);
+   
+   // Performs substraction of vectors
+   void substract_vector(const CCVector &vector,
+                         CCVector &solution_vector);
+   
+   // Performs multiplication of vectors (one by one entries)
+   void multiply_element_by_element_vector(const CCVector &vector,
+                                           CCVector &solution_vector);
+   
+   // Computes the transpose and store it in the transpose vector
+   void transpose(CCVector &transposed_vector);
+      
+   // Get the specified value from the vector (read-only)
+   const T value(const unsigned long i) const;
+   
+   // Set values in the vector (write version)
+   T &value(const unsigned long i);
+   
+   // Output the vector
+   void output(bool output_indexes = false) const ;
+   
+   // Output to file
+   void output(std::ofstream &outfile, bool output_indexes = false) const;
+   
+   // Get access to the Vector_pt
+   inline T *vector_pt() const {return Vector_pt;}
+   
+  protected:
+   
+   // Creates a zero vector with the given number of entries
+   void create_zero_vector();
+   
+   // The vector
+   T *Vector_pt;
+   
+  };
  
  // ================================================================
  // Extra methods to work with vectors, we do not need them to be
@@ -118,23 +115,27 @@ namespace chapchom
  
  // Dot product of vectors
  template<class T>
- void dot_vectors(const CCVector<T> &vector_one, const CCVector<T> &vector_two,
-                  CCVector<T> &solution_vector);
+  void dot_vectors(const CCVector<T> &vector_one,
+                   const CCVector<T> &vector_two,
+                   CCVector<T> &solution_vector);
  
  // Addition of vectors
  template<class T>
- void add_vectors(const CCVector<T> &vector_one, const CCVector<T> &vector_two,
-                  CCVector<T> &solution_vector);
+  void add_vectors(const CCVector<T> &vector_one,
+                   const CCVector<T> &vector_two,
+                   CCVector<T> &solution_vector);
  
  // Substraction of vectors
  template<class T>
- void substract_vectors(const CCVector<T> &vector_one, const CCVector<T> &vector_two,
-                        CCVector<T> &solution_vector);
+  void substract_vectors(const CCVector<T> &vector_one,
+                         const CCVector<T> &vector_two,
+                         CCVector<T> &solution_vector);
  
  // Performs multiplication of vectors (one by one entries)
  template<class T>
- void multiply_vectors(const CCVector<T> &vector_one, const CCVector<T> &vector_two,
-                       CCVector<T> &solution_vector);
+  void multiply_vectors(const CCVector<T> &vector_one,
+                        const CCVector<T> &vector_two,
+                        CCVector<T> &solution_vector);
  
 }
 

@@ -23,11 +23,11 @@ namespace chapchom
    
    // Empty constructor
    ACVector();
-  
+   
    // Constructor to create an n size zero vector (we assume vectors
-   // are created as column vectors, if you require a row vector then
-   // transpose it)
-   ACVector(const unsigned long n);
+   // are created as column vectors, if you need a row vector then
+   // pass "true" as the second parameter)
+   ACVector(const unsigned long n, bool is_transposed = false);
    
    // Destructor
    virtual ~ACVector();
@@ -99,7 +99,7 @@ namespace chapchom
    inline bool set_transposed_status(bool status)
    {Is_transpose = status;}
    
-   // Transpose the matrix
+   // Transpose the vector
    inline void transpose(){is_transpose=~is_transpose;}
    
    // Computes the transpose and store it in the transpose vector
@@ -107,6 +107,12 @@ namespace chapchom
    
    // Checks whether the vector has been set, or allocated
    inline bool is_empty() const {return Is_empty;}
+   
+   // Set matrix as having elements
+   inline void mark_as_empty() {Is_empty = true;}
+   
+   // Set matrix as no having elements
+   inline void mark_as_no_empty() {Is_empty = false;}
    
    // Checks whether the vector is allowed to be deleted
    inline bool delete_vector() const {return Delete_vector;}

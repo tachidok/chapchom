@@ -11,59 +11,59 @@
 
 namespace chapchom
 {
-
+ 
  /// @class ACMatrix ac_matrix.h
  
  // Abstract class to represent matrices
  template<class T>
   class ACMatrix
   {
-
+   
   public:
- 
+   
    // Empty constructor
    ACMatrix();
- 
+   
    // Constructor to create an n X n zero matrix
    ACMatrix(const unsigned long n);
- 
+   
    // Constructor to create an m X n zero matrix
    ACMatrix(const unsigned long m, const unsigned long n);
-  
+   
    // Destructor
    virtual ~ACMatrix();
-  
+   
    // Transforms the input vector to a matrix class type (virtual such
    // that each derived class has to implement it)
    virtual void set_matrix(const T *matrix_pt,
                            const unsigned long m,
                            const unsigned long n) = 0;
- 
+   
    // Clean up for any dynamically stored data
    virtual void clean_up() = 0;
- 
+   
    // Free allocated memory for matrix
    virtual void free_memory_for_matrix() = 0;
-  
+   
    // Get the specified value from the matrix (read-only)
    virtual const T value(const unsigned long i, const unsigned long j) const = 0;
-  
+   
    // Set values in the matrix (write version)
    virtual T &value(const unsigned long i, const unsigned long j) = 0;
- 
+   
    // Get the specified value from the matrix
    inline T get_value(const unsigned long i, const unsigned long j) const
    {return value(i,j);}
- 
+   
    // Set values in the matrix
    inline void set_value(const unsigned long i, const unsigned long j, T v)
    {value(i, j) = v;}
- 
+   
    /// Get access using brackets as matrix(i,j). Read-only version
    inline virtual T operator()(const unsigned long &i, 
                                const unsigned long &j) const
    {return value(i, j);}
- 
+   
    /// Get access using brackets as matrix(i,j). Read-write version
    inline virtual T &operator()(const unsigned long &i, 
                                 const unsigned long &j)
@@ -71,6 +71,7 @@ namespace chapchom
    
    // Output the matrix
    virtual void output(bool output_indexes = false) const = 0;
+   
    // Output to file
    virtual void output(std::ofstream &outfile,
                        bool output_indexes = false) const = 0;
@@ -136,7 +137,7 @@ namespace chapchom
     {
      BrokenCopy::broken_copy("ACMatrix");
     }
- 
+   
    // Assignment operator (we do not want this class to be
    // copiable. Check
    // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
@@ -144,9 +145,9 @@ namespace chapchom
     {
      BrokenCopy::broken_assign("ACMatrix");
     }
- 
+   
   };
-
-}
  
+}
+
 #endif // #ifndef ACMATRIX_H

@@ -13,7 +13,7 @@ namespace chapchom
  ACMatrix<T>::ACMatrix() 
   : NRows(0), NColumns(0), Is_empty(true), Delete_matrix(true)
  { }
-
+ 
  // ===================================================================
  // Constructor to create an n X n zero matrix
  // ===================================================================
@@ -22,7 +22,6 @@ namespace chapchom
   : NRows(n), NColumns(n), Is_empty(true), Delete_matrix(true)
  { }
  
-
  // ===================================================================
  // Constructor to create an m X n zero matrix
  // ===================================================================
@@ -30,7 +29,7 @@ namespace chapchom
  ACMatrix<T>::ACMatrix(const unsigned long m, const unsigned long n)
   : NRows(m), NColumns(n), Is_empty(true), Delete_matrix(true)
  { }
-
+ 
  // ===================================================================
  // Destructor
  // ===================================================================
