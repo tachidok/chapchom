@@ -1001,10 +1001,14 @@ namespace chapchom
  // ================================================================
  // Extra methods to work with vector and matrices operations
  // ================================================================
+
+ // ================================================================
  // Multiply vector times vector (if you want to perform dot product
  // use the dot() method defined in the cc_vector.h file instead)
+ // ================================================================
  template<class T>
- void multiply_vector_times_vector(const CCVector<T> &left_vector, const CCVector<T> &right_vector,
+ void multiply_vector_times_vector(const CCVector<T> &left_vector,
+                                   const CCVector<T> &right_vector,
                                    CCMatrix<T> &solution_matrix)
  {
   // Check that the left and the right vectors have entries to operate
@@ -1086,43 +1090,290 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
-
+  
+  // Get the matrix pointer of the solution matrix
+  T *solution_matrix_pt = solution_matrix.matrix_pt();
+  
+  // Check whether the solution matrix has allocated memory, otherwise
+  // allocate it here!!!
+  if (solution_matrix.is_empty())
+   {
+    // Allocate memory for the matrix
+    solution_matrix_pt =
+     new T[n_rows_solution_matrix*n_columns_solution_matrix];
+    
+    // Mark the solution matrix as having elements
+    solution_matrix.mark_as_no_empty();
+   }
+  
   // Get both vectors and multiply them
   T *left_vector_pt = left_vector.vector_pt();
   T *right_vector_pt = right_vector.vector_pt();
-
-  for (unsigned i = 0; i < n_columns_left_vector; i++)
+  
+  // Perform the multiplication
+  for (unsigned long i = 0; i < n_rows_solution_matrix; i++)
    {
-    for (unsigned j = 0; j < n_rows_right_vector; j++)
+    const unsigned offset_left_vector = i * n_columns_left_vector;
+    const unsigned offset_right_vector = i * n_columns_right_vector;
+    for (unsigned long j = 0; j < n_columns_solution_matrix; j++)
      {
-      
+      // Initialise
+      solution_matrix_pt[offset_right_vector+j] = 0;
+      for (unsigned long k = 0; k < n_columns_left_vector; k++)
+       {
+        solution_matrix_pt[offset_right_vector+j]+=
+         left_vector_pt[offset_left_vector+k] * right_vector_pt[k*n_columns_right_vector+j];
+       }
      }
    }
   
-  HERE IMPLEMETING THIS FUNCTION
-    LOOK FOR JOHN LENON SONG
-   but when i see you darling is like
-   falling in love again is like starting over
-   starting over
-   
-   }
- 
- // Multiply vector times matrix
- template<class T>
- void multiply_vector_by_matrix(const CCVector<T> &vector, const CCMatrix<T> &matrix,
-                                CCMatrix<T> &solution_matrix)
- {
-  // Check whether the dimensions of the vector and the matrix allow
-  // the operation
-  HERE HERE HERE HERE HERE
  }
  
- // Multiply matrix times vector
+ // ================================================================
+ // Multiply vector times matrix
+ // ================================================================
  template<class T>
- void multiply_matrix_by_vector(const CCMatrix<T> &matrix, const CCVector<T> &vector,
+ void multiply_vector_by_matrix(const CCVector<T> &vector,
+                                const CCMatrix<T> &matrix,
+                                CCMatrix<T> &solution_matrix)
+ {
+  // Check that the vector and the matrix have entries to operate with
+  if (vector.is_empty() || matrix.is_empty())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "Either the vector or the matrix have no entries to\n"
+                  << "operate with\n"
+                  << "vector.is_empty() = "
+                  << vector.is_empty() << "\n"
+                  << "matrix.is_empty() = "
+                  << matrix.is_empty() << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check whether the dimensions of the vector and the matrix allow
+  // the operation
+  unsigned n_rows_vector = 0;
+  unsigned n_columns_vector = 0;
+  if (vector.is_transposed()) // a row vector
+   {
+    n_rows_vector = 1;
+    n_columns_vector = vector.nvalues();
+   }
+  else // a column vector
+   {
+    n_rows_vector = vector.nvalues();
+    n_columns_vector = 1;
+   }
+  
+  unsigned n_rows_matrix = matrix.nrows();
+  unsigned n_columns_matrix = matrix.ncolumns();
+  
+  // Check that the dimension of the vector and the matrix allow the
+  // operation
+  if (n_columns_vector != n_rows_matrix)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The dimension of the vector and the matrix does\n"
+                  << "not allow multiplication:\n"
+                  << "dim(vector) = (" << n_rows_vector << ", "
+                  << n_columns_vector << ")\n"
+                  << "dim(matrix) = (" << n_rows_matrix << ", "
+                  << n_columns_matrix << ")\n" << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check whether the dimension of the solution matrix are correct
+  const unsigned long n_rows_solution_matrix = solution_matrix.nrows();
+  const unsigned long n_columns_solution_matrix = solution_matrix.ncolumns();
+  if (n_rows_vector != n_rows_solution_matrix ||
+      n_columns_matrix != n_columns_solution_matrix)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The dimension of the solution matrix is not appropiate for\n"
+                  << "the operation:\n"
+                  << "dim(vector) = (" << n_rows_vector << ", "
+                  << n_columns_vector << ")\n"
+                  << "dim(matrix) = (" << n_rows_matrix << ", "
+                  << n_columns_matrix << ")\n"
+                  << "dim(solution_matrix) = (" << n_rows_solution_matrix
+                  << ", " << n_columns_solution_matrix << ")\n" << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Get the matrix pointer of the solution matrix
+  T *solution_matrix_pt = solution_matrix.matrix_pt();
+  
+  // Check whether the solution matrix has allocated memory, otherwise
+  // allocate it here!!!
+  if (solution_matrix.is_empty())
+   {
+    // Allocate memory for the matrix
+    solution_matrix_pt =
+     new T[n_rows_solution_matrix*n_columns_solution_matrix];
+    
+    // Mark the solution matrix as having elements
+    solution_matrix.mark_as_no_empty();
+   }
+  
+  // Get both the vector and the matrix pointer
+  T *vector_pt = vector.vector_pt();
+  T *matrix_pt = matrix.matrix_pt();
+  
+  // Perform the multiplication
+  for (unsigned long i = 0; i < n_rows_solution_matrix; i++)
+   {
+    const unsigned offset_vector = i * n_columns_vector;
+    const unsigned offset_matrix = i * n_columns_matrix;
+    for (unsigned long j = 0; j < n_columns_solution_matrix; j++)
+     {
+      // Initialise
+      solution_matrix_pt[offset_matrix+j] = 0;
+      for (unsigned long k = 0; k < n_columns_vector; k++)
+       {
+        solution_matrix_pt[offset_matrix+j]+=
+         vector_pt[offset_vector+k] * matrix_pt[k*n_columns_matrix+j];
+       }
+     }
+   }
+  
+ }
+ 
+ // ================================================================
+ // Multiply matrix times vector
+ // ================================================================
+ template<class T>
+ void multiply_matrix_by_vector(const CCMatrix<T> &matrix,
+                                const CCVector<T> &vector,
                                 CCVector<T> &solution_vector)
  {
-  HERE HERE HERE HERE HERE
+ // Check that the matrix and the vector have entries to operate with
+  if (matrix.is_empty() || vector.is_empty())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "Either the matrix or the vector have no entries to\n"
+                  << "operate with\n"
+                  << "matrix.is_empty() = "
+                  << matrix.is_empty() << "\n"
+                  << "vector.is_empty() = "
+                  << vector.is_empty() << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check whether the dimensions of the matrix and the vector allow
+  // the operation
+  unsigned n_rows_matrix = matrix.nrows();
+  unsigned n_columns_matrix = matrix.ncolumns();
+  
+  unsigned n_rows_vector = 0;
+  unsigned n_columns_vector = 0;
+  if (vector.is_transposed()) // a row vector
+   {
+    n_rows_vector = 1;
+    n_columns_vector = vector.nvalues();
+   }
+  else // a column vector
+   {
+    n_rows_vector = vector.nvalues();
+    n_columns_vector = 1;
+   }
+  
+  // Check that the dimension of the vector and the matrix allow the
+  // operation
+  if (n_columns_matrix != n_rows_vector)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The dimension of the matrix and the vector does\n"
+                  << "not allow multiplication:\n"
+                  << "dim(matrix) = (" << n_rows_matrix << ", "
+                  << n_columns_matrix << ")\n"
+                  << "dim(vector) = (" << n_rows_vector << ", "
+                  << n_columns_vector << ")\n" << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check whether the dimension of the solution vector is correct
+  unsigned n_rows_solution_vector = 0;
+  unsigned n_columns_solution_vector = 0;
+  if (solution_vector.is_transposed()) // a row vector
+   {
+    n_rows_solution_vector = 1;
+    n_columns_solution_vector = solution_vector.nvalues();
+   }
+  else // a column vector
+   {
+    n_rows_solution_vector = solution_vector.nvalues();
+    n_columns_solution_vector = 1;
+   }
+  
+  if (n_rows_matrix != n_rows_solution_vector ||
+      n_columns_vector != n_columns_solution_vector)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The dimension of the solution vector is not appropiate for\n"
+                  << "the operation:\n"
+                  << "dim(matrix) = (" << n_rows_matrix << ", "
+                  << n_columns_matrix << ")\n"
+                  << "dim(vector) = (" << n_rows_vector << ", "
+                  << n_columns_vector << ")\n"
+                  << "dim(solution_vector) = (" << n_rows_solution_vector
+                  << ", " << n_columns_solution_vector << ")\n" << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Get the vector pointer of the solution vector
+  T *solution_vector_pt = solution_vector.vector_pt();
+  
+  // Check whether the solution vector has allocated memory, otherwise
+  // allocate it here!!!
+  if (solution_vector.is_empty())
+   {
+    // Allocate memory for the vector
+    solution_vector_pt =
+     new T[n_rows_solution_vector*n_columns_solution_vector];
+    
+    // Mark the solution vector as having elements
+    solution_vector.mark_as_no_empty();
+   }
+  
+  // Get both the vector and the matrix pointer
+  T *matrix_pt = matrix.matrix_pt();
+  T *vector_pt = vector.vector_pt();
+  
+  // Perform the multiplication
+  for (unsigned long i = 0; i < n_rows_solution_vector; i++)
+   {
+    const unsigned offset_matrix = i * n_columns_matrix;
+    const unsigned offset_vector = i * n_columns_vector;
+    for (unsigned long j = 0; j < n_columns_solution_vector; j++)
+     {
+      // Initialise
+      solution_vector_pt[offset_vector+j] = 0;
+      for (unsigned long k = 0; k < n_columns_matrix; k++)
+       {
+        solution_vector_pt[offset_vector+j]+=
+         matrix_pt[k*n_columns_matrix+j] * vector_pt[offset_vector+k];
+       }
+     }
+   }
+  
  }
  
 }
