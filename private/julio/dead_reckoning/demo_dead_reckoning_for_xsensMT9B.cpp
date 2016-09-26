@@ -19,11 +19,11 @@ using namespace chapchom;
 
 //#define DEBUG
 
-//#define T_NO_MOVEMENT
+#define T_NO_MOVEMENT
 //#define T_CHARACTERISE_YAW
 //#define T_CHARACTERISE_YAW2
 //#define T_ELLIPSE_MOVEMENT
-#define T_CHARACTERISE_YAW_HALF_HOUR
+//#define T_CHARACTERISE_YAW_HALF_HOUR
 //#define T_CHARACTERISE_TWO_HOURS
 
 //#define T_GET_YAW_DRIFT

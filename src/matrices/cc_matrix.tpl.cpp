@@ -983,8 +983,8 @@ namespace chapchom
   // Perform the multiplication
   for (unsigned long i = 0; i < n_rows_left_matrix; i++)
    {
-    const unsigned offset_right_matrix = i * n_columns_right_matrix;
     const unsigned offset_left_matrix = i * n_columns_left_matrix;
+    const unsigned offset_right_matrix = i * n_columns_right_matrix;
     for (unsigned long j = 0; j < n_columns_right_matrix; j++)
      {
       // Initialise
@@ -1362,15 +1362,14 @@ namespace chapchom
    {
     const unsigned offset_matrix = i * n_columns_matrix;
     const unsigned offset_vector = i * n_columns_vector;
-    for (unsigned long j = 0; j < n_columns_solution_vector; j++)
+    // We can skip one loop since there is only one column
+    
+    // Initialise
+    solution_vector_pt[offset_vector] = 0;
+    for (unsigned long k = 0; k < n_columns_matrix; k++)
      {
-      // Initialise
-      solution_vector_pt[offset_vector+j] = 0;
-      for (unsigned long k = 0; k < n_columns_matrix; k++)
-       {
-        solution_vector_pt[offset_vector+j]+=
-         matrix_pt[k*n_columns_matrix+j] * vector_pt[offset_vector+k];
-       }
+      solution_vector_pt[offset_vector]+=
+       matrix_pt[offset_matrix+k] * vector_pt[offset_vector+k];
      }
    }
   

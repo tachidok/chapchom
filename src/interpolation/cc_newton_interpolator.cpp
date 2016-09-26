@@ -83,6 +83,15 @@ namespace chapchom
    }
   else if (order == 2) // quadratic interpolation
    {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "This is not correctly implemented, check it and try it!!!\n"
+                  << "Look for ERROR HERE"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+    
     a[0] = fx_points[0];
     // Using divided differences notation
     const double f01 =
@@ -95,6 +104,9 @@ namespace chapchom
     // Do interpolation
     const double interpolated_value = a[0] + a[1] * (x - x_points[0]) +
      a[2] * (x - x_points[0]) * (x - x_points[1]);
+    // ERROR HERE
+    // ERROR HERE
+    // ERROR HERE, where does a[2] was set before used??
    
     return interpolated_value;
    }
