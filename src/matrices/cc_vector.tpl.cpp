@@ -125,19 +125,24 @@ namespace chapchom
   substract_vector(vector, solution);
   return solution;
  }
-
- HERE HERE RE-IMPLEMENT TO RETURN A MATRIX USING THE OPERATION FOR MATRIX MULTIPLICATION
+ 
+ //HERE HERE RE-IMPLEMENT TO RETURN A MATRIX USING THE OPERATION FOR MATRIX MULTIPLICATION
  
  // ===================================================================
- // Multiplication operator (element by element)
+ // Multiplication operator (it returns a matrix with the
+ // corresponding size, if you require a dot product operation use the
+ // dot() method instead
  // ===================================================================
  template<class T>
- CCVector<T> CCVector<T>::operator*(const CCVector<T> &vector)
- { 
+ CCMatrix<T> CCVector<T>::operator*(const CCVector<T> &vector)
+ {
+  // Create two matrices, one from each vector
+  CCMatrix<T> left_matrix(*this);
+  CCMatrix<T> right_matrix(vector);
   // Create a zero vector where to store the result
   CCVector<T> solution(this->NValues);
   // Perform the multiplication
-  multiply_by_vector(vector, solution);
+  multiply_matrices(left_matrix,right_matrix, solution);
   // Return the solution vector
   return solution;
  }
@@ -528,7 +533,7 @@ namespace chapchom
  // Computes the transpose and store in the solution vector
  // ===================================================================
  template<class T>
- void CCVector<T>::transpose(const CCVector<T> &transposed_vector)
+ void CCVector<T>::transpose(CCVector<T> &transposed_vector)
  {
   // Check that THIS vector has entries to operate with
   if (this->Is_empty)
@@ -664,7 +669,7 @@ namespace chapchom
  // friends of the class since all their operations are performed
  // using the class methods
  // ================================================================
-
+ 
  // ================================================================
  // Dot product of vectors
  // ================================================================
@@ -705,7 +710,7 @@ namespace chapchom
   
   // Check that the left vector is a row vector and that the right
   // vector is a column vector
-  if (left_vectoris.transposed())
+  if (left_vector.transposed())
    {
     // Error message
     std::ostringstream error_message;

@@ -16,25 +16,28 @@ namespace chapchom
  template<class T>
  class CCMatrix : public virtual ACMatrix<T>
  {
-
+  
  public:
- 
+  
   // Empty constructor
   CCMatrix();
- 
+  
   // Constructor to create an n X n zero matrix
   CCMatrix(const unsigned long n);
- 
+  
   // Constructor to create an m X n zero matrix
   CCMatrix(const unsigned long m, const unsigned long n);
- 
+  
   // Constructor where we pass the data for the matrix of size m X n
   CCMatrix(T *matrix_pt, const unsigned long m, const unsigned long n);
- 
+  
+  // Constructor that creates a matrix from a vector
+  CCMatrix(CCVector<T> &vector);
+  
   // Copy constructor (we require to define this if we want to use
   // operators overloading as sum and assignment)
   CCMatrix(const CCMatrix &copy);
- 
+  
   // Destructor
   virtual ~CCMatrix();
   

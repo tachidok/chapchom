@@ -533,7 +533,7 @@ namespace chapchom
  // Computes the transpose and store in the solution matrix
  // ===================================================================
  template<class T>
- void CCMatrix<T>::transpose(const CCMatrix<T> &transposed_matrix)
+ void CCMatrix<T>::transpose(CCMatrix<T> &transposed_matrix)
  {
   // Get the number of rows and columns of the matrix
   const unsigned long n_rows = this->NRows;
@@ -793,10 +793,10 @@ namespace chapchom
   T *matrix_one_pt = matrix_one.matrix_pt();
   T *matrix_two_pt = matrix_two.matrix_pt();
   // Perform the addition
-  for (unsigned long i = 0; i < n_rows; i++)
+  for (unsigned long i = 0; i < n_rows_solution_matrix; i++)
    {
-    const unsigned long offset = i*n_columns;
-    for (unsigned long j = 0; j < n_columns; j++)
+    const unsigned long offset = i*n_columns_solution_matrix;
+    for (unsigned long j = 0; j < n_columns_solution_matrix; j++)
      {
       solution_matrix_pt[offset+j] =
        matrix_one_pt[offset+j] + matrix_two_pt[offset+j];
@@ -885,10 +885,10 @@ namespace chapchom
   T *matrix_one_pt = matrix_one.matrix_pt();
   T *matrix_two_pt = matrix_two.matrix_pt();
   // Perform the substraction
-  for (unsigned long i = 0; i < n_rows; i++)
+  for (unsigned long i = 0; i < n_rows_solution_matrix; i++)
    {
-    const unsigned long offset = i*n_columns;
-    for (unsigned long j = 0; j < n_columns; j++)
+    const unsigned long offset = i*n_columns_solution_matrix;
+    for (unsigned long j = 0; j < n_columns_solution_matrix; j++)
      {
       solution_matrix_pt[offset+j] =
        matrix_one_pt[offset+j] - matrix_two_pt[offset+j];
@@ -1061,10 +1061,10 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "The dimension of the vectors does not allow "
                   << "multiplication:\n"
-                  << "dim(left_matrix) = (" << n_rows_left_matrix << ", "
-                  << n_columns_left_matrix << ")\n"
-                  << "dim(right_matrix) = (" << n_rows_right_matrix << ", "
-                  << n_columns_right_matrix << ")\n" << std::endl;
+                  << "dim(left_vector) = (" << n_rows_left_vector << ", "
+                  << n_columns_left_vector << ")\n"
+                  << "dim(right_vector) = (" << n_rows_right_vector << ", "
+                  << n_columns_right_vector << ")\n" << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);

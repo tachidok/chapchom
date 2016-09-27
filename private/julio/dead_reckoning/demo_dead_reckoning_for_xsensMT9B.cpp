@@ -17,9 +17,12 @@
 
 using namespace chapchom;
 
+//#define T_TEST_TRIG_ONLY
+
 //#define DEBUG
 
-#define T_NO_MOVEMENT
+//#define T_NO_MOVEMENT
+#define T_PIC
 //#define T_CHARACTERISE_YAW
 //#define T_CHARACTERISE_YAW2
 //#define T_ELLIPSE_MOVEMENT
@@ -122,8 +125,39 @@ void multiply_matrix_times_vector(std::vector<std::vector<double> > &A,
  
 int main(int argc, char *argv[])
 {
- // Initialise chapcom
+ // Initialise chapchom
  initialise_chapchom();
+ 
+#ifdef T_TEST_TRIG_ONLY
+ {
+  const unsigned n_steps = 10;
+  double h = M_PI / n_steps;
+  double angle = 0.0;
+  for (unsigned i = 0; i < n_steps; i++,angle+=h)
+   {
+    std::cout << "Sin("<<angle<<"):["<<std::sin(angle)<<"] "
+              << "Cos("<<angle<<"):["<<std::cos(angle)<<"] "
+              << "Tan("<<angle<<"):["<<std::tan(angle)<<"] "
+              << std::endl;
+   }
+  
+  const double dx = 2.0/n_steps;
+  const double dy = 2.0/n_steps;
+  double x, y;
+  x = y = -1.0;
+  for (unsigned i = 0; i < n_steps; i++, y+=dy)
+   {
+    x = -1.0;
+    for (unsigned j = 0; j < n_steps; j++, x+=dx)
+     {
+      std::cout << "atan2("<<y<<","<<x<<"):["<<atan2(y,x)<<"]" << std::endl;
+     }
+   }
+
+  return 0;
+  
+ }
+#endif // #ifdef T_TEST_TRIG_ONLY
  
  // -----------------------------------------------------------------
  // Instantiation of the problem
@@ -132,10 +166,16 @@ int main(int argc, char *argv[])
  // Create an instance of the ODEs to solve
 #ifdef T_NO_MOVEMENT
  CCODEsFromTableFromXSENSMT9B *odes =
+  new CCODEsFromTableFromXSENSMT9B("./xsensMT9B/08_test_PIC/MT9_euler_00007154_000.log",
+                                   "./xsensMT9B/08_test_PIC/MT9_cal_00007154_000.log");
+#endif // #ifdef T_NO_MOVEMENT
+ 
+#ifdef T_PIC
+ CCODEsFromTableFromXSENSMT9B *odes =
   new CCODEsFromTableFromXSENSMT9B("./xsensMT9B/01_no_movement/MT9_euler_00007154_000.log",
                                    "./xsensMT9B/01_no_movement/MT9_cal_00007154_000.log");
-#endif // #ifdef T_NO_MOVEMENT
-
+#endif // #ifdef T_PIC
+ 
 #ifdef T_CHARACTERISE_YAW
  CCODEsFromTableFromXSENSMT9B *odes =
   new CCODEsFromTableFromXSENSMT9B("./xsensMT9B/03_characterise_yaw_drift/MT9_euler_00007154_000.log",
@@ -363,6 +403,11 @@ int main(int argc, char *argv[])
  const double t_final = 76.0;
 #endif // #ifdef T_NO_MOVEMENT
  
+#ifdef T_PIC
+ const double t_initial = 5.113;
+ const double t_final = 5.148;
+#endif // T_PIC
+ 
 #ifdef T_CHARACTERISE_YAW
  const double t_initial = 8.54;
  const double t_final = 82.0;
@@ -394,9 +439,14 @@ int main(int argc, char *argv[])
  //const double t_final = 100;
  // Set the number of steps per second
  const double n_steps_per_second = 257.0; // 257 measeurements per second (original number of measurements)
+#ifdef T_PIC
+  // Set the number of steps we want to take
+ const unsigned n_steps = 10;
+#else
  // Set the number of steps we want to take
  const double n_steps = n_steps_per_second * t_final;
  //const double n_steps = 18273;
+#endif // #ifdef T_PIC
  // Get the step size
  const double h = (t_final - t_initial) / n_steps;
  
@@ -477,11 +527,21 @@ int main(int argc, char *argv[])
  //acc_angles[0] = atan2(acc_inertial[1], acc_inertial[2]);
  //acc_angles[1] = atan2(-acc_inertial[0], sqrt(acc_inertial[1]*acc_inertial[1]+acc_inertial[2]*acc_inertial[2]));
  //acc_angles[2] = atan2(acc_inertial[1], acc_inertial[0]);
+
+ // HERE
+ std::cout << "t: " << t
+           << " acc[0]: " << acc[0] << " acc[1]: " << acc[1]
+           << " acc[2]: " << acc[2] << std::endl;
  
  acc_angles[0] = atan2(acc[1], acc[2]);
  acc_angles[1] = atan2(-acc[0], sqrt(acc[1]*acc[1]+acc[2]*acc[2]));
  acc_angles[2] = atan2(acc[2], sqrt(acc[0]*acc[0]+acc[2]*acc[2]));
  //acc_angles[2] = atan2(sqrt(acc[0]*acc[0]+acc[1]*acc[1]), acc[0]); // HERE
+ 
+ // HERE
+ std::cout << "t: " << t
+           << " acc_angles[0]: " << acc_angles[0] << " acc_angles[1]: " << acc_angles[1]
+           << " acc_angles[2]: " << acc_angles[2] << std::endl;
  
  //acc_angles[2] = atan2(acc[1], acc[0]);
  //acc_angles[2] = atan2(-acc[0], sqrt(acc[0]*acc[0]+acc[1]*acc[1]+acc[2]*acc[2]));
@@ -498,7 +558,7 @@ int main(int argc, char *argv[])
  // Update filtered Euler angles
  y[0][6] = alpha * y[0][6] + (1.0 - alpha) * acc_angles[0];
  y[0][7] = alpha * y[0][7] + (1.0 - alpha) * acc_angles[1];
- y[0][8]+= yaw_correction;
+ //y[0][8]+= yaw_correction;
  //y[0][8] = alpha_yaw * y[0][8];// + (1.0 - alpha) * yaw_correction;
  //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * (y[0][8] + yaw_correction);
  //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * acc_angles[2];
@@ -608,9 +668,20 @@ int main(int argc, char *argv[])
    //acc_angles[1] = atan2(-acc_inertial[0], sqrt(acc_inertial[1]*acc_inertial[1]+acc_inertial[2]*acc_inertial[2]));
    //acc_angles[2] = atan2(acc_inertial[1], acc_inertial[0]);
    
+   // HERE
+   std::cout << "t: " << t
+             << " acc[0]: " << acc[0] << " acc[1]: " << acc[1]
+             << " acc[2]: " << acc[2] << std::endl;
+   
    acc_angles[0] = atan2(acc[1], acc[2]);
    acc_angles[1] = atan2(-acc[0], sqrt(acc[1]*acc[1]+acc[2]*acc[2]));
    acc_angles[2] = atan2(acc[2], sqrt(acc[0]*acc[0]+acc[2]*acc[2]));
+   
+   // HERE
+   std::cout << "t: " << t
+             << " acc_angles[0]: " << acc_angles[0] << " acc_angles[1]: " << acc_angles[1]
+             << " acc_angles[2]: " << acc_angles[2] << std::endl;
+   
    //acc_angles[2] = atan2(sqrt(acc[0]*acc[0]+acc[1]*acc[1]), acc[0]); // HERE
    
    //acc_angles[2] = atan2(acc[1], acc[0]);
@@ -630,7 +701,7 @@ int main(int argc, char *argv[])
    // Update filtered Euler angles
    y[0][6] = alpha * y[0][6] + (1.0 - alpha) * acc_angles[0];
    y[0][7] = alpha * y[0][7] + (1.0 - alpha) * acc_angles[1];
-   y[0][8]+= yaw_correction;
+   //y[0][8]+= yaw_correction;
    //y[0][8] = alpha_yaw * y[0][8];// + (1.0 - alpha) * yaw_correction;
    //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * (y[0][8] + yaw_correction);
    //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * yaw_correction;

@@ -17,7 +17,8 @@ namespace chapchom
   Loaded_table = false;
   // Initialise the number of data in the Table
   //N_data_in_table = 0;
-  N_data_in_table = 18273; // no movement
+  //N_data_in_table = 18273; // no movement
+  N_data_in_table = 10; // PIC
   //N_data_in_table = 21162; // characterise yaw drift
   //N_data_in_table = 266959; // characterise yaw drift2
   //N_data_in_table = 20076; // ellipse movement

@@ -38,7 +38,7 @@ namespace chapchom
                            const unsigned long n) = 0;
    
    // Clean up for any dynamically stored data
-   virtual void clean_up() = 0;o
+   virtual void clean_up() = 0;
    
    // Free allocated memory for vector
    virtual void free_memory_for_vector() = 0;
@@ -93,18 +93,15 @@ namespace chapchom
    
    // Check whether the vector should be treated as transposed (we
    // assume all vectors are created as column vectors)
-   inline bool is_transposed() const {return Is_transpose;}
+   inline bool is_transposed() const {return Is_transposed;}
    
    // Set transposed status
    inline bool set_transposed_status(bool status)
-   {Is_transpose = status;}
+   {Is_transposed = status;}
    
    // Transpose the vector
-   inline void transpose(){is_transpose=~is_transpose;}
-   
-   // Computes the transpose and store it in the transpose vector
-   virtual void transpose(const CCVector &transpose_vector) = 0;
-   
+   inline void transpose(){is_transposed=~is_transposed;}
+      
    // Checks whether the vector has been set, or allocated
    inline bool is_empty() const {return Is_empty;}
    

@@ -11,14 +11,14 @@ namespace chapchom
  // ===================================================================
  template<class T>
  ACVector<T>::ACVector() 
-  : NValues(0), Is_tranposed(false), Is_empty(true), Delete_vector(true)
+  : NValues(0), Is_transposed(false), Is_empty(true), Delete_vector(true)
  { }
  
  // ===================================================================
  // Constructor to create an n size zero vector
  // ===================================================================
  template<class T>
- ACVector<T>::ACVector(const unsigned long n, bool is_transposed = false)
+ ACVector<T>::ACVector(const unsigned long n, bool is_transposed)
   : NValues(n), Is_empty(true), Delete_vector(true),
     Is_transposed(is_transposed)
  { }

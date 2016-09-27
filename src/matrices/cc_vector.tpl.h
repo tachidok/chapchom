@@ -11,6 +11,18 @@
 namespace chapchom
 {
  
+ // forward CCMatrix class declaration, required for vector
+ // overloading operation *
+ template<class T>
+  class CCMatrix;
+ 
+ // extern method to perform vectors multiplication
+ // Performs multiplication of matrices
+ template<class T>
+  extern void multiply_matrices(const CCMatrix<T> &left_matrix,
+                                const CCMatrix<T> &right_matrix,
+                                CCMatrix<T> &solution_matrix);
+ 
  // Concrete class to represent vectors
  template<class T>
   class CCVector : public virtual ACVector<T>
@@ -50,9 +62,11 @@ namespace chapchom
    
    // Substraction operator
    CCVector operator-(const CCVector &vector);
-   
-   // Multiplication operator (element by element)
-   CCVector operator*(const CCVector &vector);
+
+   // Multiplication operator (it returns a matrix with the
+   // corresponding size, if you require a dot product operation use
+   // the dot() method instead
+   CCMatrix<T> operator*(const CCVector &vector);
    
    // Performs dot product with the current vector
    T dot(const CCVector &right_vector);
@@ -115,9 +129,7 @@ namespace chapchom
  
  // Dot product of vectors
  template<class T>
-  void dot_vectors(const CCVector<T> &vector_one,
-                   const CCVector<T> &vector_two,
-                   CCVector<T> &solution_vector);
+  T dot_vectors(const CCVector<T> &left_vector, const CCVector<T> &right_vector);
  
  // Addition of vectors
  template<class T>
@@ -133,9 +145,9 @@ namespace chapchom
  
  // Performs multiplication of vectors (one by one entries)
  template<class T>
-  void multiply_vectors(const CCVector<T> &vector_one,
-                        const CCVector<T> &vector_two,
-                        CCVector<T> &solution_vector);
+  void multiply_element_by_element_vectors(const CCVector<T> &vector_one,
+                                           const CCVector<T> &vector_two,
+                                           CCVector<T> &solution_vector);
  
 }
 
