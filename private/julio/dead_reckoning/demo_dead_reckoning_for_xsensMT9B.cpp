@@ -527,21 +527,23 @@ int main(int argc, char *argv[])
  //acc_angles[0] = atan2(acc_inertial[1], acc_inertial[2]);
  //acc_angles[1] = atan2(-acc_inertial[0], sqrt(acc_inertial[1]*acc_inertial[1]+acc_inertial[2]*acc_inertial[2]));
  //acc_angles[2] = atan2(acc_inertial[1], acc_inertial[0]);
-
- // HERE
+ 
+#ifdef T_TEST_TRIG_ONLY
  std::cout << "t: " << t
            << " acc[0]: " << acc[0] << " acc[1]: " << acc[1]
            << " acc[2]: " << acc[2] << std::endl;
+#endif // #ifdef T_TEST_TRIG_ONLY
  
  acc_angles[0] = atan2(acc[1], acc[2]);
  acc_angles[1] = atan2(-acc[0], sqrt(acc[1]*acc[1]+acc[2]*acc[2]));
  acc_angles[2] = atan2(acc[2], sqrt(acc[0]*acc[0]+acc[2]*acc[2]));
  //acc_angles[2] = atan2(sqrt(acc[0]*acc[0]+acc[1]*acc[1]), acc[0]); // HERE
  
- // HERE
+#ifdef T_TEST_TRIG_ONLY
  std::cout << "t: " << t
            << " acc_angles[0]: " << acc_angles[0] << " acc_angles[1]: " << acc_angles[1]
            << " acc_angles[2]: " << acc_angles[2] << std::endl;
+#endif // #ifdef T_TEST_TRIG_ONLY
  
  //acc_angles[2] = atan2(acc[1], acc[0]);
  //acc_angles[2] = atan2(-acc[0], sqrt(acc[0]*acc[0]+acc[1]*acc[1]+acc[2]*acc[2]));
@@ -668,19 +670,21 @@ int main(int argc, char *argv[])
    //acc_angles[1] = atan2(-acc_inertial[0], sqrt(acc_inertial[1]*acc_inertial[1]+acc_inertial[2]*acc_inertial[2]));
    //acc_angles[2] = atan2(acc_inertial[1], acc_inertial[0]);
    
-   // HERE
+#ifdef T_TEST_TRIG_ONLY
    std::cout << "t: " << t
              << " acc[0]: " << acc[0] << " acc[1]: " << acc[1]
              << " acc[2]: " << acc[2] << std::endl;
+#endif // #ifdef T_TEST_TRIG_ONLY
    
    acc_angles[0] = atan2(acc[1], acc[2]);
    acc_angles[1] = atan2(-acc[0], sqrt(acc[1]*acc[1]+acc[2]*acc[2]));
    acc_angles[2] = atan2(acc[2], sqrt(acc[0]*acc[0]+acc[2]*acc[2]));
    
-   // HERE
+#ifdef T_TEST_TRIG_ONLY
    std::cout << "t: " << t
              << " acc_angles[0]: " << acc_angles[0] << " acc_angles[1]: " << acc_angles[1]
              << " acc_angles[2]: " << acc_angles[2] << std::endl;
+#endif // #ifdef T_TEST_TRIG_ONLY
    
    //acc_angles[2] = atan2(sqrt(acc[0]*acc[0]+acc[1]*acc[1]), acc[0]); // HERE
    

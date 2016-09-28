@@ -688,7 +688,7 @@ namespace chapchom
          {
           outfile << Matrix_pt[i*this->NColumns+j] << " ";
          } // for (j < this->NColumns)
-        output << std::endl;
+        outfile << std::endl;
        } // for (i < this->NRows)
      } // else if (output_indexes)
     

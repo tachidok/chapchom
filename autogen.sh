@@ -117,6 +117,11 @@ echo ""
 #====================================================================
 # Calling CMake
 #====================================================================
+echo "============================================================= "
+echo "I am going to run CMake ..."
+echo "============================================================= "
+echo ""
+echo ""
 # Go one folder up since we did a cd into ./build
 cmake ../ -Dlib_type=$lib_type -DCMAKE_BUILD_TYPE=$lib_version
 make clean
@@ -125,14 +130,23 @@ make
 echo ""
 echo ""
 echo "============================================================= "
-echo "Done CMake"
+echo "[Done] CMake"
 echo "============================================================= "
 
 #====================================================================
 # Copy library into lib folder
 #====================================================================
 cd ..
-cp $build_dir/lib$lib_name$lib_ext ./$lib_dir
+cp $build_dir/src/general/libgeneral$lib_ext ./$lib_dir
+cp $build_dir/src/matrices/libmatrices$lib_ext ./$lib_dir
+cp $build_dir/src/linear_solvers/liblinear_solvers$lib_ext ./$lib_dir
+cp $build_dir/src/interpolation/libinterpolation$lib_ext ./$lib_dir
+cp $build_dir/src/odes/libodes$lib_ext ./$lib_dir
+cp $build_dir/src/integration/libintegration$lib_ext ./$lib_dir
+#====================================================================
+# External sources as well
+#====================================================================
+cp $build_dir/external_src/numerical_recipes/libnumerical_recipes$lib_ext ./$lib_dir
 
 #====================================================================
 # Copying include files ...
@@ -152,12 +166,12 @@ else
 	mkdir $include_dir
 fi
 
-mkdir $include_dir/linear_solvers
-mkdir $include_dir/general
-mkdir $include_dir/integration
-mkdir $include_dir/interpolation
-mkdir $include_dir/matrices
-mkdir $include_dir/odes
+mkdir -p $include_dir/linear_solvers
+mkdir -p $include_dir/general
+mkdir -p $include_dir/integration
+mkdir -p $include_dir/interpolation
+mkdir -p $include_dir/matrices
+mkdir -p $include_dir/odes
 mkdir -p $include_dir/$external_src_dir/numerical_recipes
 
 cp $src_dir/linear_solvers/*.h $include_dir/linear_solvers/

@@ -65,7 +65,8 @@ int main(int argc, char *argv[])
  // Create the matrix from the vector data
  // ---------------------------------------
  CCMatrix<double> B(matrix_pt, n_rows, n_columns);
- CCMatrix<double> B_t = B.transpose();
+ CCMatrix<double> B_t;
+ B.transpose(B_t);
  
  std::cout << std::endl << "Matrix created from vector" << std::endl << std::endl;
  B.output();

@@ -3,9 +3,6 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 #Project name (this case library's name)
 PROJECT(${example_name})
-#SET(${PROJET_NAME}_MAJOR_VERSION 1)
-#SET(${PROJET_NAME}_MINOR_VERSION 0)
-#SET(${PROJET_NAME}_PATCH_LEVEL 0)
 
 # Include testing (this function already calls enable_testing())
 include(CTest)
@@ -15,11 +12,8 @@ IF(NOT CMAKE_BUILD_TYPE)
 	SET(CMAKE_BUILD_TYPE "Debug")
 ENDIF()
 
-#Set include path
-#SET(include_dirs ../../src)
-
 #Adding include directories
-INCLUDE_DIRECTORIES(../../../src)
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../../include)
 
 #Adding link directories
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../../lib)
@@ -28,7 +22,7 @@ LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../../lib)
 SET(main_source demo_matrix_basic_operations)
 
 ADD_EXECUTABLE(${PROJECT_NAME} ${main_source})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} chapchom)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} general matrices)
 
 # ===========================================
 # Do tests
