@@ -115,7 +115,7 @@ namespace chapchom
 		  const std::string &function_name,
 		  const char *location) :
   ChapchomLibException(error_description,function_name,location,"ERROR",
-                       *Stream_pt,Output_width) 
+                       *Stream_pt, Output_width) 
    { }
  
   /// Static member function used to specify the error stream, which

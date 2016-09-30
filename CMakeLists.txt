@@ -18,3 +18,6 @@ ADD_SUBDIRECTORY(external_src)
 
 # Add sub-directories with source files
 ADD_SUBDIRECTORY(src)
+
+# Once all source code has been compiled add sub-directories for demos
+ADD_SUBDIRECTORY(demos)

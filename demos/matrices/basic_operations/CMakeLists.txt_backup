@@ -1,3 +1,9 @@
+# Check for cmake minimum required
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+
+#Project name (this case library's name)
+PROJECT(${example_name})
+
 # Include testing (this function already calls enable_testing())
 include(CTest)
 
@@ -7,26 +13,26 @@ IF(NOT CMAKE_BUILD_TYPE)
 ENDIF()
 
 #Adding include directories
-#INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../../include)
-#INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../../include)
 
 #Adding link directories
-#LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../../lib)
-#LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/lib)
+LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../../lib)
+
+#Adding library's sources
+#SET(main_source demo_matrix_basic_operations)
 
 #ADD_EXECUTABLE(${PROJECT_NAME} ${main_source})
 #TARGET_LINK_LIBRARIES(${PROJECT_NAME} general matrices)
 
-SET(demo_matrix_name demo_matrix_basic_operations)
-ADD_EXECUTABLE(demo_matrix_exe ${demo_matrix_name})
-TARGET_LINK_LIBRARIES(demo_matrix_exe general matrices)
+ADD_EXECUTABLE(main_source demo_matrix_basic_operations)
+TARGET_LINK_LIBRARIES(${main_source} general matrices)
 
 # ===========================================
 # Do tests
 # ===========================================
 # Run the application to check it works
 add_test (NAME TEST_check_it_runs
-          COMMAND ${demo_matrix_name})
+          COMMAND ${main_source})
 #WORKING_DIRECTORY TESTS
 add_test(NAME TEST_check_it_runs_output
          COMMAND ${CMAKE_COMMAND} -E compare_files output_correct.dat output_test.dat)
