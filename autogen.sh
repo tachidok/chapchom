@@ -137,16 +137,16 @@ echo "============================================================= "
 # Copy library into lib folder
 #====================================================================
 cd ..
-cp $build_dir/src/general/libgeneral$lib_ext ./$lib_dir
-cp $build_dir/src/matrices/libmatrices$lib_ext ./$lib_dir
-cp $build_dir/src/linear_solvers/liblinear_solvers$lib_ext ./$lib_dir
-cp $build_dir/src/interpolation/libinterpolation$lib_ext ./$lib_dir
-cp $build_dir/src/odes/libodes$lib_ext ./$lib_dir
-cp $build_dir/src/integration/libintegration$lib_ext ./$lib_dir
+cp $build_dir/src/general/libgeneral_lib$lib_ext ./$lib_dir
+cp $build_dir/src/matrices/libmatrices_lib$lib_ext ./$lib_dir
+cp $build_dir/src/linear_solvers/liblinear_solvers_lib$lib_ext ./$lib_dir
+cp $build_dir/src/odes/libodes_lib$lib_ext ./$lib_dir
+cp $build_dir/src/interpolation/libinterpolation_lib$lib_ext ./$lib_dir
+cp $build_dir/src/integration/libintegration_lib$lib_ext ./$lib_dir
 #====================================================================
 # External sources as well
 #====================================================================
-cp $build_dir/external_src/numerical_recipes/libnumerical_recipes$lib_ext ./$lib_dir
+cp $build_dir/external_src/numerical_recipes/libnumerical_recipes_lib$lib_ext ./$lib_dir
 
 #====================================================================
 # Copying include files ...
@@ -166,20 +166,23 @@ else
 	mkdir $include_dir
 fi
 
-mkdir -p $include_dir/linear_solvers
+#====================================================================
+# 
+#====================================================================
 mkdir -p $include_dir/general
+mkdir -p $include_dir/matrices
+mkdir -p $include_dir/linear_solvers
+mkdir -p $include_dir/odes
 mkdir -p $include_dir/integration
 mkdir -p $include_dir/interpolation
-mkdir -p $include_dir/matrices
-mkdir -p $include_dir/odes
 mkdir -p $include_dir/$external_src_dir/numerical_recipes
 
-cp $src_dir/linear_solvers/*.h $include_dir/linear_solvers/
 cp $src_dir/general/*.h $include_dir/general/
+cp $src_dir/matrices/*.h $include_dir/matrices/
+cp $src_dir/linear_solvers/*.h $include_dir/linear_solvers/
+cp $src_dir/odes/*.h $include_dir/odes/
 cp $src_dir/integration/*.h $include_dir/integration/
 cp $src_dir/interpolation/*.h $include_dir/interpolation/
-cp $src_dir/matrices/*.h $include_dir/matrices/
-cp $src_dir/odes/*.h $include_dir/odes/
 cp $external_src_dir/numerical_recipes/*.h $include_dir/$external_src_dir/numerical_recipes/
 
 echo "Include directory created"

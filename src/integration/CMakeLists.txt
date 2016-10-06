@@ -6,7 +6,7 @@ SET(SRC_FILES ac_integration_method.cpp ac_explicit_integration_method.cpp cc_eu
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Create a library with the above files
-ADD_LIBRARY(integration ${SRC_FILES})
+ADD_LIBRARY(integration_lib ${SRC_FILES})
 
 # Now make the library available for its use
 #TARGET_INCLUDE_DIRECTORIES(integration ${CMAKE_CURRENT_SOURCE_DIR})

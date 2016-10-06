@@ -6,7 +6,10 @@ SET(SRC_FILES ac_vector.tpl.cpp cc_vector.tpl.cpp ac_matrix.tpl.cpp cc_matrix.tp
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Create a library with the above files
-ADD_LIBRARY(matrices ${SRC_FILES})
+ADD_LIBRARY(matrices_lib ${SRC_FILES})
+
+# Indicate dependencies within libraries (it seems not to be necessary)
+#TARGET_LINK_LIBRARIES(matrices_lib general_lib)
 
 # Now make the library available for its use
 #TARGET_INCLUDE_DIRECTORIES(matrices ${CMAKE_CURRENT_SOURCE_DIR})

@@ -6,7 +6,7 @@ SET(SRC_FILES utilities.cpp initialise.cpp)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Create a library with the above files
-ADD_LIBRARY(general ${SRC_FILES})
+ADD_LIBRARY(general_lib ${SRC_FILES})
 
 # Now make the library available for its use
 #TARGET_INCLUDE_DIRECTORIES(general ${CMAKE_CURRENT_SOURCE_DIR})
