@@ -1,33 +1,27 @@
+# Include testing (this function already calls enable_testing())
+include(CTest)
 
-# Check for cmake minimum required
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+# Indicate source files
+SET(SOURCES demo_linear_solver.cpp)
 
-#Project name (this case library's name)
-PROJECT(${example_name})
-#SET(${PROJET_NAME}_MAJOR_VERSION 1)
-#SET(${PROJET_NAME}_MINOR_VERSION 0)
-#SET(${PROJET_NAME}_PATCH_LEVEL 0)
+# ... and create executable (check whether compilation was requested or not)
+IF(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
+  ADD_EXECUTABLE(demo_linear_solver ${SOURCES})
+ELSE(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
+  ADD_EXECUTABLE(demo_linear_solver EXCLUDE_FROM_ALL ${SOURCES})
+ENDIF(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
 
-#set default cmake build type to Debug (None Debug Release RelWithDebInfo MinSizeRel)
-IF(NOT CMAKE_BUILD_TYPE)
-	SET(CMAKE_BUILD_TYPE "Debug")
-ENDIF()
+# Indicate linking libraries
+SET(LIBRARIES numerical_recipes_lib general_lib matrices_lib linear_solvers_lib)
+# ... and link againts them  
+TARGET_LINK_LIBRARIES(demo_linear_solver ${LIBRARIES})
 
-#Set include path
-#SET(include_dirs ../../src)
-
-#Adding include directories
-INCLUDE_DIRECTORIES(../../../src)
-
-#Adding link directories
-LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../../lib)
-
-#Adding library's sources
-#SET(src_files cc_odes_from_table)
-
-SET(main_source demo_linear_solver)
-
-#FIND_LIBRARY(multirate_path multirate ../../lib)
-
-ADD_EXECUTABLE(${PROJECT_NAME} ${main_source})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} chapchom)
+# ===========================================
+# Do tests
+# ===========================================
+# Run the application to check it works
+add_test (NAME TEST_check_it_runs
+          COMMAND ${SOURCES})
+#WORKING_DIRECTORY TESTS
+add_test(NAME TEST_check_it_runs_output
+         COMMAND ${CMAKE_COMMAND} -E compare_files output_correct.dat output_test.dat)

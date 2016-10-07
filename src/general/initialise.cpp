@@ -10,12 +10,17 @@ namespace chapchom
   /// Setup terminate helper
   TerminateHelper::setup();
   chapchom_output << "[DONE]: Chapchom initialisation" << std::endl;
+  // Everything was alright
+  return true;
+  
  }
  
  bool finalise_chapchom()
  {
   chapchom_output << "Finalising chapchom ..." << std::endl;
   chapchom_output << "[DONE]: Chapchom termination" << std::endl;
+  // Everything was alright
+  return true;
  }
  
 }

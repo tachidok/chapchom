@@ -100,7 +100,7 @@ namespace chapchom
   else
    {
     // Error message
-   std:ostringstream error_message;
+    std::ostringstream error_message;
     error_message << "You have not specific any matrix for the system of\n"
                   << "equations. Set one matrix first by calling the/"
                   << "set_matrix() method or use the solve() method where\n"
@@ -110,9 +110,9 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
- 
+  
  }
-
+ 
  // ===================================================================
  // Re-solve a system of equations with the already stored matrix
  // A. Reusing the LU decomposition. We specify the right-hand side b
@@ -133,15 +133,15 @@ namespace chapchom
   else
    {
     // Error message
-   std:ostringstream error_message;
+    std::ostringstream error_message;
     error_message << "Resolve is not enabled.\n" << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
- 
+  
  }
-
+ 
  // ===================================================================
  // Performs LU factorisation of the input matrix, the factorisation is
  // internally stored such that it can be re-used when calling resolve
@@ -174,7 +174,7 @@ namespace chapchom
   if (n_rows!=n_columns)
    {
     // Error message
-   std:ostringstream error_message;
+    std::ostringstream error_message;
     error_message << "The matrix is not square." << std::endl
                   << "The matrix is of size: " << n_rows << " x "
                   << n_columns << std::endl;
@@ -182,7 +182,7 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
- 
+  
   // The matrix used as input and output, after calling ludcmp it has
   // the LU factorisation
   lu_a = new Mat_DP(this->A.matrix_pt(), n_rows, n_columns);

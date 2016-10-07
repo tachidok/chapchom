@@ -26,13 +26,22 @@ OptionRead()
 # Variables
 #====================================================================
 build_dir=build
-lib_dir=lib
-include_dir=include
 src_dir=src
 external_src_dir=external_src
 
-lib_ext=*
+# The name of the library
 lib_name=chapchom
+# The extension of the library is given by the choosing of STATIC or
+# SHARED library
+lib_ext=*
+# The type of the library is given by the choosing of STATIC or SHARED
+# library
+lib_type=*
+# The version of the library is given by whether the user choose to
+# build the DEBUG or the RELEASE version of the library
+lib_version=*
+# Indicates whether to build/compile demos
+build_demos=TRUE
 
 #====================================================================
 # The building script
@@ -49,69 +58,79 @@ echo "============================================================= "
 echo ""
 echo "I am going to build "$lib_name
 echo "I will use the ./"$build_dir" directory as the temp build folder"
-echo "The complete built library will be stored in the ./"$lib_dir" folder"
 echo ""
 echo "============================================================= "
 echo ""
 
 #====================================================================
-# Checking if lib_dir exists
-#====================================================================
-if (test -d $lib_dir); then 
-	continue
-else
-	mkdir $lib_dir
-fi
-
-#====================================================================
 # Going to the build directory
 #====================================================================
 if (test -d  $build_dir); then 
-	cd $build_dir
-	echo "Cleaning up ..."
-	rm -r *
-	echo "Done"
+    cd $build_dir
+    echo "Cleaning up ..."
+    rm -r *
+    echo "Done"
 else
-	mkdir $build_dir
-	cd $build_dir
+    mkdir $build_dir
+    cd $build_dir
 fi
 echo ""
+echo ""
+
+#====================================================================
+# Library type
+#====================================================================
+
+echo "Which library type do you want to build?"
+OptionPrompt "The a)STATIC or the b)SHARED type library? [a/b -- default: a]"
+static_or_shared=`OptionRead`
+if test "$static_or_shared" = "b" -o "$static_or_shared" = "B" ; then 
+    lib_type=SHARED
+    lib_ext=.so
+else
+    lib_type=STATIC
+    lib_ext=.a
+fi
+
+echo ""
+echo "============================================================= "
 echo ""
 
 #====================================================================
 # Library version
 #====================================================================
 
-echo "Which library type do you want to build?"
-OptionPrompt "The a)STATIC or the b)SHARED type library? [a/b -- default: a]"
-static_or_shared=`OptionRead`
-    if test "$static_or_shared" = "b" -o "$static_or_shared" = "B" ; then 
-		lib_type=SHARED
-		lib_ext=.so
-	else
-		lib_type=STATIC
-		lib_ext=.a
-	fi
-	
-echo ""
-echo "============================================================= "
-echo ""
-	
 echo "Which library version do you want to build?"
-OptionPrompt "The a)DEBUG or the b)RELEASE versionlibrary ? [a/b -- default: a]"
+OptionPrompt "The a)DEBUG or the b)RELEASE version of the library ? [a/b -- default: a]"
 debug_or_release=`OptionRead`
-    if test "$debug_or_release" = "b" -o "$debug_or_release" = "B" ; then 
-		lib_version=RELEASE
-	else
-		lib_version=DEBUG
-	fi
-	
-echo ""
+if test "$debug_or_release" = "b" -o "$debug_or_release" = "B" ; then 
+    lib_version=RELEASE
+else
+    lib_version=DEBUG
+fi
+
 echo ""
 echo "============================================================= "
-echo "Building the " $lib_type "/" $lib_version " version of the library ..."
-echo "============================================================= "
 echo ""
+    
+#====================================================================
+# Build demos
+#====================================================================
+
+echo "Do you want to build and run the demos?"
+OptionPrompt "a)DO BUILD/RUN demos b)DO NOT BUILD/RUN demos [a/b -- default: a]"
+build_and_run_demos=`OptionRead`
+if test "$build_and_run_demos" = "b" -o "$build_and_run_demos" = "B" ; then 
+    build_demos=FALSE
+else
+    build_demos=TRUE
+fi
+
+echo ""
+echo "============================================================= "
+echo "Building the " $lib_type "/" $lib_version " version of the library "
+echo "with BUILD_DEMOS="$build_demos
+echo "============================================================= "
 echo ""
 
 #====================================================================
@@ -121,73 +140,18 @@ echo "============================================================= "
 echo "I am going to run CMake ..."
 echo "============================================================= "
 echo ""
-echo ""
 # Go one folder up since we did a cd into ./build
-cmake ../ -Dlib_type=$lib_type -DCMAKE_BUILD_TYPE=$lib_version
+cmake ../ \
+      -DCHAPCHOM_LIB_TYPE=$lib_type \
+      -DCHAPCHOM_BUILD_VERSION=$lib_version \
+      -DCHAPCHOM_BUILD_DEMOS=$build_demos
 make clean
 make
 
 echo ""
-echo ""
 echo "============================================================= "
 echo "[Done] CMake"
 echo "============================================================= "
-
-#====================================================================
-# Copy library into lib folder
-#====================================================================
-cd ..
-cp $build_dir/src/general/libgeneral_lib$lib_ext ./$lib_dir
-cp $build_dir/src/matrices/libmatrices_lib$lib_ext ./$lib_dir
-cp $build_dir/src/linear_solvers/liblinear_solvers_lib$lib_ext ./$lib_dir
-cp $build_dir/src/odes/libodes_lib$lib_ext ./$lib_dir
-cp $build_dir/src/interpolation/libinterpolation_lib$lib_ext ./$lib_dir
-cp $build_dir/src/integration/libintegration_lib$lib_ext ./$lib_dir
-#====================================================================
-# External sources as well
-#====================================================================
-cp $build_dir/external_src/numerical_recipes/libnumerical_recipes_lib$lib_ext ./$lib_dir
-
-#====================================================================
-# Copying include files ...
-#====================================================================
-
-echo ""
-echo ""
-echo "============================================================= "
-
-echo "Copying include files"
-if (test -d  $include_dir); then 
-	echo "Cleaning up ..."
-	cd $include_dir
-	rm -r *
-	cd ..
-else
-	mkdir $include_dir
-fi
-
-#====================================================================
-# 
-#====================================================================
-mkdir -p $include_dir/general
-mkdir -p $include_dir/matrices
-mkdir -p $include_dir/linear_solvers
-mkdir -p $include_dir/odes
-mkdir -p $include_dir/integration
-mkdir -p $include_dir/interpolation
-mkdir -p $include_dir/$external_src_dir/numerical_recipes
-
-cp $src_dir/general/*.h $include_dir/general/
-cp $src_dir/matrices/*.h $include_dir/matrices/
-cp $src_dir/linear_solvers/*.h $include_dir/linear_solvers/
-cp $src_dir/odes/*.h $include_dir/odes/
-cp $src_dir/integration/*.h $include_dir/integration/
-cp $src_dir/interpolation/*.h $include_dir/interpolation/
-cp $external_src_dir/numerical_recipes/*.h $include_dir/$external_src_dir/numerical_recipes/
-
-echo "Include directory created"
-echo "============================================================= "
-echo ""
 
 #====================================================================
 # Finishing up !!!

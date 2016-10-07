@@ -96,7 +96,7 @@ namespace chapchom
    inline bool is_transposed() const {return Is_transposed;}
    
    // Set transposed status
-   inline bool set_transposed_status(bool status)
+   inline void set_transposed_status(bool status)
    {Is_transposed = status;}
    
    // Transpose the vector
