@@ -1,5 +1,7 @@
-# Include testing (this function already calls enable_testing())
-include(CTest)
+# Set output directory for executables
+SET(RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+MESSAGE( STATUS "RUNTIME_OUTPUT_DIRECTORY:         " ${RUNTIME_OUTPUT_DIRECTORY} )
+MESSAGE( STATUS "CMAKE_CURRENT_SOURCE_DIR:         " ${CMAKE_CURRENT_SOURCE_DIR} )
 
 # Indicate source files
 SET(SOURCES demo_matrix_basic_operations.cpp)
@@ -20,8 +22,8 @@ TARGET_LINK_LIBRARIES(demo_matrix_basic_operations ${LIBRARIES})
 # Do tests
 # ===========================================
 # Run the application to check it works
-add_test (NAME TEST_check_it_runs
-          COMMAND ${SOURCES})
+ADD_TEST(NAME TEST_demo_matrix_basic_operations_run
+         COMMAND demo_matrix_basic_operations)
 #WORKING_DIRECTORY TESTS
-add_test(NAME TEST_check_it_runs_output
+ADD_TEST(NAME TEST_demo_matrix_basic_operations_check_output
          COMMAND ${CMAKE_COMMAND} -E compare_files output_correct.dat output_test.dat)

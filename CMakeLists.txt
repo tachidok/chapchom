@@ -37,6 +37,9 @@ SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${CHAPCHOM_CXX_FLAGS}" )
 # Uncomment this line if you added extra libraries
 #SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}" )
 
+# Include testing (this function already calls enable_testing())
+include(CTest)
+
 # Output configuration flags
 # The flags passed to the C-compiler
 MESSAGE( STATUS "CMAKE_C_FLAGS:         " ${CMAKE_C_FLAGS} )
