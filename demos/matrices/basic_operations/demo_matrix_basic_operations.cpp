@@ -78,6 +78,7 @@ int main(int argc, char *argv[])
  // Create a matrix where to store results
  // ----------------------------------------------------------
  // Solution matrix
+ // Allocate memory for the data
  CCMatrix<double> C(n_rows, n_columns);
  
  std::cout << std::endl
@@ -241,7 +242,7 @@ int main(int argc, char *argv[])
  // Close the output for test
  outfile.close();
  
- // Free memory 
+ // Free memory
  delete [] matrix_pt;
  matrix_pt = 0;
  delete [] matrix_A_pt;

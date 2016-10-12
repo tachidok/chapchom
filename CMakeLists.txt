@@ -7,8 +7,8 @@ SET(${PROJET_NAME}_MAJOR_VERSION 0)
 SET(${PROJET_NAME}_MINOR_VERSION 1)
 SET(${PROJET_NAME}_PATCH_LEVEL 0)
 
-# This seems to do nothing
-SET(CMAKE_VERSBOSE_MAKEFILE TRUE)
+# Prints a lot of stuff
+#SET(CMAKE_VERBOSE_MAKEFILE TRUE)
 
 # Output requested configuration
 MESSAGE( STATUS "CHAPCHOM_LIB_TYPE:         " ${CHAPCHOM_LIB_TYPE} )
@@ -21,6 +21,10 @@ IF(${CHAPCHOM_BUILD_VERSION} STREQUAL DEBUG)
 ELSEIF(${CHAPCHOM_BUILD_VERSION} STREQUAL RELEASE)
   SET(CHAPCHOM_C_FLAGS "-O3 -Wall -pedantic -DNDEBUG")
   SET(CHAPCHOM_CXX_FLAGS "-O3 -Wall -pedantic -DNDEBUG")
+ELSEIF(${CHAPCHOM_BUILD_VERSION} STREQUAL PROFILING)
+  SET(CHAPCHOM_C_FLAGS "-O0 -pg -Wall -pedantic")
+  SET(CHAPCHOM_CXX_FLAGS "-O0 -pg -Wall -pedantic")  
+  MESSAGE( WARNING "You are compiling with profiling ENABLED, this will SIGNIFICANTLY increase execution times. If you do not want profiling to be ENABLED then choose another version when asked for library version" ) 
 ELSE(${CHAPCHOM_BUILD_VERSION} STREQUAL DEBUG)
   SET(CHAPCHOM_C_FLAGS "-O0 -g -Wall -pedantic")
   SET(CHAPCHOM_CXX_FLAGS "-O0 -g -Wall -pedantic")
@@ -48,7 +52,7 @@ MESSAGE( STATUS "CMAKE_CXX_FLAGS:         " ${CMAKE_CXX_FLAGS} )
 MESSAGE( STATUS "CMAKE_EXE_LINKER_FLAGS:         " ${CMAKE_EXE_LINKER_FLAGS} )
 
 # Output some extra info.
-MESSAGE( STATUS "CMAKE_VERSBOSE_MAKEFILE:         " ${CMAKE_VERSBOSE_MAKEFILE} )
+MESSAGE( STATUS "CMAKE_VERBOSE_MAKEFILE:         " ${CMAKE_VERBOSE_MAKEFILE} )
 
 # Add external source files sub-directories
 ADD_SUBDIRECTORY(external_src)

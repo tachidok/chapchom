@@ -1,25 +1,32 @@
-# Set output directory for executables
-SET(RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-MESSAGE( STATUS "RUNTIME_OUTPUT_DIRECTORY:         " ${RUNTIME_OUTPUT_DIRECTORY} )
-MESSAGE( STATUS "CMAKE_CURRENT_SOURCE_DIR:         " ${CMAKE_CURRENT_SOURCE_DIR} )
-
 # Indicate source files
-SET(SOURCES demo_matrix_basic_operations.cpp)
+SET(SRC_demo_matrix_basic_operations demo_matrix_basic_operations.cpp)
 
-# ... and create executable (check whether compilation was requested or not)
+# Create executable (check whether compilation was requested or not)
 IF(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
-  ADD_EXECUTABLE(demo_matrix_basic_operations ${SOURCES})
+  ADD_EXECUTABLE(demo_matrix_basic_operations ${SRC_demo_matrix_basic_operations})
 ELSE(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
-  ADD_EXECUTABLE(demo_matrix_basic_operations EXCLUDE_FROM_ALL ${SOURCES})
+  ADD_EXECUTABLE(demo_matrix_basic_operations EXCLUDE_FROM_ALL ${SRC_demo_matrix_basic_operations})
 ENDIF(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
 
 # Indicate linking libraries
-SET(LIBRARIES general_lib matrices_lib)
+SET(LIB_demo_matrix_basic_operations general_lib matrices_lib)
 # ... and link againts them  
-TARGET_LINK_LIBRARIES(demo_matrix_basic_operations ${LIBRARIES})
+TARGET_LINK_LIBRARIES(demo_matrix_basic_operations ${LIB_demo_matrix_basic_operations})
+
+# Check if the output/bin directory exists
+IF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+  # Then create the directory
+  FILE(MAKE_DIRECTORY "${bin}")
+ENDIF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+
+# Set output directory for executables
+set_target_properties( demo_matrix_basic_operations
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin"
+)
 
 # ===========================================
-# Do tests
+# Tests section
 # ===========================================
 # Run the application to check it works
 ADD_TEST(NAME TEST_demo_matrix_basic_operations_run
