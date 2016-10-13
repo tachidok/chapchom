@@ -26,8 +26,13 @@ int main(int argc, char *argv[])
  // ----------------------------------------------------------
  // Identity matrix
  // ----------------------------------------------------------
- // Instantiate double type matrices
+ // Instantiate double type matrices.
  CCMatrix<double> I(n_rows, n_columns);
+ 
+ // Create a zero matrix such that memory is allocated to store the
+ // entries of the matrix. Otherwise we could not use the I(i,i)
+ // assignement without previous memory allocation
+ I.create_zero_matrix();
  
  // Feed some data to the matrix (the identity)
  for (unsigned i = 0; i < n_rows; i++)
@@ -78,8 +83,13 @@ int main(int argc, char *argv[])
  // Create a matrix where to store results
  // ----------------------------------------------------------
  // Solution matrix
- // Allocate memory for the data
+ // Instantiate double type matrices.
  CCMatrix<double> C(n_rows, n_columns);
+ 
+ // Create a zero matrix such that memory is allocated to store the
+ // entries of the matrix. Otherwise we could not use the C(i,j)
+ // assignement without previous memory allocation
+ C.create_zero_matrix(); 
  
  std::cout << std::endl
            << "------------------------------------------------------------------------------"
@@ -217,7 +227,14 @@ int main(int argc, char *argv[])
  // --------------------------------------
  // Matrix multiplication A * x = b
  // --------------------------------------
- CCMatrix<double> b(n_rows_A, n_columns_x);
+ CCMatrix<double> b(n_rows_A, n_columns_x); // Note that we do not
+                                            // need to force the
+                                            // allocation of memory to
+                                            // store the entries of
+                                            // the matrix b, the
+                                            // operation* takes care
+                                            // of the allocation in
+                                            // case it is required
  b = A * x;
  
  std::cout << std::endl << "The multiplication of the matrices is:"

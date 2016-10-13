@@ -42,7 +42,7 @@ namespace chapchom
  {
   // Set the matrix and its size
   this->set_matrix_A(A);
- 
+  
   // Solve
   solve(b, x);
  
@@ -243,6 +243,14 @@ namespace chapchom
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check whether the solution matrix has allocated memory, otherwise
+  // allocate it here!!!
+  if (x_output.is_empty())
+   {
+    // Create a zero matrix with the given size to allocate memory
+    x_output.create_zero_matrix();
    }
   
   // The solution vector size n x 1 (Numerical Recipes definition)

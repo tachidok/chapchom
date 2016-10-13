@@ -13,18 +13,21 @@ namespace chapchom
  CCVector<T>::CCVector() 
   : ACVector<T>()
  {
-  // Set the pointer of the vector to NULL
-  Vector_pt = 0;
+  // Delete any data in memory
+  clean_up();
  }
  
  // ===================================================================
- // Constructor to create an n size zero vector
+ // Constructor to create an n size zero vector (we assume vectors
+ // are created as column vectors, if you need a row vector then
+ // pass "true" as the second parameter).
  // ===================================================================
  template<class T>
  CCVector<T>::CCVector(const unsigned long n, bool is_transposed)
   : ACVector<T>(n, is_transposed)
  {
-  create_zero_vector();
+  // Delete any data in memory
+  clean_up();
  }
  
  // ===================================================================
@@ -361,11 +364,10 @@ namespace chapchom
   // allocate it here!!!
   if (solution_vector.is_empty())
    {
-    // Allocate memory for the vector
-    solution_vector_pt = new T[n_values_this_vector];
-    
-    // Mark the solution vector as having elements
-    solution_vector.mark_as_no_empty();
+    // Create a zero vector with the given size to allocate memory
+    solution_vector.create_zero_vector();
+    // Get the new vector pointer
+    solution_vector_pt = solution_vector.vector_pt();
    }
   
   // Get the vector pointer of the input vector
@@ -436,11 +438,10 @@ namespace chapchom
   // allocate it here!!!
   if (solution_vector.is_empty())
    {
-    // Allocate memory for the vector
-    solution_vector_pt = new T[n_values_this_vector];
-    
-    // Mark the solution vector as having elements
-    solution_vector.mark_as_no_empty();
+    // Create a zero vector with the given size to allocate memory
+    solution_vector.create_zero_vector();
+    // Get the new vector pointer
+    solution_vector_pt = solution_vector.vector_pt();
    }
   
   // Get the vector pointer of the input vector
@@ -512,11 +513,10 @@ namespace chapchom
   // allocate it here!!!
   if (solution_vector.is_empty())
    {
-    // Allocate memory for the vector
-    solution_vector_pt = new T[n_values_this_vector];
-    
-    // Mark the solution vector as having elements
-    solution_vector.mark_as_no_empty();
+    // Create a zero vector with the given size to allocate memory
+    solution_vector.create_zero_vector();
+    // Get the new vector pointer
+    solution_vector_pt = solution_vector.vector_pt();
    }
   
   // Get the vector pointer of the input vector
@@ -656,12 +656,19 @@ namespace chapchom
  
  // ===================================================================
  // Creates a zero vector with the already defined number of entries
+ // (allocates memory to store entries of the matrix)
  // ===================================================================
  template<class T>
  void CCVector<T>::create_zero_vector()
  {
-  // Delete any possible stored matrix
+  // Delete any data in memory
   clean_up();
+  
+  // Allocate memory for the vector
+  Vector_pt = new T[this->NValues];
+  
+  // Mark the vector as having something
+  this->Is_empty=false;  
  }
  
  // ================================================================
@@ -809,11 +816,10 @@ namespace chapchom
   // allocate it here!!!
   if (solution_vector.is_empty())
    {
-    // Allocate memory for the vector
-    solution_vector_pt = new T[n_values_vector_one];
-    
-    // Mark the solution vector as having elements
-    solution_vector.mark_as_no_empty();
+    // Create a zero vector with the given size to allocate memory
+    solution_vector.create_zero_vector();
+    // Get the new vector pointer
+    solution_vector_pt = solution_vector.vector_pt();
    }
   
   // Get the vector pointer of the vector one
@@ -888,11 +894,10 @@ namespace chapchom
   // allocate it here!!!
   if (solution_vector.is_empty())
    {
-    // Allocate memory for the vector
-    solution_vector_pt = new T[n_values_vector_one];
-    
-    // Mark the solution vector as having elements
-    solution_vector.mark_as_no_empty();
+    // Create a zero vector with the given size to allocate memory
+    solution_vector.create_zero_vector();
+    // Get the new vector pointer
+    solution_vector_pt = solution_vector.vector_pt();
    }
   
   // Get the vector pointer of the vector one
@@ -967,11 +972,10 @@ namespace chapchom
   // allocate it here!!!
   if (solution_vector.is_empty())
    {
-    // Allocate memory for the vector
-    solution_vector_pt = new T[n_values_vector_one];
-    
-    // Mark the solution vector as having elements
-    solution_vector.mark_as_no_empty();
+    // Create a zero vector with the given size to allocate memory
+    solution_vector.create_zero_vector();
+    // Get the new vector pointer
+    solution_vector_pt = solution_vector.vector_pt();
    }
   
   // Get the vector pointer of the vector one

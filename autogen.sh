@@ -162,12 +162,54 @@ cd ..
 echo ""
 echo "============================================================= "
 echo ""
-echo "Finishing library built process ... (autogen.sh has finished!)"
+echo "Finishing library built process ... (cmake and make have"
+echo "finished!)"
 echo "If you can't spot any error messages above this, the" 
-echo $lib_name " library should now be ready to use... " 
+echo $lib_name "library should now be ready to use... " 
 echo " "
+echo "If you want to run the test type 'make test' and hit enter in"
+echo "the build folder=$build_dir"
+echo ""
 echo "Please contact the developers if you encountered any"
 echo "building problem!"
 echo ""
 echo "============================================================= "
 echo ""
+
+#====================================================================
+# Run tests
+#====================================================================
+
+if test "$build_demos" = "TRUE" ; then
+    echo ""
+    echo ""
+    echo ""
+    echo "============================================================= "
+    echo ""
+    echo "I am going to run the tests as you requested."
+    echo ""
+    echo "============================================================= "
+    echo ""
+    echo ""
+    cd $build_dir
+    make test
+    cd ..
+    echo ""
+    echo "============================================================= "
+    echo ""
+    echo "Finishing library test process ... (make test has finished!)"
+    echo "If you can't spot any error messages above this, the" 
+    echo $lib_name " library should now be ready to use and free of errors" 
+    echo " "
+    echo "Do not commit any broken version of the library. If any test "
+    echo "fails and you know what the problem is about then try to fix "
+    echo "it and report back to the developers!"
+    echo ""
+    echo "Your contributions are very welcome!"
+    echo ""
+    echo "Please contact the developers if you encountered any"
+    echo "test/building problem!"
+    echo ""
+    echo "============================================================= "
+    echo ""
+fi

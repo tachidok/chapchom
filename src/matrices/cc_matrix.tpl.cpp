@@ -13,28 +13,30 @@ namespace chapchom
  CCMatrix<T>::CCMatrix() 
   : ACMatrix<T>()
  {
-  // Set the pointer of the matrix to NULL
-  Matrix_pt = 0;
+  // Delete any data in memory
+  clean_up();
  }
 
  // ===================================================================
- // Constructor to create an n X n zero matrix
+ // Constructor to create an n X n matrix.
  // ===================================================================
  template<class T>
  CCMatrix<T>::CCMatrix(const unsigned long n)
  : ACMatrix<T>(n)
  {
-  create_zero_matrix();
+  // Delete any data in memory
+  clean_up();
  }
  
  // ===================================================================
- // Constructor to create a zero matrix
+ // Constructor to create an m X n matrix.
  // ===================================================================
  template<class T>
  CCMatrix<T>::CCMatrix(const unsigned long m, const unsigned long n)
   : ACMatrix<T>(m, n)
  {
-  create_zero_matrix();
+  // Delete any data in memory
+  clean_up();
  }
  
  // ===================================================================
@@ -323,11 +325,10 @@ namespace chapchom
   // allocate it here!!!
   if (solution_matrix.is_empty())
    {
-    // Allocate memory for the matrix
-    solution_matrix_pt = new T[n_rows*n_columns];
-    
-    // Mark the solution matrix as having elements
-    solution_matrix.mark_as_no_empty();
+    // Create a zero matrix with the given size to allocate memory
+    solution_matrix.create_zero_matrix();
+    // Get the new matrix pointer
+    solution_matrix_pt = solution_matrix.matrix_pt();
    }
   
   // Get the matrix pointer of the input matrix
@@ -409,11 +410,10 @@ namespace chapchom
   // allocate it here!!!
   if (solution_matrix.is_empty())
    {
-    // Allocate memory for the matrix
-    solution_matrix_pt = new T[n_rows*n_columns];
-    
-    // Mark the solution matrix as having elements
-    solution_matrix.mark_as_no_empty();
+    // Create a zero matrix with the given size to allocate memory
+    solution_matrix.create_zero_matrix();
+    // Get the new matrix pointer
+    solution_matrix_pt = solution_matrix.matrix_pt();
    }
   
   // Get the matrix pointer of the input matrix
@@ -501,11 +501,10 @@ namespace chapchom
   // allocate it here!!!
   if (solution_matrix.is_empty())
    {
-    // Allocate memory for the matrix
-    solution_matrix_pt = new T[n_rows_left_matrix*n_columns_right_matrix];
-    
-    // Mark the solution matrix as having elements
-    solution_matrix.mark_as_no_empty();
+    // Create a zero matrix with the given size to allocate memory
+    solution_matrix.create_zero_matrix();
+    // Get the new matrix pointer
+    solution_matrix_pt = solution_matrix.matrix_pt();
    }
   
   // Get the matrix pointer of the right matrix
@@ -697,14 +696,20 @@ namespace chapchom
  }
  
  // ===================================================================
- // Creates a zero matrix with the given rows and columns
+ // Creates a zero matrix with the given rows and columns (allocates
+ // memory to store entries of the matrix)
  // ===================================================================
  template<class T>
  void CCMatrix<T>::create_zero_matrix()
  {
-  // Delete any possible stored matrix
+  // Delete any data in memory
   clean_up();
-  // Do nothing, we do not need to allocate memory to save nothing!!!
+  
+  // Allocate memory for the matrix
+  Matrix_pt = new T[this->NRows*this->NColumns];
+  
+  // Mark the matrix as having something
+  this->Is_empty=false;
  }
  
  // ================================================================
@@ -782,11 +787,10 @@ namespace chapchom
   // allocate it here!!!
   if (solution_matrix.is_empty())
    {
-    // Allocate memory for the matrix
-    solution_matrix_pt = new T[n_rows_matrix_one*n_columns_matrix_one];
-    
-    // Mark the solution matrix as having elements
-    solution_matrix.mark_as_no_empty();
+    // Create a zero matrix with the given size to allocate memory
+    solution_matrix.create_zero_matrix();
+    // Get the new matrix pointer
+    solution_matrix_pt = solution_matrix.matrix_pt();
    }
   
   // Get the matrix pointer of the input matrices
@@ -874,11 +878,10 @@ namespace chapchom
   // allocate it here!!!
   if (solution_matrix.is_empty())
    {
-    // Allocate memory for the matrix
-    solution_matrix_pt = new T[n_rows_matrix_one*n_columns_matrix_one];
-    
-    // Mark the solution matrix as having elements
-    solution_matrix.mark_as_no_empty();
+    // Create a zero matrix with the given size to allocate memory
+    solution_matrix.create_zero_matrix();
+    // Get the new matrix pointer
+    solution_matrix_pt = solution_matrix.matrix_pt();
    }
   
   // Get the matrix pointer of the input matrices
@@ -969,11 +972,10 @@ namespace chapchom
   // allocate it here!!!
   if (solution_matrix.is_empty())
    {
-    // Allocate memory for the matrix
-    solution_matrix_pt = new T[n_rows_left_matrix*n_columns_right_matrix];
-    
-    // Mark the solution matrix as having elements
-    solution_matrix.mark_as_no_empty();
+    // Create a zero matrix with the given size to allocate memory
+    solution_matrix.create_zero_matrix();
+    // Get the new matrix pointer
+    solution_matrix_pt = solution_matrix.matrix_pt();
    }
   
   // Get the matrix pointer of the left matrix
@@ -1098,12 +1100,10 @@ namespace chapchom
   // allocate it here!!!
   if (solution_matrix.is_empty())
    {
-    // Allocate memory for the matrix
-    solution_matrix_pt =
-     new T[n_rows_solution_matrix*n_columns_solution_matrix];
-    
-    // Mark the solution matrix as having elements
-    solution_matrix.mark_as_no_empty();
+    // Create a zero matrix with the given size to allocate memory
+    solution_matrix.create_zero_matrix();
+    // Get the new matrix pointer
+    solution_matrix_pt = solution_matrix.matrix_pt();
    }
   
   // Get both vectors and multiply them
@@ -1216,12 +1216,10 @@ namespace chapchom
   // allocate it here!!!
   if (solution_matrix.is_empty())
    {
-    // Allocate memory for the matrix
-    solution_matrix_pt =
-     new T[n_rows_solution_matrix*n_columns_solution_matrix];
-    
-    // Mark the solution matrix as having elements
-    solution_matrix.mark_as_no_empty();
+    // Create a zero matrix with the given size to allocate memory
+    solution_matrix.create_zero_matrix();
+    // Get the new matrix pointer
+    solution_matrix_pt = solution_matrix.matrix_pt();
    }
   
   // Get both the vector and the matrix pointer
@@ -1345,12 +1343,10 @@ namespace chapchom
   // allocate it here!!!
   if (solution_vector.is_empty())
    {
-    // Allocate memory for the vector
-    solution_vector_pt =
-     new T[n_rows_solution_vector*n_columns_solution_vector];
-    
-    // Mark the solution vector as having elements
-    solution_vector.mark_as_no_empty();
+    // Create a zero matrix with the given size to allocate memory
+    solution_vector.create_zero_vector();
+    // Get the new matrix pointer
+    solution_vector_pt = solution_vector.vector_pt();
    }
   
   // Get both the vector and the matrix pointer

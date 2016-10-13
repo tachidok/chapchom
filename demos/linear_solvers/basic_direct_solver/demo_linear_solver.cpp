@@ -29,7 +29,11 @@ int main(int argc, char *argv[])
  CCMatrix<double> A(vector_data_A, n_rows, n_cols);
  
  // The right hand side vector
- CCMatrix<double> b(n_rows, 1);
+ CCMatrix<double> b(n_rows);
+ // Create a zero vector such that memory is allocated to store the
+ // entries of the vector. Otherwise we could not use the b(i,i)
+ // assignement without previous memory allocation
+ b.create_zero_matrix();
  
  // Solve the following system of equations
  A(0,0) = 7.0;  A(0,1) = 5.0;  A(0,2) = -3.0;
@@ -54,7 +58,7 @@ int main(int argc, char *argv[])
  CCLUSolverNumericalRecipes<double> linear_solver;
  
  // The solution vector
- CCMatrix<double> sol(n_cols, 1);
+ CCMatrix<double> sol(n_cols);
  
  // Solve the system of equations
  linear_solver.solve(A, b, sol);

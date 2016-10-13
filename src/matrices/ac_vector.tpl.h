@@ -32,6 +32,10 @@ namespace chapchom
    // Destructor
    virtual ~ACVector();
    
+   // Creates a zero vector with the given rows (allocates memory to
+   // store entries of the vector)
+   virtual void create_zero_vector() = 0;
+   
    // Transforms the input vector to a vector class type (virtual such
    // that each derived class has to implement it)
    virtual void set_vector(const T *vector_pt,
@@ -105,12 +109,6 @@ namespace chapchom
    // Checks whether the vector has been set, or allocated
    inline bool is_empty() const {return Is_empty;}
    
-   // Set matrix as having elements
-   inline void mark_as_empty() {Is_empty = true;}
-   
-   // Set matrix as no having elements
-   inline void mark_as_no_empty() {Is_empty = false;}
-   
    // Checks whether the vector is allowed to be deleted
    inline bool delete_vector() const {return Delete_vector;}
    
@@ -121,10 +119,7 @@ namespace chapchom
    inline void disable_delete_vector() {Delete_vector=false;}
    
   protected:
-   
-   // Creates a zero vector with the given number of entries
-   virtual void create_zero_vector() = 0;
-   
+      
    // The size of the vector
    unsigned long NValues;
    

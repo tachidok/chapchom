@@ -33,6 +33,10 @@ namespace chapchom
    // Destructor
    virtual ~ACMatrix();
    
+   // Creates a zero matrix with the given rows and columns (allocates
+   // memory to store entries of the matrix)
+   virtual void create_zero_matrix() = 0;
+   
    // Transforms the input vector to a matrix class type (virtual such
    // that each derived class has to implement it)
    virtual void set_matrix(const T *matrix_pt,
@@ -94,12 +98,6 @@ namespace chapchom
    // Checks whether the matrix has been set, or allocated
    inline bool is_empty() const {return Is_empty;}
    
-   // Set matrix as having elements
-   inline void mark_as_empty() {Is_empty = true;}
-   
-   // Set matrix as no having elements
-   inline void mark_as_no_empty() {Is_empty = false;}
-   
    // Checks whether the matrix is allowed to be deleted
    inline bool delete_matrix() const {return Delete_matrix;}
    
@@ -110,10 +108,7 @@ namespace chapchom
    inline void disable_delete_matrix() {Delete_matrix=false;}
    
   protected:
-   
-   // Creates a zero matrix with the given rows and columns
-   virtual void create_zero_matrix() = 0;
-   
+      
    // The size of the matrix
    unsigned long NRows;
    unsigned long NColumns;

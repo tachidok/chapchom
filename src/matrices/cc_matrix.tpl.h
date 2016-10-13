@@ -22,10 +22,10 @@ namespace chapchom
   // Empty constructor
   CCMatrix();
   
-  // Constructor to create an n X n zero matrix
+  // Constructor to create an n X n matrix.
   CCMatrix(const unsigned long n);
   
-  // Constructor to create an m X n zero matrix
+  // Constructor to create an m X n matrix.
   CCMatrix(const unsigned long m, const unsigned long n);
   
   // Constructor where we pass the data for the matrix of size m X n
@@ -58,6 +58,10 @@ namespace chapchom
   
   // Multiplication operator
   CCMatrix operator*(const CCMatrix &right_matrix);
+  
+  // Creates a zero matrix with the given rows and columns (allocates
+  // memory to store entries of the matrix)
+  void create_zero_matrix();
   
   // Transforms the input vector to a matrix class type (virtual such
   // that each derived class has to implement it)
@@ -102,10 +106,7 @@ namespace chapchom
   inline T *matrix_pt() const {return Matrix_pt;}
   
  protected:
-  
-  // Creates a zero matrix with the given rows and columns
-  void create_zero_matrix();
-  
+    
   // The matrix
   T *Matrix_pt;
   

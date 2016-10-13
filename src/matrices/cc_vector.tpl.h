@@ -35,10 +35,10 @@ namespace chapchom
    
    // Constructor to create an n size zero vector (we assume vectors
    // are created as column vectors, if you need a row vector then
-   // pass "true" as the second parameter)
+   // pass "true" as the second parameter).
    CCVector(const unsigned long n, bool is_transposed = false);
    
-   // Constructor where we pass the data for the vector of size n
+   // Constructor where we pass the data for the vector of size n.
    CCVector(T *vector_pt, const unsigned long n, bool is_transposed = false);
    
    // Copy constructor (we require to define this if we want to use
@@ -67,6 +67,10 @@ namespace chapchom
    // corresponding size, if you require a dot product operation use
    // the dot() method instead
    CCMatrix<T> operator*(const CCVector &vector);
+   
+   // Creates a zero vector with the given number of entries
+   // (allocates memory to store entries of the matrix)
+   void create_zero_vector();
    
    // Performs dot product with the current vector
    T dot(const CCVector &right_vector);
@@ -112,10 +116,7 @@ namespace chapchom
    inline T *vector_pt() const {return Vector_pt;}
    
   protected:
-   
-   // Creates a zero vector with the given number of entries
-   void create_zero_vector();
-   
+      
    // The vector
    T *Vector_pt;
    
