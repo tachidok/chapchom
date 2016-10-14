@@ -33,4 +33,4 @@ ADD_TEST(NAME TEST_demo_matrix_basic_operations_run
          COMMAND demo_matrix_basic_operations)
 #WORKING_DIRECTORY TESTS
 ADD_TEST(NAME TEST_demo_matrix_basic_operations_check_output
-         COMMAND ${CMAKE_COMMAND} -E compare_files output_correct.dat output_test.dat)
+         COMMAND ${CMAKE_COMMAND} -E compare_files ${CMAKE_CURRENT_SOURCE_DIR}/bin/output_correct.dat ${CMAKE_CURRENT_SOURCE_DIR}/bin/output_test.dat)
