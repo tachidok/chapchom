@@ -221,7 +221,7 @@ namespace chapchom
     else
      {
       // Compute the middle index in the current range
-      const unsigned i_middle = std::floor(i_left + (i_right - i_left)/ 2);
+      const int i_middle = std::floor(i_left + (i_right - i_left)/ 2);
 #if 0
       std::cout << "T: (" << t << ")" << std::endl;
       std::cout << "i_left: (" << i_left << ") i_middle: ("
@@ -231,8 +231,8 @@ namespace chapchom
                 << Table_time[i_middle] << ") [i_right]: ("
                 << Table_time[i_right] << ")" << std::endl;
 #endif // #if 0
-      if (i_middle == i_left || i_middle == i_right &&
-          (i_right - i_left) == 1)
+      if ((i_middle == i_left || i_middle == i_right) &&
+          ((i_right - i_left) == 1))
        {
         //std::cout << "[END]" << std::endl;
         // Found data

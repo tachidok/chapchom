@@ -14,6 +14,8 @@
 #include "../../../src/integration/cc_RK4_method.h"
 // The odes
 #include "cc_odes_from_table_from_xsensMT9B.h"
+// The nmea decoder
+#include "cc_nmea_decoder.h"
 
 using namespace chapchom;
 

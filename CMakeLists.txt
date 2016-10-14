@@ -44,6 +44,10 @@ SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${CHAPCHOM_CXX_FLAGS}" )
 # Include testing (this function already calls enable_testing())
 include(CTest)
 
+# Output compilers versions
+MESSAGE( STATUS "CMAKE_C_COMPILER:         " ${CMAKE_C_COMPILER} )
+MESSAGE( STATUS "CMAKE_CXX_COMPILER:       " ${CMAKE_CXX_COMPILER} )
+
 # Output configuration flags
 # The flags passed to the C-compiler
 MESSAGE( STATUS "CMAKE_C_FLAGS:         " ${CMAKE_C_FLAGS} )
@@ -59,6 +63,10 @@ ADD_SUBDIRECTORY(external_src)
 
 # Add sub-directories with source files
 ADD_SUBDIRECTORY(src)
+
+# Add private folders (note that any source code in here is not
+# compiled but only added to the make list)
+ADD_SUBDIRECTORY(private)
 
 # Once all source code has been compiled add sub-directories for demos
 ADD_SUBDIRECTORY(demos)
