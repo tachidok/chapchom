@@ -17,8 +17,8 @@ namespace chapchom
  {
     
   // Resize the transition matrix
-  const unsigned n_states = 6;
-  const unsigned n_transitions = 15;
+  const unsigned n_states = 5;//6;
+  const unsigned n_transitions = 5;//15;
   State_machine_transitions.resize(n_states);
   for (unsigned i = 0; i < n_states; i++)
    {
@@ -26,15 +26,27 @@ namespace chapchom
     State_machine_transitions[i].resize(n_transitions);
    }
   
+#if 0
   // The transition matrix
   unsigned transition_matrix[] =
    {
     0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 1, 1, 1, 3, 1, 2, 1, 1, 1, 1, 1, 1, 1, 0,
-    0, 1, 1, 1, 3, 1, 2, 1, 1, 1, 1, 1, 1, 1, 0,
+    0, 1, 1, 1, 3, 1, 2, 1, 1, 1, 1, 1, 1, 1, 0,    
     0, 0, 1, 0, 0, 0, 0, 0, 4, 0, 4, 0, 4, 0, 0,
     0, 0, 1, 0, 0, 0, 0, 0, 5, 0, 5, 0, 5, 0, 0,
     0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   };
+#endif // #if 0
+  
+  // The transition matrix
+  unsigned transition_matrix[] =
+   {
+    0, 0, 0, 1, 0,
+    0, 1, 1, 1, 2,
+    0, 0, 3, 1, 0,
+    0, 0, 4, 1, 0,
+    0, 0, 0, 1, 0
    };
   
   // Copy the "transition_matrix" into the "State_machine_transitions"
@@ -60,7 +72,8 @@ namespace chapchom
   // Initialise/reset state machine
   reset_state_machine();
   // Establish the final state
-  Final_state = 5;
+  //Final_state = 5;
+  Final_state = 4;
   
  }
 
@@ -123,8 +136,150 @@ namespace chapchom
  // string and stores its entry in a matrix structure containing the
  // parsed information
  // ===================================================================
- void CCNMEADecoder::parse(const unsigned char character)
+ unsigned CCNMEADecoder::parse(const unsigned char character)
  {
+  // Keep track of the last state
+  Last_state = Current_state;
+  // Increase the number of read chacacters
+  Counter_n_read_characters++;
+  
+  // Check whether we have exceed the maximum number of read
+  // characters
+  if (Counter_n_read_characters > Max_nmea_string_size)
+   {
+    // Reset all
+    reset_state_machine();
+    // Return an error indication
+    return 1;
+   }
+
+  // Identify the group that the input character is part of
+  
+  if (character <= 0x1F) // GROUP A (unit separator)
+   {
+    Current_state = State_machine_transitions[Current_state][0];
+   }
+  else if ((0x20 <= character) && (character <= 0x23)) // GROUP B (space), !, ", #
+   {
+    Current_state = State_machine_transitions[Current_state][1];
+   }
+  else if (character == 0x24) // GROUP C $
+   {
+    if (Current_state != 0)
+     {
+      reset_state_machine();
+     }
+    Current_state = State_machine_transitions[Current_state][2];
+   }
+  else if ((0x25 <= character) && (character <= 0x29)) // GROUP D %, &, ', (, )
+   {
+    Current_state = State_machine_transitions[Current_state][3];
+   }
+  else if (character == 0x2A)// GROUP E *
+   {
+    Current_state = State_machine_transitions[Current_state][4];
+   }
+  else if (character == 0x2B)// GROUP F +
+   {
+    Current_state = State_machine_transitions[Current_state][5];
+   }
+  else if (character == 0x2C)//GROUP G , (coma)
+   {
+    Current_state = State_machine_transitions[Current_state][6];
+   }
+  else if ((0x2D <= character) && (character <= 0x2F)) // GROUP H -,.,/
+   {
+    Current_state = State_machine_transitions[Current_state][7];
+   }
+  else if ((0x30 <= character) && (character <= 0x39)) // GROUP I 0,1,...,9
+   {
+    Current_state = State_machine_transitions[Current_state][8];
+   }
+  else if ((0x3A <= character) && (character <= 0x40)) // GROUP J :, ;, <, =, >, ?, @
+   {
+    Current_state = State_machine_transitions[Current_state][9];
+   }
+  else if ((0x41 <= character) && (character <= 0x46)) // GROUP K A, B, C, D, E, F
+   {
+    Current_state = State_machine_transitions[Current_state][10];
+   }
+  else if ((0x47 <= character) && (character <= 0x60)) // GROUP L G, H, I,..., X, Y, Z, [, \, ], ^, _, `
+   {
+    Current_state = State_machine_transitions[Current_state][11];
+   }
+  else if ((0x61 <= character) && (character <= 0x66)) // GROUP M a, b, c, d, e, f
+   {
+    Current_state = State_machine_transitions[Current_state][12];
+   }
+  else if ((0x67 <= character) && (character <= 0x7E)) // GROUP N g, h, i,...,x, y, z, {, |, }, ~
+   {
+    Current_state = State_machine_transitions[Current_state][13];
+   }
+  else if ((0x7F <= character) && (character <= 0xFF)) // GROUP O (extended ASCII)
+   {
+    Current_state = State_machine_transitions[Current_state][14];
+   }
+  
+  if (Current_state == 0)
+   {
+    reset_state_machine();
+   }
+  
+  if (Current_state == 2){ //se termino un campo, empezar a avanzar al siguiente
+		campos[numeroCampos][contadorCampo] = 0;
+		numeroCampos++;
+		contadorCampo = 0;
+
+
+                if ((strcmp(campos[0],"WIMWV") == 0)&&(numeroCampos==5))
+                {
+                    strcpy(campos[5],"R");
+                    //fprintf(stderr, "%s-%s-%s-%s-%s-%s*\n", campos[0], campos[1],campos[2], campos[3], campos[4], campos[5]);
+                    //inf.numeroCampos = numeroCampos;
+                    //inf.decodifica(campos);
+                        //inf.print();
+                    mwv.numeroCampos = numeroCampos;
+                    mwv.decodifica(campos);
+
+                }
+
+	}
+
+	if (Current_state == 4){ //se obtuvo el primer character del checksum
+		numeroCampos++;
+		cadenaChecksum[0] = character;
+	}
+	if (Current_state == 5) //se obtuvo el segundo character del checksum
+		cadenaChecksum[1] = character;
+
+	if ((Current_state == 1) && (character != 0x24)){//$
+		campos[numeroCampos][contadorCampo] = character;
+		contadorCampo++;
+	}
+
+	if ((character != 0x24) && ((Current_state == 1) || (Current_state == 2)))//$
+		checksum ^= character;
+
+	if (Current_state == estadosFinales[0]){ //Si el estado actual es un estado final
+		//verificar el checksum obtenido
+		char cadenaChecksumCalculado[CNMEA_CHECKSUM_SIZE];
+		sprintf(cadenaChecksumCalculado,"%02X",checksum);
+
+		//if (stricmp(cadenaChecksumCalculado,cadenaChecksum)!=0){
+                if (strcmp(cadenaChecksumCalculado,cadenaChecksum)!=0){
+			Current_state = 0;
+			iniciarVariables();//checksum INCORRECTO, regresar al estado inicial
+			return 1;
+                }
+
+		verificarMensaje(numeroCampos);
+
+
+	}
+
+
+	return 1;
+
   
  }
  
