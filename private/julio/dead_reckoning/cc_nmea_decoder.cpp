@@ -13,18 +13,16 @@ namespace chapchom
                               const unsigned max_fields_size,
                               const unsigned checksum_size)
   : Max_fields(max_fields), Max_fields_size(max_fields_size),
-    Max_nmea_string_size(max_fields*max_fields_size), Checksum_size(checksum_size)
+    Max_nmea_string_size(max_fields*max_fields_size), Checksum_size(checksum_size),
+    NStates(5), NTransitions(5)
  {
-    
+
+  // ----------------------------------------------------------
+  // Finite state machine
+  // ----------------------------------------------------------
   // Resize the transition matrix
-  const unsigned n_states = 5;//6;
-  const unsigned n_transitions = 5;//15;
-  State_machine_transitions.resize(n_states);
-  for (unsigned i = 0; i < n_states; i++)
-   {
-    // Allocate space for the number of transitions for each state
-    State_machine_transitions[i].resize(n_transitions);
-   }
+  const unsigned n_states = NStates;//6;
+  const unsigned n_transitions = NTransitions;//15;
   
 #if 0
   // The transition matrix
@@ -49,6 +47,8 @@ namespace chapchom
     0, 0, 0, 1, 0
    };
   
+  // Allocate memory for the State transition matrix
+  State_machine_transitions = new unsigned[n_states*n_transitions];
   // Copy the "transition_matrix" into the "State_machine_transitions"
   // structure
   unsigned k = 0;
@@ -56,43 +56,70 @@ namespace chapchom
    {
     for (unsigned j = 0; j < n_transitions; j++)
      {
-      State_machine_transitions[i][j] = transition_matrix[k++];
+      State_machine_transitions[i*n_transitions+j] = transition_matrix[k++];
      } // for (j < n_transitions)
     
    } // for (i < n_states)
-
-  // Resize to the maximum number of allowed fields
-  Fields.resize(max_fields);
-  // Allocate memory for entries in the Fields matrix
+  
+  // Allocate memory for the Fields matrix
+  Fields = new char*[max_fields];
+  // Allocate memory for each row of the Fields matrix
   for (unsigned i = 0; i < max_fields; i++)
    {
     Fields[i] = new char[max_fields_size];
    }
   
-  // Initialise/reset state machine
+  // Allocate memory for checsum entries
+  Input_checksum = new char[checksum_size];
+  
+  // Initialise/reset state machine and checksum vector
   reset_state_machine();
   // Establish the final state
   //Final_state = 5;
   Final_state = 4;
+
+  // ----------------------------------------------------------
+  // Read data (initialise structures)
+  // ----------------------------------------------------------
+  pstm3dacc.valid_data_time = false;
+  pstm3dacc.valid_data_acc_x = false;
+  pstm3dacc.valid_data_acc_y = false;
+  pstm3dacc.valid_data_acc_z = false;
+  
+  pstm3dgyro.valid_data_time = false;
+  pstm3dgyro.valid_data_raw_x = false;
+  pstm3dgyro.valid_data_raw_y = false;
+  pstm3dgyro.valid_data_raw_z = false;
+  pstm3dgyro.valid_data_odometer_counter = false;
+  pstm3dgyro.valid_data_reverse = false;
   
  }
-
+ 
  // ===================================================================
  // Destructor (release allocated memory)
  // ===================================================================
  CCNMEADecoder::~CCNMEADecoder()
  {
+  // Free memory for state machien transitions
+  delete State_machine_transitions;
+  State_machine_transitions = 0;
+  
   // Free memory allocated for entries in the Fields matrix
   for (unsigned i = 0; i < Max_fields; i++)
    {
     delete Fields[i];
+    Fields[i] = 0;
    }
   
-  // Clear all entries in the vector
-  Fields.clear();
+  delete [] Fields;
+  Fields = 0;
+  
+  // Free memory for checksum
+  delete Input_checksum;
+  Input_checksum = 0;
   
  }
-
+ 
  // ===================================================================
  // Initialise any variables (of the state machine). This method is
  // called any time a non-valid nmea string is identified
@@ -127,7 +154,7 @@ namespace chapchom
    }
   
   // Clean the stored checksum as well
-  Input_checksum.clear();
+  memset(Input_checksum, 0, Checksum_size);
   
  }
  
@@ -136,7 +163,7 @@ namespace chapchom
  // string and stores its entry in a matrix structure containing the
  // parsed information
  // ===================================================================
- unsigned CCNMEADecoder::parse(const unsigned char character)
+ void CCNMEADecoder::parse(const unsigned char character)
  {
   // Keep track of the last state
   Last_state = Current_state;
@@ -149,151 +176,446 @@ namespace chapchom
    {
     // Reset all
     reset_state_machine();
-    // Return an error indication
-    return 1;
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The maximum number of the NMEA string has been exceeded.\n"
+                  << "The maximum NMEA string size is: [" << Max_nmea_string_size << "]"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
    }
-
-  // Identify the group that the input character is part of
   
-  if (character <= 0x1F) // GROUP A (unit separator)
+  // ------------------------------------------------------------------
+  // Identify the group that the input character is part of, and
+  // transition accordingly
+  // ------------------------------------------------------------------
+  if ((character <= 0x1F) ||                       // GROUP A (unit separator) 
+      ((0x7F <= character) && (character <= 0xFF)) // GROUP O (extended ASCII))
+      )
    {
-    Current_state = State_machine_transitions[Current_state][0];
+    Current_state = State_machine_transitions[NTransitions*Current_state+0];
    }
-  else if ((0x20 <= character) && (character <= 0x23)) // GROUP B (space), !, ", #
+  else if (((0x20 <= character) && (character <= 0x23)) || // GROUP B (space), !, ", #
+           ((0x25 <= character) && (character <= 0x29)) || // GROUP D %, &, ', (, )
+           (character == 0x2B) ||                          // GROUP F +
+           (character == 0x2C) ||                          // GROUP G , (coma)
+           ((0x2D <= character) && (character <= 0x2F)) || // GROUP H -,.,/
+           ((0x3A <= character) && (character <= 0x40)) || // GROUP J :, ;, <, =, >, ?, @
+           ((0x47 <= character) && (character <= 0x60)) || // GROUP L G, H, I,..., X, Y, Z, [, \, ], ^, _, `
+           ((0x67 <= character) && (character <= 0x7E))    // GROUP N g, h, i,...,x, y, z, {, |, }, ~
+           )
    {
-    Current_state = State_machine_transitions[Current_state][1];
+    Current_state = State_machine_transitions[NTransitions*Current_state+1];
+   }
+  else if (((0x30 <= character) && (character <= 0x39)) || // GROUP I 0,1,...,9
+           ((0x41 <= character) && (character <= 0x46)) || // GROUP K A, B, C, D, E, F
+           ((0x61 <= character) && (character <= 0x66))    // GROUP M a, b, c, d, e, f           
+           )
+   {
+    Current_state = State_machine_transitions[NTransitions*Current_state+2];
    }
   else if (character == 0x24) // GROUP C $
    {
-    if (Current_state != 0)
+    reset_state_machine();
+    // Always uses transition [0][3] since reset_state_machine() sets
+    // Current_state = 0
+    Current_state = State_machine_transitions[NTransitions*Current_state+3];
+   }
+  else if (character == 0x2A) // GROUP E *
+   {
+    Current_state = State_machine_transitions[NTransitions*Current_state+4];
+   }
+  
+  // -----------------------------------------------------------------------
+  // Is there something we need to do in each state?
+  // -----------------------------------------------------------------------
+  if (Current_state == 1) // eat characters, add them tot he Fields
+                          // structure and and compute the checksum
+   {
+    if (character == 0x2C) // , (coma)), end of field by found
+                           // delimiter
+     {
+      Computed_checksum ^= character;
+      Fields[Total_number_of_fields][Counter_n_current_fields] = 0;
+      Total_number_of_fields++;
+      Counter_n_current_fields = 0;
+     }
+    else if (character != 0x24) // Include to the fields structure any
+                                // other thing different from $
+     {
+      Computed_checksum ^= character;
+      Fields[Total_number_of_fields][Counter_n_current_fields] = character;
+      Counter_n_current_fields++;
+     }
+   }
+  else if (Current_state == 3) // First checksum character
+   {
+    Total_number_of_fields++;
+    Input_checksum[0] = character;
+   }
+  else if (Current_state == 4) // Second checksum character
+   {
+    Input_checksum[1] = character;
+   }
+  
+  // Check whether we have reached a final state
+  if (Current_state == Final_state)
+   {
+    // Validate the checksum
+    char computed_checksum_hex[Checksum_size];
+    // Transform to hexadecimal
+    sprintf(computed_checksum_hex, "%02X", Computed_checksum);
+    
+    if (strcmp(Input_checksum, computed_checksum_hex)!=0)
      {
       reset_state_machine();
+      // Validate the checksum
+      char checksum[Checksum_size];
+      // Transform to hexadecimal
+      sprintf(checksum, "%02X", Computed_checksum);
+      // Error message
+      std::ostringstream error_message;
+      error_message << "The checksum is not correct\n"
+                    << "We got [" << computed_checksum_hex << "] as the computed checksum,\n"
+                    << "and [" << Input_checksum << "] as the checksum in the input string."
+                    << std::endl;
+      throw ChapchomLibError(error_message.str(),
+                             CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
      }
-    Current_state = State_machine_transitions[Current_state][2];
-   }
-  else if ((0x25 <= character) && (character <= 0x29)) // GROUP D %, &, ', (, )
-   {
-    Current_state = State_machine_transitions[Current_state][3];
-   }
-  else if (character == 0x2A)// GROUP E *
-   {
-    Current_state = State_machine_transitions[Current_state][4];
-   }
-  else if (character == 0x2B)// GROUP F +
-   {
-    Current_state = State_machine_transitions[Current_state][5];
-   }
-  else if (character == 0x2C)//GROUP G , (coma)
-   {
-    Current_state = State_machine_transitions[Current_state][6];
-   }
-  else if ((0x2D <= character) && (character <= 0x2F)) // GROUP H -,.,/
-   {
-    Current_state = State_machine_transitions[Current_state][7];
-   }
-  else if ((0x30 <= character) && (character <= 0x39)) // GROUP I 0,1,...,9
-   {
-    Current_state = State_machine_transitions[Current_state][8];
-   }
-  else if ((0x3A <= character) && (character <= 0x40)) // GROUP J :, ;, <, =, >, ?, @
-   {
-    Current_state = State_machine_transitions[Current_state][9];
-   }
-  else if ((0x41 <= character) && (character <= 0x46)) // GROUP K A, B, C, D, E, F
-   {
-    Current_state = State_machine_transitions[Current_state][10];
-   }
-  else if ((0x47 <= character) && (character <= 0x60)) // GROUP L G, H, I,..., X, Y, Z, [, \, ], ^, _, `
-   {
-    Current_state = State_machine_transitions[Current_state][11];
-   }
-  else if ((0x61 <= character) && (character <= 0x66)) // GROUP M a, b, c, d, e, f
-   {
-    Current_state = State_machine_transitions[Current_state][12];
-   }
-  else if ((0x67 <= character) && (character <= 0x7E)) // GROUP N g, h, i,...,x, y, z, {, |, }, ~
-   {
-    Current_state = State_machine_transitions[Current_state][13];
-   }
-  else if ((0x7F <= character) && (character <= 0xFF)) // GROUP O (extended ASCII)
-   {
-    Current_state = State_machine_transitions[Current_state][14];
+    
+    decode_message_and_fill_structure();
+    
    }
   
-  if (Current_state == 0)
-   {
-    reset_state_machine();
-   }
-  
-  if (Current_state == 2){ //se termino un campo, empezar a avanzar al siguiente
-		campos[numeroCampos][contadorCampo] = 0;
-		numeroCampos++;
-		contadorCampo = 0;
-
-
-                if ((strcmp(campos[0],"WIMWV") == 0)&&(numeroCampos==5))
-                {
-                    strcpy(campos[5],"R");
-                    //fprintf(stderr, "%s-%s-%s-%s-%s-%s*\n", campos[0], campos[1],campos[2], campos[3], campos[4], campos[5]);
-                    //inf.numeroCampos = numeroCampos;
-                    //inf.decodifica(campos);
-                        //inf.print();
-                    mwv.numeroCampos = numeroCampos;
-                    mwv.decodifica(campos);
-
-                }
-
-	}
-
-	if (Current_state == 4){ //se obtuvo el primer character del checksum
-		numeroCampos++;
-		cadenaChecksum[0] = character;
-	}
-	if (Current_state == 5) //se obtuvo el segundo character del checksum
-		cadenaChecksum[1] = character;
-
-	if ((Current_state == 1) && (character != 0x24)){//$
-		campos[numeroCampos][contadorCampo] = character;
-		contadorCampo++;
-	}
-
-	if ((character != 0x24) && ((Current_state == 1) || (Current_state == 2)))//$
-		checksum ^= character;
-
-	if (Current_state == estadosFinales[0]){ //Si el estado actual es un estado final
-		//verificar el checksum obtenido
-		char cadenaChecksumCalculado[CNMEA_CHECKSUM_SIZE];
-		sprintf(cadenaChecksumCalculado,"%02X",checksum);
-
-		//if (stricmp(cadenaChecksumCalculado,cadenaChecksum)!=0){
-                if (strcmp(cadenaChecksumCalculado,cadenaChecksum)!=0){
-			Current_state = 0;
-			iniciarVariables();//checksum INCORRECTO, regresar al estado inicial
-			return 1;
-                }
-
-		verificarMensaje(numeroCampos);
-
-
-	}
-
-
-	return 1;
-
   
  }
  
  // ===================================================================
- // Fill the corresponding data structure based on the parsed nmea
- // string
+ // Decode the NMEA message and fill the corresponding data structure
  // ===================================================================
- void CCNMEADecoder::fill_structure()
+ void CCNMEADecoder::decode_message_and_fill_structure()
  {
+  // Based on the first field in the Fields matrix call the
+  // correspoing method in charge of filling the data structure
+  if (strcmp(Fields[0], "PSTM3DACC") == 0)
+   {
+    decode_PSTM3DACC_and_fill_structure();
+    print_PSTM3DACC_structure();
+   }
+  else if (strcmp(Fields[0], "PSTM3DGYRO") == 0)
+   {
+    decode_PSTM3DGYRO_and_fill_structure();
+    print_PSTM3DGYRO_structure();
+   }
   
  }
 
-}
+ // ===================================================================
+ // Decode the $PSTM3DACC string and fill the corresponding data
+ // structure
+ // ===================================================================
+ bool CCNMEADecoder::decode_PSTM3DACC_and_fill_structure()
+ {
+  // Reset valid status of data
+  pstm3dacc.valid_data_time = false;
+  pstm3dacc.valid_data_acc_x = false;
+  pstm3dacc.valid_data_acc_y = false;
+  pstm3dacc.valid_data_acc_z = false;
+  
+  // Start decoding data
+  if (transform_helper(pstm3dacc.time, Fields[1]))
+   {
+    pstm3dacc.valid_data_time = true;
+   }
+  else
+   {
+    return false;
+   }
+  
+  if (transform_helper(pstm3dacc.acc_x, Fields[2]))
+   {
+    pstm3dacc.valid_data_acc_x = true;
+   }
+  else
+   {
+    return false;
+   }  
+  
+  if (transform_helper(pstm3dacc.acc_y, Fields[3]))
+   {
+    pstm3dacc.valid_data_acc_y = true;
+   }
+  else
+   {
+    return false;
+   }  
+  
+  if (transform_helper(pstm3dacc.acc_z, Fields[4]))
+   {
+    pstm3dacc.valid_data_acc_z = true;
+   }
+  else
+   {
+    return false;
+   }  
+
+  // Only return true when no error occurred, otherwise return with
+  // false
+  return true;
+  
+ }
  
+ // ===================================================================
+ // Print the data stored in the $PSTM3DACC structure
+ // ===================================================================
+ void CCNMEADecoder::print_PSTM3DACC_structure()
+ {
+  if (pstm3dacc.valid_data_time)
+   {
+    std::cout << "pstm3dacc.time:[" << pstm3dacc.time << "]" << std::endl;
+   }
+  else
+   {
+    std::cout << "pstm3dacc.time:[NO_VALID_DATA]" << std::endl;
+   }
+  
+  if (pstm3dacc.valid_data_acc_x)
+   {
+    std::cout << "pstm3dacc.acc_x:[" << pstm3dacc.acc_x << "]" << std::endl;
+   }
+  else
+   {
+    std::cout << "pstm3dacc.acc_x:[NO_VALID_DATA]" << std::endl;
+   }
+  
+  if (pstm3dacc.valid_data_acc_y)
+   {
+    std::cout << "pstm3dacc.acc_y:[" << pstm3dacc.acc_y << "]" << std::endl;
+   }
+  else
+   {
+    std::cout << "pstm3dacc.acc_y:[NO_VALID_DATA]" << std::endl;
+   }
+  
+  if (pstm3dacc.valid_data_acc_z)
+   {
+    std::cout << "pstm3dacc.acc_z:[" << pstm3dacc.acc_z << "]" << std::endl;
+   }
+  else
+   {
+    std::cout << "pstm3dacc.acc_z:[NO_VALID_DATA]" << std::endl;
+   }   
+ }
+ 
+ // ===================================================================
+ // Decode the $PSTM3DGYRO string and fill the corresponding data
+ // structure
+ // ===================================================================
+ bool CCNMEADecoder::decode_PSTM3DGYRO_and_fill_structure()
+ {
+  pstm3dgyro.valid_data_time = false;
+  pstm3dgyro.valid_data_raw_x = false;
+  pstm3dgyro.valid_data_raw_y = false;
+  pstm3dgyro.valid_data_raw_z = false;
+  pstm3dgyro.valid_data_odometer_counter = false;
+  pstm3dgyro.valid_data_reverse = false;
+
+  // Start decoding data
+  if (transform_helper(pstm3dgyro.time, Fields[1]))
+   {
+    pstm3dgyro.valid_data_time = true;
+   }
+  else
+   {
+    return false;
+   }
+  
+  if (transform_helper(pstm3dgyro.raw_x, Fields[2]))
+   {
+    pstm3dgyro.valid_data_raw_x = true;
+   }
+  else
+   {
+    return false;
+   }  
+  
+  if (transform_helper(pstm3dgyro.raw_y, Fields[3]))
+   {
+    pstm3dgyro.valid_data_raw_y = true;
+   }
+  else
+   {
+    return false;
+   }  
+  
+  if (transform_helper(pstm3dgyro.raw_z, Fields[4]))
+   {
+    pstm3dgyro.valid_data_raw_z = true;
+   }
+  else
+   {
+    return false;
+   }
+  
+  if (transform_helper(pstm3dgyro.odometer_counter, Fields[5]))
+   {
+    pstm3dgyro.valid_data_odometer_counter = true;
+   }
+  else
+   {
+    return false;
+   }
+  
+  if (transform_helper(pstm3dgyro.reverse, Fields[6]))
+   {
+    pstm3dgyro.valid_data_reverse = true;
+   }
+  else
+   {
+    return false;
+   }
+  
+  // Only return true when no error occurred, otherwise return with
+  // false
+  return true;
+  
+ }
+ 
+ // ===================================================================
+ // Print the data stored in the $PSTM3DGYRO structure
+ // ===================================================================
+ void CCNMEADecoder::print_PSTM3DGYRO_structure()
+ {
+  if (pstm3dgyro.valid_data_time)
+   {
+    std::cout << "pstm3dgyro.time:[" << pstm3dgyro.time << "]" << std::endl;
+   }
+  else
+   {
+    std::cout << "pstm3dgyro.time:[NO_VALID_DATA]" << std::endl;
+   }
+  
+  if (pstm3dgyro.valid_data_raw_x)
+   {
+    std::cout << "pstm3dgyro.raw_x:[" << pstm3dgyro.raw_x << "]" << std::endl;
+   }
+  else
+   {
+    std::cout << "pstm3dgyro.raw_x:[NO_VALID_DATA]" << std::endl;
+   }
+  
+  if (pstm3dgyro.valid_data_raw_y)
+   {
+    std::cout << "pstm3dgyro.raw_y:[" << pstm3dgyro.raw_y << "]" << std::endl;
+   }
+  else
+   {
+    std::cout << "pstm3dgyro.raw_y:[NO_VALID_DATA]" << std::endl;
+   }
+  
+  if (pstm3dgyro.valid_data_raw_z)
+   {
+    std::cout << "pstm3dgyro.raw_z:[" << pstm3dgyro.raw_z << "]" << std::endl;
+   }
+  else
+   {
+    std::cout << "pstm3dgyro.raw_z:[NO_VALID_DATA]" << std::endl;
+   }
+  
+  if (pstm3dgyro.valid_data_odometer_counter)
+   {
+    std::cout << "pstm3dgyro.odometer_counter:[" << pstm3dgyro.odometer_counter << "]" << std::endl;
+   }
+  else
+   {
+    std::cout << "pstm3dgyro.odometer_counter:[NO_VALID_DATA]" << std::endl;
+   }
+  
+  if (pstm3dgyro.valid_data_reverse)
+   {
+    std::cout << "pstm3dgyro.reverse:[" << pstm3dgyro.reverse << "]" << std::endl;
+   }
+  else
+   {
+    std::cout << "pstm3dgyro.odometer_counter:[NO_VALID_DATA]" << std::endl;
+   }
+  
+ }
+ 
+ // ===================================================================
+ // Helper function to transform from string to double
+ // ===================================================================
+ bool CCNMEADecoder::transform_helper(double &number, char *string)
+ {
+  // Null pointer?
+  if (string == NULL)
+   {
+    return false;
+   }
+
+  // No elements in the string?
+  if (strlen (string) <=0){
+   return false;
+  }
+
+  // Pointer to the end of string
+  char *end_string;
+  double tmp_number = std::strtod(string, &end_string);
+  // Check whether all the string was consumed
+  if (std::strlen(end_string) != 0)
+   {
+    return false;
+   }
+  else
+   {
+    number = tmp_number;
+    return true;
+   }
+  
+  // Never reached code but added to avoid warning
+  return false;
+  
+ }
+
+ // ===================================================================
+ // Helper function to transform from string to int
+ // ===================================================================
+ bool CCNMEADecoder::transform_helper(int &number, char *string)
+ {
+  // Null pointer?
+  if (string == NULL)
+   {
+    return false;
+   }
+
+  // No elements in the string?
+  if (strlen (string) <=0){
+   return false;
+  }
+
+  // Pointer to the end of string
+  char *end_string;
+  int tmp_number = static_cast<int>(std::strtod(string, &end_string));
+  // Check whether all the string was consumed
+  if (std::strlen(end_string) != 0)
+   {
+    return false;
+   }
+  else
+   {
+    number = tmp_number;
+    return true;
+   }
+  
+  // Never reached code but added to avoid warning
+  return false;
+  
+ }
+  
+}
+
 #if 0
  
  
