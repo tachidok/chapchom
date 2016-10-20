@@ -144,7 +144,7 @@ namespace chapchom
   // Decode the $PSTM3DACC string and fill the corresponding data
   // structure
   bool decode_PSTM3DACC_and_fill_structure();
-
+  
   // Print the data stored in the $PSTM3DACC structure
   void print_PSTM3DACC_structure();
   

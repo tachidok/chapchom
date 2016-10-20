@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <fstream>
 
 // Include general/common includes, utilities and initialisation
 #include "../../../src/general/common_includes.h"
@@ -107,7 +108,7 @@ void multiply_matrix_times_vector(std::vector<std::vector<double> > &A,
                  << n_rows_x << ", 1)" << std::endl;
    throw ChapchomLibError(error_message.str(),
                           CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);   
+                          CHAPCHOM_EXCEPTION_LOCATION);
   }
  
  // Clear the vector x

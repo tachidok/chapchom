@@ -263,27 +263,30 @@ namespace chapchom
   if (Current_state == Final_state)
    {
     // Validate the checksum
-    char computed_checksum_hex[Checksum_size];
+    char *computed_checksum_hex = new char[Checksum_size];
     // Transform to hexadecimal
     sprintf(computed_checksum_hex, "%02X", Computed_checksum);
+    // To upper case
+    std::string str(Input_checksum);
+    std::transform(str.begin(), str.end(),str.begin(), ::toupper);
     
-    if (strcmp(Input_checksum, computed_checksum_hex)!=0)
+    if (strcmp(str.c_str(), computed_checksum_hex)!=0)
      {
       reset_state_machine();
-      // Validate the checksum
-      char checksum[Checksum_size];
-      // Transform to hexadecimal
-      sprintf(checksum, "%02X", Computed_checksum);
       // Error message
       std::ostringstream error_message;
       error_message << "The checksum is not correct\n"
                     << "We got [" << computed_checksum_hex << "] as the computed checksum,\n"
-                    << "and [" << Input_checksum << "] as the checksum in the input string."
+                    << "and [" << str << "] as the checksum in the input string."
                     << std::endl;
       throw ChapchomLibError(error_message.str(),
                              CHAPCHOM_CURRENT_FUNCTION,
                              CHAPCHOM_EXCEPTION_LOCATION);
      }
+
+    // Free memory
+    delete computed_checksum_hex;
+    computed_checksum_hex = 0;
     
     decode_message_and_fill_structure();
     

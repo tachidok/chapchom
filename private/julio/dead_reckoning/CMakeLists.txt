@@ -1,13 +1,18 @@
 # Indicate source files and dependencies in the files
 SET(SRC_demo_dead_reckoning_for_xsensMT9B demo_dead_reckoning_for_xsensMT9B.cpp cc_odes_from_table_from_xsensMT9B.cpp cc_nmea_decoder.cpp)
 
+SET(SRC_demo_nmea_decoder_test demo_cc_nmea_decoder_test.cpp cc_nmea_decoder.cpp)
+
 # Do not create executable but add them to the 'make' list
 ADD_EXECUTABLE(demo_dead_reckoning_for_xsensMT9B EXCLUDE_FROM_ALL ${SRC_demo_dead_reckoning_for_xsensMT9B})
+ADD_EXECUTABLE(demo_nmea_decoder_test EXCLUDE_FROM_ALL ${SRC_demo_nmea_decoder_test})
 
 # Indicate linking libraries
 SET(LIB_demo_dead_reckoning_for_xsensMT9B general_lib odes_lib integration_lib interpolation_lib)
+SET(LIB_demo_nmea_decoder_test general_lib)
 # ... and link againts them  
 TARGET_LINK_LIBRARIES(demo_dead_reckoning_for_xsensMT9B ${LIB_demo_dead_reckoning_for_xsensMT9B})
+TARGET_LINK_LIBRARIES(demo_nmea_decoder_test ${LIB_demo_nmea_decoder_test})
 
 # Check if the output/bin directory exists
 IF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bin)
@@ -19,7 +24,13 @@ ENDIF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 set_target_properties( demo_dead_reckoning_for_xsensMT9B
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin"
-)
+    )
+
+  # Set output directory for executables
+set_target_properties( demo_nmea_decoder_test
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin"
+    )
 
 #Adding library's sources
 #SET(src_files cc_odes_from_table_based_on_velocity)
