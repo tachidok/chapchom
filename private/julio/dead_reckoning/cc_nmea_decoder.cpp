@@ -14,7 +14,10 @@ namespace chapchom
                               const unsigned checksum_size)
   : Max_fields(max_fields), Max_fields_size(max_fields_size),
     Max_nmea_string_size(max_fields*max_fields_size), Checksum_size(checksum_size),
-    NStates(5), NTransitions(5)
+    NStates(5), NTransitions(5),
+    Accelerometer_data_ready(false),
+    Gyro_data_ready(false),
+    GPRMC_data_ready(false)
  {
 
   // ----------------------------------------------------------
@@ -305,22 +308,30 @@ namespace chapchom
   if (strcmp(Fields[0], "PSTM3DACC") == 0)
    {
     decode_PSTM3DACC_and_fill_structure();
-    print_PSTM3DACC_structure();
+    //print_PSTM3DACC_structure();
    }
   else if (strcmp(Fields[0], "PSTM3DGYRO") == 0)
    {
     decode_PSTM3DGYRO_and_fill_structure();
-    print_PSTM3DGYRO_structure();
+    //print_PSTM3DGYRO_structure();
+   }
+  else if (strcmp(Fields[0], "GPRMC") == 0)
+   {
+    decode_GPRMC_and_fill_structure();
+    //print_GPRMC_structure();
    }
   
  }
-
+ 
  // ===================================================================
  // Decode the $PSTM3DACC string and fill the corresponding data
  // structure
  // ===================================================================
  bool CCNMEADecoder::decode_PSTM3DACC_and_fill_structure()
  {
+  // Indicate that accelerometer data is not ready
+  Accelerometer_data_ready = false;
+  
   // Reset valid status of data
   pstm3dacc.valid_data_time = false;
   pstm3dacc.valid_data_acc_x = false;
@@ -363,7 +374,10 @@ namespace chapchom
    {
     return false;
    }  
-
+  
+  // Indicate that accelerometer data is ready
+  Accelerometer_data_ready = true;
+  
   // Only return true when no error occurred, otherwise return with
   // false
   return true;
@@ -375,6 +389,7 @@ namespace chapchom
  // ===================================================================
  void CCNMEADecoder::print_PSTM3DACC_structure()
  {
+  std::cout << std::endl;
   if (pstm3dacc.valid_data_time)
    {
     std::cout << "pstm3dacc.time:[" << pstm3dacc.time << "]" << std::endl;
@@ -418,6 +433,9 @@ namespace chapchom
  // ===================================================================
  bool CCNMEADecoder::decode_PSTM3DGYRO_and_fill_structure()
  {
+  // Indicate that gryo data is not ready
+  Gyro_data_ready = false;
+  
   pstm3dgyro.valid_data_time = false;
   pstm3dgyro.valid_data_raw_x = false;
   pstm3dgyro.valid_data_raw_y = false;
@@ -480,6 +498,9 @@ namespace chapchom
     return false;
    }
   
+  // Indicate that gryo data is ready
+  Gyro_data_ready = true;
+  
   // Only return true when no error occurred, otherwise return with
   // false
   return true;
@@ -491,6 +512,7 @@ namespace chapchom
  // ===================================================================
  void CCNMEADecoder::print_PSTM3DGYRO_structure()
  {
+  std::cout << std::endl;
   if (pstm3dgyro.valid_data_time)
    {
     std::cout << "pstm3dgyro.time:[" << pstm3dgyro.time << "]" << std::endl;
@@ -548,6 +570,243 @@ namespace chapchom
  }
  
  // ===================================================================
+ // Decode the $GPRMC string and fill the corresponding data structure
+ // ===================================================================
+ bool CCNMEADecoder::decode_GPRMC_and_fill_structure()
+ {
+  // Indicate that gprmc data is not ready
+  GPRMC_data_ready = false;
+  
+  // Reset valid status of data
+  gprmc.valid_data_UTC_time = false;
+  gprmc.valid_data_status = false;
+  gprmc.valid_data_latitude = false;
+  gprmc.valid_data_NS = false;
+  gprmc.valid_data_longitude = false;
+  gprmc.valid_data_EW = false;
+  gprmc.valid_data_speed_knots = false;
+  gprmc.valid_data_course_degrees = false;
+  gprmc.valid_data_date = false;
+  gprmc.valid_data_magnetic_variation_degrees = false;
+  gprmc.valid_data_EW_magnetic = false;
+  
+  // Start decoding data
+  if (transform_helper(gprmc.UTC_time, Fields[1]))
+   {
+    gprmc.valid_data_UTC_time = true;
+   }
+  else
+   {
+    return false;
+   }
+  
+  if (transform_helper(gprmc.status, Fields[2]))
+   {
+    gprmc.valid_data_status = true;
+   }
+  else
+   {
+    return false;
+   }
+  
+  if (transform_helper(gprmc.latitude, Fields[3]))
+   {
+    gprmc.valid_data_latitude = true;
+   }
+  else
+   {
+    return false;
+   }
+  
+  if (transform_helper(gprmc.NS, Fields[4]))
+   {
+    gprmc.valid_data_NS = true;
+   }
+  else
+   {
+    return false;
+   }
+  
+  if (transform_helper(gprmc.longitude, Fields[5]))
+   {
+    gprmc.valid_data_longitude = true;
+   }
+  else
+   {
+    return false;
+   }
+  
+  if (transform_helper(gprmc.EW, Fields[6]))
+   {
+    gprmc.valid_data_EW = true;
+   }
+  else
+   {
+    return false;
+   }
+  
+  if (transform_helper(gprmc.speed_knots, Fields[7]))
+   {
+    gprmc.valid_data_speed_knots = true;
+   }
+  else
+   {
+    return false;
+   }
+  
+  if (transform_helper(gprmc.course_degrees, Fields[8]))
+   {
+    gprmc.valid_data_course_degrees = true;
+   }
+  else
+   {
+    return false;
+   }
+  
+  if (transform_helper(gprmc.date, Fields[9]))
+   {
+    gprmc.valid_data_date = true;
+   }
+  else
+   {
+    return false;
+   }
+  
+  if (transform_helper(gprmc.magnetic_variation_degrees, Fields[10]))
+   {
+    gprmc.valid_data_magnetic_variation_degrees = true;
+   }
+  else
+   {
+    return false;
+   }
+  
+  if (transform_helper(gprmc.EW_magnetic, Fields[11]))
+   {
+    gprmc.valid_data_EW_magnetic = true;
+   }
+  else
+   {
+    return false;
+   }  
+  
+  // Indicate that gprmc data is ready
+  GPRMC_data_ready = true;
+  
+  // Only return true when no error occurred, otherwise return with
+  // false
+  return true;
+  
+ }
+ 
+ // ===================================================================
+ // Print the data stored in the $GPRMC structure
+ // ===================================================================
+ void CCNMEADecoder::print_GPRMC_structure()
+ {
+  std::cout << std::endl;
+  if (gprmc.valid_data_UTC_time)
+   {
+    std::cout << "gprmc.UTC_time:[" << gprmc.UTC_time << "]" << std::endl;
+   }
+  else
+   {
+    std::cout << "gprmc.UTC_time:[NO_VALID_DATA]" << std::endl;
+   }
+  
+  if (gprmc.valid_data_status)
+   {
+    std::cout << "gprmc.status:[" << gprmc.status << "]" << std::endl;
+   }
+  else
+   {
+    std::cout << "gprmc.status:[NO_VALID_DATA]" << std::endl;
+   }
+  
+  if (gprmc.valid_data_latitude)
+   {
+    std::cout << "gprmc.latitude:[" << gprmc.latitude << "]" << std::endl;
+   }
+  else
+   {
+    std::cout << "gprmc.latitude:[NO_VALID_DATA]" << std::endl;
+   }
+  
+  if (gprmc.valid_data_NS)
+   {
+    std::cout << "gprmc.NS:[" << gprmc.NS << "]" << std::endl;
+   }
+  else
+   {
+    std::cout << "gprmc.NS:[NO_VALID_DATA]" << std::endl;
+   }
+  
+  if (gprmc.valid_data_longitude)
+   {
+    std::cout << "gprmc.longitude:[" << gprmc.longitude << "]" << std::endl;
+   }
+  else
+   {
+    std::cout << "gprmc.longitude:[NO_VALID_DATA]" << std::endl;
+   }
+  
+  if (gprmc.valid_data_EW)
+   {
+    std::cout << "gprmc.EW:[" << gprmc.EW << "]" << std::endl;
+   }
+  else
+   {
+    std::cout << "gprmc.EW:[NO_VALID_DATA]" << std::endl;
+   }
+  
+  if (gprmc.valid_data_speed_knots)
+   {
+    std::cout << "gprmc.speed_knots:[" << gprmc.speed_knots << "]" << std::endl;
+   }
+  else
+   {
+    std::cout << "gprmc.speed_knots:[NO_VALID_DATA]" << std::endl;
+   }
+  
+  if (gprmc.valid_data_course_degrees)
+   {
+    std::cout << "gprmc.course_degrees:[" << gprmc.course_degrees << "]" << std::endl;
+   }
+  else
+   {
+    std::cout << "gprmc.course_degrees:[NO_VALID_DATA]" << std::endl;
+   }
+  
+  if (gprmc.valid_data_date)
+   {
+    std::cout << "gprmc.date:[" << gprmc.date << "]" << std::endl;
+   }
+  else
+   {
+    std::cout << "gprmc.date:[NO_VALID_DATA]" << std::endl;
+   }
+  
+  if (gprmc.valid_data_magnetic_variation_degrees)
+   {
+    std::cout << "gprmc.magnetic_variation_degrees:[" << gprmc.magnetic_variation_degrees << "]" << std::endl;
+   }
+  else
+   {
+    std::cout << "gprmc.magnetic_variation_degrees:[NO_VALID_DATA]" << std::endl;
+   }
+  
+  if (gprmc.valid_data_EW_magnetic)
+   {
+    std::cout << "gprmc.EW_magnetic:[" << gprmc.EW_magnetic << "]" << std::endl;
+   }
+  else
+   {
+    std::cout << "gprmc.EW_magnetic:[NO_VALID_DATA]" << std::endl;
+   }
+  
+ }
+ 
+ // ===================================================================
  // Helper function to transform from string to double
  // ===================================================================
  bool CCNMEADecoder::transform_helper(double &number, char *string)
@@ -559,10 +818,11 @@ namespace chapchom
    }
 
   // No elements in the string?
-  if (strlen (string) <=0){
-   return false;
-  }
-
+  if (strlen (string) <=0)
+   {
+    return false;
+   }
+  
   // Pointer to the end of string
   char *end_string;
   double tmp_number = std::strtod(string, &end_string);
@@ -594,10 +854,11 @@ namespace chapchom
    }
 
   // No elements in the string?
-  if (strlen (string) <=0){
-   return false;
-  }
-
+  if (strlen (string) <=0)
+   {
+    return false;
+   }
+  
   // Pointer to the end of string
   char *end_string;
   int tmp_number = static_cast<int>(std::strtod(string, &end_string));
@@ -616,5 +877,29 @@ namespace chapchom
   return false;
   
  }
+ 
+ // ===================================================================
+ // Helper function to transform from string to char 
+ // ===================================================================
+ bool CCNMEADecoder::transform_helper(char &character, char *string)
+ {
+  // Null pointer?
+  if (string == NULL)
+   {
+    return false;
+   }
+
+  // No elements in the string?
+  if (strlen (string) <=0)
+   {
+    return false;
+   }
   
+  // Copy the first character
+  character = string[0];
+  
+  return true;
+  
+ }
+ 
 }

@@ -45,6 +45,40 @@ namespace chapchom
   bool valid_data_reverse;
  };
  
+ /// \struct GPRMC cc_nmea_decoder.h
+ 
+ /// Stores the information decoded from the $GPRMC NMEA string. This
+ /// string stores info. related with latitude, longitud, course and
+ /// magnetic variation with respect to east/west. Additionally, it
+ /// contains time and date stamps with the current speed in
+ /// knots. This string is commonly sent by a positioning (GPS)
+ /// device.
+ struct GPRMC
+ {
+  double UTC_time;
+  bool valid_data_UTC_time;
+  char status; // It may be A=active or V=void
+  bool valid_data_status;
+  double latitude;
+  bool valid_data_latitude;
+  char NS; // North/South
+  bool valid_data_NS;
+  double longitude;
+  bool valid_data_longitude;
+  char EW; // East/West
+  bool valid_data_EW;
+  double speed_knots; // Speen in knots
+  bool valid_data_speed_knots;
+  double course_degrees; // True course
+  bool valid_data_course_degrees;
+  double date; // Date stamp
+  bool valid_data_date;
+  double magnetic_variation_degrees; // Magnetic variation - substract from true course
+  bool valid_data_magnetic_variation_degrees;
+  char EW_magnetic; // East/West
+  bool valid_data_EW_magnetic;
+ };
+ 
  /// \class CCNMEADecoder cc_nmea_decoder.h
  
  /// This class reads NMEA strings and fill data structures (other
@@ -71,6 +105,35 @@ namespace chapchom
   // string and stores its entry in a matrix structure containing the
   // parsed information
   void parse(const unsigned char character);
+  
+  // Method to check whether new values from accelerometer are ready
+  // or not
+  inline bool is_accelerometer_data_ready() {return Accelerometer_data_ready;}
+  
+  // Indicate that the accelerometer data has been processed
+  inline void consume_accelerometer_data() {Accelerometer_data_ready = false;}
+  
+  // Return a reference to the structure PSTM3DACC
+  inline struct PSTM3DACC &get_pstm3dacc() {return pstm3dacc;}
+  
+  // Method to check whether new values from gyro are ready or not
+  inline bool is_gyro_data_ready() {return Gyro_data_ready;}
+  
+  // Indicate that the gyro data has been processed
+  inline void consume_gyro_data() {Gyro_data_ready = false;}
+  
+  // Return a pointer to the structure PSTM3DACC
+  inline struct PSTM3DGYRO &get_pstm3dgyro() {return pstm3dgyro;}
+  
+  // Method to check whether new values from gprmc NMEA string are
+  // ready or not
+  inline bool is_GPRMC_data_ready() {return GPRMC_data_ready;}
+  
+  // Indicate that the GPRMC data has been processed
+  inline void consume_GPRMC_data() {GPRMC_data_ready = false;}
+  
+  // Return a pointer to the structure PSTM3DACC
+  inline struct GPRMC &get_gprmc() {return gprmc;}
   
  protected:
   
@@ -155,19 +218,42 @@ namespace chapchom
   // Print the data stored in the $PSTM3DACC structure
   void print_PSTM3DGYRO_structure();
   
+  // Decode the $GPRMC string and fill the corresponding data
+  // structure
+  bool decode_GPRMC_and_fill_structure();
+  
+  // Print the data stored in the $GPRMC structure
+  void print_GPRMC_structure();
+  
   // Helper function to transform from string to double
   bool transform_helper(double &number, char *string);
   
   // Helper function to transform from string to int
   bool transform_helper(int &number, char *string);
   
+  // Helper function to transform from string to char
+  bool transform_helper(char &character, char *string);
+  
   // Structure to store the values received from the $PSTM3DACC NMEA
   // string
   struct PSTM3DACC pstm3dacc;
   
+  // Flag to indicate that new values from accelerometer are ready
+  bool Accelerometer_data_ready;
+  
   // Structure to store the values received from the $PSTM3DGYRO NMEA
   // string
   struct PSTM3DGYRO pstm3dgyro;
+  
+  // Flag to indicate that new values from gyro are ready
+  bool Gyro_data_ready;
+  
+  // Structure to store the values received from the $GPRMC NMEA
+  // string
+  struct GPRMC gprmc;
+  
+  // Flag to indicate that new values from gprmc NMEA string are ready
+  bool GPRMC_data_ready;
   
  };
   
