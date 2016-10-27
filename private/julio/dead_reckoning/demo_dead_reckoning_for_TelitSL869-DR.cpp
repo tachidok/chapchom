@@ -253,9 +253,8 @@ int main(int argc, char *argv[])
  // received from the sensors
  double h = 0.0;
  
- // Current time (this will be given by the first reading from the
- // sensors)
- std::vector<double> t;
+ // Current time
+ double t = 0.0;
  
  // -----------------------------------------------------------------------------
  // Initialise
@@ -264,10 +263,10 @@ int main(int argc, char *argv[])
  // Get the readings from sensores
  // Accelerations
  std::vector<std::vector<double> > acc(DIM);
- // Gyro data
- std::vector<std::vector<double> > dtheta(DIM);
  // Retrieve data from sensors
- odes.get_sensors_lecture(t, acc, dtheta, euler_angles); // tachidok
+ odes.get_sensors_lecture(); // tachidok
+ // TODO : Get data from sensors
+ // acc = get_acceleration_data();
  
  // Initial conditions
  y[0][0] = 0.0; // Initial x-position
@@ -404,7 +403,7 @@ int main(int argc, char *argv[])
              << " roll: " << y[0][6] << " pitch: " << y[0][7] << " yaw: " << y[0][8] << std::endl;
    
    // Get the accelerometers readings from the Table
-   odes.get_sensors_lecture(t, acc, dtheta, magnetometer, euler_angles);
+   odes.get_sensors_lecture();
    
    // -------------------------------------------------------------------
    // Apply complementary filter

@@ -47,9 +47,7 @@ namespace chapchom
  // ======================================================================
  /// Get the values of the sensors at specific time (computed from table)
  // ======================================================================
- void CCODEsFromSensorsTelitSL869DR::get_sensors_lecture(std::vector<std::vector<double> > &acc,
-                                                         std::vector<std::vector<double> > &gyro,
-                                                         std::vector<std::vector<double> > &euler_angles)
+ void CCODEsFromSensorsTelitSL869DR::get_sensors_lecture()
  {
   // Read data from the file/sensors. We proceed as follow:
   // -------------------------------------------------------------------
@@ -62,13 +60,19 @@ namespace chapchom
   char character;
   unsigned n_PSTM3DACC = 0;
   unsigned n_PSTM3DGYRO = 0;
-  unsigned state = 1;
+  unsigded state = 1;
+  // Flag to indicate whether GPRMC data has been read
+  bool read_GPRMC_data = false;
+  // Flag to indicate whether Euler angles data has been read
+  bool read_Euler_angles_data = false;
+  // Flag to continue looping
+  bool LOOP = true;
   // Clear the input vectors
-  acc.clear();
-  gyro.clear();
-  euler_angles.clear();
+  Acceleration_data.clear();
+  Gyro_data.clear();
+  Euler_angles_data.clear();
   // Loop until eof
-  while(!Input_file.eof())
+  while(LOOP && !Input_file.eof())
    {
     Input_file.get(character);
     //std::cerr << character;
@@ -88,7 +92,7 @@ namespace chapchom
         // Consume accelerometer data
         nmea_decoder.consume_accelerometer_data();
         // Add the reading to the acceleration data
-        acc.push_back(read_acc);
+        Acceleration_data.push_back(read_acc);
         // Increase the counter of the number of read acceleration data
         n_PSTM3DACC++;
         std::cout << "Time:" << read_acc[0]
@@ -108,11 +112,11 @@ namespace chapchom
         // start again
         state = 1;
         // Clear the input vectors
-        acc.clear();
+        Acceleration_data.clear();
+        Gyro_data.clear();
+        Euler_angles_data.clear();
         n_PSTM3DACC = 0;
-        gyro.clear();
-        n_PSTM3DGYRO = 0;
-        euler_angles.clear();
+        n_PSTM3DGYRO = 0;        
        }
       
      }
@@ -131,7 +135,7 @@ namespace chapchom
         // Consume gyro data
         nmea_decoder.consume_gyro_data();
         // Add the reading to the gyro data
-        gyro.push_back(gyro_read_gyro);
+        Gyro_data.push_back(gyro_read_gyro);
         // Increase the counter of the number of read acceleration data
         n_PSTM3DGYRO++;
         std::cout << "Time:" << read_gyro[0]
@@ -150,14 +154,17 @@ namespace chapchom
         // start again
         state = 1;
         // Clear the input vectors
-        acc.clear();
+        Acceleration_data.clear();
+        Gyro_data.clear();
+        Euler_angles_data.clear();
         n_PSTM3DACC = 0;
-        gyro.clear();
         n_PSTM3DGYRO = 0;
-        euler_angles.clear();
        }
       
      }
+    
+    // TODO: GPRMC data
+    read_GPRMC_data = true;
     
     if (nmea_decoder.is_GPRMC_data_ready())
      {
@@ -168,188 +175,21 @@ namespace chapchom
       const double course_degrees = gprmc.course_degrees;
       // Consume GPRMC data
       nmea_decoder.consume_GPRMC_data();
+      // Indicate GPRMC data has been read
+      read_GPRMC_data = true;
       std::cout << "GPRMC:(" << latitude << ", " << longitude << ", " <<  course_degrees << ")" << std::endl;
      }
     
-    // If we have read the corresponding accelerometer and gyro data
-    // then break the cycle
-    if (state == 3)
+    // TODO: Read Euler angles data
+    read_Euler_angles_data = true;
+    
+    // If we have read the corresponding accelerometer, gyro, GPRMC
+    // and Euler angles data then break the cycle
+    if (state == 3 && read_GPRMC_data && read_Euler_angles_data)
      {
-      break;
+      LOOP = false;
      }
     
-   }
-
-  // HERE HERE HERE
-  
-
-
-
-
-
-
-
-
-
-  
-  // Do linear interpolation
-  unsigned interpolation_order = 1;
-  // Do interpolation if the exact value was not found in the table
-  bool do_interpolation = true;
-  // In case of not using interpolation then use this index as the
-  // entry of the table having the exact value
-  unsigned i_exact = 0;
- 
-  // Search for the greater value smaller than "t", and the smaller
-  // value larger than "t" to use them as the "x"s points for
-  // interpolation
-  int i_left = 0;
-  int i_right = N_data_in_table - 1;
-  bool loop = true;
-  bool found_value = false;
-  unsigned found_index = 0;
-  while(loop)
-   {
-    if (i_left > i_right)
-     {
-      // Failure to find the value
-      loop = false;
-     }
-   
-    if (Table_time[i_left] == t)
-     {
-      do_interpolation = false;
-      loop = false;
-      found_value = true;
-      i_exact = i_left;
-     }
-    else if (Table_time[i_right] == t)
-     {
-      do_interpolation = false;
-      loop = false;
-      found_value = true;
-      i_exact = i_right;
-     }
-    else
-     {
-      // Compute the middle index in the current range
-      const int i_middle = std::floor(i_left + (i_right - i_left)/ 2);
-#if 0
-      std::cout << "T: (" << t << ")" << std::endl;
-      std::cout << "i_left: (" << i_left << ") i_middle: ("
-                << i_middle << ") i_right: ("
-                << i_right << ")" << std::endl;
-      std::cout << "[i_left]: (" << Table_time[i_left] << ") [i_middle]: ("
-                << Table_time[i_middle] << ") [i_right]: ("
-                << Table_time[i_right] << ")" << std::endl;
-#endif // #if 0
-      if ((i_middle == i_left || i_middle == i_right) &&
-          ((i_right - i_left) == 1))
-       {
-        //std::cout << "[END]" << std::endl;
-        // Found data
-        loop = false;
-        found_value = true;
-       }
-      else if (Table_time[i_middle] < t)
-       {
-        //std::cout << "[MOVE LEFT TO MIDDLE]" << std::endl;
-        i_left = i_middle;
-       }
-      else if (Table_time[i_middle] > t)
-       {
-        //std::cout << "[MOVE RIGHT TO MIDDLE]" << std::endl;
-        i_right = i_middle;
-       }
-      else
-       {
-        // Error message
-        std::ostringstream error_message;
-        error_message << "The requested 't' value is not in the table"
-                      << std::endl;
-        throw ChapchomLibError(error_message.str(),
-                               CHAPCHOM_CURRENT_FUNCTION,
-                               CHAPCHOM_EXCEPTION_LOCATION);
-       }
-     
-     } // The searched value is not exactly in the table
-   
-   } // while(loop)
- 
-  if (do_interpolation)
-   {
-    // Store the data used to interpolate in the correponding data structures
-    std::vector<double> time(interpolation_order + 1);
-    std::vector<double> acc_x(interpolation_order + 1);
-    std::vector<double> acc_y(interpolation_order + 1);
-    std::vector<double> acc_z(interpolation_order + 1);
-    std::vector<double> gyro_x(interpolation_order + 1);
-    std::vector<double> gyro_y(interpolation_order + 1);
-    std::vector<double> gyro_z(interpolation_order + 1);
-    std::vector<double> mag_x(interpolation_order + 1);
-    std::vector<double> mag_y(interpolation_order + 1);
-    std::vector<double> mag_z(interpolation_order + 1);
-    std::vector<double> roll(interpolation_order + 1);
-    std::vector<double> pitch(interpolation_order + 1);
-    std::vector<double> yaw(interpolation_order + 1);
-   
-    // Copy the data
-    time[0] = Table_time[i_left];
-    time[1] = Table_time[i_right];
-    acc_x[0]= Table_acc_x[i_left];
-    acc_x[1]= Table_acc_x[i_right];
-    acc_y[0]= Table_acc_y[i_left];
-    acc_y[1]= Table_acc_y[i_right];
-    acc_z[0]= Table_acc_z[i_left];
-    acc_z[1]= Table_acc_z[i_right];
-    gyro_x[0]= Table_gyro_x[i_left];
-    gyro_x[1]= Table_gyro_x[i_right];
-    gyro_y[0]= Table_gyro_y[i_left];
-    gyro_y[1]= Table_gyro_y[i_right];
-    gyro_z[0]= Table_gyro_z[i_left];
-    gyro_z[1]= Table_gyro_z[i_right];
-    mag_x[0]= Table_mag_x[i_left];
-    mag_x[1]= Table_mag_x[i_right];
-    mag_y[0]= Table_mag_y[i_left];
-    mag_y[1]= Table_mag_y[i_right];
-    mag_z[0]= Table_mag_z[i_left];
-    mag_z[1]= Table_mag_z[i_right];
-    roll[0]= Table_roll[i_left];
-    roll[1]= Table_roll[i_right];
-    pitch[0]= Table_pitch[i_left];
-    pitch[1]= Table_pitch[i_right];
-    yaw[0]= Table_yaw[i_left];
-    yaw[1]= Table_yaw[i_right];
-   
-    acc[0] = interpolator_pt->interpolate_1D(time, acc_x, t, interpolation_order);
-    acc[1] = interpolator_pt->interpolate_1D(time, acc_y, t, interpolation_order);
-    acc[2] = interpolator_pt->interpolate_1D(time, acc_z, t, interpolation_order);
-    gyro[0] = interpolator_pt->interpolate_1D(time, gyro_x, t, interpolation_order);
-    gyro[1] = interpolator_pt->interpolate_1D(time, gyro_y, t, interpolation_order);
-    gyro[2] = interpolator_pt->interpolate_1D(time, gyro_z, t, interpolation_order);
-    mag[0] = interpolator_pt->interpolate_1D(time, mag_x, t, interpolation_order);
-    mag[1] = interpolator_pt->interpolate_1D(time, mag_y, t, interpolation_order);
-    mag[2] = interpolator_pt->interpolate_1D(time, mag_z, t, interpolation_order);
-    // Transform to radians because the lectures are given in degress
-    euler_angles[0] = interpolator_pt->interpolate_1D(time, roll, t, interpolation_order) * (M_PI / 180.0);
-    euler_angles[1] = interpolator_pt->interpolate_1D(time, pitch, t, interpolation_order) * (M_PI / 180.0);
-    euler_angles[2] = interpolator_pt->interpolate_1D(time, yaw, t, interpolation_order) * (M_PI / 180.0);
-   }
-  else // Do not do interpolation, the exact values are in the table
-   {
-    acc[0] = Table_acc_x[i_exact];
-    acc[1] = Table_acc_y[i_exact];
-    acc[2] = Table_acc_z[i_exact];
-    gyro[0] = Table_gyro_x[i_exact];
-    gyro[1] = Table_gyro_y[i_exact];
-    gyro[2] = Table_gyro_z[i_exact];
-    mag[0] = Table_gyro_x[i_exact];
-    mag[1] = Table_gyro_y[i_exact];
-    mag[2] = Table_gyro_z[i_exact];
-    // Transform to radians because the lectures are given in degress
-    euler_angles[0] = Table_roll[i_exact] * (M_PI / 180.0);
-    euler_angles[1] = Table_pitch[i_exact] * (M_PI / 180.0);
-    euler_angles[2] = Table_yaw[i_exact] * (M_PI / 180.0);
    }
   
  }
@@ -359,8 +199,15 @@ namespace chapchom
  // per second
  // ===================================================================
  const double CCODEsFromSensorsTelitSL869DR::get_yaw_correction(const double t,
-                                                               const double n_steps_per_second)
+                                                                const double n_steps_per_second)
  {
+  // Error message
+  std::ostringstream error_message;
+  error_message << "Implement this" << std::endl;
+  throw ChapchomLibError(error_message.str(),
+                         CHAPCHOM_CURRENT_FUNCTION,
+                         CHAPCHOM_EXCEPTION_LOCATION);
+  
   // Check in which interval is "t"
   if (t >= 0 && t < 30.0)
    {
@@ -376,44 +223,9 @@ namespace chapchom
    {
     return 2.5 * 0.006544985/n_steps_per_second; // 0.75 degreess per second
    }
+  
  }
- 
-#if 0
- // ===================================================================
- // Get yaw correction as a function of time and the number of steps
- // per second
- // ===================================================================
- const double CCODEsFromSensorsTelitSL869DR::get_yaw_correction(const double t,
-                                                               const double n_steps_per_second)
- {
-  // Check in which interval is "t"
-  if (t >= 0 && t < 10.0)
-   {
-    return 0.006544985/n_steps_per_second; // 0.00011 degreess per second
-   }
-  else if (t >= 10.0 && t < 30.0)
-   {
-    return 1.2 * 0.006544985/n_steps_per_second; // 0.00013 degreess per second
-   }
-  else if (t >= 30.0 && t < 60.0)
-   {
-    return 1.6 * 0.006544985/n_steps_per_second; // 0.00018 degreess per second
-   }
-  //else if (t >= 60.0 && t < 60.0*10.0)
-  // {
-  //  return 0.5 * 0.006544985/n_steps_per_second; // 0.00018 degreess per second
-  // }
-  else
-   {
-    return 2.0 * 0.006544985/n_steps_per_second; // 0.75 degreess per second
-    //0.013089969/n_steps_per_second;
-   }
-  //   {
-  //    return 0.013089969/n_steps_per_second; // 0.75 degreess per second
-  //   }
- }
-#endif // #if 0
- 
+  
  // ===================================================================
  /// Fills the matrix that performs the transformation from angular
  /// velocities to Euler-rates
@@ -447,8 +259,8 @@ namespace chapchom
  /// Multiplies a matrix times a vector
  // ===================================================================
  void CCODEsFromSensorsTelitSL869DR::multiply_matrix_times_vector(std::vector<std::vector<double> > &A,
-                                                                 std::vector<double> &b,
-                                                                 std::vector<double> &x)
+                                                                  std::vector<double> &b,
+                                                                  std::vector<double> &x)
  {
   // Get the size of the matrix
   const unsigned n_rows_A = A.size(); 
@@ -499,29 +311,23 @@ namespace chapchom
    } // for (i < n_rows_A)
  
  }
-
+ 
  // ===================================================================
  // Evaluates the system of odes at the given time "t" and the values
  // of the function in "y". The evaluation produces results in the dy
  // vector
  // ===================================================================
  void CCODEsFromSensorsTelitSL869DR::evaluate(const double t,
-                                             const std::vector<double> &y,
-                                             std::vector<double> &dy)
+                                              const std::vector<double> &y,
+                                              std::vector<double> &dy)
  {
-  // Velocities
-  std::vector<double> vel(DIM);
-  // Accelerations
-  std::vector<double> acc(DIM);
   // Angle rates (gyro data)
   std::vector<double> gyro(DIM);
-  // Angle rates (gyro data)
-  std::vector<double> mag(DIM);
-  // Dummy data
-  std::vector<double> dummy(DIM);
+  
+  // TODO: Get the values of the gyro at this time
   // Retrieve data from table
   get_sensors_lecture(t, acc, gyro, mag, dummy);
- 
+  
   // Zero velocities
   vel[0] = 0.0;
   vel[1] = 0.0;

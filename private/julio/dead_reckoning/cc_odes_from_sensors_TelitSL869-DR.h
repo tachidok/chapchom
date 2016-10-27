@@ -50,10 +50,19 @@ namespace chapchom
   virtual ~CCODEsFromSensorsTelitSL869DR();
   
   /// Get the values of the sensors at specific time (computed from table)
-  void get_sensors_lecture(std::vector<double> &t,
-                           std::vector<std::vector<double> > &acc,
-                           std::vector<std::vector<double> > &gyro,
-                           std::vector<std::vector<double> > &euler_angles);
+  void get_sensors_lecture();
+  
+  // Get acceleration data
+  inline std::vector<std::vector<double> > &get_accelerations()
+  {return Acceleration_data;}
+  
+  // Get gyro's data
+  inline std::vector<std::vector<double> > &get_angular_rates()
+  {return Gyro_data;}
+  
+  /// Get the values of the Euler angles
+  inline std::vector<std::vector<double> > &get_euler_angles()
+  {return Euler_angles_data;}
   
   // Get yaw correction as a function of time and the number of steps
   // per second
@@ -115,9 +124,16 @@ namespace chapchom
   
   // Stores linear acceleration
   std::vector<double> Linear_acceleration;
+
+  // Temporary storage for acceleration data
+  std::vector<std::vector<double> > Acceleration_data;
+  // Temporary storage for gyroscope data
+  std::vector<std::vector<double> > Gyro_data;
+  // Temporary storage for Euler angles data
+  std::vector<std::vector<double> > Euler_angles_data;
   
  };
-
+ 
 }
 
 #endif // #ifndef CCODESFROMSENSORSTELITSL869DR_H
