@@ -1,5 +1,5 @@
-#ifndef CCODESFROMTABLEFROMXSENSMT9B_H
-#define CCODESFROMTABLEFROMXSENSMT9B_H
+#ifndef CCODESFROMSENSORSTELITSL869DR_H
+#define CCODESFROMSENSORSTELITSL869DR_H
 
 // Include general/common includes, utilities and initialisation
 #include "../../../src/general/common_includes.h"
@@ -9,39 +9,51 @@
 #include "../../../src/odes/ac_odes.h"
 #include "../../../src/interpolation/cc_newton_interpolator.h"
 
-// Load data from FILE
-#include <stdio.h>
+// The nmea decoder
+#include "cc_nmea_decoder.h"
+
+#define X_MIN -32768
+#define X_MAX 32767
+#define FX_MIN_ACC -2.0
+#define FX_MAX_ACC 2.0
+#define FX_MIN_GYRO -250.0
+#define FX_MAX_GYRO 250.0
+#define SIZE_BLOCK_DATA 15
+
+#define DIM 3
+
+// In charge of mapping the input value to the new scale (used by the
+// class CCODEsFromSensorsTelitSL869DR to transform the data read from
+// the NMEA strings to 'real')
+double scale(double x_min, double x_max, double fx_min, double fx_max, double x)
+{
+ const double s = (fx_max - fx_min) / (x_max - x_min);
+ return ((x - x_min) * s) + fx_min;
+}
 
 namespace chapchom
 {
-
- /// \class CCODEsFromTableFromXSENSMT9B
- /// cc_odes_from_table_from_xsensMT9B.h
-    
+ 
+ /// \class CCODEsFromSensorsTelitSL869DR cc_odes_from_sensors_TelitSL869-DR.h
+ 
  /// This class implements a set of odes from a Table. It inherits the
  /// interface to define ODEs from the ACODEs class
- class CCODEsFromTableFromXSENSMT9B : public virtual ACODEs
+ class CCODEsFromSensorsTelitSL869DR : public virtual ACODEs
  {
- 
+  
  public:
-
+  
   /// Constructor, sets the number of odes
-  CCODEsFromTableFromXSENSMT9B(const char *euler_angles_filename,
-                               const char *raw_sensors_data_filename);
- 
-  /// Empty destructor
-  virtual ~CCODEsFromTableFromXSENSMT9B();
- 
-  /// Loads the data from an input file to generate a table from which
-  /// the ode takes its values
-  void load_table(const char *euler_angles_filename, const char *raw_data_filename);
- 
+  CCODEsFromSensorsTelitSL869DR(const char *input_filename);
+  
+  /// Destructor
+  virtual ~CCODEsFromSensorsTelitSL869DR();
+  
   /// Get the values of the sensors at specific time (computed from table)
-  void get_sensors_lecture(const double t,
-                           std::vector<double> &acc,
-                           std::vector<double> &gyro,
-                           std::vector<double> &mag,
-                           std::vector<double> &euler_angles);
+  void get_sensors_lecture(std::vector<double> &t,
+                           std::vector<std::vector<double> > &acc,
+                           std::vector<std::vector<double> > &gyro,
+                           std::vector<std::vector<double> > &euler_angles);
   
   // Get yaw correction as a function of time and the number of steps
   // per second
@@ -52,12 +64,12 @@ namespace chapchom
   /// velocities to Euler-rates
   void fill_angular_velocities_to_euler_rates_matrix(std::vector<std::vector<double> > &A,
                                                      std::vector<double> &euler_angles);
- 
+  
   /// Multiplies a matrix times a vector
   void multiply_matrix_times_vector(std::vector<std::vector<double> > &A,
                                     std::vector<double> &b,
                                     std::vector<double> &x);
- 
+  
   /// Set linear acceleration for current time
   inline std::vector<double> &linear_acceleration() {return Linear_acceleration;}
  
@@ -78,55 +90,34 @@ namespace chapchom
   /// Copy constructor (we do not want this class to be
   /// copiable). Check
   /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CCODEsFromTableFromXSENSMT9B(const CCODEsFromTableFromXSENSMT9B &copy)
+ CCODEsFromSensorsTelitSL869DR(const CCODEsFromSensorsTelitSL869DR &copy)
   : ACODEs(copy), DIM(0)
    {
-    BrokenCopy::broken_copy("CCODEsFromTableFromXSENSMT9B");
+    BrokenCopy::broken_copy("CCODEsFromSensorsTelitSL869DR");
    }
  
   /// Assignment operator (we do not want this class to be
   /// copiable. Check
   /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
-  void operator=(const CCODEsFromTableFromXSENSMT9B &copy)
+  void operator=(const CCODEsFromSensorsTelitSL869DR &copy)
    {
-    BrokenCopy::broken_assign("CCODEsFromTableFromXSENSMT9B");
+    BrokenCopy::broken_assign("CCODEsFromSensorsTelitSL869DR");
    }
- 
-  // The dimension of the problem
-  const unsigned DIM;
- 
-  // Indicates whether the data have been loaded from the table or not
-  bool Loaded_table;
- 
-  // Number of data in the loaded table
-  unsigned N_data_in_table;
- 
-  // Storage for the loaded data
-  std::vector<double> Table_time;
-  std::vector<double> Table_acc_x;
-  std::vector<double> Table_acc_y;
-  std::vector<double> Table_acc_z;
-  std::vector<double> Table_gyro_x;
-  std::vector<double> Table_gyro_y;
-  std::vector<double> Table_gyro_z;
-  std::vector<double> Table_mag_x;
-  std::vector<double> Table_mag_y;
-  std::vector<double> Table_mag_z;
-  std::vector<double> Table_roll;
-  std::vector<double> Table_pitch;
-  std::vector<double> Table_yaw;
- 
+    
+  // File handler
+  std::ifstream Input_file;
+  
   // The interpolator
-  CCNewtonInterpolator *interpolator_pt;
- 
+  CCNewtonInterpolator interpolator_pt;
+  
   // A transformation matrix from angular velocities to Euler rates
   std::vector<std::vector<double> > A;
-
+  
   // Stores linear acceleration
   std::vector<double> Linear_acceleration;
   
  };
 
 }
- 
-#endif // #ifndef CCODESFROMTABLEFROMXSENSMT9B_H
+
+#endif // #ifndef CCODESFROMSENSORSTELITSL869DR_H

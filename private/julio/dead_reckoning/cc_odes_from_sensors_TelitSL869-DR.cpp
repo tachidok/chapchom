@@ -1,4 +1,4 @@
-/** \file This file implements the CCODEsFromTableFromXSENSMT9B class
+/** \file This file implements the CCODEsFromTableBasedOnAcceleration class
  */
 #include "cc_odes_from_table_from_xsensMT9B.h"
 
@@ -9,29 +9,22 @@ namespace chapchom
  // Constructor, sets the number of odes. We currently have two odes,
  // one for the velocity and the other for the acceleration
  // ===================================================================
- CCODEsFromTableFromXSENSMT9B::CCODEsFromTableFromXSENSMT9B(const char *euler_angles_filename,
-                                                            const char *raw_sensors_data_filename)
-  : ACODEs(9), DIM(3)
+ CCODEsFromSensorsTelitSL869DR::CCODEsFromSensorsTelitSL869DR(const char *input_filename)
+  : ACODEs(9), dim(DIM)
  {
-  // The values have not been loaded into a table 
-  Loaded_table = false;
-  // Initialise the number of data in the Table
-  //N_data_in_table = 0;
-  //N_data_in_table = 18273; // no movement
-  N_data_in_table = 10; // PIC
-  //N_data_in_table = 21162; // characterise yaw drift
-  //N_data_in_table = 266959; // characterise yaw drift2
-  //N_data_in_table = 20076; // ellipse movement
-  //N_data_in_table = 524668; // characterise yaw drift half hour
-  //N_data_in_table = 1808483; // characterise yaw two hours
- 
-  // Create the interpolator
-  interpolator_pt = new CCNewtonInterpolator();
- 
-  // Read the data from file
-  //load_table("./xsensMT9B/no_movement/MT9_euler_00007154_000.log", "./xsensMT9B/no_movement/MT9_cal_00007154_000.log");
-  load_table(euler_angles_filename, raw_sensors_data_filename);
- 
+  // Open the file
+  Input_file.open(input_filename, std::ios::in);
+  if (Input_file.fail())
+   {
+    // Error message
+   std::ostringstream error_message;
+   error_message << "We could not open the NMEA strings - sensors file:["
+                 << input_filename << "]" << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }  
+  
   // Create storage for the matrix that relates the angular velocities
   // with the Euler rates
   A.resize(DIM);
@@ -43,143 +36,162 @@ namespace chapchom
  }
 
  // ===================================================================
- // Empty destructor
+ // Destructor
  // ===================================================================
- CCODEsFromTableFromXSENSMT9B::~CCODEsFromTableFromXSENSMT9B()
+ CCODEsFromSensorsTelitSL869DR::~CCODEsFromSensorsTelitSL869DR()
  { 
-  // Free memory for interpolator
-  delete interpolator_pt;
-  interpolator_pt = 0;
+  // Close the file
+  Input_file.close();
  }
-
- // ===================================================================
- // Loads the data from an input file to generate a table from which
- // the ode takes its values
- // ===================================================================
- void CCODEsFromTableFromXSENSMT9B::load_table(const char *euler_angles_filename,
-                                               const char *raw_data_filename)
- {
-  // Open the file with the euler angles data
-  FILE *file_euler_angles_pt = fopen(euler_angles_filename, "r");
-  if (file_euler_angles_pt == 0)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "The data file [" << euler_angles_filename << "] was not opened"
-                  << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
  
-  // Open the file with the raw data
-  FILE *file_raw_pt = fopen(raw_data_filename, "r");
-  if (file_raw_pt == 0)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "The data file [" << raw_data_filename << "] was not opened"
-                  << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
- 
-  // Resize the containers based on the Table size
-  Table_time.resize(N_data_in_table);
-  Table_acc_x.resize(N_data_in_table);
-  Table_acc_y.resize(N_data_in_table);
-  Table_acc_z.resize(N_data_in_table);
-  Table_gyro_x.resize(N_data_in_table);
-  Table_gyro_y.resize(N_data_in_table);
-  Table_gyro_z.resize(N_data_in_table);
-  Table_mag_x.resize(N_data_in_table);
-  Table_mag_y.resize(N_data_in_table);
-  Table_mag_z.resize(N_data_in_table);
-  Table_roll.resize(N_data_in_table);
-  Table_pitch.resize(N_data_in_table);
-  Table_yaw.resize(N_data_in_table);
- 
-  // Read the data
-  for (unsigned i = 0; i < N_data_in_table; i++)
-   {
-    double time;
-    double acc_x;
-    double acc_y;
-    double acc_z;
-    double gyro_x;
-    double gyro_y;
-    double gyro_z;
-    double magnet_x;
-    double magnet_y;
-    double magnet_z;
-    double roll;
-    double pitch;
-    double yaw;
-    double temperature;
-   
-    // Read euler angles
-    int n_read = fscanf(file_euler_angles_pt, "%lf\t%lf\t%lf\t%lf\n",
-                        &time, &roll, &pitch, &yaw);
-    if (n_read != 4)
-     {
-      // Error message
-      std::ostringstream error_message;
-      error_message << "Number of read values (" << n_read << ") in euler angles file" << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
-     }
-   
-    // Read raw data
-    n_read = fscanf(file_raw_pt, "%lf\t%lf\t%lf\t%lf\t%lf\t%lf\t%lf\t%lf\t%lf\t%lf\t%lf\n",
-                    &time,
-                    &acc_x, &acc_y, &acc_z,
-                    &gyro_x, &gyro_y, &gyro_z,
-                    &magnet_x, &magnet_y, &magnet_z,
-                    &temperature);
-    if (n_read != 11)
-     {
-      // Error message
-      std::ostringstream error_message;
-      error_message << "Number of read values (" << n_read << ") in raw data file" << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
-     }
-   
-    Table_time[i] = time;
-    Table_acc_x[i] = acc_x;
-    Table_acc_y[i] = acc_y;
-    Table_acc_z[i] = acc_z;
-    Table_gyro_x[i] = gyro_x;
-    Table_gyro_y[i] = gyro_y;
-    Table_gyro_z[i] = gyro_z;
-    Table_mag_x[i] = magnet_x;
-    Table_mag_y[i] = magnet_y;
-    Table_mag_z[i] = magnet_z;
-    Table_roll[i] = roll;
-    Table_pitch[i] = pitch;
-    Table_yaw[i] = yaw;
-   }
- 
-  // Close the files
-  fclose(file_euler_angles_pt);
-  fclose(file_raw_pt);
- 
-  Loaded_table = true;
- 
- }
-
  // ======================================================================
  /// Get the values of the sensors at specific time (computed from table)
  // ======================================================================
- void CCODEsFromTableFromXSENSMT9B::get_sensors_lecture(const double t,
-                                                        std::vector<double> &acc,
-                                                        std::vector<double> &gyro,
-                                                        std::vector<double> &mag,
-                                                        std::vector<double> &euler_angles)
+ void CCODEsFromSensorsTelitSL869DR::get_sensors_lecture(std::vector<std::vector<double> > &acc,
+                                                         std::vector<std::vector<double> > &gyro,
+                                                         std::vector<std::vector<double> > &euler_angles)
  {
+  // Read data from the file/sensors. We proceed as follow:
+  // -------------------------------------------------------------------
+  // - State 1: Read a block of SIZE_BLOCK_DATA(15) PSTM3DACC data
+  // -------------------------------------------------------------------
+  // - State 2: Read a block of SIZE_BLOCK_DATA(15) PSTM3DGYRO data
+  // -------------------------------------------------------------------
+  
+  // Extracted character
+  char character;
+  unsigned n_PSTM3DACC = 0;
+  unsigned n_PSTM3DGYRO = 0;
+  unsigned state = 1;
+  // Clear the input vectors
+  acc.clear();
+  gyro.clear();
+  euler_angles.clear();
+  // Loop until eof
+  while(!Input_file.eof())
+   {
+    Input_file.get(character);
+    //std::cerr << character;
+    nmea_decoder.parse(character);
+    // Check whether any of the data structures has new information
+    if (nmea_decoder.is_accelerometer_data_ready())
+     {
+      if (state == 1)
+       {
+        // Get the data structure
+        struct PSTM3DACC pstm3dacc = nmea_decoder.get_pstm3dacc();
+        std::vector<double> read_acc(DIM+1);
+        read_acc[0] = pstm3dacc.time;
+        read_acc[1] = scale(X_MIN, X_MAX, FX_MIN_ACC, FX_MAX_ACC, pstm3dacc.acc_x);
+        read_acc[2] = scale(X_MIN, X_MAX, FX_MIN_ACC, FX_MAX_ACC, pstm3dacc.acc_y);
+        read_acc[3] = scale(X_MIN, X_MAX, FX_MIN_ACC, FX_MAX_ACC, pstm3dacc.acc_z);
+        // Consume accelerometer data
+        nmea_decoder.consume_accelerometer_data();
+        // Add the reading to the acceleration data
+        acc.push_back(read_acc);
+        // Increase the counter of the number of read acceleration data
+        n_PSTM3DACC++;
+        std::cout << "Time:" << read_acc[0]
+                  << "Accelerometer:(" << read_acc[1] << ", " << read_acc[2] << ", " <<  read_acc[3] << ")"
+                  << std::endl;
+        
+        // Have we reached the number of data
+        if (n_PSTM3DACC == SIZE_BLOCK_DATA)
+         {
+          state = 2;
+         }
+        
+       }
+      else
+       {
+        // Something was wrong, clear all previously stored data and
+        // start again
+        state = 1;
+        // Clear the input vectors
+        acc.clear();
+        n_PSTM3DACC = 0;
+        gyro.clear();
+        n_PSTM3DGYRO = 0;
+        euler_angles.clear();
+       }
+      
+     }
+    
+    if (nmea_decoder.is_gyro_data_ready())
+     {      
+      if (state == 2)
+       {
+        // Get the data structure
+        struct PSTM3DGYRO pstm3dgyro = nmea_decoder.get_pstm3dgyro();
+        std::vector<double> read_gyro(DIM+1);
+        read_gyro[0] = pstm3dgyro.time;
+        read_gyro[1] = scale(X_MIN, X_MAX, FX_MIN_GYRO, FX_MAX_GYRO, pstm3dgyro.raw_x);
+        read_gyro[2] = scale(X_MIN, X_MAX, FX_MIN_GYRO, FX_MAX_GYRO, pstm3dgyro.raw_y);
+        read_gyro[3] = scale(X_MIN, X_MAX, FX_MIN_GYRO, FX_MAX_GYRO, pstm3dgyro.raw_z);
+        // Consume gyro data
+        nmea_decoder.consume_gyro_data();
+        // Add the reading to the gyro data
+        gyro.push_back(gyro_read_gyro);
+        // Increase the counter of the number of read acceleration data
+        n_PSTM3DGYRO++;
+        std::cout << "Time:" << read_gyro[0]
+                  << "Gyro:(" << read_gyro[1] << ", " << read_gyro[2] << ", " <<  read_gyro[3] << ")" << std::endl;
+
+        // Have we reached the number of data
+        if (n_PSTM3DGYRO == SIZE_BLOCK_DATA)
+         {
+          state = 3;
+         }
+        
+       }
+      else
+       {
+        // Something was wrong, clear all previously stored data and
+        // start again
+        state = 1;
+        // Clear the input vectors
+        acc.clear();
+        n_PSTM3DACC = 0;
+        gyro.clear();
+        n_PSTM3DGYRO = 0;
+        euler_angles.clear();
+       }
+      
+     }
+    
+    if (nmea_decoder.is_GPRMC_data_ready())
+     {
+      // Get the data structure
+      struct GPRMC gprmc = nmea_decoder.get_gprmc();
+      const double latitude = gprmc.latitude;
+      const double longitude = gprmc.longitude;
+      const double course_degrees = gprmc.course_degrees;
+      // Consume GPRMC data
+      nmea_decoder.consume_GPRMC_data();
+      std::cout << "GPRMC:(" << latitude << ", " << longitude << ", " <<  course_degrees << ")" << std::endl;
+     }
+    
+    // If we have read the corresponding accelerometer and gyro data
+    // then break the cycle
+    if (state == 3)
+     {
+      break;
+     }
+    
+   }
+
+  // HERE HERE HERE
+  
+
+
+
+
+
+
+
+
+
+  
   // Do linear interpolation
   unsigned interpolation_order = 1;
   // Do interpolation if the exact value was not found in the table
@@ -346,7 +358,7 @@ namespace chapchom
  // Get yaw correction as a function of time and the number of steps
  // per second
  // ===================================================================
- const double CCODEsFromTableFromXSENSMT9B::get_yaw_correction(const double t,
+ const double CCODEsFromSensorsTelitSL869DR::get_yaw_correction(const double t,
                                                                const double n_steps_per_second)
  {
   // Check in which interval is "t"
@@ -371,7 +383,7 @@ namespace chapchom
  // Get yaw correction as a function of time and the number of steps
  // per second
  // ===================================================================
- const double CCODEsFromTableFromXSENSMT9B::get_yaw_correction(const double t,
+ const double CCODEsFromSensorsTelitSL869DR::get_yaw_correction(const double t,
                                                                const double n_steps_per_second)
  {
   // Check in which interval is "t"
@@ -406,7 +418,7 @@ namespace chapchom
  /// Fills the matrix that performs the transformation from angular
  /// velocities to Euler-rates
  // ===================================================================
- void CCODEsFromTableFromXSENSMT9B::
+ void CCODEsFromSensorsTelitSL869DR::
  fill_angular_velocities_to_euler_rates_matrix(std::vector<std::vector<double> > &A,
                                                std::vector<double> &euler_angles)
  {
@@ -434,7 +446,7 @@ namespace chapchom
  // ===================================================================
  /// Multiplies a matrix times a vector
  // ===================================================================
- void CCODEsFromTableFromXSENSMT9B::multiply_matrix_times_vector(std::vector<std::vector<double> > &A,
+ void CCODEsFromSensorsTelitSL869DR::multiply_matrix_times_vector(std::vector<std::vector<double> > &A,
                                                                  std::vector<double> &b,
                                                                  std::vector<double> &x)
  {
@@ -493,7 +505,7 @@ namespace chapchom
  // of the function in "y". The evaluation produces results in the dy
  // vector
  // ===================================================================
- void CCODEsFromTableFromXSENSMT9B::evaluate(const double t,
+ void CCODEsFromSensorsTelitSL869DR::evaluate(const double t,
                                              const std::vector<double> &y,
                                              std::vector<double> &dy)
  {
@@ -575,7 +587,7 @@ namespace chapchom
  // given time "t" and the values of the function in "y". The
  // evaluation produces results in the dy vector at the dy[i] position
  // ===================================================================
- void CCODEsFromTableFromXSENSMT9B::evaluate(const unsigned i, const double t,
+ void CCODEsFromSensorsTelitSL869DR::evaluate(const unsigned i, const double t,
                                              const std::vector<double> &y,
                                              std::vector<double> &dy)
  {
