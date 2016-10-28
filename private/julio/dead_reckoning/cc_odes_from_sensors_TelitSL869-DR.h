@@ -17,7 +17,7 @@
 #define FX_MAX_ACC 2.0
 #define FX_MIN_GYRO -250.0
 #define FX_MAX_GYRO 250.0
-//#define SIZE_BLOCK_DATA 15
+#define SIZE_BLOCK_DATA 15
 #define DIM 3
 
 namespace chapchom

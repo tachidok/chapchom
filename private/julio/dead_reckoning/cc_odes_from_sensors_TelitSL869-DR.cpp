@@ -10,7 +10,7 @@ namespace chapchom
  // class CCODEsFromSensorsTelitSL869DR to transform the data read from
  // the NMEA strings to 'real')
  // ===================================================================
- double scale(double x_min, double x_max, double fx_min, double fx_max, double x);
+ double scale(double x_min, double x_max, double fx_min, double fx_max, double x)
  {
   const double s = (fx_max - fx_min) / (x_max - x_min);
   return ((x - x_min) * s) + fx_min;
@@ -81,7 +81,7 @@ namespace chapchom
   char character;
   unsigned n_PSTM3DACC = 0;
   unsigned n_PSTM3DGYRO = 0;
-  unsigned state = 1;
+  unsigned state = 0;
   // Flag to indicate whether GPRMC data has been read
   bool read_GPRMC_data = false;
   // Flag to indicate whether Euler angles data has been read
@@ -101,94 +101,73 @@ namespace chapchom
     // Check whether any of the data structures has new information
     if (nmea_decoder->is_accelerometer_data_ready())
      {
-      if (state == 1)
+      // Is this the first time we are reading data from the accelerometer?
+      if (state == 0)
        {
-        // Get the data structure
-        struct PSTM3DACC pstm3dacc = nmea_decoder->get_pstm3dacc();
-        std::vector<double> read_acc(DIM+1);
-        read_acc[0] = pstm3dacc.time;
-        read_acc[1] = scale(X_MIN, X_MAX, FX_MIN_ACC, FX_MAX_ACC, pstm3dacc.acc_x);
-        read_acc[2] = scale(X_MIN, X_MAX, FX_MIN_ACC, FX_MAX_ACC, pstm3dacc.acc_y);
-        read_acc[3] = scale(X_MIN, X_MAX, FX_MIN_ACC, FX_MAX_ACC, pstm3dacc.acc_z);
-        // Consume accelerometer data
-        nmea_decoder->consume_accelerometer_data();
-        // Add the reading to the acceleration data
-        Acceleration_data.push_back(read_acc);
-        // Increase the counter of the number of read acceleration data
-        n_PSTM3DACC++;
-        std::cout << "Time:" << read_acc[0]
-                  << "Accelerometer:(" << read_acc[1] << ", " << read_acc[2] << ", " <<  read_acc[3] << ")"
-                  << std::endl;
-        
-        // Have we reached the number of data
-        if (n_PSTM3DACC == SIZE_BLOCK_DATA)
-         {
-          state = 2;
-         }
-        
-       }
-      else
-       {
-        // Something was wrong, clear all previously stored data and
-        // start again
         state = 1;
-        // Clear the input vectors
-        Acceleration_data.clear();
-        Gyro_data.clear();
-        Euler_angles_data.clear();
-        n_PSTM3DACC = 0;
-        n_PSTM3DGYRO = 0;        
+       }
+      else if (state == 3) // We got another acceleration data but no
+                           // GPRMC data
+       {
+        // Get out of here
+        LOOP = false;
+        break;
        }
       
+      // Get the data structure
+      struct PSTM3DACC pstm3dacc = nmea_decoder->get_pstm3dacc();
+      std::vector<double> read_acc(DIM+1);
+      read_acc[0] = pstm3dacc.time;
+      read_acc[1] = scale(X_MIN, X_MAX, FX_MIN_ACC, FX_MAX_ACC, pstm3dacc.acc_x);
+      read_acc[2] = scale(X_MIN, X_MAX, FX_MIN_ACC, FX_MAX_ACC, pstm3dacc.acc_y);
+      read_acc[3] = scale(X_MIN, X_MAX, FX_MIN_ACC, FX_MAX_ACC, pstm3dacc.acc_z);
+      // Consume accelerometer data
+      nmea_decoder->consume_accelerometer_data();
+      // Add the reading to the acceleration data
+      Acceleration_data.push_back(read_acc);
+      // Increase the counter of the number of read acceleration data
+      n_PSTM3DACC++;
+      std::cout << "Time:" << read_acc[0]
+                << "Accelerometer:(" << read_acc[1] << ", " << read_acc[2] << ", " <<  read_acc[3] << ")"
+                << std::endl;
      }
     
     if (nmea_decoder->is_gyro_data_ready())
-     {      
-      if (state == 2)
+     {
+      // Is this the first time we are reading data from the gyro?
+      if (state == 1)
        {
-        // Get the data structure
-        struct PSTM3DGYRO pstm3dgyro = nmea_decoder->get_pstm3dgyro();
-        std::vector<double> read_gyro(DIM+1);
-        read_gyro[0] = pstm3dgyro.time;
-        read_gyro[1] = scale(X_MIN, X_MAX, FX_MIN_GYRO, FX_MAX_GYRO, pstm3dgyro.raw_x);
-        read_gyro[2] = scale(X_MIN, X_MAX, FX_MIN_GYRO, FX_MAX_GYRO, pstm3dgyro.raw_y);
-        read_gyro[3] = scale(X_MIN, X_MAX, FX_MIN_GYRO, FX_MAX_GYRO, pstm3dgyro.raw_z);
-        // Consume gyro data
-        nmea_decoder->consume_gyro_data();
-        // Add the reading to the gyro data
-        Gyro_data.push_back(read_gyro);
-        // Increase the counter of the number of read acceleration data
-        n_PSTM3DGYRO++;
-        std::cout << "Time:" << read_gyro[0]
-                  << "Gyro:(" << read_gyro[1] << ", " << read_gyro[2] << ", " <<  read_gyro[3] << ")" << std::endl;
-
-        // Have we reached the number of data
-        if (n_PSTM3DGYRO == SIZE_BLOCK_DATA)
-         {
-          state = 3;
-         }
-        
-       }
-      else
-       {
-        // Something was wrong, clear all previously stored data and
-        // start again
-        state = 1;
-        // Clear the input vectors
-        Acceleration_data.clear();
-        Gyro_data.clear();
-        Euler_angles_data.clear();
-        n_PSTM3DACC = 0;
-        n_PSTM3DGYRO = 0;
+        state = 2;
        }
       
+      // Get the data structure
+      struct PSTM3DGYRO pstm3dgyro = nmea_decoder->get_pstm3dgyro();
+      std::vector<double> read_gyro(DIM+1);
+      read_gyro[0] = pstm3dgyro.time;
+      read_gyro[1] = scale(X_MIN, X_MAX, FX_MIN_GYRO, FX_MAX_GYRO, pstm3dgyro.raw_x);
+      read_gyro[2] = scale(X_MIN, X_MAX, FX_MIN_GYRO, FX_MAX_GYRO, pstm3dgyro.raw_y);
+      read_gyro[3] = scale(X_MIN, X_MAX, FX_MIN_GYRO, FX_MAX_GYRO, pstm3dgyro.raw_z);
+      // Consume gyro data
+      nmea_decoder->consume_gyro_data();
+      // Add the reading to the gyro data
+      Gyro_data.push_back(read_gyro);
+      // Increase the counter of the number of read acceleration data
+      n_PSTM3DGYRO++;
+      std::cout << "Time:" << read_gyro[0]
+                << "Gyro:(" << read_gyro[1] << ", " << read_gyro[2] << ", " <<  read_gyro[3] << ")" << std::endl;
      }
     
     // TODO: GPRMC data
-    read_GPRMC_data = true;
+    read_GPRMC_data = false;
     
     if (nmea_decoder->is_GPRMC_data_ready())
      {
+      // Is this the first time we are reading GPRMC data?
+      if (state == 2)
+       {
+        state = 3;
+       }
+      
       // Get the data structure
       struct GPRMC gprmc = nmea_decoder->get_gprmc();
       const double latitude = gprmc.latitude;
