@@ -303,11 +303,13 @@ int main(int argc, char *argv[])
      odes.current_data_index() = i;
      // Copy the data into a 3x3 vector
      std::vector<double> acc(DIM);
+     // ... and multiply by 9.81 since the data from the gyro are
+     // given in 'g' units
      for (unsigned j = 0; j < DIM; j++)
       {
-       acc[j] = acc_t[j+1];
+       acc[j] = acc_t[j+1] * 9.81;
       }
-   
+     
      // Get yaw correction
      //const double bias_yaw = -0.95 * 180.0/M_PI;
      //double yaw_correction = (-1.0 * bias_yaw) / n_steps_per_second;

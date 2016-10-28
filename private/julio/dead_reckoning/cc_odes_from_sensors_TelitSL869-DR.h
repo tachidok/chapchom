@@ -127,9 +127,11 @@ namespace chapchom
   
   /// In charge of "pairing/align" the data obtained from the sensors
   /// (accelerometers and gyro) via nearest value or interpolation
-  /// such that both lectures correspond to the same time
-  void pair_lectures();
-
+  /// such that both lectures correspond to the same time. This method
+  /// is also in charge of scaling the raw values obtined from the
+  /// lectures and transform them into 'real' values
+  void pair_and_scale_lectures();
+  
   // Indicates the index of the lectures from sensors currently beeing
   // processed
   unsigned Current_data_index;

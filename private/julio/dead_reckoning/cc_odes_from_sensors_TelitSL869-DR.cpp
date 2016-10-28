@@ -118,9 +118,9 @@ namespace chapchom
       struct PSTM3DACC pstm3dacc = nmea_decoder->get_pstm3dacc();
       std::vector<double> read_acc(DIM+1);
       read_acc[0] = pstm3dacc.time;
-      read_acc[1] = scale(X_MIN, X_MAX, FX_MIN_ACC, FX_MAX_ACC, pstm3dacc.acc_x);
-      read_acc[2] = scale(X_MIN, X_MAX, FX_MIN_ACC, FX_MAX_ACC, pstm3dacc.acc_y);
-      read_acc[3] = scale(X_MIN, X_MAX, FX_MIN_ACC, FX_MAX_ACC, pstm3dacc.acc_z);
+      read_acc[1] = pstm3dacc.acc_x;
+      read_acc[2] = pstm3dacc.acc_y;
+      read_acc[3] = pstm3dacc.acc_z;      
       // Consume accelerometer data
       nmea_decoder->consume_accelerometer_data();
       // Add the reading to the acceleration data
@@ -128,7 +128,7 @@ namespace chapchom
       // Increase the counter of the number of read acceleration data
       n_PSTM3DACC++;
       std::cout << "Time:" << read_acc[0]
-                << "Accelerometer:(" << read_acc[1] << ", " << read_acc[2] << ", " <<  read_acc[3] << ")"
+                << " Accelerometer:(" << read_acc[1] << ", " << read_acc[2] << ", " <<  read_acc[3] << ")"
                 << std::endl;
      }
     
@@ -144,9 +144,9 @@ namespace chapchom
       struct PSTM3DGYRO pstm3dgyro = nmea_decoder->get_pstm3dgyro();
       std::vector<double> read_gyro(DIM+1);
       read_gyro[0] = pstm3dgyro.time;
-      read_gyro[1] = scale(X_MIN, X_MAX, FX_MIN_GYRO, FX_MAX_GYRO, pstm3dgyro.raw_x);
-      read_gyro[2] = scale(X_MIN, X_MAX, FX_MIN_GYRO, FX_MAX_GYRO, pstm3dgyro.raw_y);
-      read_gyro[3] = scale(X_MIN, X_MAX, FX_MIN_GYRO, FX_MAX_GYRO, pstm3dgyro.raw_z);
+      read_gyro[1] = pstm3dgyro.raw_x;
+      read_gyro[2] = pstm3dgyro.raw_y;
+      read_gyro[3] = pstm3dgyro.raw_z;
       // Consume gyro data
       nmea_decoder->consume_gyro_data();
       // Add the reading to the gyro data
@@ -154,7 +154,8 @@ namespace chapchom
       // Increase the counter of the number of read acceleration data
       n_PSTM3DGYRO++;
       std::cout << "Time:" << read_gyro[0]
-                << "Gyro:(" << read_gyro[1] << ", " << read_gyro[2] << ", " <<  read_gyro[3] << ")" << std::endl;
+                << " Gyro:(" << read_gyro[1] << ", " << read_gyro[2] << ", " <<  read_gyro[3] << ")"
+                << std::endl;
      }
     
     // TODO: GPRMC data
@@ -177,7 +178,7 @@ namespace chapchom
       nmea_decoder->consume_GPRMC_data();
       // Indicate GPRMC data has been read
       read_GPRMC_data = true;
-      std::cout << "GPRMC:(" << latitude << ", " << longitude << ", " <<  course_degrees << ")" << std::endl;
+      //std::cout << "GPRMC:(" << latitude << ", " << longitude << ", " <<  course_degrees << ")" << std::endl;
      }
     
     // TODO: Read Euler angles data
@@ -199,9 +200,9 @@ namespace chapchom
     return false;
    }
   
-  // Align/pair lectures such that accelerometers and gyro data
-  // are given at the same time
-  pair_lectures();
+  // Align/pair and scale lectures such that accelerometers and gyro
+  // data are given at the same time
+  pair_and_scale_lectures();
   
   return true;
   
@@ -418,110 +419,102 @@ namespace chapchom
                          CHAPCHOM_CURRENT_FUNCTION,
                          CHAPCHOM_EXCEPTION_LOCATION);
  }
-
+ 
  // ===================================================================
- // In charge of "pairing/align" the data obtained from the sensors
- // (accelerometers and gyro) via nearest value or interpolation such
- // that both lectures correspond to the same time
- // ===================================================================
- void CCODEsFromSensorsTelitSL869DR::pair_lectures()
+ /// In charge of "pairing/align" the data obtained from the sensors
+ /// (accelerometers and gyro) via nearest value or interpolation
+ /// such that both lectures correspond to the same time. This method
+ /// is also in charge of scaling the raw values obtined from the
+ /// lectures and transform them into 'real' values
+ // ===================================================================  
+ void CCODEsFromSensorsTelitSL869DR::pair_and_scale_lectures()
  {
   // Get the number of lectures for accelerometer and gyro
   const unsigned n_acc_data = Acceleration_data.size();
   const unsigned n_gyro_data = Gyro_data.size();
+  // Most of the times we have the same number of lectures per
+  // sensors, additionally, the gyro's lecture comes in between two
+  // accelerometers lectures, if that is the case we interpolate the
+  // accelerometer's lectures to the gyro's time, otherwise, we only
+  // copy the nearest data from the accelerometers
+  
   // Get the minimum number of lectures
   double n_min_data = 0.0;
   if (n_acc_data <= n_gyro_data)
    {
     n_min_data = n_acc_data;
    }
-  else
+  else if (n_acc_data > n_gyro_data)
    {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "There are more acceleration data [" << n_acc_data
-                  << "] than gyro data [" << n_gyro_data << "]."
-                  << std::endl << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    n_min_data = n_gyro_data;
    }
   
-  // Indicates the strategy followed to match the data
-  // strategy = 0, nearest value
-  // strategy = 1, linear interpolation
-  
-  // These strategies are based on the knowledge that the
-  // accelerometers are read before the gyro's data
-  const unsigned strategy = 0;
-  // Create temporary arrays to process the data
+  // Generate vectors with the same number of data
   std::vector<std::vector<double> > tmp_acc_data;
-  // Match the values based on the selected strategy
-  if (strategy == 0)
+  std::vector<std::vector<double> > tmp_gyro_data;
+  for (unsigned i = 0; i < n_min_data-1; i++)
    {
-    // Do nothing since the data are already sorted following a
-    // nearest strategy
-   }
-  else if (strategy == 1)
-   {
-    // We use the gyro's time to interpolate the accelerometers data
-    for (unsigned i = 0; i < n_min_data - 1; i++)
+    const double t = Gyro_data[i][0];
+    // Push back gyros data
+    tmp_gyro_data.push_back(Gyro_data[i]);
+    // Get the times for the acceleration readings
+    const double t_acc0 = Acceleration_data[i][0];
+    const double t_acc1 = Acceleration_data[i+1][0];
+    // Can we interpolate?
+    if (t >= t_acc0 && t <= t_acc1)
      {
-      const double t = Gyro_data[i][0];      
-      // We know that gyro's readings come after one reading of the
-      // accelerometers, thus we can use the previous and the next
-      // data from the accelerometers to interpolate
-      const double t_acc0 = Acceleration_data[i][0];
-      const double t_acc1 = Acceleration_data[i+1][0];
-      if (t >= t_acc0 && t <= t_acc1)
+      std::vector<double> interpolated_data(DIM+1);
+      interpolated_data[0] = t;
+      const double dt = t_acc1 - t_acc0;
+      // Linear interpolation (for each dimension)
+      for (unsigned j = 1; j < DIM+1; j++)
        {
-        std::vector<double> interpolated_data(DIM+1);
-        interpolated_data[0] = t;
-        const double dt = t_acc1 - t_acc0;
-        // Linear interpolation (for each dimension)
-        for (unsigned j = 0; j < DIM; j++)
-         {
-          // Using divided differences notation
-          const double a0 = Acceleration_data[i][j];
-          const double a1 =
-           (Acceleration_data[i+1][j] - Acceleration_data[i][j]) / dt;
-          // Do interpolation
-          interpolated_data[j+1] = a0 + a1 * (t - t_acc0);
-         }
+        // Using divided differences notation
+        const double a0 = Acceleration_data[i][j];
+        const double a1 =
+         (Acceleration_data[i+1][j] - Acceleration_data[i][j]) / dt;
+        // Do interpolation
+        interpolated_data[j] = a0 + a1 * (t - t_acc0);
+       }
+      // Add to the vector
+      tmp_acc_data.push_back(interpolated_data);
+     }
+    else // No iterpolation, copy the nearest
+     {
+      if (fabs(t - t_acc0) < fabs(t - t_acc1))
+       {
+        // Change the time to reflect the same as the gyro's data
+        Acceleration_data[i][0] = t;
         // Add to the vector
-        tmp_acc_data.push_back(interpolated_data);
-        
-       } // if (t >= t_acc0 && t <= t_acc1)
+        tmp_acc_data.push_back(Acceleration_data[i]);
+       }
       else
        {
-        // Error message
-        std::ostringstream error_message;
-        error_message << "Interpolation error, the time of reading the gyro"
-                      << "\nis not between two readings of the accelerometer"
-                      << "\nGyro["<<i<<"][0]:" << t
-                      << "\nAcceleration["<<i<<"][0]:"<<Acceleration_data[i][0]
-                      << "\nAcceleration["<<i+1<<"][0]:"<<Acceleration_data[i+1][0]
-                      << std::endl << std::endl;
-        throw ChapchomLibError(error_message.str(),
-                               CHAPCHOM_CURRENT_FUNCTION,
-                               CHAPCHOM_EXCEPTION_LOCATION);
+        // Change the time to reflect the same as the gyro's data
+        Acceleration_data[i+1][0] = t;
+        // Add to the vector
+        tmp_acc_data.push_back(Acceleration_data[i+1]);
        }
       
-      
-     } // for (i < n_min_data)
-
-    // Copy back the information to the "Acceleration_data" structure
-    Acceleration_data.clear();
-    Acceleration_data.resize(n_min_data);
-    for (unsigned i = 0; i < n_min_data; i++)
-     {
-      Acceleration_data.push_back(tmp_acc_data[i]);
-     }
+     } // if (t >= t_acc0 && t <= t_acc1)
     
-   }
-  else
+   } // for (i < n_min_data-1)
+  
+  // Copy back the information to the "Acceleration_data" and
+  // "Gyro_data" structure. Also perform the scaling of the
+  // information
+  Acceleration_data.clear();
+  Gyro_data.clear();
+  for (unsigned i = 0; i < n_min_data-1; i++)
    {
-    // Do nothing
+    tmp_acc_data[i][1] = scale(X_MIN, X_MAX, FX_MIN_ACC, FX_MAX_ACC, tmp_acc_data[i][1]);
+    tmp_acc_data[i][2] = scale(X_MIN, X_MAX, FX_MIN_ACC, FX_MAX_ACC, tmp_acc_data[i][2]);
+    tmp_acc_data[i][3] = scale(X_MIN, X_MAX, FX_MIN_ACC, FX_MAX_ACC, tmp_acc_data[i][3]);    
+    Acceleration_data.push_back(tmp_acc_data[i]);
+    tmp_gyro_data[i][1] = scale(X_MIN, X_MAX, FX_MIN_GYRO, FX_MAX_GYRO, tmp_gyro_data[i][1]);
+    tmp_gyro_data[i][2] = scale(X_MIN, X_MAX, FX_MIN_GYRO, FX_MAX_GYRO, tmp_gyro_data[i][2]);
+    tmp_gyro_data[i][3] = scale(X_MIN, X_MAX, FX_MIN_GYRO, FX_MAX_GYRO, tmp_gyro_data[i][3]);    
+    Gyro_data.push_back(tmp_gyro_data[i]);
    }
   
  }

@@ -678,7 +678,8 @@ namespace chapchom
    }
   else
    {
-    return false;
+    // return false; // TODO: tachidok, check for special case when we
+    // have no data, a comma after another comma ,,
    }
   
   if (transform_helper(gprmc.EW_magnetic, Fields[11]))
@@ -687,7 +688,9 @@ namespace chapchom
    }
   else
    {
-    return false;
+    // return false; // TODO: tachidok, check for special case when we
+    // have no data, a comma after another comma ,,    
+    // return false;
    }  
   
   // Indicate that gprmc data is ready
