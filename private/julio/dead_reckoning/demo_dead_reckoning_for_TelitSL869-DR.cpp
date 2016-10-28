@@ -13,6 +13,8 @@
 // Integration methods
 #include "../../../src/integration/cc_euler_method.h"
 #include "../../../src/integration/cc_RK4_method.h"
+// The odes
+#include "cc_odes_from_sensors_TelitSL869-DR.h"
 // The nmea decoder
 #include "cc_nmea_decoder.h"
 
@@ -249,24 +251,16 @@ int main(int argc, char *argv[])
  // Configuration and initialisation of the problem (steps, h, initial
  // values)
  // -----------------------------------------------------------------
- // The step size is variable and depends on the number of data
- // received from the sensors
- double h = 0.0;
+ // The step size is given by the number of data we have in a second
+ // (15Hz)
+ const double h = 1.0 / SIZE_BLOCK_DATA;
  
  // Current time
- double t = 0.0;
+ double time = 0.0;
  
  // -----------------------------------------------------------------------------
  // Initialise
  // -----------------------------------------------------------------------------
-  
- // Get the readings from sensores
- // Accelerations
- std::vector<std::vector<double> > acc(DIM);
- // Retrieve data from sensors
- odes.get_sensors_lecture(); // tachidok
- // TODO : Get data from sensors
- // acc = get_acceleration_data();
  
  // Initial conditions
  y[0][0] = 0.0; // Initial x-position
@@ -281,203 +275,171 @@ int main(int argc, char *argv[])
  y[0][8] = 0.0; // Initial yaw
  
  // Output the initial data to screen
- std::cout << "t: " << t
+ std::cout << "t: " << time
            << " x-pos: " << y[0][0] << " x-vel: " << y[0][1]
            << " y-pos: " << y[0][2] << " y-vel: " << y[0][3]
            << " z-pos: " << y[0][4] << " z-vel: " << y[0][5]
            << " roll: " << y[0][6] << " pitch: " << y[0][7] << " yaw: " << y[0][8] << std::endl;
- 
- // Get yaw correction
- //const double bias_yaw = -0.95 * 180.0/M_PI;
- //double yaw_correction = (-1.0 * bias_yaw) / n_steps_per_second;
- //double yaw_correction = 0.75 / n_steps_per_second;
- //double yaw_correction = (0.75 / n_steps_per_second) * M_PI / 180.0;
- //double yaw_correction = 0.001745278 * M_PI / 180.0;
- //double yaw_correction = 0.001745278 * M_PI / 180.0;
- //double yaw_correction = 0.003696498 * M_PI / 180.0;
- //double yaw_correction = (5.0 * 180.0/M_PI) / n_steps_per_second;
- //double yaw_correction = 0.013089969/n_steps_per_second; // 0.75 degreess per second
- //double yaw_correction = 0.013089969/n_steps_per_second;
- //double yaw_correction = 0.006544985/n_steps_per_second; // 0.01 degreess per second
- //double yaw_correction = 0.0;
- //double yaw_correction = odes.get_yaw_correction(t, n_steps_per_second);
- 
- // -------------------------------------------------------------------
- // Apply complementary filter
- // -------------------------------------------------------------------
- // Complementary filter parameter
- const double alpha = 0.98;
- //const double alpha_yaw = 1.0;
- // Transform accelerations to angles
- std::vector<double> acc_angles(3, 0.0);
- //acc_angles[0] = atan2(acc_inertial[2], acc_inertial[1]);
- //acc_angles[1] = atan2(acc_inertial[0], acc_inertial[2]);
- //acc_angles[2] = atan2(acc_inertial[1], acc_inertial[0]);
- 
- //acc_angles[0] = atan2(acc_inertial[1], acc_inertial[2]);
- //acc_angles[1] = atan2(-acc_inertial[0], sqrt(acc_inertial[1]*acc_inertial[1]+acc_inertial[2]*acc_inertial[2]));
- //acc_angles[2] = atan2(acc_inertial[1], acc_inertial[0]);
- 
- acc_angles[0] = atan2(acc[1], acc[2]);
- acc_angles[1] = atan2(-acc[0], sqrt(acc[1]*acc[1]+acc[2]*acc[2]));
- acc_angles[2] = atan2(acc[2], sqrt(acc[0]*acc[0]+acc[2]*acc[2]));
- //acc_angles[2] = atan2(sqrt(acc[0]*acc[0]+acc[1]*acc[1]), acc[0]); // HERE
- 
- //acc_angles[2] = atan2(acc[1], acc[0]);
- //acc_angles[2] = atan2(-acc[0], sqrt(acc[0]*acc[0]+acc[1]*acc[1]+acc[2]*acc[2]));
- //acc_angles[2] = (atan2(acc[1], acc[0]) + atan2(-acc[0], sqrt(acc[0]*acc[0]+acc[1]*acc[1]+acc[2]*acc[2]))) / 2.0;
-   
- // Update filtered Euler angles
- y[0][6] = alpha * y[0][6] + (1.0 - alpha) * acc_angles[0];
- y[0][7] = alpha * y[0][7] + (1.0 - alpha) * acc_angles[1];
- //y[0][8]+= yaw_correction;
- //y[0][8] = alpha_yaw * y[0][8];// + (1.0 - alpha) * yaw_correction;
- //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * (y[0][8] + yaw_correction);
- //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * acc_angles[2];
- //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * magnetometer[1];
-  
- // --------------------------------------------------
- // Gravity compensation
- // --------------------------------------------------
- // Extract gravity and output the raw and the modified accelerations
- 
- // Create the rotation matrices
- std::vector<std::vector<double> > R(DIM);
- std::vector<std::vector<double> > R_t(DIM);
- for (unsigned i = 0; i < DIM; i++)
+
+ bool LOOP = true;
+
+ while (LOOP)
   {
-   R[i].resize(DIM);
-   R_t[i].resize(DIM);
-  }
- 
- // Fill rotation matrices
- fill_rotation_matrices(R, R_t, y[0][6], y[0][7], y[0][8]); // tachidok
- 
- // Transform from the body reference frame to the inertial reference
- // frame
- std::vector<double> acc_inertial(3, 0.0);
- multiply_matrix_times_vector(R_t, acc, acc_inertial);//tachidok
- // Substract gravity
- acc_inertial[2]-=9.81;
- 
- // Set linear acceleration
- odes.linear_acceleration() = acc_inertial;
- 
- // -----------------
- // Output data
- // -----------------
- // Position
- outfile_position << t << " " << y[0][0] << " " << y[0][2] << " " << y[0][4] << std::endl; 
- // Velocity
- outfile_velocity << t << " " << y[0][1] << " " << y[0][3] << " " << y[0][5] << std::endl;
- // Raw accelerations
- outfile_raw_acc << t << " " << acc[0] << " " << acc[1] << " " << acc[2] << std::endl;
- // Inertial accelerations
- outfile_intertial_acc << t << " " << acc_inertial[0] << " "
-                       << acc_inertial[1] << " " << acc_inertial[2] << std::endl;
- // Euler angles
- outfile_roll_pitch_yaw << t << " " << y[0][6] << " " << y[0][7] << " " << y[0][8] << std::endl;
- // Euler angles from accelerations
- outfile_roll_pitch_yaw_from_acc << t << " " << acc_angles[0] << " "
-                                 << acc_angles[1] << " " << acc_angles[2] << std::endl;
- 
- // -----------------------------------------------------------------
- // Integrate
- // -----------------------------------------------------------------
- //integrator->integrate(*odes, h, t_initial, t_final, y);
- for (unsigned i = 0; i < n_steps; i++)
-  {
-   integrator->integrate_step(*odes, h, t, y);
-   // Update data
-   for (unsigned j = 0; j < n_odes; j++)
+   // Retrieve data from sensors
+   LOOP = odes.get_sensors_lectures(); // tachidok
+   if (!LOOP)
     {
-     y[0][j] = y[1][j];
+     break;
     }
-   // Update time
-   t+=h;
    
-   std::cout << "t: " << t
-             << " x-pos: " << y[0][0] << " x-vel: " << y[0][1]
-             << " y-pos: " << y[0][2] << " y-vel: " << y[0][3]
-             << " z-pos: " << y[0][4] << " z-vel: " << y[0][5]
-             << " roll: " << y[0][6] << " pitch: " << y[0][7] << " yaw: " << y[0][8] << std::endl;
+   // Get the number of acceleration data
+   const unsigned n_acc_data = odes.nacceleration_data();
+   for (unsigned i = 0; i < n_acc_data; i++)
+    {
+     // Get the readings from sensors
+     // Accelerations
+     std::vector<double> acc_t = odes.get_accelerations(i);
+     // Set the current data index
+     odes.current_data_index() = i;
+     // Copy the data into a 3x3 vector
+     std::vector<double> acc(DIM);
+     for (unsigned j = 0; j < DIM; j++)
+      {
+       acc[j] = acc_t[j+1];
+      }
    
-   // Get the accelerometers readings from the Table
-   odes.get_sensors_lecture();
+     // Get yaw correction
+     //const double bias_yaw = -0.95 * 180.0/M_PI;
+     //double yaw_correction = (-1.0 * bias_yaw) / n_steps_per_second;
+     //double yaw_correction = 0.75 / n_steps_per_second;
+     //double yaw_correction = (0.75 / n_steps_per_second) * M_PI / 180.0;
+     //double yaw_correction = 0.001745278 * M_PI / 180.0;
+     //double yaw_correction = 0.001745278 * M_PI / 180.0;
+     //double yaw_correction = 0.003696498 * M_PI / 180.0;
+     //double yaw_correction = (5.0 * 180.0/M_PI) / n_steps_per_second;
+     //double yaw_correction = 0.013089969/n_steps_per_second; // 0.75 degreess per second
+     //double yaw_correction = 0.013089969/n_steps_per_second;
+     //double yaw_correction = 0.006544985/n_steps_per_second; // 0.01 degreess per second
+     //double yaw_correction = 0.0;
+     //double yaw_correction = odes.get_yaw_correction(t, n_steps_per_second);
    
-   // -------------------------------------------------------------------
-   // Apply complementary filter
-   // -------------------------------------------------------------------
-   // Transform accelerations to angles
-   //acc_angles[0] = atan2(acc_inertial[2], acc_inertial[1]);
-   //acc_angles[1] = atan2(acc_inertial[0], acc_inertial[2]);
-   //acc_angles[2] = atan2(acc_inertial[1], acc_inertial[0]);
+     // -------------------------------------------------------------------
+     // Apply complementary filter
+     // -------------------------------------------------------------------
+     // Complementary filter parameter
+     const double alpha = 0.98;
+     //const double alpha_yaw = 1.0;
    
-   //acc_angles[0] = atan2(acc_inertial[1], acc_inertial[2]);
-   //acc_angles[1] = atan2(-acc_inertial[0], sqrt(acc_inertial[1]*acc_inertial[1]+acc_inertial[2]*acc_inertial[2]));
-   //acc_angles[2] = atan2(acc_inertial[1], acc_inertial[0]);
+     // Transform accelerations to angles
+     std::vector<double> acc_angles(3, 0.0);
+     //acc_angles[0] = atan2(acc_inertial[2], acc_inertial[1]);
+     //acc_angles[1] = atan2(acc_inertial[0], acc_inertial[2]);
+     //acc_angles[2] = atan2(acc_inertial[1], acc_inertial[0]);
    
-   acc_angles[0] = atan2(acc[1], acc[2]);
-   acc_angles[1] = atan2(-acc[0], sqrt(acc[1]*acc[1]+acc[2]*acc[2]));
-   acc_angles[2] = atan2(acc[2], sqrt(acc[0]*acc[0]+acc[2]*acc[2]));
+     //acc_angles[0] = atan2(acc_inertial[1], acc_inertial[2]);
+     //acc_angles[1] = atan2(-acc_inertial[0], sqrt(acc_inertial[1]*acc_inertial[1]+acc_inertial[2]*acc_inertial[2]));
+     //acc_angles[2] = atan2(acc_inertial[1], acc_inertial[0]);
    
-   //acc_angles[2] = atan2(sqrt(acc[0]*acc[0]+acc[1]*acc[1]), acc[0]); // HERE
+     acc_angles[0] = atan2(acc[1], acc[2]);
+     acc_angles[1] = atan2(-acc[0], sqrt(acc[1]*acc[1]+acc[2]*acc[2]));
+     acc_angles[2] = atan2(acc[2], sqrt(acc[0]*acc[0]+acc[2]*acc[2]));
+     //acc_angles[2] = atan2(sqrt(acc[0]*acc[0]+acc[1]*acc[1]), acc[0]); // HERE
    
-   //acc_angles[2] = atan2(acc[1], acc[0]);
-   //acc_angles[2] = atan2(-acc[0], sqrt(acc[0]*acc[0]+acc[1]*acc[1]+acc[2]*acc[2]));
-   //acc_angles[2] = (atan2(acc[1], acc[0]) + atan2(-acc[0], sqrt(acc[0]*acc[0]+acc[1]*acc[1]+acc[2]*acc[2]))) / 2.0;
+     //acc_angles[2] = atan2(acc[1], acc[0]);
+     //acc_angles[2] = atan2(-acc[0], sqrt(acc[0]*acc[0]+acc[1]*acc[1]+acc[2]*acc[2]));
+     //acc_angles[2] = (atan2(acc[1], acc[0]) + atan2(-acc[0], sqrt(acc[0]*acc[0]+acc[1]*acc[1]+acc[2]*acc[2]))) / 2.0;
    
-   mag_proc[0] = atan2(magnetometer[1], magnetometer[2]);
-   mag_proc[1] = atan2(-magnetometer[0], sqrt(magnetometer[1]*magnetometer[1]+magnetometer[2]*magnetometer[2]));
-   mag_proc[2] = atan2(magnetometer[2], sqrt(magnetometer[0]*magnetometer[0]+magnetometer[2]*magnetometer[2]));
+     // Update filtered Euler angles
+     y[0][6] = alpha * y[0][6] + (1.0 - alpha) * acc_angles[0];
+     y[0][7] = alpha * y[0][7] + (1.0 - alpha) * acc_angles[1];
+     //y[0][8]+= yaw_correction;
+     //y[0][8] = alpha_yaw * y[0][8];// + (1.0 - alpha) * yaw_correction;
+     //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * (y[0][8] + yaw_correction);
+     //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * acc_angles[2];
+     //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * magnetometer[1];
    
-   // Update yaw correcion
-   yaw_correction = odes.get_yaw_correction(t, n_steps_per_second);
+     // --------------------------------------------------
+     // Gravity compensation
+     // --------------------------------------------------
+     // Extract gravity and output the raw and the modified
+     // accelerations
    
-   // Update filtered Euler angles
-   y[0][6] = alpha * y[0][6] + (1.0 - alpha) * acc_angles[0];
-   y[0][7] = alpha * y[0][7] + (1.0 - alpha) * acc_angles[1];
-   //y[0][8]+= yaw_correction;
-   //y[0][8] = alpha_yaw * y[0][8];// + (1.0 - alpha) * yaw_correction;
-   //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * (y[0][8] + yaw_correction);
-   //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * yaw_correction;
-   //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * acc_angles[2];
-   //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * magnetometer[1];
-      
-   // --------------------------------------------------
-   // Gravity compensation
-   // --------------------------------------------------
-   // Extract gravity and output the raw and the modified accelerations
+     // Create the rotation matrices
+     std::vector<std::vector<double> > R(DIM);
+     std::vector<std::vector<double> > R_t(DIM);
+     for (unsigned i = 0; i < DIM; i++)
+      {
+       R[i].resize(DIM);
+       R_t[i].resize(DIM);
+      }
    
-   // Fill rotation matrices
-   fill_rotation_matrices(R, R_t, y[0][6], y[0][7], y[0][8]); // tachidok
+     // Fill rotation matrices
+     fill_rotation_matrices(R, R_t, y[0][6], y[0][7], y[0][8]); // tachidok
    
-   // Transform from the body reference frame to the inertial reference
-   // frame
-   multiply_matrix_times_vector(R_t, acc, acc_inertial);//tachidok
-   // Substract gravity
-   acc_inertial[2]-=9.81;
+     // Transform from the body reference frame to the inertial
+     // reference frame
+     std::vector<double> acc_inertial(3, 0.0);
+     multiply_matrix_times_vector(R_t, acc, acc_inertial);//tachidok
+     // Substract gravity
+     acc_inertial[2]-=9.81;
    
-   // Set linear acceleration
-   odes.linear_acceleration() = acc_inertial;
+     // Set linear acceleration
+     odes.linear_acceleration() = acc_inertial;
    
-   // -----------------
-   // Output data
-   // -----------------
-   // Position
-   outfile_position << t << " " << y[0][0] << " " << y[0][2] << " " << y[0][4] << std::endl; 
-   // Velocity
-   outfile_velocity << t << " " << y[0][1] << " " << y[0][3] << " " << y[0][5] << std::endl;
-   // Raw accelerations
-   outfile_raw_acc << t << " " << acc[0] << " " << acc[1] << " " << acc[2] << std::endl;
-   // Inertial accelerations
-   outfile_intertial_acc << t << " " << acc_inertial[0] << " "
-                         << acc_inertial[1] << " " << acc_inertial[2] << std::endl;
-   // Euler angles
-   outfile_roll_pitch_yaw << t << " " << y[0][6] << " " << y[0][7] << " " << y[0][8] << std::endl;
-   // Euler angles from accelerations
-   outfile_roll_pitch_yaw_from_acc << t << " " << acc_angles[0] << " "
-                                   << acc_angles[1] << " " << acc_angles[2] << std::endl;   
+     // -----------------------------------------------------------------
+     // Integrate
+     // -----------------------------------------------------------------
+     integrator->integrate_step(odes, h, time, y);
+     // Update data
+     for (unsigned j = 0; j < n_odes; j++)
+      {
+       y[0][j] = y[1][j];
+      }
+     // Update time
+     time+=h;
+     
+     // -----------------
+     // Output data
+     // -----------------
+     // Position
+     outfile_position << time
+                      << " " << y[0][0]
+                      << " " << y[0][2]
+                      << " " << y[0][4] << std::endl; 
+     // Velocity
+     outfile_velocity << time
+                      << " " << y[0][1]
+                      << " " << y[0][3]
+                      << " " << y[0][5] << std::endl;
+     // Raw accelerations
+     outfile_raw_acc << time
+                     << " " << acc[0]
+                     << " " << acc[1]
+                     << " " << acc[2] << std::endl;
+     // Inertial accelerations
+     outfile_intertial_acc << time
+                           << " " << acc_inertial[0]
+                           << " " << acc_inertial[1]
+                           << " " << acc_inertial[2] << std::endl;
+     // Euler angles
+     outfile_roll_pitch_yaw << time
+                            << " " << y[0][6]
+                            << " " << y[0][7]
+                            << " " << y[0][8] << std::endl;
+   
+     // Euler angles from accelerations
+     outfile_roll_pitch_yaw_from_acc << time
+                                     << " " << acc_angles[0]
+                                     << " " << acc_angles[1]
+                                     << " " << acc_angles[2] << std::endl;
+   
+     std::cout << "t: " << time
+               << " x-pos: " << y[0][0] << " x-vel: " << y[0][1]
+               << " y-pos: " << y[0][2] << " y-vel: " << y[0][3]
+               << " z-pos: " << y[0][4] << " z-vel: " << y[0][5]
+               << " roll: " << y[0][6] << " pitch: " << y[0][7] << " yaw: " << y[0][8] << std::endl;
+   
+    }
    
   }
  
@@ -494,8 +456,6 @@ int main(int argc, char *argv[])
  // Free memory
  delete integrator;
  integrator = 0;
- delete odes;
- odes = 0;
  
  // Finalise chapcom
  finalise_chapchom();

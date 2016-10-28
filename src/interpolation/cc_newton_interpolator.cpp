@@ -85,8 +85,9 @@ namespace chapchom
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "This is not correctly implemented, check it and try it!!!\n"
-                  << "Look for ERROR HERE"
+    error_message << "This is not correctly implemented, check it, test "
+                  << "it and then use it!!!\n"
+                  << "Look for 'ERROR HERE' in code"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
