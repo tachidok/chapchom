@@ -20,6 +20,9 @@
 #define SIZE_BLOCK_DATA 15
 #define DIM 3
 
+#define TO_RADIANS (M_PI/180.0)
+#define TO_DEGREES (180.0/M_PI)
+
 namespace chapchom
 {
  

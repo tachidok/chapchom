@@ -357,12 +357,18 @@ namespace chapchom
   for (unsigned j = 0; j < DIM; j++)
    {
     gyro[j] = gyro_t[j+1];
+# if 0 // TODO: tachidok, what if we set the yaw data to 0.0 dps
+    if (j == 2)
+     {
+      gyro[j] = 0.0;
+     }
+#endif
    }
   
   // Store the Euler-angles rates
   std::vector<double> euler_angles_rates(DIM);
   multiply_matrix_times_vector(A, gyro, euler_angles_rates);
- 
+  
   // -----------------
   // y[0] x-position
   // y[1] x-velocity
@@ -408,8 +414,8 @@ namespace chapchom
  // evaluation produces results in the dy vector at the dy[i] position
  // ===================================================================
  void CCODEsFromSensorsTelitSL869DR::evaluate(const unsigned i, const double t,
-                                             const std::vector<double> &y,
-                                             std::vector<double> &dy)
+                                              const std::vector<double> &y,
+                                              std::vector<double> &dy)
  {
   // Error message
   std::ostringstream error_message;
@@ -511,9 +517,10 @@ namespace chapchom
     tmp_acc_data[i][2] = scale(X_MIN, X_MAX, FX_MIN_ACC, FX_MAX_ACC, tmp_acc_data[i][2]);
     tmp_acc_data[i][3] = scale(X_MIN, X_MAX, FX_MIN_ACC, FX_MAX_ACC, tmp_acc_data[i][3]);    
     Acceleration_data.push_back(tmp_acc_data[i]);
-    tmp_gyro_data[i][1] = scale(X_MIN, X_MAX, FX_MIN_GYRO, FX_MAX_GYRO, tmp_gyro_data[i][1]);
-    tmp_gyro_data[i][2] = scale(X_MIN, X_MAX, FX_MIN_GYRO, FX_MAX_GYRO, tmp_gyro_data[i][2]);
-    tmp_gyro_data[i][3] = scale(X_MIN, X_MAX, FX_MIN_GYRO, FX_MAX_GYRO, tmp_gyro_data[i][3]);    
+    // And transform to radians since they are given in degrees
+    tmp_gyro_data[i][1] = scale(X_MIN, X_MAX, FX_MIN_GYRO, FX_MAX_GYRO, tmp_gyro_data[i][1]) * TO_RADIANS;
+    tmp_gyro_data[i][2] = scale(X_MIN, X_MAX, FX_MIN_GYRO, FX_MAX_GYRO, tmp_gyro_data[i][2]) * TO_RADIANS;
+    tmp_gyro_data[i][3] = scale(X_MIN, X_MAX, FX_MIN_GYRO, FX_MAX_GYRO, tmp_gyro_data[i][3]) * TO_RADIANS;
     Gyro_data.push_back(tmp_gyro_data[i]);
    }
   

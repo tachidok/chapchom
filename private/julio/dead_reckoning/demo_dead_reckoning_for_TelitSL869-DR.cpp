@@ -18,6 +18,9 @@
 // The nmea decoder
 #include "cc_nmea_decoder.h"
 
+#define LOWER_THRESHOLD 1.0
+//#define LOWER_THRESHOLD 9.81 * 0.1
+
 using namespace chapchom;
 
 void fill_rotation_matrices(std::vector<std::vector<double> > &R,
@@ -121,7 +124,11 @@ int main(int argc, char *argv[])
  // Instantiation of the problem
  // -----------------------------------------------------------------
  // The ode's
- CCODEsFromSensorsTelitSL869DR odes("./bin/Cadenas_GNSS.txt");
+ //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/Cadenas_GNSS.txt");
+ CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_1_espera.log");
+ //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_2_sin_espera_basura.log");
+ //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_3_sin_espera_sin_basura.log");
+ //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_4_sin_espera_sin_basura_final.log");
  // Create the factory for the methods
  CCFactoryIntegrationMethod *factory_integration_methods =
   new CCFactoryIntegrationMethod();
@@ -310,6 +317,26 @@ int main(int argc, char *argv[])
        acc[j] = acc_t[j+1] * 9.81;
       }
      
+#if 1 // TODO
+     // Correct accelerations due to misalignment on device
+     {
+      double tmp = acc[0];
+      acc[0] = acc[1];
+      acc[1] = tmp*(-1.0);
+     }
+#endif // #if 0
+     
+#if 0 // TODO
+     // Filter accelerations data?
+     for (unsigned j = 0; j < DIM; j++)
+      {
+       if (fabs(acc[j] - LOWER_THRESHOLD) < 0.0)
+        {
+         acc[j] = 0.0;
+        }
+      }
+#endif // #if 0
+     
      // Get yaw correction
      //const double bias_yaw = -0.95 * 180.0/M_PI;
      //double yaw_correction = (-1.0 * bias_yaw) / n_steps_per_second;
@@ -324,14 +351,14 @@ int main(int argc, char *argv[])
      //double yaw_correction = 0.006544985/n_steps_per_second; // 0.01 degreess per second
      //double yaw_correction = 0.0;
      //double yaw_correction = odes.get_yaw_correction(t, n_steps_per_second);
-   
+     
      // -------------------------------------------------------------------
      // Apply complementary filter
      // -------------------------------------------------------------------
      // Complementary filter parameter
      const double alpha = 0.98;
      //const double alpha_yaw = 1.0;
-   
+     
      // Transform accelerations to angles
      std::vector<double> acc_angles(3, 0.0);
      //acc_angles[0] = atan2(acc_inertial[2], acc_inertial[1]);
