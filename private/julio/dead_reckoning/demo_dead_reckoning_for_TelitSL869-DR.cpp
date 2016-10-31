@@ -20,6 +20,8 @@
 
 #define LOWER_THRESHOLD 1.0
 //#define LOWER_THRESHOLD 9.81 * 0.1
+#define GRAVITY 9.81
+//#define GRAVITY_TO_BODY_FRAME
 
 using namespace chapchom;
 
@@ -125,10 +127,13 @@ int main(int argc, char *argv[])
  // -----------------------------------------------------------------
  // The ode's
  //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/Cadenas_GNSS.txt");
- CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_1_espera.log");
+ //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_1_espera.log");
  //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_2_sin_espera_basura.log");
  //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_3_sin_espera_sin_basura.log");
  //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_4_sin_espera_sin_basura_final.log");
+ //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_5_espera_large.log");
+ //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_6_espera_large.log");
+ CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_7_espera_large.log");
  // Create the factory for the methods
  CCFactoryIntegrationMethod *factory_integration_methods =
   new CCFactoryIntegrationMethod();
@@ -201,7 +206,25 @@ int main(int argc, char *argv[])
                           CHAPCHOM_CURRENT_FUNCTION,
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
-
+ 
+#ifdef GRAVITY_TO_BODY_FRAME
+ // Body frame gravity
+ char file_body_frame_gravity_name[100];
+ sprintf(file_body_frame_gravity_name, "./RESLT/body_frame_gravity.dat");
+ std::ofstream outfile_body_frame_gravity;
+ outfile_body_frame_gravity.open(file_body_frame_gravity_name, std::ios::out);
+ if (outfile_body_frame_gravity.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_body_frame_gravity_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+#endif // #ifdef GRAVITY_TO_BODY_FRAME
+ 
  // Inertial accelerations
  char file_inertial_accelerations_name[100];
  sprintf(file_inertial_accelerations_name, "./RESLT/inertial_accelerations.dat");
@@ -314,7 +337,7 @@ int main(int argc, char *argv[])
      // given in 'g' units
      for (unsigned j = 0; j < DIM; j++)
       {
-       acc[j] = acc_t[j+1] * 9.81;
+       acc[j] = acc_t[j+1] * GRAVITY;
       }
      
 #if 1 // TODO
@@ -364,7 +387,7 @@ int main(int argc, char *argv[])
      //acc_angles[0] = atan2(acc_inertial[2], acc_inertial[1]);
      //acc_angles[1] = atan2(acc_inertial[0], acc_inertial[2]);
      //acc_angles[2] = atan2(acc_inertial[1], acc_inertial[0]);
-   
+     
      //acc_angles[0] = atan2(acc_inertial[1], acc_inertial[2]);
      //acc_angles[1] = atan2(-acc_inertial[0], sqrt(acc_inertial[1]*acc_inertial[1]+acc_inertial[2]*acc_inertial[2]));
      //acc_angles[2] = atan2(acc_inertial[1], acc_inertial[0]);
@@ -392,7 +415,7 @@ int main(int argc, char *argv[])
      // --------------------------------------------------
      // Extract gravity and output the raw and the modified
      // accelerations
-   
+     
      // Create the rotation matrices
      std::vector<std::vector<double> > R(DIM);
      std::vector<std::vector<double> > R_t(DIM);
@@ -401,20 +424,31 @@ int main(int argc, char *argv[])
        R[i].resize(DIM);
        R_t[i].resize(DIM);
       }
-   
+     
      // Fill rotation matrices
      fill_rotation_matrices(R, R_t, y[0][6], y[0][7], y[0][8]); // tachidok
-   
+     
      // Transform from the body reference frame to the inertial
      // reference frame
      std::vector<double> acc_inertial(3, 0.0);
+#ifdef GRAVITY_TO_BODY_FRAME
+     std::vector<double> gravity(3, 0.0);
+     gravity[2] = GRAVITY;
+     std::vector<double> body_frame_gravity(3, 0.0);
+     multiply_matrix_times_vector(R, gravity, body_frame_gravity);//tachidok
+     for (unsigned i = 0; i < DIM; i++)
+      {
+       acc_inertial[i] = acc[i] - body_frame_gravity[i];
+      }     
+#else
      multiply_matrix_times_vector(R_t, acc, acc_inertial);//tachidok
      // Substract gravity
-     acc_inertial[2]-=9.81;
-   
+     acc_inertial[2]-=GRAVITY;     
+#endif // #ifdef GRAVITY_TO_BODY_FRAME
+     
      // Set linear acceleration
      odes.linear_acceleration() = acc_inertial;
-   
+     
      // -----------------------------------------------------------------
      // Integrate
      // -----------------------------------------------------------------
@@ -445,6 +479,16 @@ int main(int argc, char *argv[])
                      << " " << acc[0]
                      << " " << acc[1]
                      << " " << acc[2] << std::endl;
+#ifdef GRAVITY_TO_BODY_FRAME
+     // Body frame gravity
+     outfile_body_frame_gravity << time
+                                << " " << body_frame_gravity[0]
+                                << " " << body_frame_gravity[1]
+                                << " " << body_frame_gravity[2]
+                                << " " << std::sqrt(body_frame_gravity[0] * body_frame_gravity[0] +
+      body_frame_gravity[1] * body_frame_gravity[1] + body_frame_gravity[2] * body_frame_gravity[2])
+                                << std::endl;
+#endif // #ifdef GRAVITY_TO_BODY_FRAME
      // Inertial accelerations
      outfile_intertial_acc << time
                            << " " << acc_inertial[0]
@@ -478,6 +522,9 @@ int main(int argc, char *argv[])
  outfile_position.close();
  outfile_velocity.close();
  outfile_raw_acc.close();
+#ifdef GRAVITY_TO_BODY_FRAME
+ outfile_body_frame_gravity.close();
+#endif // #ifdef GRAVITY_TO_BODY_FRAME
  outfile_intertial_acc.close();
  outfile_roll_pitch_yaw.close();
  outfile_roll_pitch_yaw_from_acc.close();
