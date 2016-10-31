@@ -6,6 +6,16 @@ namespace chapchom
  bool initialise_chapchom()
  {
   chapchom_output << "Initialising chapchom .." << std::endl;
+  // These variables are defined in the header file
+  // cmake_definitions.h, which is automatically generated from the
+  // cmake_definitions.h.in file
+  chapchom_output << "This is chapchom version "
+                  << MAJOR_VERSION
+                  << "."
+                  << MINOR_VERSION
+                  << "."
+                  << PATCH_LEVEL
+                  << std::endl;
   
   /// Setup terminate helper
   TerminateHelper::setup();
