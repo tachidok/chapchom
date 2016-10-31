@@ -22,7 +22,7 @@ namespace chapchom
  // ===================================================================
  CCODEsFromSensorsTelitSL869DR::
  CCODEsFromSensorsTelitSL869DR(const char *input_filename)
-  : ACODEs(9), Current_data_index(0)
+  : ACODEs(9)
  {
   // Open the file
   Input_file.open(input_filename, std::ios::in);
@@ -40,14 +40,6 @@ namespace chapchom
   // Initialise nmea parser
   nmea_decoder = new CCNMEADecoder(20);
   
-  // Create storage for the matrix that relates the angular velocities
-  // with the Euler rates
-  A.resize(DIM);
-  for (unsigned i = 0; i < DIM; i++)
-   {
-    A[i].resize(DIM);
-   }
- 
  }
 
  // ===================================================================
@@ -67,9 +59,6 @@ namespace chapchom
  // ======================================================================
  bool CCODEsFromSensorsTelitSL869DR::get_sensors_lectures()
  {
-  // Initialise current data index (used to indicate which sensor data
-  // is currently beeing processed)
-  Current_data_index = 0;
   // Read data from the file/sensors. We proceed as follow:
   // -------------------------------------------------------------------
   // - State 1: Read a block of SIZE_BLOCK_DATA(15) PSTM3DACC data
@@ -239,93 +228,6 @@ namespace chapchom
    }
   
  }
-  
- // ===================================================================
- /// Fills the matrix that performs the transformation from angular
- /// velocities to Euler-rates
- // ===================================================================
- void CCODEsFromSensorsTelitSL869DR::
- fill_angular_velocities_to_euler_rates_matrix(std::vector<std::vector<double> > &A,
-                                               std::vector<double> &euler_angles)
- {
-  // New variable names
-  const double phi = euler_angles[0];
-  const double theta = euler_angles[1];
-  // Get trigonometric function values
-  const double sin_phi = sin(phi);
-  const double cos_phi = cos(phi);
-  const double sec_theta = 1.0/cos(theta);
-  const double tan_theta = tan(theta);
- 
-  // Fill the matrix
-  A[0][0] = 1.0;
-  A[0][1] = sin_phi * tan_theta;
-  A[0][2] = cos_phi * tan_theta;
-  A[1][0] = 0.0;
-  A[1][1] = cos_phi;
-  A[1][2] = -sin_phi;
-  A[2][0] = 0.0;
-  A[2][1] = sin_phi*sec_theta;
-  A[2][2] = cos_phi*sec_theta;
- }
- 
- // ===================================================================
- /// Multiplies a matrix times a vector
- // ===================================================================
- void CCODEsFromSensorsTelitSL869DR::
- multiply_matrix_times_vector(std::vector<std::vector<double> > &A,
-                              std::vector<double> &b,
-                              std::vector<double> &x)
- {
-  // Get the size of the matrix
-  const unsigned n_rows_A = A.size(); 
-  const unsigned n_cols_A = A[0].size();
-  // Get the size of the input vector
-  const unsigned n_rows_b = b.size();
-  // Check that we can multiply
-  if (n_cols_A != n_rows_b)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "We can not muliply, the input matrix has dimension ("
-                  << n_rows_A << ", " << n_cols_A << ")" << std::endl;
-    error_message << "The input vector has dimension dimension ("
-                  << n_rows_b << ", 1)" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);   
-   }
-
-  // Get the size of the output vector
-  const unsigned n_rows_x = x.size();
-  // Check that we can multiply
-  if (n_rows_A != n_rows_x)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "We can not muliply, the input matrix has dimension ("
-                  << n_rows_A << ", " << n_cols_A << ")" << std::endl;
-    error_message << "The output vector has dimension dimension ("
-                  << n_rows_x << ", 1)" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);   
-   }
-
-  // Clear the vector x
-  x.clear();
-  x.resize(n_rows_x, 0.0);
-  // Do the multiplication
-  for (unsigned i = 0; i < n_rows_A; i++)
-   {
-    for (unsigned j = 0; j < n_cols_A; j++)
-     {
-      x[i]+= A[i][j] * b[j];
-     } // for (j < n_cols_A)
-    
-   } // for (i < n_rows_A)
-  
- }
  
  // ===================================================================
  // Evaluates the system of odes at the given time "t" and the values
@@ -335,40 +237,7 @@ namespace chapchom
  void CCODEsFromSensorsTelitSL869DR::evaluate(const double t,
                                               const std::vector<double> &y,
                                               std::vector<double> &dy)
- {
-  // -------------------------------------------------------------------
-  // Get the Euler angles
-  // -------------------------------------------------------------------
-  // Store the Euler-angles
-  std::vector<double> euler_angles(DIM);
-  euler_angles[0] = y[6];
-  euler_angles[1] = y[7];
-  euler_angles[2] = y[8];
-  
-  // Fill the matrix that transforms from angular velocities to
-  // Euler-rates
-  fill_angular_velocities_to_euler_rates_matrix(A, euler_angles);
-  
-  // Get the current reading from sensors
-  // Gyro
-  std::vector<double> gyro_t = get_angular_rates(Current_data_index);
-  // Copy the data into a 3x3 vector
-  std::vector<double> gyro(DIM);
-  for (unsigned j = 0; j < DIM; j++)
-   {
-    gyro[j] = gyro_t[j+1];
-# if 0 // TODO: tachidok, what if we set the yaw data to 0.0 dps
-    if (j == 2)
-     {
-      gyro[j] = 0.0;
-     }
-#endif
-   }
-  
-  // Store the Euler-angles rates
-  std::vector<double> euler_angles_rates(DIM);
-  multiply_matrix_times_vector(A, gyro, euler_angles_rates);
-  
+ {  
   // -----------------
   // y[0] x-position
   // y[1] x-velocity
@@ -402,9 +271,9 @@ namespace chapchom
   dy[3] = Linear_acceleration[1];
   dy[4] = y[5];
   dy[5] = Linear_acceleration[2];
-  dy[6] = euler_angles_rates[0];
-  dy[7] = euler_angles_rates[1];
-  dy[8] = euler_angles_rates[2];
+  dy[6] = Euler_angular_rates[0];
+  dy[7] = Euler_angular_rates[1];
+  dy[8] = Euler_angular_rates[2];
   
  }
  

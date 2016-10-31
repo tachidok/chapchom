@@ -72,30 +72,17 @@ namespace chapchom
   inline std::vector<double> &get_euler_angles(const unsigned i)
   {return Euler_angles_data[i];}
   
-  // Get access to the current data index
-  inline unsigned current_data_index() const {return Current_data_index;}
-  
-  // Set the value of the current data index
-  inline unsigned &current_data_index() {return Current_data_index;}
-  
   // Get yaw correction as a function of time and the number of steps
   // per second
   const double get_yaw_correction(const double t,
                                   const double n_steps_per_second);
   
-  /// Fills the matrix that performs the transformation from angular
-  /// velocities to Euler-rates
-  void fill_angular_velocities_to_euler_rates_matrix(std::vector<std::vector<double> > &A,
-                                                     std::vector<double> &euler_angles);
-  
-  /// Multiplies a matrix times a vector
-  void multiply_matrix_times_vector(std::vector<std::vector<double> > &A,
-                                    std::vector<double> &b,
-                                    std::vector<double> &x);
-  
   /// Set linear acceleration for current time
   inline std::vector<double> &linear_acceleration() {return Linear_acceleration;}
- 
+  
+  /// Set Euler angular rates for current time
+  inline std::vector<double> &euler_angular_rates() {return Euler_angular_rates;}
+  
   /// Evaluates the system of odes at the given time "t" and the values
   /// of the function in "y". The evaluation produces results in the dy
   /// vector
@@ -135,22 +122,18 @@ namespace chapchom
   /// lectures and transform them into 'real' values
   void pair_and_scale_lectures();
   
-  // Indicates the index of the lectures from sensors currently beeing
-  // processed
-  unsigned Current_data_index;
-  
   // An nmea decoder
   CCNMEADecoder *nmea_decoder;
   
   // File handler
   std::ifstream Input_file;
   
-  // A transformation matrix from angular velocities to Euler rates
-  std::vector<std::vector<double> > A;
-  
   // Stores linear acceleration
   std::vector<double> Linear_acceleration;
-
+  
+  // Stores Euler angular rates
+  std::vector<double> Euler_angular_rates;
+  
   // Temporary storage for acceleration data
   std::vector<std::vector<double> > Acceleration_data;
   // Temporary storage for gyroscope data

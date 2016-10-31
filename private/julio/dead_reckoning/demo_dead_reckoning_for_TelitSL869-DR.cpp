@@ -25,6 +25,38 @@
 
 using namespace chapchom;
 
+// ===================================================================
+// Fills the matrix that performs the transformation from angular
+// velocities to Euler-rates
+// ===================================================================
+void fill_angular_velocities_to_euler_rates_matrix(std::vector<std::vector<double> > &A,
+                                                   std::vector<double> &euler_angles)
+{
+ // New variable names
+ const double phi = euler_angles[0];
+ const double theta = euler_angles[1];
+ // Get trigonometric function values
+ const double sin_phi = sin(phi);
+ const double cos_phi = cos(phi);
+ const double sec_theta = 1.0/cos(theta);
+ const double tan_theta = tan(theta);
+ 
+ // Fill the matrix
+ A[0][0] = 1.0;
+ A[0][1] = sin_phi * tan_theta;
+ A[0][2] = cos_phi * tan_theta;
+ A[1][0] = 0.0;
+ A[1][1] = cos_phi;
+ A[1][2] = -sin_phi;
+ A[2][0] = 0.0;
+ A[2][1] = sin_phi*sec_theta;
+ A[2][2] = cos_phi*sec_theta;
+}
+
+// ===================================================================
+// Fills the matrices that transform from the inertial frame to the
+// body frame
+// ===================================================================
 void fill_rotation_matrices(std::vector<std::vector<double> > &R,
                             std::vector<std::vector<double> > &R_t,
                             const double theta_x,
@@ -63,6 +95,10 @@ void fill_rotation_matrices(std::vector<std::vector<double> > &R,
  R_t[2][2] = R[2][2];
 }
 
+
+// ===================================================================
+// Multiply a matrix by a vector
+// ===================================================================
 void multiply_matrix_times_vector(std::vector<std::vector<double> > &A,
                                   std::vector<double> &b,
                                   std::vector<double> &x)
@@ -116,7 +152,7 @@ void multiply_matrix_times_vector(std::vector<std::vector<double> > &A,
   } // for (i < n_rows_A)
  
 }
- 
+
 int main(int argc, char *argv[])
 {
  // Initialise chapchom
@@ -288,6 +324,13 @@ int main(int argc, char *argv[])
  // Current time
  double time = 0.0;
  
+ // Matrix that relates the angular velocities with the Euler rates
+ std::vector<std::vector<double> >A(DIM);
+ for (unsigned i = 0; i < DIM; i++)
+  {
+   A[i].resize(DIM);
+  }
+ 
  // -----------------------------------------------------------------------------
  // Initialise
  // -----------------------------------------------------------------------------
@@ -326,11 +369,67 @@ int main(int argc, char *argv[])
    const unsigned n_acc_data = odes.nacceleration_data();
    for (unsigned i = 0; i < n_acc_data; i++)
     {
+     // ----------------------------------------------------------
+     // Process the gyros data
+     // ----------------------------------------------------------
+     
+     // Double check that we have the same number of data for
+     // accelerations and gyros
+     const unsigned n_gyro_data = odes.ngyro_data();
+     if (n_acc_data != n_gyro_data)
+      {
+       // Error message
+       std::ostringstream error_message;
+       error_message << "The number of data from the accelerometer and the gyro are different\n"
+                     << "n_acc_data: " << n_acc_data << "\n"
+                     << "n_gyro_data: " << n_gyro_data << "\n"
+                     << std::endl;
+       throw ChapchomLibError(error_message.str(),
+                              CHAPCHOM_CURRENT_FUNCTION,
+                              CHAPCHOM_EXCEPTION_LOCATION);
+      }
+     
+     // --------------------------
+     // Get the Euler angles
+     // --------------------------
+     // Store the Euler-angles
+     std::vector<double> euler_angles(DIM);
+     euler_angles[0] = y[0][6];
+     euler_angles[1] = y[0][7];
+     euler_angles[2] = y[0][8];
+     
+     // Fill the matrix that transforms from angular velocities to
+     // Euler-rates
+     fill_angular_velocities_to_euler_rates_matrix(A, euler_angles);
+     
+     // Get the current reading from sensors
+     // Gyro
+     std::vector<double> gyro_t = odes.get_angular_rates(i);
+     // Copy the data into a 3x3 vector
+     std::vector<double> gyro(DIM);
+     for (unsigned j = 0; j < DIM; j++)
+      {
+       gyro[j] = gyro_t[j+1];
+# if 0 // TODO: tachidok, what if we set the yaw data to 0.0 dps
+       if (j == 2)
+        {
+         gyro[j] = 0.0;
+        }
+#endif
+      }
+     
+     // Store the Euler-angles rates
+     std::vector<double> euler_angular_rates(DIM);
+     multiply_matrix_times_vector(A, gyro, euler_angular_rates);
+     // Set the Euler angular rates
+     odes.euler_angular_rates() = euler_angular_rates;
+     
+     // ----------------------------------------------------------
+     // Process the acceleration data
+     // ----------------------------------------------------------
      // Get the readings from sensors
      // Accelerations
      std::vector<double> acc_t = odes.get_accelerations(i);
-     // Set the current data index
-     odes.current_data_index() = i;
      // Copy the data into a 3x3 vector
      std::vector<double> acc(DIM);
      // ... and multiply by 9.81 since the data from the gyro are
