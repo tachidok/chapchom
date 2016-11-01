@@ -38,7 +38,7 @@ namespace chapchom
   }  
   
   // Initialise nmea parser
-  nmea_decoder = new CCNMEADecoder(20);
+  nmea_decoder = new CCNMEADecoder(50);
   
  }
 
@@ -259,12 +259,6 @@ namespace chapchom
   // dy[7] dpitch
   // dy[8] dyaw
  
-  //dy[0] = vel[0];
-  //dy[1] = acc[0];
-  //dy[2] = vel[1];
-  //dy[3] = acc[1];
-  //dy[4] = vel[2];
-  //dy[5] = acc[2];
   dy[0] = y[1];
   dy[1] = Linear_acceleration[0];
   dy[2] = y[3];

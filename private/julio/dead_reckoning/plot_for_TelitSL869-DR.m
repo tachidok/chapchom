@@ -66,6 +66,22 @@ my_velocity = import_results_TelitSL869DR('RESLT/velocity.dat', 1, 1844);
 
 body_frame_gravity = importfile_TelitSL869DR_body_frame_gravity('RESLT/body_frame_gravity.dat', 1, 1844);
 
+% putty_8_car_ride_square_wait_large.log
+my_roll_pitch_yaw = import_results_TelitSL869DR('RESLT/roll_pitch_yaw.dat', 1, 6651);
+my_raw_accelerations = import_results_TelitSL869DR('RESLT/raw_accelerations.dat', 1, 6651);
+my_roll_pitch_yaw_from_acc = import_results_TelitSL869DR('RESLT/roll_pitch_yaw_from_acc.dat', 1, 6651);
+inertial_acceleration = import_results_TelitSL869DR('RESLT/inertial_accelerations.dat', 1, 6651);
+my_position = import_results_TelitSL869DR('RESLT/position.dat', 1, 6651);
+my_velocity = import_results_TelitSL869DR('RESLT/velocity.dat', 1, 6651);
+
+% putty_9_car_ride_tona_acatepec_inaoe_wait_large.log
+my_roll_pitch_yaw = import_results_TelitSL869DR('RESLT/roll_pitch_yaw.dat', 1, 7370);
+my_raw_accelerations = import_results_TelitSL869DR('RESLT/raw_accelerations.dat', 1, 7370);
+my_roll_pitch_yaw_from_acc = import_results_TelitSL869DR('RESLT/roll_pitch_yaw_from_acc.dat', 1, 7370);
+inertial_acceleration = import_results_TelitSL869DR('RESLT/inertial_accelerations.dat', 1, 7370);
+my_position = import_results_TelitSL869DR('RESLT/position.dat', 1, 7370);
+my_velocity = import_results_TelitSL869DR('RESLT/velocity.dat', 1, 7370);
+
 %% Euler angles
 % Processed roll
 figure
@@ -114,26 +130,26 @@ ylabel('z-acceleration')
 legend('Raw acceleration', 'Inertial acceleration', 'Location', 'NorthWest')
 
 %% Raw and inertial acceleration
-figure
-plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 2), 'b', inertial_acceleration(:, 1), inertial_acceleration(:, 2), 'r', body_frame_gravity(:, 1), body_frame_gravity(:,2), 'g', body_frame_gravity(:, 1), body_frame_gravity(:,5), 'y')
-title('[X] Acceleration')
-xlabel('Time (s)')
-ylabel('x-acceleration')
-legend('Raw acceleration', 'Inertial acceleration', 'Body frame gravity', 'Magnitude body frame gravity', 'Location', 'NorthWest')
- 
-figure
-plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 3), 'b', inertial_acceleration(:, 1), inertial_acceleration(:, 3), 'r', body_frame_gravity(:, 1), body_frame_gravity(:,3), 'g', body_frame_gravity(:, 1), body_frame_gravity(:,5), 'y')
-title('[Y] Acceleration')
-xlabel('Time (s)')
-ylabel('y-acceleration')
-legend('Raw acceleration', 'Inertial acceleration', 'Body frame gravity', 'Magnitude body frame gravity', 'Location', 'NorthWest')
- 
-figure
-plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 4), 'b', inertial_acceleration(:, 1), inertial_acceleration(:, 4), 'r', body_frame_gravity(:, 1), body_frame_gravity(:,4), 'g', body_frame_gravity(:, 1), body_frame_gravity(:,5), 'y')
-title('[Z] Acceleration')
-xlabel('Time (s)')
-ylabel('z-acceleration')
-legend('Raw acceleration', 'Inertial acceleration', 'Body frame gravity', 'Magnitude body frame gravity', 'Location', 'NorthWest')
+%figure
+%plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 2), 'b', inertial_acceleration(:, 1), inertial_acceleration(:, 2), 'r', body_frame_gravity(:, 1), body_frame_gravity(:,2), 'g', body_frame_gravity(:, 1), body_frame_gravity(:,5), 'y')
+%title('[X] Acceleration')
+% xlabel('Time (s)')
+% ylabel('x-acceleration')
+% legend('Raw acceleration', 'Inertial acceleration', 'Body frame gravity', 'Magnitude body frame gravity', 'Location', 'NorthWest')
+%  
+% figure
+% plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 3), 'b', inertial_acceleration(:, 1), inertial_acceleration(:, 3), 'r', body_frame_gravity(:, 1), body_frame_gravity(:,3), 'g', body_frame_gravity(:, 1), body_frame_gravity(:,5), 'y')
+% title('[Y] Acceleration')
+% xlabel('Time (s)')
+% ylabel('y-acceleration')
+% legend('Raw acceleration', 'Inertial acceleration', 'Body frame gravity', 'Magnitude body frame gravity', 'Location', 'NorthWest')
+%  
+% figure
+% plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 4), 'b', inertial_acceleration(:, 1), inertial_acceleration(:, 4), 'r', body_frame_gravity(:, 1), body_frame_gravity(:,4), 'g', body_frame_gravity(:, 1), body_frame_gravity(:,5), 'y')
+% title('[Z] Acceleration')
+% xlabel('Time (s)')
+% ylabel('z-acceleration')
+% legend('Raw acceleration', 'Inertial acceleration', 'Body frame gravity', 'Magnitude body frame gravity', 'Location', 'NorthWest')
 
 %% Position
 % % Plot position

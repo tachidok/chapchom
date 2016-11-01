@@ -22,6 +22,7 @@
 //#define LOWER_THRESHOLD 9.81 * 0.1
 #define GRAVITY 9.81
 //#define GRAVITY_TO_BODY_FRAME
+//#define INERTIAL_ACCELERATION_THRESHOLD GRAVITY
 
 using namespace chapchom;
 
@@ -169,7 +170,9 @@ int main(int argc, char *argv[])
  //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_4_sin_espera_sin_basura_final.log");
  //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_5_espera_large.log");
  //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_6_espera_large.log");
- CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_7_espera_large.log");
+ //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_7_espera_large.log");
+ //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_8_car_ride_square_wait_large.log");
+ CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_9_car_ride_tona_acatepec_inaoe_wait_large.log");
  // Create the factory for the methods
  CCFactoryIntegrationMethod *factory_integration_methods =
   new CCFactoryIntegrationMethod();
@@ -319,7 +322,7 @@ int main(int argc, char *argv[])
  // -----------------------------------------------------------------
  // The step size is given by the number of data we have in a second
  // (15Hz)
- const double h = 1.0 / SIZE_BLOCK_DATA;
+ double h = 0.0;
  
  // Current time
  double time = 0.0;
@@ -367,6 +370,8 @@ int main(int argc, char *argv[])
    
    // Get the number of acceleration data
    const unsigned n_acc_data = odes.nacceleration_data();
+   // The step size is given by the number of data reported in a second
+   h = 1.0 / n_acc_data;
    for (unsigned i = 0; i < n_acc_data; i++)
     {
      // ----------------------------------------------------------
@@ -409,7 +414,8 @@ int main(int argc, char *argv[])
      std::vector<double> gyro(DIM);
      for (unsigned j = 0; j < DIM; j++)
       {
-       gyro[j] = gyro_t[j+1];
+       //gyro[j] = gyro_t[j+1];
+       gyro[j] = 0.0;       
 # if 0 // TODO: tachidok, what if we set the yaw data to 0.0 dps
        if (j == 2)
         {
@@ -421,6 +427,9 @@ int main(int argc, char *argv[])
      // Store the Euler-angles rates
      std::vector<double> euler_angular_rates(DIM);
      multiply_matrix_times_vector(A, gyro, euler_angular_rates);
+     //euler_angular_rates[0] = 0.0;
+     //euler_angular_rates[1] = 0.0;
+     //euler_angular_rates[2] = 0.0;
      // Set the Euler angular rates
      odes.euler_angular_rates() = euler_angular_rates;
      
@@ -538,12 +547,23 @@ int main(int argc, char *argv[])
      for (unsigned i = 0; i < DIM; i++)
       {
        acc_inertial[i] = acc[i] - body_frame_gravity[i];
-      }     
+      }
 #else
      multiply_matrix_times_vector(R_t, acc, acc_inertial);//tachidok
      // Substract gravity
      acc_inertial[2]-=GRAVITY;     
 #endif // #ifdef GRAVITY_TO_BODY_FRAME
+     
+#if 0
+     // Check whether inertial acceleration is meaningless
+     for (unsigned i = 0; i < DIM; i++)
+      {
+       if (fabs(acc_inertial[i]) < INERTIAL_ACCELERATION_THRESHOLD)
+        {
+         acc_inertial[i] = 0.0;
+        }
+      }
+#endif // #if 0
      
      // Set linear acceleration
      odes.linear_acceleration() = acc_inertial;
