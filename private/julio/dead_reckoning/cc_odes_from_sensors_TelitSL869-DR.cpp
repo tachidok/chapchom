@@ -116,9 +116,9 @@ namespace chapchom
       Acceleration_data.push_back(read_acc);
       // Increase the counter of the number of read acceleration data
       n_PSTM3DACC++;
-      std::cout << "Time:" << read_acc[0]
-                << " Accelerometer:(" << read_acc[1] << ", " << read_acc[2] << ", " <<  read_acc[3] << ")"
-                << std::endl;
+      //      std::cout << "Time:" << read_acc[0]
+      //                << " Accelerometer:(" << read_acc[1] << ", " << read_acc[2] << ", " <<  read_acc[3] << ")"
+      //                << std::endl;
      }
     
     if (nmea_decoder->is_gyro_data_ready())
@@ -142,9 +142,9 @@ namespace chapchom
       Gyro_data.push_back(read_gyro);
       // Increase the counter of the number of read acceleration data
       n_PSTM3DGYRO++;
-      std::cout << "Time:" << read_gyro[0]
-                << " Gyro:(" << read_gyro[1] << ", " << read_gyro[2] << ", " <<  read_gyro[3] << ")"
-                << std::endl;
+      //      std::cout << "Time:" << read_gyro[0]
+      //                << " Gyro:(" << read_gyro[1] << ", " << read_gyro[2] << ", " <<  read_gyro[3] << ")"
+      //                << std::endl;
      }
     
     // TODO: GPRMC data

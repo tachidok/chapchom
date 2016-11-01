@@ -18,6 +18,7 @@
 // The nmea decoder
 #include "cc_nmea_decoder.h"
 
+#define CORRECT_ACCELEROMETER_MISALIGNMENT
 #define LOWER_THRESHOLD 1.0
 //#define LOWER_THRESHOLD 9.81 * 0.1
 #define GRAVITY 9.81
@@ -230,6 +231,38 @@ int main(int argc, char *argv[])
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
  
+ // Raw gyro
+ char file_raw_gyro_name[100];
+ sprintf(file_raw_gyro_name, "./RESLT/raw_gyro.dat");
+ std::ofstream outfile_raw_gyro;
+ outfile_raw_gyro.open(file_raw_gyro_name, std::ios::out);
+ if (outfile_raw_gyro.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_raw_gyro_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+ // Euler-angles rates
+ char file_euler_angles_rates_name[100];
+ sprintf(file_euler_angles_rates_name, "./RESLT/euler_angles_rates.dat");
+ std::ofstream outfile_euler_angles_rates;
+ outfile_euler_angles_rates.open(file_euler_angles_rates_name, std::ios::out);
+ if (outfile_euler_angles_rates.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_euler_angles_rates_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
  // Raw accelerations
  char file_raw_accelerations_name[100];
  sprintf(file_raw_accelerations_name, "./RESLT/raw_accelerations.dat");
@@ -375,8 +408,10 @@ int main(int argc, char *argv[])
    for (unsigned i = 0; i < n_acc_data; i++)
     {
      // ----------------------------------------------------------
+     // ----------------------------------------------------------
      // Process the gyros data
      // ----------------------------------------------------------
+     // ----------------------------------------------------------     
      
      // Double check that we have the same number of data for
      // accelerations and gyros
@@ -414,8 +449,8 @@ int main(int argc, char *argv[])
      std::vector<double> gyro(DIM);
      for (unsigned j = 0; j < DIM; j++)
       {
-       //gyro[j] = gyro_t[j+1];
-       gyro[j] = 0.0;       
+       gyro[j] = gyro_t[j+1];
+       //gyro[j] = 0.0;
 # if 0 // TODO: tachidok, what if we set the yaw data to 0.0 dps
        if (j == 2)
         {
@@ -434,8 +469,10 @@ int main(int argc, char *argv[])
      odes.euler_angular_rates() = euler_angular_rates;
      
      // ----------------------------------------------------------
+     // ----------------------------------------------------------
      // Process the acceleration data
      // ----------------------------------------------------------
+     // ----------------------------------------------------------     
      // Get the readings from sensors
      // Accelerations
      std::vector<double> acc_t = odes.get_accelerations(i);
@@ -448,14 +485,14 @@ int main(int argc, char *argv[])
        acc[j] = acc_t[j+1] * GRAVITY;
       }
      
-#if 1 // TODO
+#ifdef CORRECT_ACCELEROMETER_MISALIGNMENT
      // Correct accelerations due to misalignment on device
      {
       double tmp = acc[0];
       acc[0] = acc[1];
       acc[1] = tmp*(-1.0);
      }
-#endif // #if 0
+#endif // #ifdef CORRECT_ACCELEROMETER_MISALIGNMENT
      
 #if 0 // TODO
      // Filter accelerations data?
@@ -487,7 +524,7 @@ int main(int argc, char *argv[])
      // Apply complementary filter
      // -------------------------------------------------------------------
      // Complementary filter parameter
-     const double alpha = 0.98;
+     const double alpha = 1.0;
      //const double alpha_yaw = 1.0;
      
      // Transform accelerations to angles
@@ -502,8 +539,8 @@ int main(int argc, char *argv[])
    
      acc_angles[0] = atan2(acc[1], acc[2]);
      acc_angles[1] = atan2(-acc[0], sqrt(acc[1]*acc[1]+acc[2]*acc[2]));
-     acc_angles[2] = atan2(acc[2], sqrt(acc[0]*acc[0]+acc[2]*acc[2]));
-     //acc_angles[2] = atan2(sqrt(acc[0]*acc[0]+acc[1]*acc[1]), acc[0]); // HERE
+     //acc_angles[2] = atan2(acc[2], sqrt(acc[0]*acc[0]+acc[2]*acc[2]));
+     acc_angles[2] = atan2(sqrt(acc[0]*acc[0]+acc[1]*acc[1]), acc[0]); // HERE
    
      //acc_angles[2] = atan2(acc[1], acc[0]);
      //acc_angles[2] = atan2(-acc[0], sqrt(acc[0]*acc[0]+acc[1]*acc[1]+acc[2]*acc[2]));
@@ -592,7 +629,20 @@ int main(int argc, char *argv[])
      outfile_velocity << time
                       << " " << y[0][1]
                       << " " << y[0][3]
-                      << " " << y[0][5] << std::endl;
+                      << " " << y[0][5]
+      //                      << " " << std::sqrt(y[0][1] * y[0][1] + y[0][3] * y[0][3] + y[0][5] * y[0][5])
+                      << " " << std::sqrt(y[0][1] * y[0][1] + y[0][3] * y[0][3])
+                      << std::endl;
+     // Raw gyro
+     outfile_raw_gyro << time
+                      << " " << gyro[0]
+                      << " " << gyro[1]
+                      << " " << gyro[2] << std::endl;
+     // Euler angles rates
+     outfile_euler_angles_rates << time
+                                << " " << euler_angular_rates[0]
+                                << " " << euler_angular_rates[1]
+                                << " " << euler_angular_rates[2] << std::endl;     
      // Raw accelerations
      outfile_raw_acc << time
                      << " " << acc[0]
@@ -640,6 +690,8 @@ int main(int argc, char *argv[])
  // Close the output file
  outfile_position.close();
  outfile_velocity.close();
+ outfile_raw_gyro.close();
+ outfile_euler_angles_rates.close();
  outfile_raw_acc.close();
 #ifdef GRAVITY_TO_BODY_FRAME
  outfile_body_frame_gravity.close();
