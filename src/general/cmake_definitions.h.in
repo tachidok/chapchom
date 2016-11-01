@@ -1,0 +1,17 @@
+#ifndef CMAKE_DEFINITIONS_H
+#define CMAKE_DEFINITIONS_H
+
+// This file is used as a template for CMake to create the file
+// cmake_definitions.h, the variables in between "@"s are substituted
+// for values assigned in the "CMakeLists.txt" files
+
+namespace chapchom
+{
+ 
+#define MAJOR_VERSION @chapchom_MAJOR_VERSION@
+#define MINOR_VERSION @chapchom_MINOR_VERSION@
+#define PATCH_LEVEL @chapchom_PATCH_LEVEL@
+ 
+}
+
+#endif // #ifdef CMAKE_DEFINITIONS_H

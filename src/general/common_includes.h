@@ -68,5 +68,6 @@
 
 // Own chapchom definitions
 #include "definitions.h"
+#include "cmake_definitions.h"
 
 #endif // #ifndef COMMON_INCLUDES_H
