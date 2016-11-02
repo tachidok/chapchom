@@ -220,7 +220,46 @@ namespace chapchom
  // is used throughout the library as a "replacement" for std::cout
  //========================================================================
  extern ChapchomOutput chapchom_output;
+
+ //==================================================================
+ // Utility method to time a program
+ //==================================================================
+ namespace Timing
+ {
+  // ================================================================
+  // Use this method when you want to know the "wall time" a section
+  // of code, method or program takes for its execution. Call it at
+  // the beggining of the section and then at the end of the section
+  // you want to time
+  // ================================================================
+  inline time_t wall_time() {return time(0);}
+  
+  // ================================================================
+  // Use this method to get the difference (IN SECONDS) between two
+  // "wall_time()" method calls
+  // ================================================================
+  inline double diff_wall_time(time_t &initial_time, time_t &final_time)
+  {return difftime(initial_time, final_time);}
+  
+  // ================================================================
+  // Use this method when you want to know the "cpu time" a section of
+  // code, method or program takes for its execution. Call it at the
+  // beggining of the section and then at the end of the section you
+  // want to time
+  // ================================================================
+  inline clock_t cpu_clock_time() {return clock();}
+  
+  // ================================================================
+  // Use this method to get the difference (IN SECONDS) between two
+  // "cpu_clock_time()" method calls
+  // ================================================================
+  inline double diff_cpu_clock_time(clock_t &initial_cpu_time,
+                                    clock_t &final_cpu_time)
+  {return
+    static_cast<double>(final_cpu_time-initial_cpu_time)/CLOCKS_PER_SEC;}
+  
+ }
  
 } 
- 
+
 #endif // #ifndef UTILITIES_H
