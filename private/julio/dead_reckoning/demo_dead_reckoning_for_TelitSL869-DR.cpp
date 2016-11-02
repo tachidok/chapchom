@@ -24,8 +24,77 @@
 #define GRAVITY 9.81
 //#define GRAVITY_TO_BODY_FRAME
 //#define INERTIAL_ACCELERATION_THRESHOLD GRAVITY
+//#define GYRO_THRESHOLD 1.0 * TO_RADIANS // One degree threshold
+//#define ACCELERATION_THRESHOLD 1.0 // One meter per second per second
+//#define GYRO_AVERAGE
+//#define ACCELEROMETER_AVERAGE
 
 using namespace chapchom;
+
+
+// ===================================================================
+// Fast Fourier Transform, classical implementation of the
+// Cooley-Tukey algorithm from Numerical Recipes in C++ [5], p.513.
+// ===================================================================
+void fft(double* data, unsigned long nn)
+{
+ unsigned long n, mmax, m, j, istep, i;
+ double wtemp, wr, wpr, wpi, wi, theta;
+ double tempr, tempi;
+ 
+ // reverse-binary reindexing
+ n = nn<<1;
+ j=1;
+ for (i=1; i<n; i+=2)
+  {
+   if (j>i)
+    {
+     std::swap(data[j-1], data[i-1]);
+     std::swap(data[j], data[i]);
+    }
+   m = nn;
+   while (m>=2 && j>m)
+    {
+     j -= m;
+     m >>= 1;
+    }
+   j += m;
+  };
+ 
+ // here begins the Danielson-Lanczos section
+ mmax=2;
+ while (n>mmax)
+  {
+   istep = mmax<<1;
+   theta = -(2*M_PI/mmax);
+   wtemp = sin(0.5*theta);
+   wpr = -2.0*wtemp*wtemp;
+   wpi = sin(theta);
+   wr = 1.0;
+   wi = 0.0;
+   for (m=1; m < mmax; m += 2)
+    {
+     for (i=m; i <= n; i += istep)
+      {
+       j=i+mmax;
+       tempr = wr*data[j-1] - wi*data[j];
+       tempi = wr * data[j] + wi*data[j-1];
+       
+       data[j-1] = data[i-1] - tempr;
+       data[j] = data[i] - tempi;
+       data[i-1] += tempr;
+       data[i] += tempi;
+      }
+     wtemp=wr;
+     wr += wr*wpr - wi*wpi;
+     wi += wi*wpr + wtemp*wpi;
+    }
+   
+   mmax=istep;
+   
+  } // while (n>mmax)
+ 
+}
 
 // ===================================================================
 // Fills the matrix that performs the transformation from angular
@@ -389,9 +458,9 @@ int main(int argc, char *argv[])
            << " y-pos: " << y[0][2] << " y-vel: " << y[0][3]
            << " z-pos: " << y[0][4] << " z-vel: " << y[0][5]
            << " roll: " << y[0][6] << " pitch: " << y[0][7] << " yaw: " << y[0][8] << std::endl;
-
+ 
  bool LOOP = true;
-
+ 
  while (LOOP)
   {
    // Retrieve data from sensors
@@ -405,6 +474,12 @@ int main(int argc, char *argv[])
    const unsigned n_acc_data = odes.nacceleration_data();
    // The step size is given by the number of data reported in a second
    h = 1.0 / n_acc_data;
+#ifdef GYRO_AVERAGE
+   std::vector<double> gyro_average(DIM, 0.0);
+#endif // #ifdef GYRO_AVERAGE
+#ifdef ACCELEROMETER_AVERAGE
+   std::vector<double> acc_average(DIM, 0.0);
+#endif // #ifdef ACCELEROMETER_AVERAGE
    for (unsigned i = 0; i < n_acc_data; i++)
     {
      // ----------------------------------------------------------
@@ -442,7 +517,7 @@ int main(int argc, char *argv[])
      // Euler-rates
      fill_angular_velocities_to_euler_rates_matrix(A, euler_angles);
      
-     // Get the current reading from sensors
+     // Get the current reading from sensors     
      // Gyro
      std::vector<double> gyro_t = odes.get_angular_rates(i);
      // Copy the data into a 3x3 vector
@@ -450,6 +525,17 @@ int main(int argc, char *argv[])
      for (unsigned j = 0; j < DIM; j++)
       {
        gyro[j] = gyro_t[j+1];
+#ifdef GYRO_THRESHOLD
+       if (fabs(gyro[j]) < GYRO_THRESHOLD)
+        {
+         gyro[j] = 0.0;
+        }
+#endif // #ifdef GYRO_THRESHOLD
+#ifdef GYRO_AVERAGE
+       gyro_average[j]+=gyro[j];
+       gyro[j]=gyro_average[j]/static_cast<double>(i+1);
+#endif // #ifdef GYRO_AVERAGE
+       
        //gyro[j] = 0.0;
 # if 0 // TODO: tachidok, what if we set the yaw data to 0.0 dps
        if (j == 2)
@@ -483,6 +569,16 @@ int main(int argc, char *argv[])
      for (unsigned j = 0; j < DIM; j++)
       {
        acc[j] = acc_t[j+1] * GRAVITY;
+#ifdef ACCELERATION_THRESHOLD
+       if (fabs(acc[j]) < ACCELERATION_THRESHOLD)
+        {
+         acc[j] = 0.0;
+        }
+#endif // #ifdef ACCELERATION_THRESHOLD
+#ifdef ACCELEROMETER_AVERAGE
+       acc_average[j]+=acc[j];
+       acc[j]=acc_average[j]/static_cast<double>(i+1);
+#endif // #ifdef ACCELEROMETER_AVERAGE
       }
      
 #ifdef CORRECT_ACCELEROMETER_MISALIGNMENT
@@ -524,7 +620,7 @@ int main(int argc, char *argv[])
      // Apply complementary filter
      // -------------------------------------------------------------------
      // Complementary filter parameter
-     const double alpha = 1.0;
+     const double alpha = 0.98;
      //const double alpha_yaw = 1.0;
      
      // Transform accelerations to angles

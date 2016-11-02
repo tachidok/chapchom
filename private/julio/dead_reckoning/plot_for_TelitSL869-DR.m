@@ -232,3 +232,69 @@ title('Velocity')
 xlabel('time (s)')
 ylabel('z-velocity')
 legend('Z-velocity', 'Location', 'NorthWest')
+
+%% FFT
+my_raw_gyro_fft = fft(my_raw_gyro(:,(2:4)));
+my_raw_accelerations_fft = fft(my_raw_accelerations(:,(2:4)));
+
+Fs = 15;
+L = size(my_raw_gyro_fft,1);
+f = Fs*(0:(L/2))/L;
+P2 = abs(my_raw_gyro_fft/L);
+P1 = P2(1:L/2+1);
+P1(2:end-1) = 2*P1(2:end-1);
+
+plot(f,P1)
+title('Single-Sided Amplitude Spectrum of S(t)')
+xlabel('f (Hz)')
+ylabel('|P1(f)|')
+
+%% FFT raw gyroscope
+figure
+plot(abs(my_raw_gyro_fft(:, 2)), 'b')
+%plot(my_raw_gyro(:, 1), abs(my_raw_gyro_fft(:, 2)), 'b')
+title('[X] Raw Gyro FFT')
+xlabel('Time (s)')
+ylabel('x-frequence')
+legend('Frequence', 'Location', 'NorthWest')
+
+figure
+plot(abs(my_raw_gyro_fft(:, 3)), 'b')
+%plot(my_raw_gyro(:, 1), abs(my_raw_gyro_fft(:, 2)), 'b')
+title('[Y] Raw Gyro FFT')
+xlabel('Time (s)')
+ylabel('y-frequence')
+legend('Frequence', 'Location', 'NorthWest')
+
+figure
+plot(abs(my_raw_gyro_fft(:, 4)), 'b')
+%plot(my_raw_gyro(:, 1), abs(my_raw_gyro_fft(:, 2)), 'b')
+title('[Z] Raw Gyro FFT')
+xlabel('Time (s)')
+ylabel('z-frequence')
+legend('Frequence', 'Location', 'NorthWest')
+
+%% FFT raw acceleration
+figure
+plot(my_raw_accelerations(:, 1), abs(my_raw_accelerations_fft(:, 2)), 'b')
+%plot(my_raw_accelerations(:, 1), abs(my_raw_accelerations_fft(:, 2)), 'b')
+title('[X] Raw Acceleration FFT')
+xlabel('Time (s)')
+ylabel('x-frequence')
+legend('Frequence', 'Location', 'NorthWest')
+
+figure
+plot(my_raw_accelerations(:, 1), abs(my_raw_accelerations_fft(:, 3)), 'b')
+%plot(my_raw_accelerations(:, 1), abs(my_raw_accelerations_fft(:, 3)), 'b')
+title('[Y] Raw Acceleration FFT')
+xlabel('Time (s)')
+ylabel('y-frequence')
+legend('Frequence', 'Location', 'NorthWest')
+
+figure
+plot(my_raw_accelerations(:, 1), abs(my_raw_accelerations_fft(:, 4)), 'b')
+%plot(my_raw_accelerations(:, 1), abs(my_raw_accelerations_fft(:, 4)), 'b')
+title('[Z] Raw Acceleration FFT')
+xlabel('Time (s)')
+ylabel('z-frequence')
+legend('Frequence', 'Location', 'NorthWest')
