@@ -18,6 +18,7 @@
 // The nmea decoder
 #include "cc_nmea_decoder.h"
 
+//#define APPLY_LOW_PASS_FILTER
 #define CORRECT_ACCELEROMETER_MISALIGNMENT
 #define LOWER_THRESHOLD 1.0
 //#define LOWER_THRESHOLD 9.81 * 0.1
@@ -31,6 +32,58 @@
 
 using namespace chapchom;
 
+// ===================================================================
+// Low pass filter based on frequency. Took from
+// https://www.quora.com/Whats-the-C-coding-for-a-low-pass-filter and
+// adapted for the current demo. Pass the sample rate of Hz of our
+// example and the cut-off frequency, the frequencies below this value
+// are allowed to passed by the low-pass filter
+// ===================================================================
+void low_pass_filter_frequency(std::vector<std::vector<double> > &noisy_signal,
+                               std::vector<std::vector<double> > &filtered_signal,
+                               const double cut_off_frequency,
+                               const double sample_rate)
+{
+ // Check whether the number of input and output data are the same
+ const unsigned n_noisy_data = noisy_signal.size();
+ const unsigned n_filtered_data = filtered_signal.size();
+ if (n_noisy_data != n_filtered_data)
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "The size of the containers for the noisy and filtered data is different\n"
+                 << "noisy_data.size(): " << n_noisy_data
+                 << "filtered_data.size(): " << n_filtered_data << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+ const double RC = 1.0/(cut_off_frequency*2*3.14);
+ const double dt = 1.0/sample_rate;
+ const double alpha = dt/(RC+dt);
+ DEB(RC);
+ DEB(dt);
+ DEB(alpha);
+ 
+ // Copy the first data into the output data
+ filtered_signal[0] = noisy_signal[0];
+ // Apply the filter
+ for(unsigned i = 1; i < n_noisy_data; ++i)
+  {
+   filtered_signal[i].resize(DIM);
+   for (unsigned j = 0; j < DIM; j++)
+    {
+#ifdef APPLY_LOW_PASS_FILTER
+     filtered_signal[i][j] = filtered_signal[i-1][j] + (alpha*(noisy_signal[i][j] - filtered_signal[i-1][j]));     
+#else
+     filtered_signal[i][j] = noisy_signal[i][j];
+#endif // #ifdef APPLY_LOW_PASS_FILTER
+
+    } // for (j < DIM)
+  } // for (i < n_noisy_data)
+ 
+}
 
 // ===================================================================
 // Fast Fourier Transform, classical implementation of the
@@ -190,7 +243,7 @@ void multiply_matrix_times_vector(std::vector<std::vector<double> > &A,
                  << n_rows_b << ", 1)" << std::endl;
    throw ChapchomLibError(error_message.str(),
                           CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);   
+                          CHAPCHOM_EXCEPTION_LOCATION);
   }
  
  // Get the size of the output vector
@@ -414,6 +467,38 @@ int main(int argc, char *argv[])
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
  
+ // Filtered gyro
+ char file_filtered_gyro_name[100];
+ sprintf(file_filtered_gyro_name, "./RESLT/filtered_gyro.dat");
+ std::ofstream outfile_filtered_gyro;
+ outfile_filtered_gyro.open(file_filtered_gyro_name, std::ios::out);
+ if (outfile_filtered_gyro.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_filtered_gyro_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+ // Filtered acc
+ char file_filtered_acc_name[100];
+ sprintf(file_filtered_acc_name, "./RESLT/filtered_acc.dat");
+ std::ofstream outfile_filtered_acc;
+ outfile_filtered_acc.open(file_filtered_acc_name, std::ios::out);
+ if (outfile_filtered_acc.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_filtered_acc_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
  // ----------------------------------------------------------------------------
  // FILES (END)
  // ----------------------------------------------------------------------------
@@ -471,15 +556,129 @@ int main(int argc, char *argv[])
     }
    
    // Get the number of acceleration data
-   const unsigned n_acc_data = odes.nacceleration_data();
-   // The step size is given by the number of data reported in a second
-   h = 1.0 / n_acc_data;
+   const unsigned n_acc_data = odes.nacceleration_data(); 
+   // Double check that we have the same number of data for
+   // accelerations and gyros
+   const unsigned n_gyro_data = odes.ngyro_data();
+   if (n_acc_data != n_gyro_data)
+    {
+     // Error message
+     std::ostringstream error_message;
+     error_message << "The number of data from the accelerometer and the gyro are different\n"
+                   << "n_acc_data: " << n_acc_data << "\n"
+                   << "n_gyro_data: " << n_gyro_data << "\n"
+                   << std::endl;
+     throw ChapchomLibError(error_message.str(),
+                            CHAPCHOM_CURRENT_FUNCTION,
+                            CHAPCHOM_EXCEPTION_LOCATION);
+    }
 #ifdef GYRO_AVERAGE
    std::vector<double> gyro_average(DIM, 0.0);
 #endif // #ifdef GYRO_AVERAGE
 #ifdef ACCELEROMETER_AVERAGE
    std::vector<double> acc_average(DIM, 0.0);
 #endif // #ifdef ACCELEROMETER_AVERAGE
+   
+   // ------------------------------------------------------------------
+   // Read and filter data
+   // ------------------------------------------------------------------
+   // Copy the data into a 3x3 vector
+   std::vector<std::vector<double> > gyro(n_gyro_data);
+   // Store the gyro-filtered data
+   std::vector<std::vector<double> > gyro_filtered(n_gyro_data);
+   // Copy the data into a 3x3 vector
+   std::vector<std::vector<double> > acc(n_acc_data);
+   // Store the acc-filtered data
+   std::vector<std::vector<double> > acc_filtered(n_acc_data);
+   
+   // The step size is given by the number of data reported in a second
+   h = 1.0 / n_acc_data;   
+   
+   for (unsigned i = 0; i < n_acc_data; i++)
+    {
+     // Resize containers
+     gyro[i].resize(DIM);
+     acc[i].resize(DIM);
+     // Get the current reading from sensors
+     std::vector<double> gyro_t = odes.get_angular_rates(i);
+     std::vector<double> acc_t = odes.get_accelerations(i);
+     for (unsigned j = 0; j < DIM; j++)
+      {
+       // ---------------------------------------------------
+       // Gyro
+       // ---------------------------------------------------
+       gyro[i][j] = gyro_t[j+1];
+#ifdef GYRO_THRESHOLD
+       if (fabs(gyro[i][j]) < GYRO_THRESHOLD)
+        {
+         gyro[i][j] = 0.0;
+        }
+#endif // #ifdef GYRO_THRESHOLD
+#ifdef GYRO_AVERAGE
+       gyro_average[j]+=gyro[i][j];
+       gyro[i][j]=gyro_average[j]/static_cast<double>(i+1);
+#endif // #ifdef GYRO_AVERAGE
+       
+       //gyro[i][j] = 0.0;
+# if 0 // TODO: tachidok, what if we set the yaw data to 0.0 dps
+       if (j == 2)
+        {
+         gyro[i][j] = 0.0;
+        }
+#endif
+       
+       // ---------------------------------------------------
+       // Accelerations
+       // ---------------------------------------------------
+       
+       // Multiply by 9.81 since the data from the gyro are given in
+       // 'g' units
+       acc[i][j] = acc_t[j+1] * GRAVITY;
+       
+#ifdef ACCELERATION_THRESHOLD
+       if (fabs(acc[i][j]) < ACCELERATION_THRESHOLD)
+        {
+         acc[i][j] = 0.0;
+        }
+#endif // #ifdef ACCELERATION_THRESHOLD
+#ifdef ACCELEROMETER_AVERAGE
+       acc_average[j]+=acc[i][j];
+       acc[i][j]=acc_average[j]/static_cast<double>(i+1);
+#endif // #ifdef ACCELEROMETER_AVERAGE
+       
+#if 0 // TODO
+       // Filter accelerations data?
+       if (fabs(acc[i][j] - LOWER_THRESHOLD) < 0.0)
+        {
+         acc[i][j] = 0.0;
+        }
+#endif // #if 0
+       
+      } // for (j < DIM)
+     
+#ifdef CORRECT_ACCELEROMETER_MISALIGNMENT
+     // Correct accelerations due to misalignment on device
+     {
+      const double tmp = -acc[i][0];
+      acc[i][0] = acc[i][1];
+      acc[i][1] = tmp;
+     }
+#endif // #ifdef CORRECT_ACCELEROMETER_MISALIGNMENT
+     
+    } // for (i < n_acc_data)
+   
+   // ------------------------------------------------------
+   // Apply low pass filter to gyro and acceleration data
+   // ------------------------------------------------------
+   const double sample_rate = 15;
+   const double cut_off_frequency_gyro = 0.1;
+   const double cut_off_frequency_acc = 0.01;
+   
+   // Apply the filter
+   low_pass_filter_frequency(gyro, gyro_filtered, cut_off_frequency_gyro, sample_rate);
+   low_pass_filter_frequency(acc, acc_filtered, cut_off_frequency_acc, sample_rate);
+   
+   // Process data
    for (unsigned i = 0; i < n_acc_data; i++)
     {
      // ----------------------------------------------------------
@@ -487,22 +686,6 @@ int main(int argc, char *argv[])
      // Process the gyros data
      // ----------------------------------------------------------
      // ----------------------------------------------------------     
-     
-     // Double check that we have the same number of data for
-     // accelerations and gyros
-     const unsigned n_gyro_data = odes.ngyro_data();
-     if (n_acc_data != n_gyro_data)
-      {
-       // Error message
-       std::ostringstream error_message;
-       error_message << "The number of data from the accelerometer and the gyro are different\n"
-                     << "n_acc_data: " << n_acc_data << "\n"
-                     << "n_gyro_data: " << n_gyro_data << "\n"
-                     << std::endl;
-       throw ChapchomLibError(error_message.str(),
-                              CHAPCHOM_CURRENT_FUNCTION,
-                              CHAPCHOM_EXCEPTION_LOCATION);
-      }
      
      // --------------------------
      // Get the Euler angles
@@ -517,37 +700,9 @@ int main(int argc, char *argv[])
      // Euler-rates
      fill_angular_velocities_to_euler_rates_matrix(A, euler_angles);
      
-     // Get the current reading from sensors     
-     // Gyro
-     std::vector<double> gyro_t = odes.get_angular_rates(i);
-     // Copy the data into a 3x3 vector
-     std::vector<double> gyro(DIM);
-     for (unsigned j = 0; j < DIM; j++)
-      {
-       gyro[j] = gyro_t[j+1];
-#ifdef GYRO_THRESHOLD
-       if (fabs(gyro[j]) < GYRO_THRESHOLD)
-        {
-         gyro[j] = 0.0;
-        }
-#endif // #ifdef GYRO_THRESHOLD
-#ifdef GYRO_AVERAGE
-       gyro_average[j]+=gyro[j];
-       gyro[j]=gyro_average[j]/static_cast<double>(i+1);
-#endif // #ifdef GYRO_AVERAGE
-       
-       //gyro[j] = 0.0;
-# if 0 // TODO: tachidok, what if we set the yaw data to 0.0 dps
-       if (j == 2)
-        {
-         gyro[j] = 0.0;
-        }
-#endif
-      }
-     
      // Store the Euler-angles rates
      std::vector<double> euler_angular_rates(DIM);
-     multiply_matrix_times_vector(A, gyro, euler_angular_rates);
+     multiply_matrix_times_vector(A, gyro_filtered[i], euler_angular_rates);
      //euler_angular_rates[0] = 0.0;
      //euler_angular_rates[1] = 0.0;
      //euler_angular_rates[2] = 0.0;
@@ -559,47 +714,6 @@ int main(int argc, char *argv[])
      // Process the acceleration data
      // ----------------------------------------------------------
      // ----------------------------------------------------------     
-     // Get the readings from sensors
-     // Accelerations
-     std::vector<double> acc_t = odes.get_accelerations(i);
-     // Copy the data into a 3x3 vector
-     std::vector<double> acc(DIM);
-     // ... and multiply by 9.81 since the data from the gyro are
-     // given in 'g' units
-     for (unsigned j = 0; j < DIM; j++)
-      {
-       acc[j] = acc_t[j+1] * GRAVITY;
-#ifdef ACCELERATION_THRESHOLD
-       if (fabs(acc[j]) < ACCELERATION_THRESHOLD)
-        {
-         acc[j] = 0.0;
-        }
-#endif // #ifdef ACCELERATION_THRESHOLD
-#ifdef ACCELEROMETER_AVERAGE
-       acc_average[j]+=acc[j];
-       acc[j]=acc_average[j]/static_cast<double>(i+1);
-#endif // #ifdef ACCELEROMETER_AVERAGE
-      }
-     
-#ifdef CORRECT_ACCELEROMETER_MISALIGNMENT
-     // Correct accelerations due to misalignment on device
-     {
-      double tmp = acc[0];
-      acc[0] = acc[1];
-      acc[1] = tmp*(-1.0);
-     }
-#endif // #ifdef CORRECT_ACCELEROMETER_MISALIGNMENT
-     
-#if 0 // TODO
-     // Filter accelerations data?
-     for (unsigned j = 0; j < DIM; j++)
-      {
-       if (fabs(acc[j] - LOWER_THRESHOLD) < 0.0)
-        {
-         acc[j] = 0.0;
-        }
-      }
-#endif // #if 0
      
      // Get yaw correction
      //const double bias_yaw = -0.95 * 180.0/M_PI;
@@ -632,16 +746,18 @@ int main(int argc, char *argv[])
      //acc_angles[0] = atan2(acc_inertial[1], acc_inertial[2]);
      //acc_angles[1] = atan2(-acc_inertial[0], sqrt(acc_inertial[1]*acc_inertial[1]+acc_inertial[2]*acc_inertial[2]));
      //acc_angles[2] = atan2(acc_inertial[1], acc_inertial[0]);
-   
-     acc_angles[0] = atan2(acc[1], acc[2]);
-     acc_angles[1] = atan2(-acc[0], sqrt(acc[1]*acc[1]+acc[2]*acc[2]));
+     
+     acc_angles[0] = atan2(acc_filtered[i][1], acc_filtered[i][2]);
+     acc_angles[1] =
+      atan2(-acc_filtered[i][0], sqrt(acc_filtered[i][1]*acc_filtered[i][1]+acc_filtered[i][2]*acc_filtered[i][2]));
      //acc_angles[2] = atan2(acc[2], sqrt(acc[0]*acc[0]+acc[2]*acc[2]));
-     acc_angles[2] = atan2(sqrt(acc[0]*acc[0]+acc[1]*acc[1]), acc[0]); // HERE
-   
+     acc_angles[2] =
+      atan2(sqrt(acc_filtered[i][0]*acc_filtered[i][0]+acc_filtered[i][1]*acc_filtered[i][1]), acc_filtered[i][0]); // HERE
+     
      //acc_angles[2] = atan2(acc[1], acc[0]);
      //acc_angles[2] = atan2(-acc[0], sqrt(acc[0]*acc[0]+acc[1]*acc[1]+acc[2]*acc[2]));
      //acc_angles[2] = (atan2(acc[1], acc[0]) + atan2(-acc[0], sqrt(acc[0]*acc[0]+acc[1]*acc[1]+acc[2]*acc[2]))) / 2.0;
-   
+     
      // Update filtered Euler angles
      y[0][6] = alpha * y[0][6] + (1.0 - alpha) * acc_angles[0];
      y[0][7] = alpha * y[0][7] + (1.0 - alpha) * acc_angles[1];
@@ -650,7 +766,7 @@ int main(int argc, char *argv[])
      //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * (y[0][8] + yaw_correction);
      //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * acc_angles[2];
      //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * magnetometer[1];
-   
+     
      // --------------------------------------------------
      // Gravity compensation
      // --------------------------------------------------
@@ -660,10 +776,10 @@ int main(int argc, char *argv[])
      // Create the rotation matrices
      std::vector<std::vector<double> > R(DIM);
      std::vector<std::vector<double> > R_t(DIM);
-     for (unsigned i = 0; i < DIM; i++)
+     for (unsigned j = 0; j < DIM; j++)
       {
-       R[i].resize(DIM);
-       R_t[i].resize(DIM);
+       R[j].resize(DIM);
+       R_t[j].resize(DIM);
       }
      
      // Fill rotation matrices
@@ -677,23 +793,23 @@ int main(int argc, char *argv[])
      gravity[2] = GRAVITY;
      std::vector<double> body_frame_gravity(3, 0.0);
      multiply_matrix_times_vector(R, gravity, body_frame_gravity);//tachidok
-     for (unsigned i = 0; i < DIM; i++)
+     for (unsigned j = 0; j < DIM; j++)
       {
-       acc_inertial[i] = acc[i] - body_frame_gravity[i];
+       acc_inertial[j] = acc_filter[i][j] - body_frame_gravity[j];
       }
 #else
-     multiply_matrix_times_vector(R_t, acc, acc_inertial);//tachidok
+     multiply_matrix_times_vector(R_t, acc_filtered[i], acc_inertial);//tachidok
      // Substract gravity
      acc_inertial[2]-=GRAVITY;     
 #endif // #ifdef GRAVITY_TO_BODY_FRAME
      
 #if 0
      // Check whether inertial acceleration is meaningless
-     for (unsigned i = 0; i < DIM; i++)
+     for (unsigned j = 0; j < DIM; j++)
       {
-       if (fabs(acc_inertial[i]) < INERTIAL_ACCELERATION_THRESHOLD)
+       if (fabs(acc_inertial[j]) < INERTIAL_ACCELERATION_THRESHOLD)
         {
-         acc_inertial[i] = 0.0;
+         acc_inertial[j] = 0.0;
         }
       }
 #endif // #if 0
@@ -731,9 +847,9 @@ int main(int argc, char *argv[])
                       << std::endl;
      // Raw gyro
      outfile_raw_gyro << time
-                      << " " << gyro[0]
-                      << " " << gyro[1]
-                      << " " << gyro[2] << std::endl;
+                      << " " << gyro[i][0]
+                      << " " << gyro[i][1]
+                      << " " << gyro[i][2] << std::endl;
      // Euler angles rates
      outfile_euler_angles_rates << time
                                 << " " << euler_angular_rates[0]
@@ -741,9 +857,9 @@ int main(int argc, char *argv[])
                                 << " " << euler_angular_rates[2] << std::endl;     
      // Raw accelerations
      outfile_raw_acc << time
-                     << " " << acc[0]
-                     << " " << acc[1]
-                     << " " << acc[2] << std::endl;
+                     << " " << acc[i][0]
+                     << " " << acc[i][1]
+                     << " " << acc[i][2] << std::endl;
 #ifdef GRAVITY_TO_BODY_FRAME
      // Body frame gravity
      outfile_body_frame_gravity << time
@@ -770,16 +886,26 @@ int main(int argc, char *argv[])
                                      << " " << acc_angles[0]
                                      << " " << acc_angles[1]
                                      << " " << acc_angles[2] << std::endl;
-   
+     // Filtered gyro
+     outfile_filtered_gyro << time
+                           << " " << gyro_filtered[i][0]
+                           << " " << gyro_filtered[i][1]
+                           << " " << gyro_filtered[i][2] << std::endl;
+     // Filtered acc
+     outfile_filtered_acc << time
+                          << " " << acc_filtered[i][0]
+                          << " " << acc_filtered[i][1]
+                          << " " << acc_filtered[i][2] << std::endl;
+     
      std::cout << "t: " << time
                << " x-pos: " << y[0][0] << " x-vel: " << y[0][1]
                << " y-pos: " << y[0][2] << " y-vel: " << y[0][3]
                << " z-pos: " << y[0][4] << " z-vel: " << y[0][5]
                << " roll: " << y[0][6] << " pitch: " << y[0][7] << " yaw: " << y[0][8] << std::endl;
+     
+    } // for (i < n_acc_data)
    
-    }
-   
-  }
+  } // while (LOOP)
  
  std::cout << "[FINISHING UP] ... " << std::endl;
  
@@ -795,6 +921,8 @@ int main(int argc, char *argv[])
  outfile_intertial_acc.close();
  outfile_roll_pitch_yaw.close();
  outfile_roll_pitch_yaw_from_acc.close();
+ outfile_filtered_gyro.close();
+ outfile_filtered_acc.close();
  
  // Free memory
  delete integrator;
