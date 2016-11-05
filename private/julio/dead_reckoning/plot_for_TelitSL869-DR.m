@@ -111,16 +111,27 @@ my_filtered_gyro = importfile_TelitSL869DR_3columns('RESLT/filtered_gyro.dat', 1
 my_filtered_acc = importfile_TelitSL869DR_3columns('RESLT/filtered_acc.dat', 1, 6651);
 
 % putty_9_car_ride_tona_acatepec_inaoe_wait_large.log
-my_roll_pitch_yaw = importfile_TelitSL869DR_3columns('RESLT/roll_pitch_yaw.dat', 1, 7370);
 my_raw_gyro = importfile_TelitSL869DR_3columns('RESLT/raw_gyro.dat', 1, 7370);
-my_euler_angles_rates = importfile_TelitSL869DR_3columns('RESLT/euler_angles_rates.dat', 1, 7370);
 my_raw_accelerations = importfile_TelitSL869DR_3columns('RESLT/raw_accelerations.dat', 1, 7370);
-my_roll_pitch_yaw_from_acc = importfile_TelitSL869DR_3columns('RESLT/roll_pitch_yaw_from_acc.dat', 1, 7370);
-inertial_acceleration = importfile_TelitSL869DR_3columns('RESLT/inertial_accelerations.dat', 1, 7370);
-my_position = importfile_TelitSL869DR_3columns('RESLT/position.dat', 1, 7370);
-my_velocity = importfile_TelitSL869DR_4columns('RESLT/velocity.dat', 1, 7370);
-my_filtered_gyro = importfile_TelitSL869DR_3columns('RESLT/filtered_gyro.dat', 1, 7370);
-my_filtered_acc = importfile_TelitSL869DR_3columns('RESLT/filtered_acc.dat', 1, 7370);
+
+my_roll_pitch_yaw = importfile_TelitSL869DR_3columns('RESLT/roll_pitch_yaw.dat', 1, 7901);
+my_euler_angles_rates = importfile_TelitSL869DR_3columns('RESLT/euler_angles_rates.dat', 1, 7901);
+my_roll_pitch_yaw_from_acc = importfile_TelitSL869DR_3columns('RESLT/roll_pitch_yaw_from_acc.dat', 1, 7901);
+inertial_acceleration = importfile_TelitSL869DR_3columns('RESLT/inertial_accelerations.dat', 1, 7901);
+my_position = importfile_TelitSL869DR_3columns('RESLT/position.dat', 1, 7901);
+my_velocity = importfile_TelitSL869DR_4columns('RESLT/velocity.dat', 1, 7901);
+my_filtered_gyro = importfile_TelitSL869DR_3columns('RESLT/filtered_gyro.dat', 1, 7901);
+my_filtered_acc = importfile_TelitSL869DR_3columns('RESLT/filtered_acc.dat', 1, 7901);
+
+% my_roll_pitch_yaw = importfile_TelitSL869DR_3columns('RESLT/roll_pitch_yaw.dat', 1, 75338);
+% my_euler_angles_rates = importfile_TelitSL869DR_3columns('RESLT/euler_angles_rates.dat', 1, 75338);
+% my_roll_pitch_yaw_from_acc = importfile_TelitSL869DR_3columns('RESLT/roll_pitch_yaw_from_acc.dat', 1, 75338);
+% inertial_acceleration = importfile_TelitSL869DR_3columns('RESLT/inertial_accelerations.dat', 1, 75338);
+% my_position = importfile_TelitSL869DR_3columns('RESLT/position.dat', 1, 75338);
+% my_velocity = importfile_TelitSL869DR_4columns('RESLT/velocity.dat', 1, 75338);
+% my_filtered_gyro = importfile_TelitSL869DR_3columns('RESLT/filtered_gyro.dat', 1, 75338);
+% my_filtered_acc = importfile_TelitSL869DR_3columns('RESLT/filtered_acc.dat', 1, 75338);
+
 
 %% Euler angles
 % Processed roll
@@ -379,8 +390,9 @@ ylabel('Magnitude')
 legend('Frequency', 'Location', 'NorthWest')
 
 %% Designing a filter for the Gyro data
-cut_off_frequency = 1.0/Fs/2; % Normalised to Nyquist frequency which is half the sampling rate
-order = 80; % The order of the filter
+cut_off_frequency = 0.5/Fs/2; % Normalised to Nyquist frequency which is half the sampling rate
+order = 1; % The order of the filter
+%order = 128; % The order of the filter
 % Impose response of the low-pass filter
 h = fir1(order, cut_off_frequency);
 % Perform the convolution
@@ -442,8 +454,9 @@ ylabel('Magnitude')
 legend('Frequency', 'Location', 'NorthWest')
 
 %% Designing a filter for the Accelerometer data
-cut_off_frequency = 0.5/Fs/2; % Normalised to Nyquist frequency which is half the sampling rate
-order = 160; % The order of the filter
+cut_off_frequency = 0.25/Fs/2; % Normalised to Nyquist frequency which is half the sampling rate
+order = 8; % The order of the filter
+%order = 128; % The order of the filter
 % Impose response of the low-pass filter
 h = fir1(order, cut_off_frequency);
 % Perform the convolution
@@ -471,5 +484,3 @@ title('[Z] Filtered Accelerometer')
 xlabel('Time (s)')
 ylabel('z-acc')
 legend('Filtered acc z', 'Location', 'NorthWest')
-
-

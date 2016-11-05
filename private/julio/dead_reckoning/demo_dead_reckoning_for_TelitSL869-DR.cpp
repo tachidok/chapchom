@@ -18,7 +18,11 @@
 // The nmea decoder
 #include "cc_nmea_decoder.h"
 
+#define APPLY_CONVOLUTION
+#ifndef APPLY_CONVOLUTION
 //#define APPLY_LOW_PASS_FILTER
+#endif // #ifndef APPLY_CONVOLUTION
+
 #define CORRECT_ACCELEROMETER_MISALIGNMENT
 #define LOWER_THRESHOLD 1.0
 //#define LOWER_THRESHOLD 9.81 * 0.1
@@ -31,6 +35,67 @@
 //#define ACCELEROMETER_AVERAGE
 
 using namespace chapchom;
+
+void convolve(std::vector<std::vector<double> > &signal, double *kernel, const unsigned n_kernel,
+              std::vector<std::vector<double> > &convolved_signal)
+{
+ // Get the size of the signal
+ const unsigned n_signal = signal.size();
+ // Get the size of the convolved signal
+ const unsigned n_convolved_signal = convolved_signal.size();
+ if (n_signal + n_kernel - 1 != n_convolved_signal)
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "The size of the container for the convolved signal is not as expected\n"
+                 << "The size of the container for the convoled signal must be 'n_signal + n_kernel - 1'\n"
+                 << "but we got: "
+                 << "n_signal: " << n_signal
+                 << "n_kernel: " << n_kernel
+                 << "n_convolved_signal: " << n_convolved_signal << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+ // Loop over the size of the convolved_signal
+ for (unsigned i = 0; i < n_convolved_signal; i++)
+  {
+   // Initialise
+   convolved_signal[i].resize(DIM,0);
+   
+   unsigned k_min;
+   unsigned k_max;
+   
+   if (i >= n_kernel - 1)
+    {
+     k_min = i - (n_kernel - 1);
+    }
+   else
+    {
+     k_min = 0;
+    }
+
+   if (i < n_signal - 1)
+    {
+     k_max = i;
+    }
+   else
+    {
+     k_max = n_signal - 1;
+    }
+   
+   for (unsigned k = k_min; k <= k_max; k++)
+    {
+     for (unsigned j = 0; j < DIM; j++)
+      {
+       convolved_signal[i][j] += signal[k][j] * kernel[i - k];
+      }
+    }
+   
+  } // for (i < limit)
+ 
+}
 
 // ===================================================================
 // Low pass filter based on frequency. Took from
@@ -520,6 +585,23 @@ int main(int argc, char *argv[])
   {
    A[i].resize(DIM);
   }
+
+#ifdef APPLY_CONVOLUTION
+ // The coefficients of the kernel signal to convolve with the
+ // gyro data
+ const unsigned n_kernel_gyro = 2;
+ double kernel_gyro[] = {0.5, 0.5};
+ //double kernel_gyro[] = {0.0180725752199348,	0.0486650111180301,	0.122661837112582,	0.196816952600182,	0.227567247898542,	0.196816952600182,	0.122661837112582,	0.0486650111180301,	0.0180725752199348};
+ //const unsigned n_kernel_gyro = 129;
+ //double kernel_gyro[] = {-9.47585691386120e-05,	-7.29304779158937e-05,	-5.05386508556805e-05,	-2.65833997051733e-05,	6.61137382755088e-20,	3.03329041744814e-05,	6.55841785852153e-05	,0.000106960429148646	,0.000155695659407566	,0.000213040436431548	,0.000280250651693621	,0.000358575968081660	,0.000449248048059736	,0.000553468661062266	,0.000672397770449190	,0.000807141701747256	,0.000958741494431980	,0.00112816153915569	,0.00131627860109552	,0.00152387132798545	,0.00175161033842022	,0.00200004898219590	,0.00226961485980898	,0.00256060218280733	,0.00287316505051460	,0.00320731171178141	,0.00356289987290830	,0.00393963310479609	,0.00433705839377558	,0.00475456487152137	,0.00519138375003820	,0.00564658947800204	,0.00611910212482348	,0.00660769098876090	,0.00711097941533180	,0.00762745080223724	,0.00815545575711348	,0.00869322036474132	,0.00923885551096083	,0.00979036720153900	,0.0103456678056983	,0.0109025881460104	,0.0114588903489595	,0.0120122813637566	,0.0125604270509851	,0.0131009667374507	,0.0136315281292297	,0.0141497424713995	,0.0146532598403366	,0.0151397644527943	,0.0156069898752445	,0.0160527340172033	,0.0164748737934435	,0.0168713793421374	,0.0172403276890433	,0.0175799157518295	,0.0178884725834923	,0.0181644707595238	,0.0184065368199783	,0.0186134606848221	,0.0187842039688666	,0.0189179071311140	,0.0190138954024226	,0.0190716834449401	,0.0190909787066908	,0.0190716834449401	,0.0190138954024226	,0.0189179071311140	,0.0187842039688666	,0.0186134606848221	,0.0184065368199783	,0.0181644707595238	,0.0178884725834923	,0.0175799157518295	,0.0172403276890433	,0.0168713793421374	,0.0164748737934435	,0.0160527340172033	,0.0156069898752445	,0.0151397644527943	,0.0146532598403366	,0.0141497424713995	,0.0136315281292297	,0.0131009667374507	,0.0125604270509851	,0.0120122813637566	,0.0114588903489595	,0.0109025881460104	,0.0103456678056983	,0.00979036720153900	,0.00923885551096083	,0.00869322036474132	,0.00815545575711348	,0.00762745080223724	,0.00711097941533180	,0.00660769098876090	,0.00611910212482348	,0.00564658947800204	,0.00519138375003820	,0.00475456487152137	,0.00433705839377558	,0.00393963310479609	,0.00356289987290830	,0.00320731171178141	,0.00287316505051460	,0.00256060218280733	,0.00226961485980898	,0.00200004898219590	,0.00175161033842022	,0.00152387132798545	,0.00131627860109552	,0.00112816153915569	,0.000958741494431980	,0.000807141701747256	,0.000672397770449190	,0.000553468661062266	,0.000449248048059736	,0.000358575968081660	,0.000280250651693621	,0.000213040436431548	,0.000155695659407566	,0.000106960429148646,	6.55841785852153e-05,	3.03329041744814e-05,	6.61137382755088e-20,	-2.65833997051733e-05,	-5.05386508556805e-05,	-7.29304779158937e-05,	-9.47585691386120e-05};
+ 
+ // The coefficients of the kernel signal to convolve with the
+ // accelerometer data
+ const unsigned n_kernel_acc = 2;
+ double kernel_acc[] = {0.5, 0.5};
+ //const unsigned n_kernel_acc = 129;
+ //double kernel_acc[] = {0.000739036637028957	,0.000757788135204652	,0.000787237041411358	,0.000827891733174026	,0.000880223376668039	,0.000944663244269906	,0.00102160017805492	,0.00111137821198314	,0.00121429436487435	,0.00133059661557171	,0.00146048207093558	,0.00160409533649698	,0.00176152709873789	,0.00193281292705652	,0.00211793230252516	,0.00231680787955838	,0.00252930498558751	,0.00275523136278518	,0.00299433715480888	,0.00324631514043770	,0.00351080121486835	,0.00378737511831928	,0.00407556141047128	,0.00437483068815407	,0.00468460104257638	,0.00500423975129759	,0.00533306519905686	,0.00567034902051595	,0.00601531845694027	,0.00636715891784335	,0.00672501673765777	,0.00708800211657610	,0.00745519223383140	,0.00782563452086446	,0.00819835008105641	,0.00857233724199582	,0.00894657522560142	,0.00932002792083887	,0.00969164774325496	,0.0100603795651087	,0.0104251646995068	,0.0107849449216551	,0.0111386665101156	,0.0114852842908170	,0.0118237656665015	,0.0121530946143036	,0.0124722756342513	,0.0127803376316489	,0.0130763377165528	,0.0133593649038748	,0.0136285436980510	,0.0138830375466895	,0.0141220521481554	,0.0143448385986699	,0.0145506963651813	,0.0147389760710120	,0.0149090820820920	,0.0150604748824498	,0.0151926732285482	,0.0153052560730131	,0.0153978642493105	,0.0154702019099717	,0.0155220377120476	,0.0155532057445787	,0.0155636061940036	,0.0155532057445787	,0.0155220377120476	,0.0154702019099717	,0.0153978642493105	,0.0153052560730131	,0.0151926732285482	,0.0150604748824498	,0.0149090820820920	,0.0147389760710120	,0.0145506963651813	,0.0143448385986699	,0.0141220521481554	,0.0138830375466895	,0.0136285436980510	,0.0133593649038748	,0.0130763377165528	,0.0127803376316489	,0.0124722756342513	,0.0121530946143036	,0.0118237656665015	,0.0114852842908170	,0.0111386665101156	,0.0107849449216551	,0.0104251646995068	,0.0100603795651087	,0.00969164774325496	,0.00932002792083887	,0.00894657522560142	,0.00857233724199582	,0.00819835008105641	,0.00782563452086446	,0.00745519223383140	,0.00708800211657610	,0.00672501673765777	,0.00636715891784335	,0.00601531845694027	,0.00567034902051595	,0.00533306519905686	,0.00500423975129759	,0.00468460104257638	,0.00437483068815407	,0.00407556141047128	,0.00378737511831928	,0.00351080121486835	,0.00324631514043770	,0.00299433715480888	,0.00275523136278518	,0.00252930498558751	,0.00231680787955838	,0.00211793230252516	,0.00193281292705652	,0.00176152709873789	,0.00160409533649698	,0.00146048207093558	,0.00133059661557171	,0.00121429436487435	,0.00111137821198314	,0.00102160017805492	,0.000944663244269906	,0.000880223376668039	,0.000827891733174026	,0.000787237041411358	,0.000757788135204652	,0.000739036637028957};
+#endif // #ifdef APPLY_CONVOLUTION
  
  // -----------------------------------------------------------------------------
  // Initialise
@@ -584,16 +666,27 @@ int main(int argc, char *argv[])
    // ------------------------------------------------------------------
    // Copy the data into a 3x3 vector
    std::vector<std::vector<double> > gyro(n_gyro_data);
+#ifdef APPLY_CONVOLUTION
+   // Store the gyro-filtered data
+   std::vector<std::vector<double> > gyro_filtered(n_gyro_data + n_kernel_gyro - 1);
+#else
    // Store the gyro-filtered data
    std::vector<std::vector<double> > gyro_filtered(n_gyro_data);
+#endif // #ifdef APPLY_CONVOLUTION
    // Copy the data into a 3x3 vector
    std::vector<std::vector<double> > acc(n_acc_data);
+#ifdef APPLY_CONVOLUTION
+   // Store the acc-filtered data
+   std::vector<std::vector<double> > acc_filtered(n_acc_data + n_kernel_acc - 1);
+#else
    // Store the acc-filtered data
    std::vector<std::vector<double> > acc_filtered(n_acc_data);
+#endif // #ifdef APPLY_CONVOLUTION
    
-   // The step size is given by the number of data reported in a second
-   h = 1.0 / n_acc_data;   
-   
+   // Initial time at reading stage
+   double time_read_stage = time;
+   // The step size is given by the number of data reported in a second   
+   double h_read_stage = 1.0 / n_acc_data;
    for (unsigned i = 0; i < n_acc_data; i++)
     {
      // Resize containers
@@ -665,21 +758,48 @@ int main(int argc, char *argv[])
      }
 #endif // #ifdef CORRECT_ACCELEROMETER_MISALIGNMENT
      
+     // Increase the time at the reading stage
+     time_read_stage+=h_read_stage;
+     
+     // -----------------
+     // Output data
+     // -----------------
+     
+     // Raw gyro
+     outfile_raw_gyro << time_read_stage
+                      << " " << gyro[i][0]
+                      << " " << gyro[i][1]
+                      << " " << gyro[i][2] << std::endl;     
+     // Raw accelerations
+     outfile_raw_acc << time_read_stage
+                     << " " << acc[i][0]
+                     << " " << acc[i][1]
+                     << " " << acc[i][2] << std::endl;
+     
     } // for (i < n_acc_data)
    
    // ------------------------------------------------------
    // Apply low pass filter to gyro and acceleration data
    // ------------------------------------------------------
+   
+#ifdef APPLY_CONVOLUTION
+   convolve(gyro, kernel_gyro, n_kernel_gyro, gyro_filtered);
+   convolve(acc, kernel_acc, n_kernel_acc, acc_filtered);
+#else
    const double sample_rate = 15;
    const double cut_off_frequency_gyro = 0.1;
    const double cut_off_frequency_acc = 0.01;
-   
    // Apply the filter
    low_pass_filter_frequency(gyro, gyro_filtered, cut_off_frequency_gyro, sample_rate);
    low_pass_filter_frequency(acc, acc_filtered, cut_off_frequency_acc, sample_rate);
+#endif
+
+   const unsigned n_acc_filtered = acc_filtered.size();
+   // The step size is given by the number of data reported in a second
+   h = 1.0 / n_acc_filtered;
    
    // Process data
-   for (unsigned i = 0; i < n_acc_data; i++)
+   for (unsigned i = 0; i < n_acc_filtered; i++)
     {
      // ----------------------------------------------------------
      // ----------------------------------------------------------
@@ -845,21 +965,11 @@ int main(int argc, char *argv[])
       //                      << " " << std::sqrt(y[0][1] * y[0][1] + y[0][3] * y[0][3] + y[0][5] * y[0][5])
                       << " " << std::sqrt(y[0][1] * y[0][1] + y[0][3] * y[0][3])
                       << std::endl;
-     // Raw gyro
-     outfile_raw_gyro << time
-                      << " " << gyro[i][0]
-                      << " " << gyro[i][1]
-                      << " " << gyro[i][2] << std::endl;
      // Euler angles rates
      outfile_euler_angles_rates << time
                                 << " " << euler_angular_rates[0]
                                 << " " << euler_angular_rates[1]
-                                << " " << euler_angular_rates[2] << std::endl;     
-     // Raw accelerations
-     outfile_raw_acc << time
-                     << " " << acc[i][0]
-                     << " " << acc[i][1]
-                     << " " << acc[i][2] << std::endl;
+                                << " " << euler_angular_rates[2] << std::endl;
 #ifdef GRAVITY_TO_BODY_FRAME
      // Body frame gravity
      outfile_body_frame_gravity << time
