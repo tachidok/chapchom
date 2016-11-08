@@ -72,6 +72,9 @@ namespace chapchom
   inline std::vector<double> &get_euler_angles(const unsigned i)
   {return Euler_angles_data[i];}
   
+  /// Get the value of the true course (in degrees)
+  inline double true_course_in_degrees(){return True_course_in_degrees;}
+  
   // Get yaw correction as a function of time and the number of steps
   // per second
   const double get_yaw_correction(const double t,
@@ -140,6 +143,8 @@ namespace chapchom
   std::vector<std::vector<double> > Gyro_data;
   // Temporary storage for Euler angles data
   std::vector<std::vector<double> > Euler_angles_data;
+  // Temporary storage for true course (angle in degrees)
+  double True_course_in_degrees;
   
  };
  
