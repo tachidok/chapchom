@@ -530,6 +530,22 @@ int main(int argc, char *argv[])
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
  
+ // North-East velocity
+ char file_north_east_velocity_name[100];
+ sprintf(file_north_east_velocity_name, "./RESLT/north_east_velocity.dat");
+ std::ofstream outfile_north_east_velocity;
+ outfile_north_east_velocity.open(file_north_east_velocity_name, std::ios::out);
+ if (outfile_north_east_velocity.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_north_east_velocity_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
  // Raw gyro
  char file_raw_gyro_name[100];
  sprintf(file_raw_gyro_name, "./RESLT/raw_gyro.dat");
@@ -948,7 +964,7 @@ int main(int argc, char *argv[])
    
    const unsigned n_acc_filtered = acc_filtered.size();
    // The step size is given by the number of data reported in a second
-   h  = 1.0 / n_acc_filtered;
+   h  = 1.0 / static_cast<double>(n_acc_filtered);
    //h = 1.0 / 15.0;
    
    // Process data
@@ -979,6 +995,7 @@ int main(int argc, char *argv[])
      //euler_angular_rates[0] = 0.0;
      //euler_angular_rates[1] = 0.0;
      //euler_angular_rates[2] = 0.0;
+     
      // Set the Euler angular rates
      odes.euler_angular_rates() = euler_angular_rates;
      
@@ -1057,6 +1074,8 @@ int main(int argc, char *argv[])
      
      // Fill rotation matrices
      fill_rotation_matrices(R, R_t, y[0][6], y[0][7], y[0][8]); // tachidok
+     //fill_rotation_matrices(R, R_t, y[0][6], y[0][7], true_course_in_degrees * TO_RADIANS); // tachidok
+     //fill_rotation_matrices(R, R_t, y[0][6], y[0][7], 0.0); // tachidok     
      
      // Transform from the body reference frame to the inertial
      // reference frame
@@ -1090,11 +1109,15 @@ int main(int argc, char *argv[])
      // Set linear acceleration
      odes.linear_acceleration() = acc_inertial;
      
+     // Compute absolute velocities based on heading and relative velocities
+     odes.compute_north_east_velocities(y[0][1], y[0][3]);
+     
      // -----------------------------------------------------------------
      // Integrate
      // -----------------------------------------------------------------
-     const double h_integration_step = 1.0/15.0;
-     integrator->integrate_step(odes, h_integration_step, time, y);     
+     const double h_integration_step = 1.0/(1.0*15.0);
+     //const double h_integration_step = 1./(0.3*15.0);
+     integrator->integrate_step(odes, h_integration_step, time, y);
      //integrator->integrate_step(odes, h, time, y);
      // Update data
      for (unsigned j = 0; j < n_odes; j++)
@@ -1108,9 +1131,14 @@ int main(int argc, char *argv[])
      // Output data
      // -----------------
      // Position
+     //outfile_position << time
+     //                 << " " << y[0][0]
+     //                 << " " << y[0][2]
+     //                 << " " << y[0][4] << std::endl;
+     // Consider that x+ points to north and y+ points to west
      outfile_position << time
+                      << " " << -y[0][2]
                       << " " << y[0][0]
-                      << " " << y[0][2]
                       << " " << y[0][4] << std::endl; 
      // Velocity
      outfile_velocity << time
@@ -1120,6 +1148,13 @@ int main(int argc, char *argv[])
       //                      << " " << std::sqrt(y[0][1] * y[0][1] + y[0][3] * y[0][3] + y[0][5] * y[0][5])
                       << " " << std::sqrt(y[0][1] * y[0][1] + y[0][3] * y[0][3])
                       << std::endl;
+     // North-East velocity
+     outfile_north_east_velocity << time
+                                 << " " << odes.north_velocity()
+                                 << " " << odes.east_velocity()
+      //<< " " << y[0][1]//odes.north_velocity()
+      //<< " " << y[0][3]//odes.east_velocity()
+                                 << std::endl;
      // Euler angles rates
      outfile_euler_angles_rates << time
                                 << " " << euler_angular_rates[0]
@@ -1178,6 +1213,7 @@ int main(int argc, char *argv[])
  // Close the output file
  outfile_position.close();
  outfile_velocity.close();
+ outfile_north_east_velocity.close();
  outfile_raw_gyro.close();
  outfile_euler_angles_rates.close();
  outfile_raw_acc.close();

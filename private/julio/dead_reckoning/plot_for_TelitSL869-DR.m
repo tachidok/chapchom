@@ -324,7 +324,15 @@ legend('Filtered acc', 'Location', 'NorthWest')
 %% Position
 % % Plot position
 figure
-plot(my_position(:, 2), my_position(:, 3) * 1/1000, 'b')
+plot(my_position(:, 2) * 1/1000, my_position(:, 3) * 1/1000, 'b*')
+title('Trajectory')
+xlabel('x (km)')
+ylabel('y (km)')
+legend('Trajectory', 'Location', 'NorthWest')
+
+% x-position
+figure
+plot(my_position(:, 2), my_position(:, 3) * 1/1000, 'b*')
 title('Trajectory')
 xlabel('x (km)')
 ylabel('y (km)')

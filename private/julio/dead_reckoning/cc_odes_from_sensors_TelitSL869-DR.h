@@ -49,6 +49,10 @@ namespace chapchom
   /// Get the values of the sensors at specific time
   bool get_sensors_lectures();
   
+  /// Computes north-east velocities
+  void compute_north_east_velocities(const double x_vel,
+                                     const double y_vel);
+  
   // Get the number of acceleration data
   inline const unsigned nacceleration_data()
   {return Acceleration_data.size();}
@@ -79,6 +83,12 @@ namespace chapchom
   // per second
   const double get_yaw_correction(const double t,
                                   const double n_steps_per_second);
+  
+  /// Get north velocity
+  inline double north_velocity() const {return North_velocity;}
+  
+  /// Get east velocity
+  inline double east_velocity() const {return East_velocity;}
   
   /// Set linear acceleration for current time
   inline std::vector<double> &linear_acceleration() {return Linear_acceleration;}
@@ -130,6 +140,10 @@ namespace chapchom
   
   // File handler
   std::ifstream Input_file;
+  
+  // North-east velocities
+  double North_velocity;
+  double East_velocity;
   
   // Stores linear acceleration
   std::vector<double> Linear_acceleration;

@@ -22,7 +22,7 @@ namespace chapchom
  // ===================================================================
  CCODEsFromSensorsTelitSL869DR::
  CCODEsFromSensorsTelitSL869DR(const char *input_filename)
-  : ACODEs(9)
+  : ACODEs(9), North_velocity(0.0), East_velocity(0.0)
  {
   // Open the file
   Input_file.open(input_filename, std::ios::in);
@@ -198,6 +198,81 @@ namespace chapchom
   return true;
   
  }
+
+ // ===================================================================
+ /// Computes north-east velocities
+ // ===================================================================
+ void CCODEsFromSensorsTelitSL869DR::
+ compute_north_east_velocities(const double x_vel, const double y_vel)
+ {
+  // Get the direction angle (True_course_in_degrees) into radians
+  const double theta = True_course_in_degrees * TO_RADIANS;
+  // Based on the value of the angle proceed as follows
+  
+  if (theta >= 0) // Positive or equal to zero angle
+   {
+    if (theta >= M_PI) // Second quadrant
+     {      
+      East_velocity =
+       x_vel * sin(M_PI - theta) + y_vel * sin(theta - M_PI * 0.5);
+      
+      North_velocity =
+       -x_vel * cos(M_PI - theta) + y_vel * cos(theta - M_PI * 0.5);
+     }
+    else if (theta <= 2*M_PI) // First quadrant
+     {
+      East_velocity = x_vel * sin(theta) - y_vel * cos(theta);
+      North_velocity = x_vel * cos(theta) + y_vel * sin(theta);
+     }
+    else // The value of the angle is in the third or forth quadrant
+         // but it should have been represented as a negative angle
+     {
+      // Error message
+      std::ostringstream error_message;
+      error_message << "The angle is positive but larger than 2pi, we can\n"
+                    << "not handle that case since it should have been\n"
+                    << "represented as a negative angle\n"
+                    << "theta: " << theta
+                    << std::endl;
+      
+      throw ChapchomLibError(error_message.str(),
+                             CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
+     }
+    
+   }
+  else  // Negative angle
+   {
+    if (theta >= -M_PI) // Third quadrant
+     {
+      East_velocity = x_vel * sin(theta) - y_vel * cos(theta);
+      North_velocity = x_vel * cos(theta) + y_vel * sin(theta);
+     }
+    else if (theta >= -2*M_PI) // Fourth quadrant
+     {
+      East_velocity =
+       -x_vel * sin(M_PI + theta) + y_vel * cos(M_PI + theta);
+      North_velocity = -x_vel * cos(M_PI + theta) - y_vel * sin(M_PI + theta);
+     }
+    else // The value of the angle is in the first or second quadrant
+         // but it should have been represented as a positive angle
+     {
+      // Error message
+      std::ostringstream error_message;
+      error_message << "The angle is negative but smaller than -2pi, we can\n"
+                    << "not handle that case since it should have been\n"
+                    << "represented as a positive angle\n"
+                    << "theta: " << theta
+                    << std::endl;
+      
+      throw ChapchomLibError(error_message.str(),
+                             CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
+     }
+    
+   }
+  
+ }
  
  // ===================================================================
  // Get yaw correction as a function of time and the number of steps
@@ -260,10 +335,12 @@ namespace chapchom
   // dy[6] droll
   // dy[7] dpitch
   // dy[8] dyaw
- 
-  dy[0] = y[1];
+  
+  //dy[0] = y[1];
+  dy[0] = North_velocity;
   dy[1] = Linear_acceleration[0];
-  dy[2] = y[3];
+  //dy[2] = y[3];
+  dy[2] = East_velocity;
   dy[3] = Linear_acceleration[1];
   dy[4] = y[5];
   dy[5] = Linear_acceleration[2];
