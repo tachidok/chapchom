@@ -24,6 +24,7 @@
 #endif // #ifndef APPLY_CONVOLUTION
 
 #define CORRECT_ACCELEROMETER_MISALIGNMENT
+#define CORRECT_X_AXIS_POINTING_TO_FRONT
 #define LOWER_THRESHOLD 1.0
 //#define LOWER_THRESHOLD 9.81 * 0.1
 #define GRAVITY 9.81
@@ -837,8 +838,9 @@ int main(int argc, char *argv[])
    
    // Initial time at reading stage
    double time_read_stage = time;
-   // The step size is given by the number of data reported in a second   
-   double h_read_stage = 1.0 / n_acc_data;
+   // The step size is given by the number of data reported in a second
+   const double h_read_stage = 1.0 / n_acc_data;
+   // Get heading information
    double true_course_in_degrees = odes.true_course_in_degrees();
    for (unsigned i = 0; i < n_acc_data; i++)
     {
@@ -983,7 +985,8 @@ int main(int argc, char *argv[])
      std::vector<double> euler_angles(DIM);
      euler_angles[0] = y[0][6];
      euler_angles[1] = y[0][7];
-     euler_angles[2] = y[0][8];
+     euler_angles[2] = true_course_in_degrees * TO_RADIANS; // tachidok
+     //euler_angles[2] = y[0][8]; // tachidok
      
      // Fill the matrix that transforms from angular velocities to
      // Euler-rates
@@ -1073,8 +1076,8 @@ int main(int argc, char *argv[])
       }
      
      // Fill rotation matrices
-     fill_rotation_matrices(R, R_t, y[0][6], y[0][7], y[0][8]); // tachidok
-     //fill_rotation_matrices(R, R_t, y[0][6], y[0][7], true_course_in_degrees * TO_RADIANS); // tachidok
+     fill_rotation_matrices(R, R_t, y[0][6], y[0][7], y[0][8]);
+     //fill_rotation_matrices(R, R_t, -y[0][6], -y[0][7], -true_course_in_degrees * TO_RADIANS); // tachidok
      //fill_rotation_matrices(R, R_t, y[0][6], y[0][7], 0.0); // tachidok     
      
      // Transform from the body reference frame to the inertial
@@ -1084,7 +1087,7 @@ int main(int argc, char *argv[])
      std::vector<double> gravity(DIM, 0.0);
      gravity[2] = GRAVITY;
      std::vector<double> body_frame_gravity(DIM, 0.0);
-     multiply_matrix_times_vector(R, gravity, body_frame_gravity);//tachidok
+     multiply_matrix_times_vector(R, gravity, body_frame_gravity);
      for (unsigned j = 0; j < DIM; j++)
       {
        acc_inertial[j] = acc_filter[i][j] - body_frame_gravity[j];
@@ -1106,17 +1109,25 @@ int main(int argc, char *argv[])
       }
 #endif // #if 0
      
+#ifdef CORRECT_X_AXIS_POINTING_TO_FRONT
+     {
+      const double tmp = -acc_inertial[1];
+      acc_inertial[1] = acc_inertial[0];
+      acc_inertial[0] = tmp;
+     }
+#endif // #ifdef CORRECT_X_AXIS_POINTING_TO_FRONT
+     
      // Set linear acceleration
      odes.linear_acceleration() = acc_inertial;
      
      // Compute absolute velocities based on heading and relative velocities
-     odes.compute_north_east_velocities(y[0][1], y[0][3]);
+     //odes.compute_north_east_velocities(y[0][1], y[0][3]);
      
      // -----------------------------------------------------------------
      // Integrate
      // -----------------------------------------------------------------
-     const double h_integration_step = 1.0/(1.0*15.0);
-     //const double h_integration_step = 1./(0.3*15.0);
+     const double h_integration_step = 1.0/(1.0*15.0); // tachidok
+     //const double h_integration_step = 1.0/(0.2*15.0);
      integrator->integrate_step(odes, h_integration_step, time, y);
      //integrator->integrate_step(odes, h, time, y);
      // Update data
@@ -1131,15 +1142,15 @@ int main(int argc, char *argv[])
      // Output data
      // -----------------
      // Position
-     //outfile_position << time
-     //                 << " " << y[0][0]
-     //                 << " " << y[0][2]
-     //                 << " " << y[0][4] << std::endl;
-     // Consider that x+ points to north and y+ points to west
      outfile_position << time
-                      << " " << -y[0][2]
                       << " " << y[0][0]
-                      << " " << y[0][4] << std::endl; 
+                      << " " << y[0][2]
+                      << " " << y[0][4] << std::endl;
+     // Consider that x+ points to north and y+ points to west
+     //outfile_position << time
+     //                 << " " << -y[0][2]
+     //                 << " " << y[0][0]
+     //                 << " " << y[0][4] << std::endl; 
      // Velocity
      outfile_velocity << time
                       << " " << y[0][1]
@@ -1180,7 +1191,7 @@ int main(int argc, char *argv[])
                             << " " << y[0][6]
                             << " " << y[0][7]
       //<< " " << y[0][8] << std::endl;
-     << " " << true_course_in_degrees * TO_RADIANS << std::endl;
+                            << " " << true_course_in_degrees * TO_RADIANS << std::endl;
      
      // Euler angles from accelerations
      outfile_roll_pitch_yaw_from_acc << time

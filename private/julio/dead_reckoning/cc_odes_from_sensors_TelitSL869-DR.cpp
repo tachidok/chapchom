@@ -336,11 +336,11 @@ namespace chapchom
   // dy[7] dpitch
   // dy[8] dyaw
   
-  //dy[0] = y[1];
-  dy[0] = North_velocity;
+  dy[0] = y[1];
+  //dy[0] = North_velocity;
   dy[1] = Linear_acceleration[0];
-  //dy[2] = y[3];
-  dy[2] = East_velocity;
+  dy[2] = y[3];
+  //dy[2] = East_velocity;
   dy[3] = Linear_acceleration[1];
   dy[4] = y[5];
   dy[5] = Linear_acceleration[2];

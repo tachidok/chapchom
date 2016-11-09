@@ -111,6 +111,8 @@ my_filtered_gyro = importfile_TelitSL869DR_3columns('RESLT/filtered_gyro.dat', 1
 my_filtered_acc = importfile_TelitSL869DR_3columns('RESLT/filtered_acc.dat', 1, 6651);
 
 % putty_9_car_ride_tona_acatepec_inaoe_wait_large.log
+initial_time = 0;
+final_time = 550;
 n_input_data = 7370;
 %n_output_data = 7901;
 n_output_data = 6839; % order 2
@@ -142,6 +144,7 @@ my_filtered_acc = importfile_TelitSL869DR_3columns('RESLT/filtered_acc.dat', 1, 
 % Processed roll
 figure
 plot(my_roll_pitch_yaw_from_acc(:,1), my_roll_pitch_yaw_from_acc(:,2)*180.0/pi, 'g', my_roll_pitch_yaw(:,1), my_roll_pitch_yaw(:,2)*180.0/pi, 'r')
+axis([initial_time final_time -180 180])
 title('Euler angle [roll]')
 xlabel('Time (s)')
 ylabel('\phi (degrees)')
@@ -150,7 +153,7 @@ legend('Angle from accelerometer', 'Gyroscope and accelerometer fusion', 'Locati
 % Processed pitch
 figure
 plot(my_roll_pitch_yaw_from_acc(:,1), my_roll_pitch_yaw_from_acc(:,3)*180.0/pi, 'g', my_roll_pitch_yaw(:,1), my_roll_pitch_yaw(:,3)*180.0/pi, 'r')
-title('Euler angle [pitch]')
+axis([initial_time final_time -180 180])
 xlabel('Time(s)')
 ylabel('\theta (degrees)')
 legend('Angle from accelerometer', 'Gyroscope and accelerometer fusion', 'Location', 'NorthWest')
@@ -158,146 +161,178 @@ legend('Angle from accelerometer', 'Gyroscope and accelerometer fusion', 'Locati
 % Processed yaw
 figure
 plot(my_roll_pitch_yaw_from_acc(:,1), my_roll_pitch_yaw_from_acc(:,4)*180.0/pi, 'g', my_roll_pitch_yaw(:,1), my_roll_pitch_yaw(:,4)*180.0/pi, 'r')
+axis([initial_time final_time -180 180])
 title('Euler angle [yaw]')
 xlabel('Time(s)')
 ylabel('\theta (degrees)')
 legend('Angle from accelerometer', 'Gyroscope and accelerometer fusion', 'Location', 'NorthWest')
 
-%% Raw gyro and euler angles rates
-figure
-plot(my_raw_gyro(:, 1), my_raw_gyro(:, 2)*180.0/pi, 'b', my_euler_angles_rates(:,1), my_euler_angles_rates(:,2)*180.0/pi, '--r')
-title('[X] Gyro & [Roll] Euler angle rate')
-xlabel('Time (s)')
-ylabel('dps')
-legend('Raw gyro', '[Roll] Euler angle rate', 'Location', 'NorthWest')
-
-figure
-plot(my_raw_gyro(:, 1), my_raw_gyro(:, 3)*180.0/pi, 'b', my_euler_angles_rates(:,1), my_euler_angles_rates(:,3)*180.0/pi, '--r')
-title('[Y] Gyro & [Pitch] Euler angle rate')
-xlabel('Time (s)')
-ylabel('dps')
-legend('Raw gyro', '[Pitch] Euler angle rate', 'Location', 'NorthWest')
- 
-figure
-plot(my_raw_gyro(:, 1), my_raw_gyro(:, 4)*180.0/pi, 'b', my_euler_angles_rates(:,1), my_euler_angles_rates(:,4)*180.0/pi, '--r')
-title('[Z] Gyro & [Yaw] Euler angle rate')
-xlabel('Time (s)')
-ylabel('dps')
-legend('Raw gyro', '[Yaw] Euler angle rate', 'Location', 'NorthWest')
+% %% Raw gyro and euler angles rates
+% figure
+% plot(my_raw_gyro(:, 1), my_raw_gyro(:, 2)*180.0/pi, 'b', my_euler_angles_rates(:,1), my_euler_angles_rates(:,2)*180.0/pi, '--r')
+% title('[X] Gyro & [Roll] Euler angle rate')
+% xlabel('Time (s)')
+% ylabel('dps')
+% legend('Raw gyro', '[Roll] Euler angle rate', 'Location', 'NorthWest')
+% 
+% figure
+% plot(my_raw_gyro(:, 1), my_raw_gyro(:, 3)*180.0/pi, 'b', my_euler_angles_rates(:,1), my_euler_angles_rates(:,3)*180.0/pi, '--r')
+% title('[Y] Gyro & [Pitch] Euler angle rate')
+% xlabel('Time (s)')
+% ylabel('dps')
+% legend('Raw gyro', '[Pitch] Euler angle rate', 'Location', 'NorthWest')
+%  
+% figure
+% plot(my_raw_gyro(:, 1), my_raw_gyro(:, 4)*180.0/pi, 'b', my_euler_angles_rates(:,1), my_euler_angles_rates(:,4)*180.0/pi, '--r')
+% title('[Z] Gyro & [Yaw] Euler angle rate')
+% xlabel('Time (s)')
+% ylabel('dps')
+% legend('Raw gyro', '[Yaw] Euler angle rate', 'Location', 'NorthWest')
 
 %% Raw vs filtered gyro
 figure
-plot(my_raw_gyro(:, 1), my_raw_gyro(:, 2)*180.0/pi, 'b')
-title('[X] Raw gyro')
+plot(my_raw_gyro(:, 1), my_raw_gyro(:, 2)*180.0/pi, 'b', my_filtered_gyro(:, 1), my_filtered_gyro(:, 2)*180.0/pi, 'r')
+axis([initial_time final_time -40 40])
+title('[X] Gyro')
 xlabel('Time (s)')
 ylabel('dps')
-legend('Raw gyro', 'Location', 'NorthWest')
+legend('Raw gyro', 'Filtered gyro', 'Location', 'NorthWest')
 
 figure
-plot(my_raw_gyro(:, 1), my_raw_gyro(:, 3)*180.0/pi, 'b')
-title('[Y] Raw gyro')
+plot(my_raw_gyro(:, 1), my_raw_gyro(:, 3)*180.0/pi, 'b', my_filtered_gyro(:, 1), my_filtered_gyro(:, 3)*180.0/pi, 'r')
+axis([initial_time final_time -40 40])
+title('[Y] Gyro')
 xlabel('Time (s)')
 ylabel('dps')
-legend('Raw gyro', 'Location', 'NorthWest')
+legend('Raw gyro', 'Filtered gyro', 'Location', 'NorthWest')
  
 figure
-plot(my_raw_gyro(:, 1), my_raw_gyro(:, 4)*180.0/pi, 'b')
-title('[Z] Raw gyro')
+plot(my_raw_gyro(:, 1), my_raw_gyro(:, 4)*180.0/pi, 'b', my_filtered_gyro(:, 1), my_filtered_gyro(:, 4)*180.0/pi, 'r')
+axis([initial_time final_time -40 40])
+title('[Z] Gyro')
 xlabel('Time (s)')
 ylabel('dps')
-legend('Raw gyro', 'Location', 'NorthWest')
+legend('Raw gyro', 'Filtered gyro', 'Location', 'NorthWest')
 
-figure
-plot(my_filtered_gyro(:, 1), my_filtered_gyro(:, 2)*180.0/pi, 'r')
-%plot(my_raw_gyro(:, 1), my_raw_gyro(:, 3)*180.0/pi, 'b', my_filtered_gyro(:, 1), my_filtered_gyro(:, 3)*180.0/pi, 'r')
-title('[X] Filtered gyro')
-xlabel('Time (s)')
-ylabel('dps')
-legend('Filtered gyro', 'Location', 'NorthWest')
-
-figure
-plot(my_filtered_gyro(:, 1), my_filtered_gyro(:, 3)*180.0/pi, 'r')
-%plot(my_raw_gyro(:, 1), my_raw_gyro(:, 3)*180.0/pi, 'b', my_filtered_gyro(:, 1), my_filtered_gyro(:, 3)*180.0/pi, 'r')
-title('[Y] Filtered gyro')
-xlabel('Time (s)')
-ylabel('dps')
-legend('Filtered gyro', 'Location', 'NorthWest')
- 
-figure
-plot(my_filtered_gyro(:, 1), my_filtered_gyro(:, 4)*180.0/pi, 'r')
-%plot(my_raw_gyro(:, 1), my_raw_gyro(:, 4)*180.0/pi, 'b', my_filtered_gyro(:, 1), my_filtered_gyro(:, 4)*180.0/pi, 'r')
-title('[Z]  Filtered gyro')
-xlabel('Time (s)')
-ylabel('dps')
-legend('Filtered gyro', 'Location', 'NorthWest')
-
-%% Raw and inertial acceleration
-figure
-plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 2), 'b', inertial_acceleration(:, 1), inertial_acceleration(:, 2), 'r')
-title('[X] Acceleration')
-xlabel('Time (s)')
-ylabel('x-acceleration')
-legend('Raw acceleration', 'Inertial acceleration', 'Location', 'NorthWest')
- 
-figure
-plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 3), 'b', inertial_acceleration(:, 1), inertial_acceleration(:, 3), 'r')
-title('[Y] Acceleration')
-xlabel('Time (s)')
-ylabel('y-acceleration')
-legend('Raw acceleration', 'Inertial acceleration', 'Location', 'NorthWest')
- 
-figure
-plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 4), 'b', inertial_acceleration(:, 1), inertial_acceleration(:, 4), 'r')
-title('[Z] Acceleration')
-xlabel('Time (s)')
-ylabel('z-acceleration')
-legend('Raw acceleration', 'Inertial acceleration', 'Location', 'NorthWest')
+% figure
+% plot(my_filtered_gyro(:, 1), my_filtered_gyro(:, 2)*180.0/pi, 'r')
+% %plot(my_raw_gyro(:, 1), my_raw_gyro(:, 3)*180.0/pi, 'b', my_filtered_gyro(:, 1), my_filtered_gyro(:, 3)*180.0/pi, 'r')
+% title('[X] Filtered gyro')
+% xlabel('Time (s)')
+% ylabel('dps')
+% legend('Filtered gyro', 'Location', 'NorthWest')
+% 
+% figure
+% plot(my_filtered_gyro(:, 1), my_filtered_gyro(:, 3)*180.0/pi, 'r')
+% %plot(my_raw_gyro(:, 1), my_raw_gyro(:, 3)*180.0/pi, 'b', my_filtered_gyro(:, 1), my_filtered_gyro(:, 3)*180.0/pi, 'r')
+% title('[Y] Filtered gyro')
+% xlabel('Time (s)')
+% ylabel('dps')
+% legend('Filtered gyro', 'Location', 'NorthWest')
+%  
+% figure
+% plot(my_filtered_gyro(:, 1), my_filtered_gyro(:, 4)*180.0/pi, 'r')
+% %plot(my_raw_gyro(:, 1), my_raw_gyro(:, 4)*180.0/pi, 'b', my_filtered_gyro(:, 1), my_filtered_gyro(:, 4)*180.0/pi, 'r')
+% title('[Z]  Filtered gyro')
+% xlabel('Time (s)')
+% ylabel('dps')
+% legend('Filtered gyro', 'Location', 'NorthWest')
 
 %% Raw vs filtered acceleration
 figure
-plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 2), 'b')
+plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 2), 'b', my_filtered_acc(:, 1), my_filtered_acc(:, 2), 'r')
+axis([initial_time final_time -5 15])
 title('[X] Acceleration')
 xlabel('Time (s)')
-ylabel('x-acceleration')
-legend('Raw acceleration',  'Location', 'NorthWest')
+ylabel('x-acceleration (m/s^2)')
+legend('Raw acceleration', 'Filtered acceleration', 'Location', 'NorthWest')
 
 figure
-plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 3), 'b')
+plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 3), 'b', my_filtered_acc(:, 1), my_filtered_acc(:, 3), 'r')
+axis([initial_time final_time -5 15])
 title('[Y] Acceleration')
 xlabel('Time (s)')
-ylabel('y-acceleration')
-legend('Raw acceleration', 'Location', 'NorthWest')
+ylabel('y-acceleration (m/s^2)')
+legend('Raw acceleration', 'Filtered acceleration', 'Location', 'NorthWest')
  
 figure
-plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 4), 'b')
+plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 4), 'b', my_filtered_acc(:, 1), my_filtered_acc(:, 4), 'r')
+axis([initial_time final_time -5 15])
 title('[Z] Acceleration')
 xlabel('Time (s)')
-ylabel('z-acceleration')
-legend('Raw acceleration',  'Location', 'NorthWest')
+ylabel('z-acceleration (m/s^2)')
+legend('Raw acceleration',  'Filtered acceleration', 'Location', 'NorthWest')
 
-figure
-plot(my_filtered_acc(:, 1), my_filtered_acc(:, 2), 'r')
-%plot(my_filtered_acc(:, 1), my_filtered_acc(:, 3)*180.0/pi, 'b', my_filtered_acc(:, 1), my_filtered_acc(:, 3)*180.0/pi, 'r')
-title('[X] Filtered acc')
-xlabel('Time (s)')
-ylabel('x-acceleration')
-legend('Filtered acc', 'Location', 'NorthWest')
+% figure
+% plot(my_filtered_acc(:, 1), my_filtered_acc(:, 2), 'r')
+% %plot(my_filtered_acc(:, 1), my_filtered_acc(:, 3)*180.0/pi, 'b', my_filtered_acc(:, 1), my_filtered_acc(:, 3)*180.0/pi, 'r')
+% title('[X] Filtered acc')
+% xlabel('Time (s)')
+% ylabel('x-acceleration')
+% legend('Filtered acc', 'Location', 'NorthWest')
+% 
+% figure
+% plot(my_filtered_acc(:, 1), my_filtered_acc(:, 3), 'r')
+% %plot(my_filtered_acc(:, 1), my_filtered_acc(:, 3)*180.0/pi, 'b', my_filtered_acc(:, 1), my_filtered_acc(:, 3)*180.0/pi, 'r')
+% title('[Y] Filtered acc')
+% xlabel('Time (s)')
+% ylabel('y-acceleration')
+% legend('Filtered acc', 'Location', 'NorthWest')
+%  
+% figure
+% plot(my_filtered_acc(:, 1), my_filtered_acc(:, 4), 'r')
+% %plot(my_filtered_acc(:, 1), my_filtered_acc(:, 4)*180.0/pi, 'b', my_filtered_acc(:, 1), my_filtered_acc(:, 4)*180.0/pi, 'r')
+% title('[Z]  Filtered acc')
+% xlabel('Time (s)')
+% ylabel('z-acceleration')
+% legend('Filtered acc', 'Location', 'NorthWest')
 
+% %% Raw and inertial acceleration
+% figure
+% plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 2), 'b', inertial_acceleration(:, 1), inertial_acceleration(:, 2), 'r')
+% title('[X] Acceleration')
+% xlabel('Time (s)')
+% ylabel('x-acceleration')
+% legend('Raw acceleration', 'Inertial acceleration', 'Location', 'NorthWest')
+%  
+% figure
+% plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 3), 'b', inertial_acceleration(:, 1), inertial_acceleration(:, 3), 'r')
+% title('[Y] Acceleration')
+% xlabel('Time (s)')
+% ylabel('y-acceleration')
+% legend('Raw acceleration', 'Inertial acceleration', 'Location', 'NorthWest')
+%  
+% figure
+% plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 4), 'b', inertial_acceleration(:, 1), inertial_acceleration(:, 4), 'r')
+% title('[Z] Acceleration')
+% xlabel('Time (s)')
+% ylabel('z-acceleration')
+% legend('Raw acceleration', 'Inertial acceleration', 'Location', 'NorthWest')
+
+%% Filtered and inertial acceleration
 figure
-plot(my_filtered_acc(:, 1), my_filtered_acc(:, 3), 'r')
-%plot(my_filtered_acc(:, 1), my_filtered_acc(:, 3)*180.0/pi, 'b', my_filtered_acc(:, 1), my_filtered_acc(:, 3)*180.0/pi, 'r')
-title('[Y] Filtered acc')
+plot(my_filtered_acc(:, 1), -my_filtered_acc(:, 3), 'b', inertial_acceleration(:, 1), inertial_acceleration(:, 2), 'r')
+title('[X] Acceleration')
+axis([initial_time final_time -5 15])
 xlabel('Time (s)')
-ylabel('y-acceleration')
-legend('Filtered acc', 'Location', 'NorthWest')
+ylabel('x-acceleration (m/s^2)')
+legend('Filtered acceleration', 'Inertial acceleration', 'Location', 'NorthWest')
  
 figure
-plot(my_filtered_acc(:, 1), my_filtered_acc(:, 4), 'r')
-%plot(my_filtered_acc(:, 1), my_filtered_acc(:, 4)*180.0/pi, 'b', my_filtered_acc(:, 1), my_filtered_acc(:, 4)*180.0/pi, 'r')
-title('[Z]  Filtered acc')
+plot(my_filtered_acc(:, 1), my_filtered_acc(:, 2), 'b', inertial_acceleration(:, 1), inertial_acceleration(:, 3), 'r')
+title('[Y] Acceleration')
+axis([initial_time final_time -5 15])
 xlabel('Time (s)')
-ylabel('z-acceleration')
-legend('Filtered acc', 'Location', 'NorthWest')
+ylabel('y-acceleration (m/s^2)')
+legend('Filtered acceleration', 'Inertial acceleration', 'Location', 'NorthWest')
+ 
+figure
+plot(my_filtered_acc(:, 1), my_filtered_acc(:, 4), 'b', inertial_acceleration(:, 1), inertial_acceleration(:, 4), 'r')
+title('[Z] Acceleration')
+axis([initial_time final_time -5 15])
+xlabel('Time (s)')
+ylabel('z-acceleration (m/s^2)')
+legend('Filtered acceleration', 'Inertial acceleration', 'Location', 'NorthWest')
 
 %% Raw and inertial acceleration
 %figure
@@ -324,7 +359,7 @@ legend('Filtered acc', 'Location', 'NorthWest')
 %% Position
 % % Plot position
 figure
-plot(my_position(:, 2) * 1/1000, my_position(:, 3) * 1/1000, 'b*')
+plot(my_position(:, 2) * 1/1000, my_position(:, 3) * 1/1000, 'b')
 title('Trajectory')
 xlabel('x (km)')
 ylabel('y (km)')
@@ -332,14 +367,14 @@ legend('Trajectory', 'Location', 'NorthWest')
 
 % x-position
 figure
-plot(my_position(:, 2), my_position(:, 3) * 1/1000, 'b*')
-title('Trajectory')
-xlabel('x (km)')
-ylabel('y (km)')
-legend('Trajectory', 'Location', 'NorthWest')
+plot(my_position(:, 1), my_position(:, 2) * 1/1000, 'b', my_position(:, 1), my_position(:, 3) * 1/1000, 'r')
+title('xy-displacement')
+xlabel('time (s)')
+ylabel('displ (km)')
+legend('x-displacement', 'y-displacement', 'Location', 'NorthWest')
 
 %% Velocity
-m_per_sec_to_km_per_h = 3600/1000;
+m_per_sec_to_km_per_h = 36/10;
 % % Plot velocity
 figure
 plot(my_velocity(:, 1), my_velocity(:, 2)*m_per_sec_to_km_per_h, 'b', my_velocity(:, 1), my_velocity(:, 3)*m_per_sec_to_km_per_h, 'r', my_velocity(:, 1), my_velocity(:, 4)*m_per_sec_to_km_per_h, 'g',  my_velocity(:, 1), my_velocity(:, 5)*m_per_sec_to_km_per_h, 'y')
