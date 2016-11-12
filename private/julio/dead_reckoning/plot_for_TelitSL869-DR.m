@@ -120,6 +120,7 @@ n_output_data = 5246; % order 4
 n_output_data = 3122; % order 8
 n_output_data = 1005; % order 12
 n_output_data = 532; % order 14
+%n_output_data = 14804; % order 14
 my_raw_gyro = importfile_TelitSL869DR_3columns('RESLT/raw_gyro.dat', 1, n_input_data);
 my_raw_accelerations = importfile_TelitSL869DR_3columns('RESLT/raw_accelerations.dat', 1, n_input_data);
 my_roll_pitch_yaw = importfile_TelitSL869DR_3columns('RESLT/roll_pitch_yaw.dat', 1, n_output_data);

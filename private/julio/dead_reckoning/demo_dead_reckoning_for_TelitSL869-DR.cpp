@@ -939,17 +939,18 @@ int main(int argc, char *argv[])
    
 #ifdef APPLY_CONVOLUTION
    if (apply_convolution_gyro)
-    {
+    {     
      convolve_modified(gyro, kernel_gyro, n_kernel_gyro, gyro_filtered);
+     //convolve(gyro, kernel_gyro, n_kernel_gyro, gyro_filtered);
     }
    else
     {
      average(gyro, gyro_filtered);
     }
-   
    if (apply_convolution_acc)
-    {   
+    {
      convolve_modified(acc, kernel_acc, n_kernel_acc, acc_filtered);
+     //convolve(acc, kernel_acc, n_kernel_acc, acc_filtered);
     }
    else
     {
