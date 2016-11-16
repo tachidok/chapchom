@@ -98,19 +98,30 @@ my_filtered_acc = importfile_TelitSL869DR_3columns('RESLT/filtered_acc.dat', 1, 
 
 body_frame_gravity = importfile_TelitSL869DR_4columns('RESLT/body_frame_gravity.dat', 1, 1844);
 
-% putty_8_car_ride_square_wait_large.log
-my_roll_pitch_yaw = importfile_TelitSL869DR_3columns('RESLT/roll_pitch_yaw.dat', 1, 6651);
-my_raw_gyro = importfile_TelitSL869DR_3columns('RESLT/raw_gyro.dat', 1, 6651);
-my_euler_angles_rates = importfile_TelitSL869DR_3columns('RESLT/euler_angles_rates.dat', 1, 6651);
-my_raw_accelerations = importfile_TelitSL869DR_3columns('RESLT/raw_accelerations.dat', 1, 6651);
-my_roll_pitch_yaw_from_acc = importfile_TelitSL869DR_3columns('RESLT/roll_pitch_yaw_from_acc.dat', 1, 6651);
-inertial_acceleration = importfile_TelitSL869DR_3columns('RESLT/inertial_accelerations.dat', 1, 6651);
-my_position = importfile_TelitSL869DR_3columns('RESLT/position.dat', 1, 6651);
-my_velocity = importfile_TelitSL869DR_4columns('RESLT/velocity.dat', 1, 6651);
-my_filtered_gyro = importfile_TelitSL869DR_3columns('RESLT/filtered_gyro.dat', 1, 6651);
-my_filtered_acc = importfile_TelitSL869DR_3columns('RESLT/filtered_acc.dat', 1, 6651);
+%% putty_8_car_ride_square_wait_large.log
+initial_time = 0;
+final_time = 478;
+n_input_data = 6651;
+%n_output_data = 7901;
+n_output_data = 6839; % order 2
+n_output_data = 5246; % order 4
+n_output_data = 3122; % order 8
+n_output_data = 1005; % order 12
+n_output_data = 478; % order 14
+%n_output_data = 14804; % order 14
+my_raw_gyro = importfile_TelitSL869DR_3columns('RESLT/raw_gyro.dat', 1, n_input_data);
+my_raw_accelerations = importfile_TelitSL869DR_3columns('RESLT/raw_accelerations.dat', 1, n_input_data);
+my_roll_pitch_yaw = importfile_TelitSL869DR_3columns('RESLT/roll_pitch_yaw.dat', 1, n_output_data);
+my_true_course_in_degrees = importfile_TelitSL869DR_2columns('RESLT/true_course_in_degrees.dat', 1, n_output_data);
+my_euler_angles_rates = importfile_TelitSL869DR_3columns('RESLT/euler_angles_rates.dat', 1, n_output_data);
+my_roll_pitch_yaw_from_acc = importfile_TelitSL869DR_3columns('RESLT/roll_pitch_yaw_from_acc.dat', 1, n_output_data);
+my_inertial_acceleration = importfile_TelitSL869DR_3columns('RESLT/inertial_accelerations.dat', 1, n_output_data);
+my_position = importfile_TelitSL869DR_3columns('RESLT/position.dat', 1, n_output_data);
+my_velocity = importfile_TelitSL869DR_4columns('RESLT/velocity.dat', 1, n_output_data);
+my_filtered_gyro = importfile_TelitSL869DR_3columns('RESLT/filtered_gyro.dat', 1, n_output_data);
+my_filtered_acc = importfile_TelitSL869DR_3columns('RESLT/filtered_acc.dat', 1, n_output_data);
 
-% putty_9_car_ride_tona_acatepec_inaoe_wait_large.log
+%% putty_9_car_ride_tona_acatepec_inaoe_wait_large.log
 initial_time = 0;
 final_time = 550;
 n_input_data = 7370;
@@ -124,22 +135,15 @@ n_output_data = 532; % order 14
 my_raw_gyro = importfile_TelitSL869DR_3columns('RESLT/raw_gyro.dat', 1, n_input_data);
 my_raw_accelerations = importfile_TelitSL869DR_3columns('RESLT/raw_accelerations.dat', 1, n_input_data);
 my_roll_pitch_yaw = importfile_TelitSL869DR_3columns('RESLT/roll_pitch_yaw.dat', 1, n_output_data);
+%my_true_course_in_degrees = importfile_TelitSL869DR_2columns('RESLT/true_course_in_degrees.dat', 1, 531);
+my_true_course_in_degrees = importfile_TelitSL869DR_2columns('RESLT/true_course_in_degrees.dat', 1, n_output_data);
 my_euler_angles_rates = importfile_TelitSL869DR_3columns('RESLT/euler_angles_rates.dat', 1, n_output_data);
 my_roll_pitch_yaw_from_acc = importfile_TelitSL869DR_3columns('RESLT/roll_pitch_yaw_from_acc.dat', 1, n_output_data);
-inertial_acceleration = importfile_TelitSL869DR_3columns('RESLT/inertial_accelerations.dat', 1, n_output_data);
+my_inertial_acceleration = importfile_TelitSL869DR_3columns('RESLT/inertial_accelerations.dat', 1, n_output_data);
 my_position = importfile_TelitSL869DR_3columns('RESLT/position.dat', 1, n_output_data);
 my_velocity = importfile_TelitSL869DR_4columns('RESLT/velocity.dat', 1, n_output_data);
 my_filtered_gyro = importfile_TelitSL869DR_3columns('RESLT/filtered_gyro.dat', 1, n_output_data);
 my_filtered_acc = importfile_TelitSL869DR_3columns('RESLT/filtered_acc.dat', 1, n_output_data);
-
-% my_roll_pitch_yaw = importfile_TelitSL869DR_3columns('RESLT/roll_pitch_yaw.dat', 1, 75338);
-% my_euler_angles_rates = importfile_TelitSL869DR_3columns('RESLT/euler_angles_rates.dat', 1, 75338);
-% my_roll_pitch_yaw_from_acc = importfile_TelitSL869DR_3columns('RESLT/roll_pitch_yaw_from_acc.dat', 1, 75338);
-% inertial_acceleration = importfile_TelitSL869DR_3columns('RESLT/inertial_accelerations.dat', 1, 75338);
-% my_position = importfile_TelitSL869DR_3columns('RESLT/position.dat', 1, 75338);
-% my_velocity = importfile_TelitSL869DR_4columns('RESLT/velocity.dat', 1, 75338);
-% my_filtered_gyro = importfile_TelitSL869DR_3columns('RESLT/filtered_gyro.dat', 1, 75338);
-% my_filtered_acc = importfile_TelitSL869DR_3columns('RESLT/filtered_acc.dat', 1, 75338);
 
 %% Euler angles
 % Processed roll
@@ -161,12 +165,22 @@ legend('Angle from accelerometer', 'Gyroscope and accelerometer fusion', 'Locati
 
 % Processed yaw
 figure
-plot(my_roll_pitch_yaw_from_acc(:,1), my_roll_pitch_yaw_from_acc(:,4)*180.0/pi, 'g', my_roll_pitch_yaw(:,1), my_roll_pitch_yaw(:,4)*180.0/pi, 'r')
+%plot(my_roll_pitch_yaw_from_acc(:,1), my_roll_pitch_yaw_from_acc(:,4)*180.0/pi, 'g', my_roll_pitch_yaw(:,1), my_roll_pitch_yaw(:,4)*180.0/pi, 'r')
+plot(my_roll_pitch_yaw_from_acc(:,1), my_roll_pitch_yaw_from_acc(:,4)*180.0/pi, 'g', my_roll_pitch_yaw(:,1), my_roll_pitch_yaw(:,4)*180.0/pi, 'r', my_true_course_in_degrees(:,1), my_true_course_in_degrees(:,2), 'b')
 axis([initial_time final_time -180 180])
 title('Euler angle [yaw]')
 xlabel('Time(s)')
 ylabel('\theta (degrees)')
-legend('Angle from accelerometer', 'Gyroscope and accelerometer fusion', 'Location', 'NorthWest')
+%legend('Angle from accelerometer', 'Gyroscope and accelerometer fusion', 'Location', 'NorthWest')
+legend('Angle from accelerometer', 'Gyroscope and accelerometer fusion', 'TRUE COURSE (Heading)', 'Location', 'NorthWest')
+
+%% True course in degrees
+figure
+plot(my_true_course_in_degrees(:,1), my_true_course_in_degrees(:,2), 'b')
+axis([initial_time final_time -180 180])
+title('True course in degrees [yaw]')
+xlabel('Time(s)')
+ylabel('\theta (degrees)')
 
 % %% Raw gyro and euler angles rates
 % figure
@@ -194,7 +208,7 @@ legend('Angle from accelerometer', 'Gyroscope and accelerometer fusion', 'Locati
 figure
 plot(my_raw_gyro(:, 1), my_raw_gyro(:, 2)*180.0/pi, 'b', my_filtered_gyro(:, 1), my_filtered_gyro(:, 2)*180.0/pi, 'r')
 axis([initial_time final_time -40 40])
-title('[X] Gyro')
+title('x-gyro (device system coordinate)')
 xlabel('Time (s)')
 ylabel('dps')
 legend('Raw gyro', 'Filtered gyro', 'Location', 'NorthWest')
@@ -202,7 +216,7 @@ legend('Raw gyro', 'Filtered gyro', 'Location', 'NorthWest')
 figure
 plot(my_raw_gyro(:, 1), my_raw_gyro(:, 3)*180.0/pi, 'b', my_filtered_gyro(:, 1), my_filtered_gyro(:, 3)*180.0/pi, 'r')
 axis([initial_time final_time -40 40])
-title('[Y] Gyro')
+title('y-gyro (device system coordinate)')
 xlabel('Time (s)')
 ylabel('dps')
 legend('Raw gyro', 'Filtered gyro', 'Location', 'NorthWest')
@@ -210,7 +224,7 @@ legend('Raw gyro', 'Filtered gyro', 'Location', 'NorthWest')
 figure
 plot(my_raw_gyro(:, 1), my_raw_gyro(:, 4)*180.0/pi, 'b', my_filtered_gyro(:, 1), my_filtered_gyro(:, 4)*180.0/pi, 'r')
 axis([initial_time final_time -40 40])
-title('[Z] Gyro')
+title('z-gyro (device system coordinate)')
 xlabel('Time (s)')
 ylabel('dps')
 legend('Raw gyro', 'Filtered gyro', 'Location', 'NorthWest')
@@ -243,25 +257,25 @@ legend('Raw gyro', 'Filtered gyro', 'Location', 'NorthWest')
 figure
 plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 2), 'b', my_filtered_acc(:, 1), my_filtered_acc(:, 2), 'r')
 axis([initial_time final_time -5 15])
-title('[X] Acceleration')
+title('x-acceleration (device system coordinate)')
 xlabel('Time (s)')
-ylabel('x-acceleration (m/s^2)')
+ylabel('Acceleration (m/s^2)')
 legend('Raw acceleration', 'Filtered acceleration', 'Location', 'NorthWest')
 
 figure
 plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 3), 'b', my_filtered_acc(:, 1), my_filtered_acc(:, 3), 'r')
 axis([initial_time final_time -5 15])
-title('[Y] Acceleration')
+title('y-acceleration (device system coordinate)')
 xlabel('Time (s)')
-ylabel('y-acceleration (m/s^2)')
+ylabel('Acceleration (m/s^2)')
 legend('Raw acceleration', 'Filtered acceleration', 'Location', 'NorthWest')
  
 figure
 plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 4), 'b', my_filtered_acc(:, 1), my_filtered_acc(:, 4), 'r')
 axis([initial_time final_time -5 15])
-title('[Z] Acceleration')
+title('z-acceleration (device system coordinate)')
 xlabel('Time (s)')
-ylabel('z-acceleration (m/s^2)')
+ylabel('Acceleration (m/s^2)')
 legend('Raw acceleration',  'Filtered acceleration', 'Location', 'NorthWest')
 
 % figure
@@ -312,28 +326,28 @@ legend('Raw acceleration',  'Filtered acceleration', 'Location', 'NorthWest')
 
 %% Filtered and inertial acceleration
 figure
-plot(my_filtered_acc(:, 1), -my_filtered_acc(:, 3), 'b', inertial_acceleration(:, 1), inertial_acceleration(:, 2), 'r')
-title('[X] Acceleration')
+plot(my_filtered_acc(:, 1), my_filtered_acc(:, 2), 'b', my_inertial_acceleration(:, 1), my_inertial_acceleration(:, 2), 'r')
+title('x-acceleration')
 axis([initial_time final_time -5 15])
 xlabel('Time (s)')
-ylabel('x-acceleration (m/s^2)')
-legend('Filtered acceleration', 'Inertial acceleration', 'Location', 'NorthWest')
+ylabel('Acceleration (m/s^2)')
+legend('Filtered acceleration (device system coordinate)', 'Inertial acceleration', 'Location', 'NorthWest')
  
 figure
-plot(my_filtered_acc(:, 1), my_filtered_acc(:, 2), 'b', inertial_acceleration(:, 1), inertial_acceleration(:, 3), 'r')
-title('[Y] Acceleration')
+plot(my_filtered_acc(:, 1), my_filtered_acc(:, 3), 'b', my_inertial_acceleration(:, 1), my_inertial_acceleration(:, 3), 'r')
+title('y-acceleration')
 axis([initial_time final_time -5 15])
 xlabel('Time (s)')
-ylabel('y-acceleration (m/s^2)')
-legend('Filtered acceleration', 'Inertial acceleration', 'Location', 'NorthWest')
+ylabel('Acceleration (m/s^2)')
+legend('Filtered acceleration (device system coordinate)', 'Inertial acceleration', 'Location', 'NorthWest')
  
 figure
-plot(my_filtered_acc(:, 1), my_filtered_acc(:, 4), 'b', inertial_acceleration(:, 1), inertial_acceleration(:, 4), 'r')
-title('[Z] Acceleration')
+plot(my_filtered_acc(:, 1), my_filtered_acc(:, 4), 'b', my_inertial_acceleration(:, 1), my_inertial_acceleration(:, 4), 'r')
+title('z-acceleration')
 axis([initial_time final_time -5 15])
 xlabel('Time (s)')
-ylabel('z-acceleration (m/s^2)')
-legend('Filtered acceleration', 'Inertial acceleration', 'Location', 'NorthWest')
+ylabel('Acceleration (m/s^2)')
+legend('Filtered acceleration (device system coordinate)', 'Inertial acceleration', 'Location', 'NorthWest')
 
 %% Raw and inertial acceleration
 %figure
@@ -358,13 +372,27 @@ legend('Filtered acceleration', 'Inertial acceleration', 'Location', 'NorthWest'
 % legend('Raw acceleration', 'Inertial acceleration', 'Body frame gravity', 'Magnitude body frame gravity', 'Location', 'NorthWest')
 
 %% Position
+delay = 0.05; % Delay in seconds in every loop
+n_loop = size(my_position, 1)
+meters_to_kilometers = 1.0/1000.0;
 % % Plot position
-figure
-plot(my_position(:, 2) * 1/1000, my_position(:, 3) * 1/1000, 'b')
-title('Trajectory')
+figure();
+hold('on'); % The painting is done over this plot
+t = title('Trajectory, t=0'); % Initial title, we get a hanlder as well
+p = plot(my_position(1, 2) * meters_to_kilometers, my_position(1, 3) * meters_to_kilometers, 'b*'); % Get the plot hanlder
+%plot(my_position(i, 2) * meters_to_kilometers, my_position(i, 3) * meters_to_kilometers, 'b*') % Draw new point
+axis([-max(my_position(:, 2) * meters_to_kilometers) max(my_position(:, 2) * meters_to_kilometers) -max(my_position(:, 3) * meters_to_kilometers) max(my_position(:, 3) * meters_to_kilometers)])
 xlabel('x (km)')
 ylabel('y (km)')
 legend('Trajectory', 'Location', 'NorthWest')
+
+for i = 1:n_loop
+    t.String = sprintf('Trajectory, t = %.2f (%.2f, %.2f)', my_position(i, 1), my_position(i, 2) * meters_to_kilometers, my_position(i, 3) * meters_to_kilometers); % Update title
+    p.XData(i) = my_position(i, 2) * meters_to_kilometers;
+    p.YData(i) = my_position(i, 3) * meters_to_kilometers;
+    %drawnow();
+    pause(delay);
+end
 
 % x-position
 figure
@@ -373,6 +401,116 @@ title('xy-displacement')
 xlabel('time (s)')
 ylabel('displ (km)')
 legend('x-displacement', 'y-displacement', 'Location', 'NorthWest')
+
+%% Position (Luis Chico)
+n_data = size(my_velocity,1);
+x = zeros(n_data, 1);
+y = zeros(n_data, 1);
+for i=2:n_data
+    x(i) = my_velocity(i, 2)*m_per_sec_to_km_per_h * cos(my_true_course_in_degrees(i,2)*pi/180.0) + x(i-1);
+    y(i) = my_velocity(i, 2)*m_per_sec_to_km_per_h * sin(my_true_course_in_degrees(i,2)*pi/180.0) + y(i-1);
+end
+% % Plot position
+figure();
+plot(x, y, 'b*')
+axis([min(x) max(x) min(y) max(y)])
+title('Position')
+xlabel('x (km)')
+ylabel('y (km)')
+legend('Trajectory', 'Location', 'NorthWest')
+
+delay = 0.05; % Delay in seconds in every loop
+n_loop = size(x, 1)
+% % Plot position
+figure();
+hold('on'); % The painting is done over this plot
+t = title('Trajectory, t=0'); % Initial title, we get a hanlder as well
+p = plot(x(1), y(1), 'b*'); % Get the plot hanlder
+axis([min(x) max(x) min(y) max(y)])
+xlabel('x (km)')
+ylabel('y (km)')
+legend('Trajectory', 'Location', 'NorthWest')
+
+for i = 1:n_loop
+    t.String = sprintf('Trajectory, t = %.2f (%.2f, %.2f)', my_position(i, 1), x(i), y(i)); % Update title
+    p.XData(i) = x(i);
+    p.YData(i) = y(i);
+    %drawnow();
+    pause(delay);
+end
+
+% %% Position (Luis Chico)
+% n_data = size(my_velocity,1);
+% x = zeros(n_data, 1);
+% y = zeros(n_data, 1);
+% for i=2:n_data
+%     x(i) = my_velocity(i, 2)*m_per_sec_to_km_per_h * cos(my_roll_pitch_yaw(i,4)) + x(i-1);
+%     y(i) = my_velocity(i, 2)*m_per_sec_to_km_per_h * sin(my_roll_pitch_yaw(i,4)) + y(i-1);
+% end
+% % % Plot position
+% figure();
+% plot(y, x, 'b*')
+% title('Position')
+% xlabel('x (km)')
+% ylabel('y (km)')
+% legend('Trajectory', 'Location', 'NorthWest')
+% 
+% delay = 0.05; % Delay in seconds in every loop
+% n_loop = size(x, 1)
+% % % Plot position
+% figure();
+% hold('on'); % The painting is done over this plot
+% t = title('Trajectory, t=0'); % Initial title, we get a hanlder as well
+% p = plot(y(1), x(1), 'b*'); % Get the plot hanlder
+% axis([-max(y) max(y) -max(x) max(x)])
+% xlabel('x (km)')
+% ylabel('y (km)')
+% legend('Trajectory', 'Location', 'NorthWest')
+% 
+% for i = 1:n_loop
+%     t.String = sprintf('Trajectory, t = %.2f (%.2f, %.2f)', my_position(i, 1), y(i), x(i)); % Update title
+%     p.XData(i) = y(i);
+%     p.YData(i) = x(i);
+%     %drawnow();
+%     pause(delay);
+% end
+
+%% Position (Yo)
+n_data = size(my_velocity,1);
+x = zeros(n_data, 1);
+y = zeros(n_data, 1);
+for i=2:n_data
+    x(i) = -my_velocity(i, 3)*m_per_sec_to_km_per_h * cos(my_roll_pitch_yaw(i,4)) + x(i-1);
+    y(i) = -my_velocity(i, 3)*m_per_sec_to_km_per_h * sin(my_roll_pitch_yaw(i,4)) + y(i-1);
+end
+% % Plot position
+figure();
+plot(x, y, 'b*')
+axis([min(x) max(x) min(y) max(y)])
+title('Position')
+xlabel('x (km)')
+ylabel('y (km)')
+legend('Trajectory', 'Location', 'NorthWest')
+
+delay = 0.05; % Delay in seconds in every loop
+n_loop = size(x, 1)
+% % Plot position
+figure();
+hold('on'); % The painting is done over this plot
+t = title('Trajectory, t=0'); % Initial title, we get a hanlder as well
+p = plot(x(1), y(1), 'b*'); % Get the plot hanlder
+axis([min(x) max(x) min(y) max(y)])
+xlabel('x (km)')
+ylabel('y (km)')
+legend('Trajectory', 'Location', 'NorthWest')
+
+for i = 1:n_loop
+    t.String = sprintf('Trajectory, t = %.2f (%.2f, %.2f)', my_position(i, 1), x(i), y(i)); % Update title
+    p.XData(i) = x(i);
+    p.YData(i) = y(i);
+    %drawnow();
+    pause(delay);
+end
 
 %% Velocity
 m_per_sec_to_km_per_h = 36/10;
@@ -445,26 +583,26 @@ order = 14; % The order of the filter
 % Impose response of the low-pass filter
 h = fir1(order, cut_off_frequency);
 % Perform the convolution
-filtered_acc_x = conv(my_raw_gyro_no_time(:,1), h);
-filtered_acc_y = conv(my_raw_gyro_no_time(:,2), h);
-filtered_acc_z = conv(my_raw_gyro_no_time(:,3), h);
+filtered_gyro_x = conv(my_raw_gyro_no_time(:,1), h);
+filtered_gyro_y = conv(my_raw_gyro_no_time(:,2), h);
+filtered_gyro_z = conv(my_raw_gyro_no_time(:,3), h);
 
 figure
-plot(filtered_acc_x, 'b')
+plot(filtered_gyro_x, 'b')
 title('[X] Filtered Gyro')
 xlabel('Time (s)')
 ylabel('dps')
 legend('Filtered gyro x', 'Location', 'NorthWest')
 
 figure
-plot(filtered_acc_y, 'b')
+plot(filtered_gyro_y, 'b')
 title('[Y] Filtered Gyro')
 xlabel('Time (s)')
 ylabel('dps')
 legend('Filtered gyro y', 'Location', 'NorthWest')
 
 figure
-plot(filtered_acc_z, 'b')
+plot(filtered_gyro_z, 'b')
 title('[Z] Filtered Gyro')
 xlabel('Time (s)')
 ylabel('dps')
