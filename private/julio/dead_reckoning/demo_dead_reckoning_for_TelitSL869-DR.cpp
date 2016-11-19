@@ -909,7 +909,7 @@ int main(int argc, char *argv[])
    // ------------------------------------------------------
    // Apply low pass filter to gyro and acceleration data
    // ------------------------------------------------------
-#ifdef APPLY_CONVOLUTION
+#ifdef APPLY_CONVOLUTION   
    // Store the gyro-filtered data
    //std::vector<std::vector<double> > gyro_filtered(n_gyro_data + n_kernel_gyro - 1);
    unsigned n_filtered_gyro_data = 0;
@@ -953,7 +953,7 @@ int main(int argc, char *argv[])
    
    // Create the vector of data
    std::vector<std::vector<double> > acc_filtered(n_filtered_acc_data);
-   // Convolve?   
+   // Convolve?
    if (apply_convolution_acc)
     {
      convolve_modified(acc, kernel_acc, n_kernel_acc, acc_filtered);
@@ -967,13 +967,13 @@ int main(int argc, char *argv[])
    // Store the gyro-filtered data
    std::vector<std::vector<double> > gyro_filtered(n_gyro_data);
    // Store the acc-filtered data
-   std::vector<std::vector<double> > acc_filtered(n_acc_data);   
+   std::vector<std::vector<double> > acc_filtered(n_acc_data);
    const double sample_rate = 15;
    const double cut_off_frequency_gyro = 0.1;
    const double cut_off_frequency_acc = 0.01;
    // Apply the filter
    low_pass_filter_frequency(gyro, gyro_filtered, cut_off_frequency_gyro, sample_rate);
-   low_pass_filter_frequency(acc, acc_filtered, cut_off_frequency_acc, sample_rate);   
+   low_pass_filter_frequency(acc, acc_filtered, cut_off_frequency_acc, sample_rate);
 #endif // #ifdef APPLY_CONVOLUTION
    
    const unsigned n_acc_filtered = acc_filtered.size();
@@ -988,7 +988,7 @@ int main(int argc, char *argv[])
      // ----------------------------------------------------------
      // Process the gyros data
      // ----------------------------------------------------------
-     // ----------------------------------------------------------     
+     // ----------------------------------------------------------
      
      // --------------------------
      // Get the Euler angles
