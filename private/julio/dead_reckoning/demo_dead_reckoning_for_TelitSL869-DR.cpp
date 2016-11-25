@@ -84,6 +84,49 @@ void average(std::vector<std::vector<double> > &signal,
 }
 
 // ===================================================================
+// Modified convolution method, it applies convolution to the non
+// processed data when the kernel size fits into the data. Originally
+// took from
+// http://stackoverflow.com/questions/8424170/1d-linear-convolution-in-ansi-c-code
+// ===================================================================
+void convolve_use_non_processed_data(double *signal, const unsigned n_signal,
+                                     double *kernel, const unsigned n_kernel,
+                                     double *convolved_signal,
+                                     const double n_convolved_signal)
+{
+ // This modified convolution applies only if the kernel size is
+ // smaller or equal than the signal size
+ if (n_kernel > n_signal)
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "The kernel size is larger than the number of elements in the signal\n"
+                 << "n_kernel: " << n_kernel
+                 << "n_signal: " << n_signal
+                 << "This modified convolve function only applies if the size\n"
+                 << "of the kernel is smaller or equal than size of the signal\n"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+ // Loop over the size of the convolved_signal
+ for (unsigned i = 0; i < n_convolved_signal; i++)
+  {
+   // Initialise
+   convolved_signal[i] = 0.0;
+   
+   for (unsigned k = 0; k < n_kernel; k++)
+    {
+     convolved_signal[i] += signal[i+k] * kernel[k];
+    }
+   
+  } // for (i < n_convolved_signal)
+ 
+}
+
+// ===================================================================
 // Modified convolution method, it applies the convultion only if all
 // the values of the kernel fit into the signal. Originally took from
 // http://stackoverflow.com/questions/8424170/1d-linear-convolution-in-ansi-c-code
@@ -476,15 +519,15 @@ int main(int argc, char *argv[])
  //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_5_espera_large.log");
  //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_6_espera_large.log");
  //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_7_espera_large.log");
- CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_8_car_ride_square_wait_large.log");
- //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_9_car_ride_tona_acatepec_inaoe_wait_large.log");
+ //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_8_car_ride_square_wait_large.log");
+ CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_9_car_ride_tona_acatepec_inaoe_wait_large.log");
  // Create the factory for the methods
  CCFactoryIntegrationMethod *factory_integration_methods =
   new CCFactoryIntegrationMethod();
  // Create an instance of the integrator method
  ACIntegrationMethod *integrator =
   factory_integration_methods->create_integration_method("Euler");
- // ACIntegrationMethod *integrator =
+ //ACIntegrationMethod *integrator =
  // factory_integration_methods->create_integration_method("RK4");
  // Get the number of history values required by the integration
  // method
@@ -620,9 +663,9 @@ int main(int argc, char *argv[])
  // Inertial accelerations
  char file_inertial_accelerations_name[100];
  sprintf(file_inertial_accelerations_name, "./RESLT/inertial_accelerations.dat");
- std::ofstream outfile_intertial_acc;
- outfile_intertial_acc.open(file_inertial_accelerations_name, std::ios::out);
- if (outfile_intertial_acc.fail())
+ std::ofstream outfile_inertial_acc;
+ outfile_inertial_acc.open(file_inertial_accelerations_name, std::ios::out);
+ if (outfile_inertial_acc.fail())
   {
    // Error message
    std::ostringstream error_message;
@@ -740,11 +783,19 @@ int main(int argc, char *argv[])
  // gyro data
  const unsigned n_kernel_gyro = 15;
  double kernel_gyro[] = {0.0102773244275157,	0.0162263834264182,	0.0328881753317823,	0.0570814837334001,	0.0840520641122108,	0.108434325903213,	0.125345958994944,	0.131388568141032,	0.125345958994944,	0.108434325903213,	0.0840520641122108,	0.0570814837334001,	0.0328881753317823,	0.0162263834264182,	0.0102773244275157};
+#if 0
+ const unsigned n_kernel_gyro = 29;
+ double kernel_gyro[] = {0.00487565085802581,	0.00565023695447273,	0.00784203640693326,	0.0113870199555086,	0.0161430039027124,	0.0218963011150810,	0.0283726853564105,	0.0352520707992509,	0.0421860734791161,	0.0488174359593725,	0.0548001727490465,	0.0598192403672874,	0.0636085562411190,	0.0659662840046496,	0.0667664637020275,	0.0659662840046496,	0.0636085562411190,	0.0598192403672874,	0.0548001727490465,	0.0488174359593725,	0.0421860734791161,	0.0352520707992509,	0.0283726853564105,	0.0218963011150810,	0.0161430039027124,	0.0113870199555086,	0.00784203640693326,	0.00565023695447273,	0.00487565085802581};
+#endif // #if 0
  
  // The coefficients of the kernel signal to convolve with the
  // accelerometer data
  const unsigned n_kernel_acc = 15;
  double kernel_acc[] = {0.0104226000635011,	0.0163818874099687,	0.0330775506149548,	0.0572325417966930,	0.0840719974006429,	0.108274081298100,	0.125032039259642,	0.131014604312996,	0.125032039259642,	0.108274081298100,	0.0840719974006429,	0.0572325417966930,	0.0330775506149548,	0.0163818874099687,	0.0104226000635011};
+#if 0
+ const unsigned n_kernel_acc = 29;
+ double kernel_acc[] = {0.00516516454302776,	0.00592820768243009,	0.00815503499250421,	0.0117456327507358,	0.0165288970204929,	0.0222711447846357,	0.0286879389594637,	0.0354586185100425,	0.0422427786903709,	0.0486978400932577,	0.0544967845816832,	0.0593451246895173,	0.0629962114730087,	0.0652640721110309,	0.0660330982355974,	0.0652640721110309,	0.0629962114730087,	0.0593451246895173,	0.0544967845816832,	0.0486978400932577,	0.0422427786903709,	0.0354586185100425,	0.0286879389594637,	0.0222711447846357,	0.0165288970204929,	0.0117456327507358,	0.00815503499250421,	0.00592820768243009,	0.00516516454302776};
+#endif // #if 0
 #endif // #ifdef APPLY_CONVOLUTION
  
  // -----------------------------------------------------------------------------
@@ -761,7 +812,9 @@ int main(int argc, char *argv[])
  // The data are in radians
  y[0][6] = 0.0; // Initial roll
  y[0][7] = 0.0; // Initial pitch
- y[0][8] = 0.0; // Initial yaw
+ y[0][8] = 0.0;//130*TO_RADIANS; // Initial yaw
+ //y[0][8] = 0.0; // Initial yaw
+ bool correct_yaw = true;
  
  // Output the initial data to screen
  std::cout << "t: " << time
@@ -773,12 +826,12 @@ int main(int argc, char *argv[])
  // Flag to indicate whether to continue looping
  bool LOOP = true;
  
- // The vectors store the lectures from gyro and
- // accelerometer. "idx_current_data" indicates the starting position
- // of the data of the current lecture. Any data before "idx" must be
- // interpreted as previous time information, only used at the
- // convolution stage
- unsigned idx_current_data = 0;
+ // The vectors store the lectures from gyro and accelerometer. The
+ // number of non processed data indicates the starting position of
+ // the data at the current lecture. Any data before
+ // "n_non_processed_data" must be interpreted as previous time
+ // information, only used at the convolution stage
+ unsigned n_non_processed_data = 0;
  
  // Storage for the lectures from accelerometers and gyros
  double signal_acc_x[MAX_SIGNAL_SIZE];
@@ -843,16 +896,16 @@ int main(int argc, char *argv[])
    
    // Check whether there is enough space in the vector to store the
    // current time data
-   if (idx_current_data +  n_acc_data > MAX_SIGNAL_SIZE)
+   if (n_non_processed_data + n_acc_data > MAX_SIGNAL_SIZE)
     {
      // Error message
      std::ostringstream error_message;
      error_message << "The number of data in the buffer plus the number of\n"
                    << "data from the current lecture is larger that the maximum\n"
                    << "signal buffer size\n"
-                   << "idx_current_data: " << idx_current_data << "\n"
+                   << "n_non_processed_data: " << n_non_processed_data << "\n"
                    << "n_acc_data: " << n_acc_data << "\n"
-                   << "idx_current_data + n_acc_data: " << idx_current_data +  n_acc_data << "\n"
+                   << "n_non_processed_data + n_acc_data: " << n_non_processed_data +  n_acc_data << "\n"
                    << "MAX_SIGNAL_SIZE: " << MAX_SIGNAL_SIZE << "\n"
                    << std::endl;
      throw ChapchomLibError(error_message.str(),
@@ -866,6 +919,7 @@ int main(int argc, char *argv[])
    const double h_read_stage = 1.0 / n_acc_data;
    // Get heading information
    const double true_course_in_degrees = odes.true_course_in_degrees();
+   const double true_course_in_radians = true_course_in_degrees * TO_RADIANS;
    
    for (unsigned i = 0; i < n_acc_data; i++)
     {
@@ -878,13 +932,13 @@ int main(int argc, char *argv[])
      std::vector<double> gyro_t = odes.get_angular_rates(i);
      std::vector<double> acc_t = odes.get_accelerations(i);
      
-     const unsigned index = i+idx_current_data;
+     const unsigned current_data_index = i+n_non_processed_data;
      // ---------------------------------------------------
      // Gyro
      // ---------------------------------------------------
-     signal_gyro_x[index] = gyro_t[1];
-     signal_gyro_y[index] = gyro_t[2];
-     signal_gyro_z[index] = gyro_t[3];
+     signal_gyro_x[current_data_index] = gyro_t[1];
+     signal_gyro_y[current_data_index] = gyro_t[2];
+     signal_gyro_z[current_data_index] = gyro_t[3];
      
      // ---------------------------------------------------
      // Accelerations
@@ -892,9 +946,9 @@ int main(int argc, char *argv[])
      
      // Multiply by 9.81 since the data from the gyro are given in 'g'
      // units
-     signal_acc_x[index] = acc_t[1] * GRAVITY;
-     signal_acc_y[index] = acc_t[2] * GRAVITY;
-     signal_acc_z[index] = acc_t[3] * GRAVITY;
+     signal_acc_x[current_data_index] = acc_t[1] * GRAVITY;
+     signal_acc_y[current_data_index] = acc_t[2] * GRAVITY;
+     signal_acc_z[current_data_index] = acc_t[3] * GRAVITY;
      
 #ifdef OLD_IMPLEMENTATION
      for (unsigned j = 0; j < DIM; j++)
@@ -965,9 +1019,9 @@ int main(int argc, char *argv[])
 #ifdef CORRECT_ACCELEROMETER_MISALIGNMENT
      // Correct accelerations due to misalignment on device
      {
-      const double tmp = -signal_acc_x[index];
-      signal_acc_x[index] = signal_acc_y[index];
-      signal_acc_y[index] = tmp;
+      const double tmp = -signal_acc_x[current_data_index];
+      signal_acc_x[current_data_index] = signal_acc_y[current_data_index];
+      signal_acc_y[current_data_index] = tmp;
      }
 #endif // #ifdef CORRECT_ACCELEROMETER_MISALIGNMENT
      
@@ -980,14 +1034,14 @@ int main(int argc, char *argv[])
      
      // Raw gyro
      outfile_raw_gyro << time_read_stage
-                      << " " << signal_gyro_x[index]
-                      << " " << signal_gyro_x[index]
-                      << " " << signal_gyro_x[index] << std::endl;
+                      << " " << signal_gyro_x[current_data_index]
+                      << " " << signal_gyro_y[current_data_index]
+                      << " " << signal_gyro_z[current_data_index] << std::endl;
      // Raw accelerations
      outfile_raw_acc << time_read_stage
-                     << " " << signal_acc_x[index]
-                     << " " << signal_acc_y[index]
-                     << " " << signal_acc_z[index] << std::endl;
+                     << " " << signal_acc_x[current_data_index]
+                     << " " << signal_acc_y[current_data_index]
+                     << " " << signal_acc_z[current_data_index] << std::endl;
      
 #ifdef OLD_IMPLEMENTATION
      // Raw gyro
@@ -1004,14 +1058,92 @@ int main(int argc, char *argv[])
      
     } // for (i < n_acc_data)
    
-   // Change the index of the current data to indicate where the
-   // current data starts
-   idx_current_data = n_acc_data;
+   // Set the signal size
+   const unsigned n_signal = n_non_processed_data + n_acc_data;
    
    // ------------------------------------------------------
    // Apply low pass filter to gyro and acceleration data
    // ------------------------------------------------------
-#ifdef APPLY_CONVOLUTION   
+   
+#ifdef APPLY_CONVOLUTION
+   // The size fo the convolved signal (how many times does the kernel
+   // fits into the complete signal)
+   const int n_filtered_signal_gyro = n_signal - n_kernel_gyro + 1;
+   
+   //const unsigned n_filtered_signal_gyro = n_gyro_data + n_kernel_gyro - 1;
+   // Filtered data for gyro after convolution
+   double *filtered_signal_gyro_x;
+   double *filtered_signal_gyro_y;
+   double *filtered_signal_gyro_z;
+   bool apply_convolution_gyro = false;
+   if (n_filtered_signal_gyro > 0)
+    {
+     apply_convolution_gyro = true;
+     // Gyro x-signal
+     filtered_signal_gyro_x = new double[n_filtered_signal_gyro];
+     // Gyro y-signal
+     filtered_signal_gyro_y = new double[n_filtered_signal_gyro];
+     // Gyro z-signal
+     filtered_signal_gyro_z = new double[n_filtered_signal_gyro];
+     
+     // Convolve x-signal
+     convolve_use_non_processed_data(signal_gyro_x, n_signal,
+                                     kernel_gyro, n_kernel_gyro,
+                                     filtered_signal_gyro_x,
+                                     n_filtered_signal_gyro);
+     // Convolve y-signal
+     convolve_use_non_processed_data(signal_gyro_y, n_signal,
+                                     kernel_gyro, n_kernel_gyro,
+                                     filtered_signal_gyro_y,
+                                     n_filtered_signal_gyro);
+     // Convolve z-signal
+     convolve_use_non_processed_data(signal_gyro_z, n_signal,
+                                     kernel_gyro, n_kernel_gyro,
+                                     filtered_signal_gyro_z,
+                                     n_filtered_signal_gyro);
+    }
+   
+   // The size fo the convolved signal (how many times does the kernel
+   // fits into the complete signal)
+   const int n_filtered_signal_acc = n_signal - n_kernel_acc + 1;
+   //const unsigned n_filtered_signal_acc = n_acc_data + n_kernel_acc - 1;
+   // Filtered data for accelerometers after convolution
+   double *filtered_signal_acc_x;
+   double *filtered_signal_acc_y;
+   double *filtered_signal_acc_z;
+   bool apply_convolution_acc = false;
+   if (n_filtered_signal_acc > 0)
+    {
+     apply_convolution_acc = true;
+     // Acc x-signal
+     filtered_signal_acc_x = new double[n_filtered_signal_acc];
+     // Acc y-signal
+     filtered_signal_acc_y = new double[n_filtered_signal_acc];
+     // Acc z-signal
+     filtered_signal_acc_z = new double[n_filtered_signal_acc];
+     
+     // Convolve x-signal
+     convolve_use_non_processed_data(signal_acc_x, n_signal,
+                                     kernel_acc, n_kernel_acc,
+                                     filtered_signal_acc_x,
+                                     n_filtered_signal_acc);
+     // Convolve y-signal
+     convolve_use_non_processed_data(signal_acc_y, n_signal,
+                                     kernel_acc, n_kernel_acc,
+                                     filtered_signal_acc_y,
+                                     n_filtered_signal_acc);
+     // Convolve z-signal
+     convolve_use_non_processed_data(signal_acc_z, n_signal,
+                                     kernel_acc, n_kernel_acc,
+                                     filtered_signal_acc_z,
+                                     n_filtered_signal_acc);
+    }
+   
+#endif // #ifdef APPLY_CONVOLUTION
+   
+#ifdef OLD_IMPLEMENTATION
+   
+#ifdef APPLY_CONVOLUTION
    // Store the gyro-filtered data
    //std::vector<std::vector<double> > gyro_filtered(n_gyro_data + n_kernel_gyro - 1);
    unsigned n_filtered_gyro_data = 0;
@@ -1078,288 +1210,407 @@ int main(int argc, char *argv[])
    low_pass_filter_frequency(acc, acc_filtered, cut_off_frequency_acc, sample_rate);
 #endif // #ifdef APPLY_CONVOLUTION
    
-   // Move current time data to previous time data
-   {
-    // Get the indices of the current data
-    //const unsigned local_idx_min = signal_acc_x.idx_min;
-    //const unsigned local_idx_max = signal_acc_x.idx_max;
-    for (unsigned i = 0; i < local_idx_min, i + local_idx_min < MAX_SIGNAL_SIZE; i++)
-     {
-      signal_acc_x.data[i] = signal_acc_x.data[i+local_idx_min];
-      signal_acc_y.data[i] = signal_acc_y.data[i+local_idx_min];
-      signal_acc_z.data[i] = signal_acc_z.data[i+local_idx_min];
-      signal_gyro_x.data[i] = signal_gyro_x.data[i+local_idx_min];
-      signal_gyro_y.data[i] = signal_gyro_y.data[i+local_idx_min];
-      signal_gyro_z.data[i] = signal_gyro_z.data[i+local_idx_min];
-     }
-    
-    // Set the indexes min and max to store next chunk of data
-    signal_acc_x.idx_min = n_acc_data;
-    signal_acc_x.idx_max = n_acc_data;
-    
-   }
+#endif // #ifdef OLD_IMPLEMENTATION
    
-   const unsigned n_acc_filtered = acc_filtered.size();
-   // The step size is given by the number of data reported in a second
-   h  = 1.0 / static_cast<double>(n_acc_filtered);
-   //h = 1.0 / 15.0;
+   bool applied_convolution = apply_convolution_gyro || apply_convolution_acc;
    
-   // Process data
-   for (unsigned i = 0; i < n_acc_filtered; i++)
+   // Delete the processed data and move the non processed data to the
+   // beginning of the array
+   if (applied_convolution)
     {
-     // ----------------------------------------------------------
-     // ----------------------------------------------------------
-     // Process the gyros data
-     // ----------------------------------------------------------
-     // ----------------------------------------------------------
-     
-     // --------------------------
-     // Get the Euler angles
-     // --------------------------
-     // Store the Euler-angles
-     std::vector<double> euler_angles(DIM);
-     euler_angles[0] = y[0][6];
-     euler_angles[1] = y[0][7];
-     //euler_angles[2] = true_course_in_degrees * TO_RADIANS; // tachidok, no matter what this value is, it is not used in the calculations, oh!
-     euler_angles[2] = y[0][8]; // tachidok, no matter what this value is, it is not used in the calculations, oh!
-     //euler_angles[2] = 0.0; // tachidok, no matter what this value is, it is not used in the calculations, oh!
-     
-     // Fill the matrix that transforms from angular velocities to
-     // Euler-rates
-     fill_angular_velocities_to_euler_rates_matrix(A, euler_angles);
-     
-     // Store the Euler-angles rates
-     std::vector<double> euler_angular_rates(DIM);
-     multiply_matrix_times_vector(A, gyro_filtered[i], euler_angular_rates);
-     //euler_angular_rates[0] = 0.0;
-     //euler_angular_rates[1] = 0.0;
-     //euler_angular_rates[2] = 0.0;
-     
-     // Set the Euler angular rates
-     odes.euler_angular_rates() = euler_angular_rates;
-     
-     // ----------------------------------------------------------
-     // ----------------------------------------------------------
-     // Process the acceleration data
-     // ----------------------------------------------------------
-     // ----------------------------------------------------------     
-     
-     // Get yaw correction
-     //const double bias_yaw = -0.95 * 180.0/M_PI;
-     //double yaw_correction = (-1.0 * bias_yaw) / n_steps_per_second;
-     //double yaw_correction = 0.75 / n_steps_per_second;
-     //double yaw_correction = (0.75 / n_steps_per_second) * M_PI / 180.0;
-     //double yaw_correction = 0.001745278 * M_PI / 180.0;
-     //double yaw_correction = 0.001745278 * M_PI / 180.0;
-     //double yaw_correction = 0.003696498 * M_PI / 180.0;
-     //double yaw_correction = (5.0 * 180.0/M_PI) / n_steps_per_second;
-     //double yaw_correction = 0.013089969/n_steps_per_second; // 0.75 degreess per second
-     //double yaw_correction = 0.013089969/n_steps_per_second;
-     //double yaw_correction = 0.006544985/n_steps_per_second; // 0.01 degreess per second
-     //double yaw_correction = 0.0;
-     //double yaw_correction = odes.get_yaw_correction(t, n_steps_per_second);
-     
-     // -------------------------------------------------------------------
-     // Apply complementary filter
-     // -------------------------------------------------------------------
-     // Complementary filter parameter
-     const double alpha = 0.90;
-     //const double alpha_yaw = 1.0;
-     
-     // Transform accelerations to angles
-     std::vector<double> acc_angles(3, 0.0);
-     //acc_angles[0] = atan2(acc_inertial[2], acc_inertial[1]);
-     //acc_angles[1] = atan2(acc_inertial[0], acc_inertial[2]);
-     //acc_angles[2] = atan2(acc_inertial[1], acc_inertial[0]);
-     
-     //acc_angles[0] = atan2(acc_inertial[1], acc_inertial[2]);
-     //acc_angles[1] = atan2(-acc_inertial[0], sqrt(acc_inertial[1]*acc_inertial[1]+acc_inertial[2]*acc_inertial[2]));
-     //acc_angles[2] = atan2(acc_inertial[1], acc_inertial[0]);
-     
-     acc_angles[0] = atan2(acc_filtered[i][1], acc_filtered[i][2]);
-     acc_angles[1] =
-      atan2(-acc_filtered[i][0], sqrt(acc_filtered[i][1]*acc_filtered[i][1]+acc_filtered[i][2]*acc_filtered[i][2]));
-     //acc_angles[2] = atan2(acc[2], sqrt(acc[0]*acc[0]+acc[2]*acc[2]));
-     acc_angles[2] =
-      atan2(sqrt(acc_filtered[i][0]*acc_filtered[i][0]+acc_filtered[i][1]*acc_filtered[i][1]), acc_filtered[i][0]); // HERE
-     
-     //acc_angles[2] = atan2(acc[1], acc[0]);
-     //acc_angles[2] = atan2(-acc[0], sqrt(acc[0]*acc[0]+acc[1]*acc[1]+acc[2]*acc[2]));
-     //acc_angles[2] = (atan2(acc[1], acc[0]) + atan2(-acc[0], sqrt(acc[0]*acc[0]+acc[1]*acc[1]+acc[2]*acc[2]))) / 2.0;
-     
-     // Update filtered Euler angles
-     y[0][6] = alpha * y[0][6] + (1.0 - alpha) * acc_angles[0];
-     y[0][7] = alpha * y[0][7] + (1.0 - alpha) * acc_angles[1];
-     //y[0][8]+= yaw_correction;
-     //y[0][8] = alpha_yaw * y[0][8];// + (1.0 - alpha) * yaw_correction;
-     //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * (y[0][8] + yaw_correction);
-     //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * acc_angles[2];
-     //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * magnetometer[1];
-     
-     // --------------------------------------------------
-     // Gravity compensation
-     // --------------------------------------------------
-     // Extract gravity and output the raw and the modified
-     // accelerations
-     
-     // Create the rotation matrices
-     std::vector<std::vector<double> > R(DIM);
-     std::vector<std::vector<double> > R_t(DIM);
-     for (unsigned j = 0; j < DIM; j++)
+     // Set the number of processed data
+     unsigned counter = 0;
+     for (unsigned i = n_filtered_signal_gyro; i < n_signal; i++)
       {
-       R[j].resize(DIM);
-       R_t[j].resize(DIM);
+       signal_gyro_x[counter] = signal_gyro_x[i];
+       signal_gyro_y[counter] = signal_gyro_y[i];
+       signal_gyro_z[counter] = signal_gyro_z[i];
+       counter++;
       }
      
-     // Fill rotation matrices
-     fill_rotation_matrices(R, R_t, y[0][6], y[0][7], y[0][8]);
-     //fill_rotation_matrices(R, R_t, -y[0][6], -y[0][7], -true_course_in_degrees * TO_RADIANS); // tachidok, not ntegative because that is why we are multiplying by Rt (inverse of R)
+     n_non_processed_data = counter;
      
-     //fill_rotation_matrices(R, R_t, y[0][6], y[0][7], 0.0); // tachidok
-     
-     // Transform from the body reference frame to the inertial
-     // reference frame
-     std::vector<double> acc_inertial(DIM, 0.0);
-#ifdef GRAVITY_TO_BODY_FRAME
-     std::vector<double> gravity(DIM, 0.0);
-     gravity[2] = GRAVITY;
-     std::vector<double> body_frame_gravity(DIM, 0.0);
-     multiply_matrix_times_vector(R, gravity, body_frame_gravity);
-     for (unsigned j = 0; j < DIM; j++)
+    }
+   else
+    {
+     n_non_processed_data+=n_gyro_data;
+    }
+   
+   if (applied_convolution)
+    {
+     // Set the number of processed data
+     unsigned counter = 0;
+     for (unsigned i = n_filtered_signal_acc; i < n_signal; i++)
       {
-       acc_inertial[j] = acc_filter[i][j] - body_frame_gravity[j];
+       signal_acc_x[counter] = signal_acc_x[i];
+       signal_acc_y[counter] = signal_acc_y[i];
+       signal_acc_z[counter] = signal_acc_z[i];
+       counter++;
       }
-#else
-     multiply_matrix_times_vector(R_t, acc_filtered[i], acc_inertial);//tachidok
-     // Substract gravity
-     acc_inertial[2]-=GRAVITY;     
-#endif // #ifdef GRAVITY_TO_BODY_FRAME
      
-#if 0
-     // Check whether inertial acceleration is meaningless
-     for (unsigned j = 0; j < DIM; j++)
+     n_non_processed_data = counter;
+     
+    }
+   else
+    {
+     n_non_processed_data+=n_acc_data;
+    }
+   
+   // The following steps are only performed if convolution was applied
+   if (applied_convolution)
+    {
+     // The step size is given by the number of data reported in a second
+     h  = 1.0 / static_cast<double>(n_filtered_signal_acc);
+     //h = 1.0 / 15.0;
+     
+     // Process data
+     for (unsigned i = 0; i < static_cast<unsigned>(n_filtered_signal_acc); i++)
       {
-       if (fabs(acc_inertial[j]) < INERTIAL_ACCELERATION_THRESHOLD)
+       // ----------------------------------------------------------
+       // ----------------------------------------------------------
+       // Process the gyros data
+       // ----------------------------------------------------------
+       // ----------------------------------------------------------
+     
+       // --------------------------
+       // Get the Euler angles
+       // --------------------------
+       // Store the Euler-angles
+       std::vector<double> euler_angles(DIM);
+       euler_angles[0] = y[0][6];
+       euler_angles[1] = y[0][7];
+       //euler_angles[2] = true_course_in_degrees * TO_RADIANS; // tachidok, no matter what this value is, it is not used in the calculations, oh!
+       euler_angles[2] = y[0][8]; // tachidok, no matter what this value is, it is not used in the calculations, oh!
+       //euler_angles[2] = 0.0; // tachidok, no matter what this value is, it is not used in the calculations, oh!
+     
+       // Fill the matrix that transforms from angular velocities to
+       // Euler-rates
+       fill_angular_velocities_to_euler_rates_matrix(A, euler_angles);
+       
+       // Store the Euler-angles rates
+       std::vector<double> gyro_filtered(DIM);
+       gyro_filtered[0] = filtered_signal_gyro_x[i];
+       gyro_filtered[1] = filtered_signal_gyro_y[i];
+       gyro_filtered[2] = filtered_signal_gyro_z[i];       
+       std::vector<double> euler_angular_rates(DIM);
+       multiply_matrix_times_vector(A, gyro_filtered, euler_angular_rates);
+       //euler_angular_rates[0] = 0.0;
+       //euler_angular_rates[1] = 0.0;
+       //euler_angular_rates[2] = 0.0;
+       
+       // Set the Euler angular rates
+       odes.euler_angular_rates() = euler_angular_rates;
+     
+       // ----------------------------------------------------------
+       // ----------------------------------------------------------
+       // Process the acceleration data
+       // ----------------------------------------------------------
+       // ----------------------------------------------------------     
+     
+       // Get yaw correction
+       //const double bias_yaw = -0.95 * 180.0/M_PI;
+       //double yaw_correction = (-1.0 * bias_yaw) / n_steps_per_second;
+       //double yaw_correction = 0.75 / n_steps_per_second;
+       //double yaw_correction = (0.75 / n_steps_per_second) * M_PI / 180.0;
+       //double yaw_correction = 0.001745278 * M_PI / 180.0;
+       //double yaw_correction = 0.001745278 * M_PI / 180.0;
+       //double yaw_correction = 0.003696498 * M_PI / 180.0;
+       //double yaw_correction = (5.0 * 180.0/M_PI) / n_steps_per_second;
+       //double yaw_correction = 0.013089969/n_steps_per_second; // 0.75 degreess per second
+       //double yaw_correction = 0.013089969/n_steps_per_second;
+       //double yaw_correction = 0.006544985/n_steps_per_second; // 0.01 degreess per second
+       //double yaw_correction = 0.0;
+       //double yaw_correction = odes.get_yaw_correction(t, n_steps_per_second);
+     
+       // -------------------------------------------------------------------
+       // Apply complementary filter
+       // -------------------------------------------------------------------
+       // Complementary filter parameter
+       const double alpha = 0.90;
+       //const double alpha_yaw = 1.0;
+       
+       // Copy filtered data to vector
+       std::vector<double> acc_filtered(3);
+       acc_filtered[0] = filtered_signal_acc_x[i];
+       acc_filtered[1] = filtered_signal_acc_y[i];
+       acc_filtered[2] = filtered_signal_acc_z[i];       
+       // Transform accelerations to angles
+       std::vector<double> acc_angles(3, 0.0);
+       
+       //acc_angles[0] = atan2(acc_inertial[2], acc_inertial[1]);
+       //acc_angles[1] = atan2(acc_inertial[0], acc_inertial[2]);
+       //acc_angles[2] = atan2(acc_inertial[1], acc_inertial[0]);
+       
+       //acc_angles[0] = atan2(acc_inertial[1], acc_inertial[2]);
+       //acc_angles[1] = atan2(-acc_inertial[0], sqrt(acc_inertial[1]*acc_inertial[1]+acc_inertial[2]*acc_inertial[2]));
+       //acc_angles[2] = atan2(acc_inertial[1], acc_inertial[0]);
+       
+       acc_angles[0] = atan2(acc_filtered[1], acc_filtered[2]);
+       acc_angles[1] =
+        atan2(-acc_filtered[0], sqrt(acc_filtered[1]*acc_filtered[1]+acc_filtered[2]*acc_filtered[2]));
+       //acc_angles[2] = atan2(acc[2], sqrt(acc[0]*acc[0]+acc[2]*acc[2]));
+       acc_angles[2] =
+        atan2(sqrt(acc_filtered[0]*acc_filtered[0]+acc_filtered[1]*acc_filtered[1]), acc_filtered[0]); // HERE
+       
+       //acc_angles[2] = atan2(acc[1], acc[0]);
+       //acc_angles[2] = atan2(-acc[0], sqrt(acc[0]*acc[0]+acc[1]*acc[1]+acc[2]*acc[2]));
+       //acc_angles[2] = (atan2(acc[1], acc[0]) + atan2(-acc[0], sqrt(acc[0]*acc[0]+acc[1]*acc[1]+acc[2]*acc[2]))) / 2.0;
+       
+       // Update filtered Euler angles
+       y[0][6] = alpha * y[0][6] + (1.0 - alpha) * acc_angles[0];
+       y[0][7] = alpha * y[0][7] + (1.0 - alpha) * acc_angles[1];
+       
+#if 1
+       if (correct_yaw) // Only correct once, then "let it be"
         {
-         acc_inertial[j] = 0.0;
+         const double zero_heading_angle = 130.0*TO_RADIANS;
+         double output_yaw_angle = 0.0;
+         if (zero_heading_angle >=0.0)
+          {
+           if (y[0][8] < 0.0)
+            {
+             if (y[0][8] < -(M_PI-zero_heading_angle))
+              {
+               
+              }
+             else
+              {
+               output_yaw_angle = -y[0][8] + zero_heading_angle;
+              }
+            }
+           else
+            {
+             if (y[0][8] > zero_heading_angle)
+              {
+               output_yaw_angle = -(y[0][8] - zero_heading_angle);
+              }
+             else
+              {
+               output_yaw_angle = zero_heading_angle - y[0][8];
+              }
+             
+            }
+           
+          }
+         y[0][8] = output_yaw_angle;
+         //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * true_course_in_radians;
+         if (time <= 128.0)
+          {
+           y[0][8] = 0.0;
+          }
+         else
+          {
+           correct_yaw = false;
+          }
         }
-      }
+#endif // #if 1
+       
+       //y[0][8]+= yaw_correction;
+       //y[0][8] = alpha_yaw * y[0][8];// + (1.0 - alpha) * yaw_correction;
+       //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * (y[0][8] + yaw_correction);
+       //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * acc_angles[2];
+       //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * magnetometer[1];
+       
+       // --------------------------------------------------
+       // Gravity compensation
+       // --------------------------------------------------
+       // Extract gravity and output the raw and the modified
+       // accelerations
+     
+       // Create the rotation matrices
+       std::vector<std::vector<double> > R(DIM);
+       std::vector<std::vector<double> > R_t(DIM);
+       for (unsigned j = 0; j < DIM; j++)
+        {
+         R[j].resize(DIM);
+         R_t[j].resize(DIM);
+        }
+       
+       // Fill rotation matrices
+       fill_rotation_matrices(R, R_t, y[0][6], y[0][7], y[0][8]);
+       //fill_rotation_matrices(R, R_t, y[0][6], y[0][7], true_course_in_degrees * TO_RADIANS); // tachidok, not ntegative because that is why we are multiplying by Rt (inverse of R)
+       //fill_rotation_matrices(R, R_t, -y[0][6], -y[0][7], -true_course_in_degrees * TO_RADIANS); // tachidok, not ntegative because that is why we are multiplying by Rt (inverse of R)
+     
+       //fill_rotation_matrices(R, R_t, y[0][6], y[0][7], 0.0); // tachidok
+     
+       // Transform from the body reference frame to the inertial
+       // reference frame
+       std::vector<double> acc_inertial(DIM, 0.0);
+#ifdef GRAVITY_TO_BODY_FRAME
+       std::vector<double> gravity(DIM, 0.0);
+       gravity[2] = GRAVITY;
+       std::vector<double> body_frame_gravity(DIM, 0.0);
+       multiply_matrix_times_vector(R, gravity, body_frame_gravity);
+       for (unsigned j = 0; j < DIM; j++)
+        {
+         acc_inertial[j] = acc_filter[i][j] - body_frame_gravity[j];
+        }
+#else
+       multiply_matrix_times_vector(R_t, acc_filtered, acc_inertial);//tachidok
+       // Substract gravity
+       acc_inertial[2]-=GRAVITY;     
+#endif // #ifdef GRAVITY_TO_BODY_FRAME
+       
+#if 0
+       // Check whether inertial acceleration is meaningless
+       for (unsigned j = 0; j < DIM; j++)
+        {
+         if (fabs(acc_inertial[j]) < INERTIAL_ACCELERATION_THRESHOLD)
+          {
+           acc_inertial[j] = 0.0;
+          }
+        }
 #endif // #if 0
      
 #ifdef CORRECT_X_AXIS_POINTING_TO_FRONT
-     {
-      const double tmp = -acc_inertial[1];
-      acc_inertial[1] = acc_inertial[0];
-      acc_inertial[0] = tmp;
-     }
+       {
+        const double tmp = -acc_inertial[1];
+        acc_inertial[1] = acc_inertial[0];
+        acc_inertial[0] = tmp;
+       }
 #endif // #ifdef CORRECT_X_AXIS_POINTING_TO_FRONT
      
-     // Set linear acceleration
-     odes.linear_acceleration() = acc_inertial;
+       // Set linear acceleration
+       odes.linear_acceleration() = acc_inertial;
+       
+       // Compute absolute velocities based on heading and relative velocities
+       //odes.compute_north_east_velocities(y[0][1], y[0][3]);
      
-     // Compute absolute velocities based on heading and relative velocities
-     //odes.compute_north_east_velocities(y[0][1], y[0][3]);
+       // -----------------------------------------------------------------
+       // Integrate
+       // -----------------------------------------------------------------
+       //const double m_factor = 1.0;
+       //const double h_integration_step = 1.0/(m_factor*15.0); // tachidok
+       //const double h_integration_step = 1.0/(0.2*15.0);
+       //integrator->integrate_step(odes, h_integration_step, time, y);
+       integrator->integrate_step(odes, h, time, y);
+       // Update data
+       for (unsigned j = 0; j < n_odes; j++)
+        {
+         y[0][j] = y[1][j];
+        }
+       // Update time
+       time+=h;
      
-     // -----------------------------------------------------------------
-     // Integrate
-     // -----------------------------------------------------------------
-     //const double m_factor = 1.0;
-     //const double h_integration_step = 1.0/(m_factor*15.0); // tachidok
-     //const double h_integration_step = 1.0/(0.2*15.0);
-     //integrator->integrate_step(odes, h_integration_step, time, y);
-     integrator->integrate_step(odes, h, time, y);
-     // Update data
-     for (unsigned j = 0; j < n_odes; j++)
-      {
-       y[0][j] = y[1][j];
-      }
-     // Update time
-     time+=h;
-     
-     // -----------------
-     // Output data
-     // -----------------
-     // Position
-     outfile_position << time
-                      << " " << y[0][0]
-                      << " " << y[0][2]
-                      << " " << y[0][4] << std::endl;
-     // Consider that x+ points to north and y+ points to west
-     //outfile_position << time
-     //                 << " " << -y[0][2]
-     //                 << " " << y[0][0]
-     //                 << " " << y[0][4] << std::endl; 
-     // Velocity
-     outfile_velocity << time
-                      << " " << y[0][1]
-                      << " " << y[0][3]
-                      << " " << y[0][5]
-      //                      << " " << std::sqrt(y[0][1] * y[0][1] + y[0][3] * y[0][3] + y[0][5] * y[0][5])
-                      << " " << std::sqrt(y[0][1] * y[0][1] + y[0][3] * y[0][3])
-                      << std::endl;
-     // North-East velocity
-     outfile_north_east_velocity << time
-                                 << " " << odes.north_velocity()
-                                 << " " << odes.east_velocity()
-      //<< " " << y[0][1]//odes.north_velocity()
-      //<< " " << y[0][3]//odes.east_velocity()
-                                 << std::endl;
-     // Euler angles rates
-     outfile_euler_angles_rates << time
-                                << " " << euler_angular_rates[0]
-                                << " " << euler_angular_rates[1]
-                                << " " << euler_angular_rates[2] << std::endl;
+       // -----------------
+       // Output data
+       // -----------------
+       // Position
+       outfile_position << time
+                        << " " << y[0][0]
+                        << " " << y[0][2]
+                        << " " << y[0][4] << std::endl;
+       // Consider that x+ points to north and y+ points to west
+       //outfile_position << time
+       //                 << " " << -y[0][2]
+       //                 << " " << y[0][0]
+       //                 << " " << y[0][4] << std::endl; 
+       // Velocity
+       outfile_velocity << time
+                        << " " << y[0][1]
+                        << " " << y[0][3]
+                        << " " << y[0][5]
+        //                      << " " << std::sqrt(y[0][1] * y[0][1] + y[0][3] * y[0][3] + y[0][5] * y[0][5])
+                        << " " << std::sqrt(y[0][1] * y[0][1] + y[0][3] * y[0][3])
+                        << std::endl;
+       // North-East velocity
+       outfile_north_east_velocity << time
+                                   << " " << odes.north_velocity()
+                                   << " " << odes.east_velocity()
+        //<< " " << y[0][1]//odes.north_velocity()
+        //<< " " << y[0][3]//odes.east_velocity()
+                                   << std::endl;
+       // Euler angles rates
+       outfile_euler_angles_rates << time
+                                  << " " << euler_angular_rates[0]
+                                  << " " << euler_angular_rates[1]
+                                  << " " << euler_angular_rates[2] << std::endl;
 #ifdef GRAVITY_TO_BODY_FRAME
-     // Body frame gravity
-     outfile_body_frame_gravity << time
-                                << " " << body_frame_gravity[0]
-                                << " " << body_frame_gravity[1]
-                                << " " << body_frame_gravity[2]
-                                << " " << std::sqrt(body_frame_gravity[0] * body_frame_gravity[0] +
-      body_frame_gravity[1] * body_frame_gravity[1] + body_frame_gravity[2] * body_frame_gravity[2])
-                                << std::endl;
+       // Body frame gravity
+       outfile_body_frame_gravity << time
+                                  << " " << body_frame_gravity[0]
+                                  << " " << body_frame_gravity[1]
+                                  << " " << body_frame_gravity[2]
+                                  << " " << std::sqrt(body_frame_gravity[0] * body_frame_gravity[0] +
+                                                      body_frame_gravity[1] * body_frame_gravity[1] + body_frame_gravity[2] * body_frame_gravity[2])
+                                  << std::endl;
 #endif // #ifdef GRAVITY_TO_BODY_FRAME
-     // Inertial accelerations
-     outfile_intertial_acc << time
-                           << " " << acc_inertial[0]
-                           << " " << acc_inertial[1]
-                           << " " << acc_inertial[2] << std::endl;
-     // Euler angles
-     outfile_roll_pitch_yaw << time
-                            << " " << y[0][6]
-                            << " " << y[0][7]
-                            << " " << y[0][8] << std::endl;
-     //<< " " << true_course_in_degrees * TO_RADIANS << std::endl;
+       // Inertial accelerations
+       outfile_inertial_acc << time
+                             << " " << acc_inertial[0]
+                             << " " << acc_inertial[1]
+                             << " " << acc_inertial[2] << std::endl;
+       
+#if 0
+       const double zero_heading_angle = 130.0*TO_RADIANS;
+       double output_yaw_angle = 0.0;
+       if (zero_heading_angle >=0.0)
+        {
+         if (y[0][8] < 0.0)
+          {
+           if (y[0][8] < -(M_PI-zero_heading_angle))
+            {
+             
+            }
+           else
+            {
+             output_yaw_angle = -y[0][8] + zero_heading_angle;
+            }
+          }
+         else
+          {
+           if (y[0][8] > zero_heading_angle)
+            {
+             output_yaw_angle = -(y[0][8] - zero_heading_angle);
+            }
+           else
+            {
+             output_yaw_angle = zero_heading_angle - y[0][8];
+            }
+           
+          }
+         
+        }
+#endif // #if 0
+       
+       // Euler angles
+       outfile_roll_pitch_yaw << time
+                              << " " << y[0][6]
+                              << " " << y[0][7]
+                              << " " << y[0][8] << std::endl;
+       //<< " " << true_course_in_degrees * TO_RADIANS << std::endl;
      
-     // Euler angles from accelerations
-     outfile_roll_pitch_yaw_from_acc << time
-                                     << " " << acc_angles[0]
-                                     << " " << acc_angles[1]
-                                     << " " << acc_angles[2] << std::endl;
-     // Filtered gyro
-     outfile_filtered_gyro << time
-                           << " " << gyro_filtered[i][0]
-                           << " " << gyro_filtered[i][1]
-                           << " " << gyro_filtered[i][2] << std::endl;
-     // Filtered acc
-     outfile_filtered_acc << time
-                          << " " << acc_filtered[i][0]
-                          << " " << acc_filtered[i][1]
-                          << " " << acc_filtered[i][2] << std::endl;
+       // Euler angles from accelerations
+       outfile_roll_pitch_yaw_from_acc << time
+                                       << " " << acc_angles[0]
+                                       << " " << acc_angles[1]
+                                       << " " << acc_angles[2] << std::endl;
+       // Filtered gyro
+       outfile_filtered_gyro << time
+                             << " " << gyro_filtered[0]
+                             << " " << gyro_filtered[1]
+                             << " " << gyro_filtered[2] << std::endl;
+       // Filtered acc
+       outfile_filtered_acc << time
+                            << " " << acc_filtered[0]
+                            << " " << acc_filtered[1]
+                            << " " << acc_filtered[2] << std::endl;
+       
+       // True course in degrees (output here even though we have
+       // repeated values, we need them to plot in Matlab, otherwise we
+       // would have to interpolate in matlab)
+       outfile_true_course_in_degrees << time
+                                      << " " << true_course_in_degrees << std::endl;
+       
+       std::cout << "t: " << time
+                 << " x-pos: " << y[0][0] << " x-vel: " << y[0][1]
+                 << " y-pos: " << y[0][2] << " y-vel: " << y[0][3]
+                 << " z-pos: " << y[0][4] << " z-vel: " << y[0][5]
+                 << " roll: " << y[0][6] << " pitch: " << y[0][7] << " yaw: " << y[0][8] << std::endl;
+       
+      } // for (i < n_acc_data)
      
-     // True course in degrees (output here even though we have
-     // repeated values, we need them to plot in Matlab, otherwise we
-     // would have to interpolate in matlab)
-     outfile_true_course_in_degrees << time
-                                    << " " << true_course_in_degrees << std::endl;
-     
-     std::cout << "t: " << time
-               << " x-pos: " << y[0][0] << " x-vel: " << y[0][1]
-               << " y-pos: " << y[0][2] << " y-vel: " << y[0][3]
-               << " z-pos: " << y[0][4] << " z-vel: " << y[0][5]
-               << " roll: " << y[0][6] << " pitch: " << y[0][7] << " yaw: " << y[0][8] << std::endl;
-     
-    } // for (i < n_acc_data)
+    } // if (applied_convolution)
    
   } // while (LOOP)
  
@@ -1375,7 +1626,7 @@ int main(int argc, char *argv[])
 #ifdef GRAVITY_TO_BODY_FRAME
  outfile_body_frame_gravity.close();
 #endif // #ifdef GRAVITY_TO_BODY_FRAME
- outfile_intertial_acc.close();
+ outfile_inertial_acc.close();
  outfile_roll_pitch_yaw.close();
  outfile_true_course_in_degrees.close();
  outfile_roll_pitch_yaw_from_acc.close();

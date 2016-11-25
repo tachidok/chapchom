@@ -131,6 +131,7 @@ n_output_data = 5246; % order 4
 n_output_data = 3122; % order 8
 n_output_data = 1005; % order 12
 n_output_data = 532; % order 14
+n_output_data = 7356; % order 14
 %n_output_data = 14804; % order 14
 my_raw_gyro = importfile_TelitSL869DR_3columns('RESLT/raw_gyro.dat', 1, n_input_data);
 my_raw_accelerations = importfile_TelitSL869DR_3columns('RESLT/raw_accelerations.dat', 1, n_input_data);
@@ -167,7 +168,7 @@ legend('Angle from accelerometer', 'Gyroscope and accelerometer fusion', 'Locati
 figure
 %plot(my_roll_pitch_yaw_from_acc(:,1), my_roll_pitch_yaw_from_acc(:,4)*180.0/pi, 'g', my_roll_pitch_yaw(:,1), my_roll_pitch_yaw(:,4)*180.0/pi, 'r')
 plot(my_roll_pitch_yaw_from_acc(:,1), my_roll_pitch_yaw_from_acc(:,4)*180.0/pi, 'g', my_roll_pitch_yaw(:,1), my_roll_pitch_yaw(:,4)*180.0/pi, 'r', my_true_course_in_degrees(:,1), my_true_course_in_degrees(:,2), 'b')
-axis([initial_time final_time -180 180])
+%axis([initial_time final_time -180 180])
 title('Euler angle [yaw]')
 xlabel('Time(s)')
 ylabel('\theta (degrees)')
@@ -182,27 +183,27 @@ title('True course in degrees [yaw]')
 xlabel('Time(s)')
 ylabel('\theta (degrees)')
 
-% %% Raw gyro and euler angles rates
-% figure
-% plot(my_raw_gyro(:, 1), my_raw_gyro(:, 2)*180.0/pi, 'b', my_euler_angles_rates(:,1), my_euler_angles_rates(:,2)*180.0/pi, '--r')
-% title('[X] Gyro & [Roll] Euler angle rate')
-% xlabel('Time (s)')
-% ylabel('dps')
-% legend('Raw gyro', '[Roll] Euler angle rate', 'Location', 'NorthWest')
-% 
-% figure
-% plot(my_raw_gyro(:, 1), my_raw_gyro(:, 3)*180.0/pi, 'b', my_euler_angles_rates(:,1), my_euler_angles_rates(:,3)*180.0/pi, '--r')
-% title('[Y] Gyro & [Pitch] Euler angle rate')
-% xlabel('Time (s)')
-% ylabel('dps')
-% legend('Raw gyro', '[Pitch] Euler angle rate', 'Location', 'NorthWest')
-%  
-% figure
-% plot(my_raw_gyro(:, 1), my_raw_gyro(:, 4)*180.0/pi, 'b', my_euler_angles_rates(:,1), my_euler_angles_rates(:,4)*180.0/pi, '--r')
-% title('[Z] Gyro & [Yaw] Euler angle rate')
-% xlabel('Time (s)')
-% ylabel('dps')
-% legend('Raw gyro', '[Yaw] Euler angle rate', 'Location', 'NorthWest')
+%% Raw gyro and euler angles rates
+figure
+plot(my_raw_gyro(:, 1), my_raw_gyro(:, 2)*180.0/pi, 'b', my_euler_angles_rates(:,1), my_euler_angles_rates(:,2)*180.0/pi, '--r')
+title('[X] Gyro & [Roll] Euler angle rate')
+xlabel('Time (s)')
+ylabel('dps')
+legend('Raw gyro', '[Roll] Euler angle rate', 'Location', 'NorthWest')
+
+figure
+plot(my_raw_gyro(:, 1), my_raw_gyro(:, 3)*180.0/pi, 'b', my_euler_angles_rates(:,1), my_euler_angles_rates(:,3)*180.0/pi, '--r')
+title('[Y] Gyro & [Pitch] Euler angle rate')
+xlabel('Time (s)')
+ylabel('dps')
+legend('Raw gyro', '[Pitch] Euler angle rate', 'Location', 'NorthWest')
+ 
+figure
+plot(my_raw_gyro(:, 1), my_raw_gyro(:, 4)*180.0/pi, 'b', my_euler_angles_rates(:,1), my_euler_angles_rates(:,4)*180.0/pi, '--r')
+title('[Z] Gyro & [Yaw] Euler angle rate')
+xlabel('Time (s)')
+ylabel('dps')
+legend('Raw gyro', '[Yaw] Euler angle rate', 'Location', 'NorthWest')
 
 %% Raw vs filtered gyro
 figure
@@ -220,7 +221,7 @@ title('y-gyro (device system coordinate)')
 xlabel('Time (s)')
 ylabel('dps')
 legend('Raw gyro', 'Filtered gyro', 'Location', 'NorthWest')
- 
+
 figure
 plot(my_raw_gyro(:, 1), my_raw_gyro(:, 4)*180.0/pi, 'b', my_filtered_gyro(:, 1), my_filtered_gyro(:, 4)*180.0/pi, 'r')
 axis([initial_time final_time -40 40])
@@ -407,8 +408,10 @@ n_data = size(my_velocity,1);
 x = zeros(n_data, 1);
 y = zeros(n_data, 1);
 for i=2:n_data
-    x(i) = my_velocity(i, 2)*m_per_sec_to_km_per_h * cos(my_true_course_in_degrees(i,2)*pi/180.0) + x(i-1);
-    y(i) = my_velocity(i, 2)*m_per_sec_to_km_per_h * sin(my_true_course_in_degrees(i,2)*pi/180.0) + y(i-1);
+    %x(i) = my_velocity(i, 2)*m_per_sec_to_km_per_h * cos(my_true_course_in_degrees(i,2)*pi/180.0) + x(i-1);
+    %y(i) = my_velocity(i, 2)*m_per_sec_to_km_per_h * sin(my_true_course_in_degrees(i,2)*pi/180.0) + y(i-1);
+    x(i) = -my_velocity(i, 3)*m_per_sec_to_km_per_h * cos(my_true_course_in_degrees(i,2)*pi/180.0) + x(i-1);
+    y(i) = -my_velocity(i, 3)*m_per_sec_to_km_per_h * sin(my_true_course_in_degrees(i,2)*pi/180.0) + y(i-1);
 end
 % % Plot position
 figure();
@@ -419,7 +422,7 @@ xlabel('x (km)')
 ylabel('y (km)')
 legend('Trajectory', 'Location', 'NorthWest')
 
-delay = 0.05; % Delay in seconds in every loop
+delay = 0.005; % Delay in seconds in every loop
 n_loop = size(x, 1)
 % % Plot position
 figure();
@@ -492,7 +495,7 @@ xlabel('x (km)')
 ylabel('y (km)')
 legend('Trajectory', 'Location', 'NorthWest')
 
-delay = 0.05; % Delay in seconds in every loop
+delay = 0.005; % Delay in seconds in every loop
 n_loop = size(x, 1)
 % % Plot position
 figure();
@@ -578,7 +581,7 @@ legend('Frequency', 'Location', 'NorthWest')
 
 %% Designing a filter for the Gyro data
 cut_off_frequency = 0.5/Fs/2; % Normalised to Nyquist frequency which is half the sampling rate
-order = 14; % The order of the filter
+order = 28; % The order of the filter
 %order = 128; % The order of the filter
 % Impose response of the low-pass filter
 h = fir1(order, cut_off_frequency);
@@ -642,7 +645,7 @@ legend('Frequency', 'Location', 'NorthWest')
 
 %% Designing a filter for the Accelerometer data
 cut_off_frequency = 0.25/Fs/2; % Normalised to Nyquist frequency which is half the sampling rate
-order = 14; % The order of the filter
+order = 28; % The order of the filter
 %order = 128; % The order of the filter
 % Impose response of the low-pass filter
 h = fir1(order, cut_off_frequency);
