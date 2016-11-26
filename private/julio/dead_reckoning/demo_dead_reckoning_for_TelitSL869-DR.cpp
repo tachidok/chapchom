@@ -814,6 +814,10 @@ int main(int argc, char *argv[])
  y[0][7] = 0.0; // Initial pitch
  y[0][8] = 0.0;//130*TO_RADIANS; // Initial yaw
  //y[0][8] = 0.0; // Initial yaw
+ 
+ // Flag to indicate whether to correct yaw or not. Used once we have
+ // heading information to initialise the value of yaw and to perform
+ // corrections of yaw when the value is out of range
  bool correct_yaw = true;
  
  // Output the initial data to screen
@@ -1361,11 +1365,28 @@ int main(int argc, char *argv[])
        y[0][7] = alpha * y[0][7] + (1.0 - alpha) * acc_angles[1];
        
 #if 1
-       if (correct_yaw) // Only correct once, then "let it be"
+       if (!correct_yaw && (y[0][8] > M_PI)) // || y[0][8] < -M_PI)) // Only
+                                                                // check
+                                                                // this
+                                                                // if
+                                                                // the
+                                                                // value
+                                                                // has
+                                                                // been
+                                                                // initialised
+        {
+         correct_yaw = true;
+        }
+       
+       if (time <= 128.0)
+        {
+         y[0][8] = 0.0;
+        }
+       else if (correct_yaw) // Correct once we have heading info,
+                             // then when its value goes out of range
         {
          const double zero_heading_angle = 130.0*TO_RADIANS;
-         double output_yaw_angle = 0.0;
-         if (zero_heading_angle >=0.0)
+         if (zero_heading_angle >= 0.0)
           {
            if (y[0][8] < 0.0)
             {
@@ -1375,35 +1396,43 @@ int main(int argc, char *argv[])
               }
              else
               {
-               output_yaw_angle = -y[0][8] + zero_heading_angle;
+               y[0][8] = -y[0][8] + zero_heading_angle;
               }
             }
            else
             {
              if (y[0][8] > zero_heading_angle)
               {
-               output_yaw_angle = -(y[0][8] - zero_heading_angle);
+               if (y[0][8] > M_PI)
+                {
+                 //y[0][8] = -(2*M_PI - y[0][8]);
+                 y[0][8] = -(M_PI - (y[0][8] - zero_heading_angle));
+                 // -(M_PI - zero_heading_angle);
+                }
+               else
+                {
+                 y[0][8] = -(y[0][8] - zero_heading_angle);
+                }
               }
              else
               {
-               output_yaw_angle = zero_heading_angle - y[0][8];
+               y[0][8] = zero_heading_angle - y[0][8];
               }
              
             }
            
-          }
-         y[0][8] = output_yaw_angle;
-         //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * true_course_in_radians;
-         if (time <= 128.0)
-          {
-           y[0][8] = 0.0;
-          }
-         else
-          {
            correct_yaw = false;
+           
           }
+         
         }
-#endif // #if 1
+       
+       y[0][8] = alpha * y[0][8] + (1.0 - alpha) * true_course_in_radians;
+       if (time <= 128.0)
+        {
+         y[0][8] = 0.0;
+        }
+#endif // #if 1       
        
        //y[0][8]+= yaw_correction;
        //y[0][8] = alpha_yaw * y[0][8];// + (1.0 - alpha) * yaw_correction;
