@@ -1265,6 +1265,7 @@ int main(int argc, char *argv[])
     {
      // The step size is given by the number of data reported in a second
      h  = 1.0 / static_cast<double>(n_filtered_signal_acc);
+     DEB(n_filtered_signal_acc);
      //h = 1.0 / 15.0;
      
      // Process data
@@ -1363,8 +1364,8 @@ int main(int argc, char *argv[])
        // Update filtered Euler angles
        y[0][6] = alpha * y[0][6] + (1.0 - alpha) * acc_angles[0];
        y[0][7] = alpha * y[0][7] + (1.0 - alpha) * acc_angles[1];
-       
-#if 1
+       y[0][8] = 0.0;
+#if 0
        if (!correct_yaw && (y[0][8] > M_PI)) // || y[0][8] < -M_PI)) // Only
                                                                 // check
                                                                 // this
@@ -1498,18 +1499,18 @@ int main(int argc, char *argv[])
         acc_inertial[0] = tmp;
        }
 #endif // #ifdef CORRECT_X_AXIS_POINTING_TO_FRONT
-     
+       
        // Set linear acceleration
        odes.linear_acceleration() = acc_inertial;
        
        // Compute absolute velocities based on heading and relative velocities
        //odes.compute_north_east_velocities(y[0][1], y[0][3]);
-     
+       
        // -----------------------------------------------------------------
        // Integrate
        // -----------------------------------------------------------------
        //const double m_factor = 1.0;
-       //const double h_integration_step = 1.0/(m_factor*15.0); // tachidok
+       //const double h_integration_step = 1.0/(m_factor*50.0); // tachidok
        //const double h_integration_step = 1.0/(0.2*15.0);
        //integrator->integrate_step(odes, h_integration_step, time, y);
        integrator->integrate_step(odes, h, time, y);
@@ -1520,7 +1521,7 @@ int main(int argc, char *argv[])
         }
        // Update time
        time+=h;
-     
+       
        // -----------------
        // Output data
        // -----------------
@@ -1569,38 +1570,6 @@ int main(int argc, char *argv[])
                              << " " << acc_inertial[0]
                              << " " << acc_inertial[1]
                              << " " << acc_inertial[2] << std::endl;
-       
-#if 0
-       const double zero_heading_angle = 130.0*TO_RADIANS;
-       double output_yaw_angle = 0.0;
-       if (zero_heading_angle >=0.0)
-        {
-         if (y[0][8] < 0.0)
-          {
-           if (y[0][8] < -(M_PI-zero_heading_angle))
-            {
-             
-            }
-           else
-            {
-             output_yaw_angle = -y[0][8] + zero_heading_angle;
-            }
-          }
-         else
-          {
-           if (y[0][8] > zero_heading_angle)
-            {
-             output_yaw_angle = -(y[0][8] - zero_heading_angle);
-            }
-           else
-            {
-             output_yaw_angle = zero_heading_angle - y[0][8];
-            }
-           
-          }
-         
-        }
-#endif // #if 0
        
        // Euler angles
        outfile_roll_pitch_yaw << time
