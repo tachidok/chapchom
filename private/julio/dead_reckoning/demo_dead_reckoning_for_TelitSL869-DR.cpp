@@ -1265,7 +1265,7 @@ int main(int argc, char *argv[])
     {
      // The step size is given by the number of data reported in a second
      h  = 1.0 / static_cast<double>(n_filtered_signal_acc);
-     DEB(n_filtered_signal_acc);
+     //DEB(n_filtered_signal_acc);
      //h = 1.0 / 15.0;
      
      // Process data
@@ -1276,7 +1276,7 @@ int main(int argc, char *argv[])
        // Process the gyros data
        // ----------------------------------------------------------
        // ----------------------------------------------------------
-     
+       
        // --------------------------
        // Get the Euler angles
        // --------------------------
@@ -1287,7 +1287,7 @@ int main(int argc, char *argv[])
        //euler_angles[2] = true_course_in_degrees * TO_RADIANS; // tachidok, no matter what this value is, it is not used in the calculations, oh!
        euler_angles[2] = y[0][8]; // tachidok, no matter what this value is, it is not used in the calculations, oh!
        //euler_angles[2] = 0.0; // tachidok, no matter what this value is, it is not used in the calculations, oh!
-     
+       
        // Fill the matrix that transforms from angular velocities to
        // Euler-rates
        fill_angular_velocities_to_euler_rates_matrix(A, euler_angles);
@@ -1296,7 +1296,8 @@ int main(int argc, char *argv[])
        std::vector<double> gyro_filtered(DIM);
        gyro_filtered[0] = filtered_signal_gyro_x[i];
        gyro_filtered[1] = filtered_signal_gyro_y[i];
-       gyro_filtered[2] = filtered_signal_gyro_z[i];       
+       gyro_filtered[2] = filtered_signal_gyro_z[i];
+       //gyro_filtered[2] = 0.0; // HERE
        std::vector<double> euler_angular_rates(DIM);
        multiply_matrix_times_vector(A, gyro_filtered, euler_angular_rates);
        //euler_angular_rates[0] = 0.0;

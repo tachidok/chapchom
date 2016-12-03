@@ -183,27 +183,27 @@ title('True course in degrees [yaw]')
 xlabel('Time(s)')
 ylabel('\theta (degrees)')
 
-% %% Raw gyro and euler angles rates
-% figure
-% plot(my_raw_gyro(:, 1), my_raw_gyro(:, 2)*180.0/pi, 'b', my_euler_angles_rates(:,1), my_euler_angles_rates(:,2)*180.0/pi, '--r')
-% title('[X] Gyro & [Roll] Euler angle rate')
-% xlabel('Time (s)')
-% ylabel('dps')
-% legend('Raw gyro', '[Roll] Euler angle rate', 'Location', 'NorthWest')
-% 
-% figure
-% plot(my_raw_gyro(:, 1), my_raw_gyro(:, 3)*180.0/pi, 'b', my_euler_angles_rates(:,1), my_euler_angles_rates(:,3)*180.0/pi, '--r')
-% title('[Y] Gyro & [Pitch] Euler angle rate')
-% xlabel('Time (s)')
-% ylabel('dps')
-% legend('Raw gyro', '[Pitch] Euler angle rate', 'Location', 'NorthWest')
-%  
-% figure
-% plot(my_raw_gyro(:, 1), my_raw_gyro(:, 4)*180.0/pi, 'b', my_euler_angles_rates(:,1), my_euler_angles_rates(:,4)*180.0/pi, '--r')
-% title('[Z] Gyro & [Yaw] Euler angle rate')
-% xlabel('Time (s)')
-% ylabel('dps')
-% legend('Raw gyro', '[Yaw] Euler angle rate', 'Location', 'NorthWest')
+%% Raw gyro and euler angles rates
+figure
+plot(my_raw_gyro(:, 1), my_raw_gyro(:, 2)*180.0/pi, 'b', my_euler_angles_rates(:,1), my_euler_angles_rates(:,2)*180.0/pi, '--r')
+title('[X] Gyro & [Roll] Euler angle rate')
+xlabel('Time (s)')
+ylabel('dps')
+legend('Raw gyro', '[Roll] Euler angle rate', 'Location', 'NorthWest')
+
+figure
+plot(my_raw_gyro(:, 1), my_raw_gyro(:, 3)*180.0/pi, 'b', my_euler_angles_rates(:,1), my_euler_angles_rates(:,3)*180.0/pi, '--r')
+title('[Y] Gyro & [Pitch] Euler angle rate')
+xlabel('Time (s)')
+ylabel('dps')
+legend('Raw gyro', '[Pitch] Euler angle rate', 'Location', 'NorthWest')
+ 
+figure
+plot(my_raw_gyro(:, 1), my_raw_gyro(:, 4)*180.0/pi, 'b', my_euler_angles_rates(:,1), my_euler_angles_rates(:,4)*180.0/pi, '--r')
+title('[Z] Gyro & [Yaw] Euler angle rate')
+xlabel('Time (s)')
+ylabel('dps')
+legend('Raw gyro', '[Yaw] Euler angle rate', 'Location', 'NorthWest')
 
 %% Raw vs filtered gyro
 figure
@@ -533,7 +533,7 @@ ylabel('x-velocity')
 legend('x-velocity', 'Location', 'NorthWest')
 
 figure
-plot(my_velocity(:, 1),[Z] Filtered Accelerometer')
+plot(my_velocity(:, 1), my_velocity(:, 2), 'b')
 xlabel('Time (s)') my_velocity(:, 3), 'b')
 title('Velocity')
 xlabel('time (s)')
