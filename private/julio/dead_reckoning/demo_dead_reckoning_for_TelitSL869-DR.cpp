@@ -1366,7 +1366,7 @@ int main(int argc, char *argv[])
        y[0][6] = alpha * y[0][6] + (1.0 - alpha) * acc_angles[0];
        y[0][7] = alpha * y[0][7] + (1.0 - alpha) * acc_angles[1];
        //y[0][8] = 0.0; HERE
-#if 1
+#if 0
 #if 0
        if (!correct_yaw && (y[0][8] > M_PI)) // || y[0][8] < -M_PI)) // Only
                                                                 // check
@@ -1431,12 +1431,12 @@ int main(int argc, char *argv[])
          
         }
        
-       y[0][8] = alpha * y[0][8] + (1.0 - alpha) * true_course_in_radians;
        if (time <= 128.0)
         {
          y[0][8] = 0.0;
         }
-#endif // #if 1       
+#endif // #if 1
+       y[0][8] = alpha * y[0][8] + (1.0 - alpha) * true_course_in_radians;
        
        //y[0][8]+= yaw_correction;
        //y[0][8] = alpha_yaw * y[0][8];// + (1.0 - alpha) * yaw_correction;
