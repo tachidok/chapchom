@@ -812,8 +812,8 @@ int main(int argc, char *argv[])
  // The data are in radians
  y[0][6] = 0.0; // Initial roll
  y[0][7] = 0.0; // Initial pitch
- y[0][8] = 0.0;//130*TO_RADIANS; // Initial yaw
- //y[0][8] = 0.0; // Initial yaw
+ //y[0][8] = 130.0*TO_RADIANS; // Initial yaw
+ y[0][8] = 0.0; // Initial yaw
  
  // Flag to indicate whether to correct yaw or not. Used once we have
  // heading information to initialise the value of yaw and to perform
@@ -1365,7 +1365,8 @@ int main(int argc, char *argv[])
        // Update filtered Euler angles
        y[0][6] = alpha * y[0][6] + (1.0 - alpha) * acc_angles[0];
        y[0][7] = alpha * y[0][7] + (1.0 - alpha) * acc_angles[1];
-       y[0][8] = 0.0;
+       //y[0][8] = 0.0; HERE
+#if 1
 #if 0
        if (!correct_yaw && (y[0][8] > M_PI)) // || y[0][8] < -M_PI)) // Only
                                                                 // check
@@ -1379,6 +1380,7 @@ int main(int argc, char *argv[])
         {
          correct_yaw = true;
         }
+#endif // #if 0
        
        if (time <= 128.0)
         {

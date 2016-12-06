@@ -38,7 +38,7 @@ namespace chapchom
   }  
   
   // Initialise nmea parser
-  nmea_decoder = new CCNMEADecoder(50);
+  nmea_decoder = new CCNMEADecoder(NFIELDS_NMEA_DECODER);
   
  }
 

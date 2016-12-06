@@ -11,6 +11,8 @@
 // The nmea decoder
 #include "cc_nmea_decoder.h"
 
+#define NFIELDS_NMEA_DECODER 50
+
 #define X_MIN -32768
 #define X_MAX 32767
 #define FX_MIN_ACC -2.0
