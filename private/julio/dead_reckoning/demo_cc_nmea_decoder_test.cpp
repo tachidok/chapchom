@@ -12,6 +12,9 @@
 
 #define NFIELDS_NMEA_DECODER 50
 
+#define TO_RADIANS (M_PI/180.0)
+#define TO_DEGREES (180.0/M_PI)
+
 using namespace chapchom;
 
 #define X_MIN -32768
@@ -34,8 +37,11 @@ int main(int argc, char *argv[])
  CCNMEADecoder nmea_decoder(NFIELDS_NMEA_DECODER);
  // Create the object to deal with a file
  std::ifstream infile;
- //infile.open("./Cadenas_GNSS.txt", std::ios::in);
- infile.open("./TelitSL869-DR/putty_9_car_ride_tona_acatepec_inaoe_wait_large.log", std::ios::in); 
+ //infile.open("./Cadenas_GNSS.dat", std::ios::in);
+ //infile.open("./TelitSL869-DR/putty_9_car_ride_tona_acatepec_inaoe_wait_large.dat", std::ios::in);
+ //infile.open("./TelitSL869-DR/01_putty_110_10dps.dat", std::ios::in);
+ infile.open("./TelitSL869-DR/02_putty_110_25dps.dat", std::ios::in);
+ //infile.open("./TelitSL869-DR/03_putty_110_50dps.dat", std::ios::in);  
  if (infile.fail())
   {
    // Error message
