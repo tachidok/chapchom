@@ -25,8 +25,11 @@
 //#define APPLY_LOW_PASS_FILTER
 #endif // #ifndef APPLY_CONVOLUTION
 
-#define CORRECT_ACCELEROMETER_MISALIGNMENT
+//#define CORRECT_ACCELEROMETER_MISALIGNMENT
 //#define CORRECT_X_AXIS_POINTING_TO_FRONT
+#define CORRECT_INERTIAL_SENSORES_MISALIGNMENT
+#define GYRO_THRESHOLD 1.0 * TO_RADIANS // One degree threshold
+
 #define LOWER_THRESHOLD 1.0
 //#define LOWER_THRESHOLD 9.81 * 0.1
 #define GRAVITY 9.81
@@ -444,7 +447,6 @@ void fill_rotation_matrices(std::vector<std::vector<double> > &R,
  R_t[2][2] = R[2][2];
 }
 
-
 // ===================================================================
 // Multiply a matrix by a vector
 // ===================================================================
@@ -511,16 +513,16 @@ int main(int argc, char *argv[])
  // Instantiation of the problem
  // -----------------------------------------------------------------
  // The ode's
- //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/Cadenas_GNSS.txt");
- //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_1_espera.log");
- //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_2_sin_espera_basura.log");
- //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_3_sin_espera_sin_basura.log");
- //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_4_sin_espera_sin_basura_final.log");
- //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_5_espera_large.log");
- //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_6_espera_large.log");
- //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_7_espera_large.log");
- //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_8_car_ride_square_wait_large.log");
- CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_9_car_ride_tona_acatepec_inaoe_wait_large.log");
+ //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/Cadenas_GNSS.dat");
+ //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_1_espera.dat");
+ //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_2_sin_espera_basura.dat");
+ //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_3_sin_espera_sin_basura.dat");
+ //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_4_sin_espera_sin_basura_final.dat");
+ //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_5_espera_large.dat");
+ //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_6_espera_large.dat");
+ //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_7_espera_large.dat");
+ //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_8_car_ride_square_wait_large.dat");
+ CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_9_car_ride_tona_acatepec_inaoe_wait_large.dat");
  // Create the factory for the methods
  CCFactoryIntegrationMethod *factory_integration_methods =
   new CCFactoryIntegrationMethod();
@@ -855,6 +857,40 @@ int main(int argc, char *argv[])
    signal_gyro_z[i] = 0.0;
   }
  
+ // The matrices to rotate the inertial sensors' measurements to the
+ // device coordinate system
+ const double angle_to_rotate_gyro = M_PI/2.0;
+ std::vector<std::vector<double> > rotation_matrix_gyro(3);
+ for (unsigned i = 0; i < DIM; i++)
+  {
+   rotation_matrix_gyro[i].resize(3);
+  }
+ rotation_matrix_gyro[0][0] = cos(angle_to_rotate_gyro);
+ rotation_matrix_gyro[0][1] = sin(angle_to_rotate_gyro);
+ rotation_matrix_gyro[0][2] = 0.0;
+ rotation_matrix_gyro[1][0] = -sin(angle_to_rotate_gyro);
+ rotation_matrix_gyro[1][1] = cos(angle_to_rotate_gyro);
+ rotation_matrix_gyro[1][2] = 0.0;
+ rotation_matrix_gyro[2][0] = 0.0;
+ rotation_matrix_gyro[2][1] = 0.0;
+ rotation_matrix_gyro[2][2] = 1.0;
+ 
+ const double angle_to_rotate_acc = 0.0;
+ std::vector<std::vector<double> > rotation_matrix_acc(3);
+ for (unsigned i = 0; i < DIM; i++)
+  {
+   rotation_matrix_acc[i].resize(3);
+  } 
+ rotation_matrix_acc[0][0] = cos(angle_to_rotate_acc);
+ rotation_matrix_acc[0][1] = sin(angle_to_rotate_acc);
+ rotation_matrix_acc[0][2] = 0.0;
+ rotation_matrix_acc[1][0] = -sin(angle_to_rotate_acc);
+ rotation_matrix_acc[1][1] = cos(angle_to_rotate_acc);
+ rotation_matrix_acc[1][2] = 0.0;
+ rotation_matrix_acc[2][0] = 0.0;
+ rotation_matrix_acc[2][1] = 0.0;
+ rotation_matrix_acc[2][2] = 1.0;
+ 
  while (LOOP)
   {
    // Retrieve data from sensors
@@ -944,6 +980,21 @@ int main(int argc, char *argv[])
      signal_gyro_y[current_data_index] = gyro_t[2];
      signal_gyro_z[current_data_index] = gyro_t[3];
      
+     if (fabs(signal_gyro_x[current_data_index]) < GYRO_THRESHOLD)
+      {
+       signal_gyro_x[current_data_index] = 0.0;
+      }
+     
+     if (fabs(signal_gyro_y[current_data_index]) < GYRO_THRESHOLD)
+      {
+       signal_gyro_y[current_data_index] = 0.0;
+      }
+     
+     if (fabs(signal_gyro_z[current_data_index]) < GYRO_THRESHOLD)
+      {
+       signal_gyro_z[current_data_index] = 0.0;
+      }
+      
      // ---------------------------------------------------
      // Accelerations
      // ---------------------------------------------------
@@ -1017,7 +1068,7 @@ int main(int argc, char *argv[])
       acc[i][1] = tmp;
      }
 #endif // #ifdef CORRECT_ACCELEROMETER_MISALIGNMENT
-
+     
 #endif // #ifdef OLD_IMPLEMENTATION
      
 #ifdef CORRECT_ACCELEROMETER_MISALIGNMENT
@@ -1028,6 +1079,33 @@ int main(int argc, char *argv[])
       signal_acc_y[current_data_index] = tmp;
      }
 #endif // #ifdef CORRECT_ACCELEROMETER_MISALIGNMENT
+     
+#ifdef CORRECT_INERTIAL_SENSORES_MISALIGNMENT
+     std::vector<double> misaligned_gyro_vector(DIM);
+     misaligned_gyro_vector[0] = signal_gyro_x[current_data_index];
+     misaligned_gyro_vector[1] = signal_gyro_y[current_data_index];
+     misaligned_gyro_vector[2] = signal_gyro_z[current_data_index];
+     std::vector<double> aligned_gyro_vector(DIM);
+     multiply_matrix_times_vector(rotation_matrix_gyro,
+                                  misaligned_gyro_vector,
+                                  aligned_gyro_vector);
+     signal_gyro_x[current_data_index] = aligned_gyro_vector[0];
+     signal_gyro_y[current_data_index] = aligned_gyro_vector[1];
+     signal_gyro_z[current_data_index] = aligned_gyro_vector[2];
+     
+     std::vector<double> misaligned_acc_vector(DIM);
+     misaligned_acc_vector[0] = signal_acc_x[current_data_index];
+     misaligned_acc_vector[1] = signal_acc_y[current_data_index];
+     misaligned_acc_vector[2] = signal_acc_z[current_data_index];
+     std::vector<double> aligned_acc_vector(DIM);
+     multiply_matrix_times_vector(rotation_matrix_acc,
+                                  misaligned_acc_vector,
+                                  aligned_acc_vector);
+     signal_acc_x[current_data_index] = aligned_acc_vector[0];
+     signal_acc_y[current_data_index] = aligned_acc_vector[1];
+     signal_acc_z[current_data_index] = aligned_acc_vector[2];
+     
+#endif // #ifdef CORRECT_INERTIAL_SENSORES_MISALIGNMENT
      
      // Increase the time at the reading stage
      time_read_stage+=h_read_stage;
@@ -1382,7 +1460,7 @@ int main(int argc, char *argv[])
         }
 #endif // #if 0
        
-       if (time <= 128.0)
+       if (time <= 129.0)
         {
          y[0][8] = 0.0;
         }
@@ -1431,7 +1509,7 @@ int main(int argc, char *argv[])
          
         }
        
-       if (time <= 128.0)
+       if (time <= 129.0)
         {
          y[0][8] = 0.0;
         }
@@ -1460,7 +1538,8 @@ int main(int argc, char *argv[])
         }
        
        // Fill rotation matrices
-       fill_rotation_matrices(R, R_t, y[0][6], y[0][7], y[0][8]);
+       //fill_rotation_matrices(R, R_t, y[0][6], y[0][7], y[0][8]);
+       fill_rotation_matrices(R, R_t, y[0][7], y[0][6], y[0][8]);
        //fill_rotation_matrices(R, R_t, y[0][6], y[0][7], true_course_in_degrees * TO_RADIANS); // tachidok, not ntegative because that is why we are multiplying by Rt (inverse of R)
        //fill_rotation_matrices(R, R_t, -y[0][6], -y[0][7], -true_course_in_degrees * TO_RADIANS); // tachidok, not ntegative because that is why we are multiplying by Rt (inverse of R)
      

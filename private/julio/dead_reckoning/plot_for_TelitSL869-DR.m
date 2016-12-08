@@ -160,6 +160,7 @@ legend('Angle from accelerometer', 'Gyroscope and accelerometer fusion', 'Locati
 figure
 plot(my_roll_pitch_yaw_from_acc(:,1), my_roll_pitch_yaw_from_acc(:,3)*180.0/pi, 'g', my_roll_pitch_yaw(:,1), my_roll_pitch_yaw(:,3)*180.0/pi, 'r')
 axis([initial_time final_time -180 180])
+title('Euler angle [pitch]')
 xlabel('Time(s)')
 ylabel('\theta (degrees)')
 legend('Angle from accelerometer', 'Gyroscope and accelerometer fusion', 'Location', 'NorthWest')
