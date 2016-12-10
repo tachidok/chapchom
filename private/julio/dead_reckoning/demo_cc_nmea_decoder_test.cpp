@@ -40,8 +40,11 @@ int main(int argc, char *argv[])
  //infile.open("./Cadenas_GNSS.dat", std::ios::in);
  //infile.open("./TelitSL869-DR/putty_9_car_ride_tona_acatepec_inaoe_wait_large.dat", std::ios::in);
  //infile.open("./TelitSL869-DR/01_putty_110_10dps.dat", std::ios::in);
- infile.open("./TelitSL869-DR/02_putty_110_25dps.dat", std::ios::in);
- //infile.open("./TelitSL869-DR/03_putty_110_50dps.dat", std::ios::in);  
+ //infile.open("./TelitSL869-DR/02_putty_110_25dps.dat", std::ios::in);
+ //infile.open("./TelitSL869-DR/03_putty_110_50dps.dat", std::ios::in);
+ //infile.open("./TelitSL869-DR/04_diff_vel.dat", std::ios::in);
+ //infile.open("./TelitSL869-DR/05_const_vel.dat", std::ios::in);
+ infile.open("./TelitSL869-DR/06_var_vel.dat", std::ios::in); 
  if (infile.fail())
   {
    // Error message
@@ -106,7 +109,7 @@ int main(int argc, char *argv[])
      std::cout << "Time:[" << time << "] Accelerometer:[" << acc_x << ", " << acc_y << ", " <<  acc_z << "]" << std::endl;
      
      // Raw accelerations
-     outfile_raw_acc << " " << acc_x << " " << acc_y << " " << acc_z << std::endl;
+     outfile_raw_acc << time << " " << acc_x << " " << acc_y << " " << acc_z << std::endl;
      
     }
    
@@ -123,7 +126,7 @@ int main(int argc, char *argv[])
      std::cout << "Time:[" << time << "] Gyro:[" << raw_x << ", " << raw_y << ", " <<  raw_z << "]" << std::endl;
      
      // Raw gyro
-     outfile_raw_gyro << " " << raw_x << " " << raw_y << " " << raw_z << std::endl;
+     outfile_raw_gyro << time << " " << raw_x << " " << raw_y << " " << raw_z << std::endl;
      
     }
    

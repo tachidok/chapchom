@@ -184,26 +184,26 @@ title('True course in degrees [yaw]')
 xlabel('Time(s)')
 ylabel('\theta (degrees)')
 
-% %% Raw gyro and euler angles rates
+%% Raw gyro and euler angles rates
 % figure
 % plot(my_raw_gyro(:, 1), my_raw_gyro(:, 2)*180.0/pi, 'b', my_euler_angles_rates(:,1), my_euler_angles_rates(:,2)*180.0/pi, '--r')
 % title('[X] Gyro & [Roll] Euler angle rate')
 % xlabel('Time (s)')
-% ylabel('dps')
+% ylabel('d/s')
 % legend('Raw gyro', '[Roll] Euler angle rate', 'Location', 'NorthWest')
 % 
 % figure
 % plot(my_raw_gyro(:, 1), my_raw_gyro(:, 3)*180.0/pi, 'b', my_euler_angles_rates(:,1), my_euler_angles_rates(:,3)*180.0/pi, '--r')
 % title('[Y] Gyro & [Pitch] Euler angle rate')
 % xlabel('Time (s)')
-% ylabel('dps')
+% ylabel('d/s')
 % legend('Raw gyro', '[Pitch] Euler angle rate', 'Location', 'NorthWest')
 %  
 % figure
 % plot(my_raw_gyro(:, 1), my_raw_gyro(:, 4)*180.0/pi, 'b', my_euler_angles_rates(:,1), my_euler_angles_rates(:,4)*180.0/pi, '--r')
 % title('[Z] Gyro & [Yaw] Euler angle rate')
 % xlabel('Time (s)')
-% ylabel('dps')
+% ylabel('d/s')
 % legend('Raw gyro', '[Yaw] Euler angle rate', 'Location', 'NorthWest')
 
 %% Raw vs filtered gyro
@@ -212,7 +212,7 @@ plot(my_raw_gyro(:, 1), my_raw_gyro(:, 2)*180.0/pi, 'b', my_filtered_gyro(:, 1),
 axis([initial_time final_time -40 40])
 title('x-gyro (device system coordinate)')
 xlabel('Time (s)')
-ylabel('dps')
+ylabel('d/s')
 legend('Raw gyro', 'Filtered gyro', 'Location', 'NorthWest')
 
 figure
@@ -220,7 +220,7 @@ plot(my_raw_gyro(:, 1), my_raw_gyro(:, 3)*180.0/pi, 'b', my_filtered_gyro(:, 1),
 axis([initial_time final_time -40 40])
 title('y-gyro (device system coordinate)')
 xlabel('Time (s)')
-ylabel('dps')
+ylabel('d/s')
 legend('Raw gyro', 'Filtered gyro', 'Location', 'NorthWest')
 
 figure
@@ -228,32 +228,8 @@ plot(my_raw_gyro(:, 1), my_raw_gyro(:, 4)*180.0/pi, 'b', my_filtered_gyro(:, 1),
 axis([initial_time final_time -40 40])
 title('z-gyro (device system coordinate)')
 xlabel('Time (s)')
-ylabel('dps')
+ylabel('d/s')
 legend('Raw gyro', 'Filtered gyro', 'Location', 'NorthWest')
-
-% figure
-% plot(my_filtered_gyro(:, 1), my_filtered_gyro(:, 2)*180.0/pi, 'r')
-% %plot(my_raw_gyro(:, 1), my_raw_gyro(:, 3)*180.0/pi, 'b', my_filtered_gyro(:, 1), my_filtered_gyro(:, 3)*180.0/pi, 'r')
-% title('[X] Filtered gyro')
-% xlabel('Time (s)')
-% ylabel('dps')
-% legend('Filtered gyro', 'Location', 'NorthWest')
-% 
-% figure
-% plot(my_filtered_gyro(:, 1), my_filtered_gyro(:, 3)*180.0/pi, 'r')
-% %plot(my_raw_gyro(:, 1), my_raw_gyro(:, 3)*180.0/pi, 'b', my_filtered_gyro(:, 1), my_filtered_gyro(:, 3)*180.0/pi, 'r')
-% title('[Y] Filtered gyro')
-% xlabel('Time (s)')
-% ylabel('dps')
-% legend('Filtered gyro', 'Location', 'NorthWest')
-%  
-% figure
-% plot(my_filtered_gyro(:, 1), my_filtered_gyro(:, 4)*180.0/pi, 'r')
-% %plot(my_raw_gyro(:, 1), my_raw_gyro(:, 4)*180.0/pi, 'b', my_filtered_gyro(:, 1), my_filtered_gyro(:, 4)*180.0/pi, 'r')
-% title('[Z]  Filtered gyro')
-% xlabel('Time (s)')
-% ylabel('dps')
-% legend('Filtered gyro', 'Location', 'NorthWest')
 
 %% Raw vs filtered acceleration
 figure
@@ -280,52 +256,6 @@ xlabel('Time (s)')
 ylabel('Acceleration (m/s^2)')
 legend('Raw acceleration',  'Filtered acceleration', 'Location', 'NorthWest')
 
-% figure
-% plot(my_filtered_acc(:, 1), my_filtered_acc(:, 2), 'r')
-% %plot(my_filtered_acc(:, 1), my_filtered_acc(:, 3)*180.0/pi, 'b', my_filtered_acc(:, 1), my_filtered_acc(:, 3)*180.0/pi, 'r')
-% title('[X] Filtered acc')
-% xlabel('Time (s)')
-% ylabel('x-acceleration')
-% legend('Filtered acc', 'Location', 'NorthWest')
-% 
-% figure
-% plot(my_filtered_acc(:, 1), my_filtered_acc(:, 3), 'r')
-% %plot(my_filtered_acc(:, 1), my_filtered_acc(:, 3)*180.0/pi, 'b', my_filtered_acc(:, 1), my_filtered_acc(:, 3)*180.0/pi, 'r')
-% title('[Y] Filtered acc')
-% xlabel('Time (s)')
-% ylabel('y-acceleration')
-% legend('Filtered acc', 'Location', 'NorthWest')
-%  
-% figure
-% plot(my_filtered_acc(:, 1), my_filtered_acc(:, 4), 'r')
-% %plot(my_filtered_acc(:, 1), my_filtered_acc(:, 4)*180.0/pi, 'b', my_filtered_acc(:, 1), my_filtered_acc(:, 4)*180.0/pi, 'r')
-% title('[Z]  Filtered acc')
-% xlabel('Time (s)')
-% ylabel('z-acceleration')
-% legend('Filtered acc', 'Location', 'NorthWest')
-
-% %% Raw and inertial acceleration
-% figure
-% plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 2), 'b', inertial_acceleration(:, 1), inertial_acceleration(:, 2), 'r')
-% title('[X] Acceleration')
-% xlabel('Time (s)')
-% ylabel('x-acceleration')
-% legend('Raw acceleration', 'Inertial acceleration', 'Location', 'NorthWest')
-%  
-% figure
-% plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 3), 'b', inertial_acceleration(:, 1), inertial_acceleration(:, 3), 'r')
-% title('[Y] Acceleration')
-% xlabel('Time (s)')
-% ylabel('y-acceleration')
-% legend('Raw acceleration', 'Inertial acceleration', 'Location', 'NorthWest')
-%  
-% figure
-% plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 4), 'b', inertial_acceleration(:, 1), inertial_acceleration(:, 4), 'r')
-% title('[Z] Acceleration')
-% xlabel('Time (s)')
-% ylabel('z-acceleration')
-% legend('Raw acceleration', 'Inertial acceleration', 'Location', 'NorthWest')
-
 %% Filtered and inertial acceleration
 figure
 plot(my_filtered_acc(:, 1), my_filtered_acc(:, 2), 'b', my_inertial_acceleration(:, 1), my_inertial_acceleration(:, 2), 'r')
@@ -351,29 +281,40 @@ xlabel('Time (s)')
 ylabel('Acceleration (m/s^2)')
 legend('Filtered acceleration (device system coordinate)', 'Inertial acceleration', 'Location', 'NorthWest')
 
-%% Raw and inertial acceleration
-%figure
-%plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 2), 'b', inertial_acceleration(:, 1), inertial_acceleration(:, 2), 'r', body_frame_gravity(:, 1), body_frame_gravity(:,2), 'g', body_frame_gravity(:, 1), body_frame_gravity(:,5), 'y')
-%title('[X] Acceleration')
-% xlabel('Time (s)')
-% ylabel('x-acceleration')
-% legend('Raw acceleration', 'Inertial acceleration', 'Body frame gravity', 'Magnitude body frame gravity', 'Location', 'NorthWest')
-%  
-% figure
-% plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 3), 'b', inertial_acceleration(:, 1), inertial_acceleration(:, 3), 'r', body_frame_gravity(:, 1), body_frame_gravity(:,3), 'g', body_frame_gravity(:, 1), body_frame_gravity(:,5), 'y')
-% title('[Y] Acceleration')
-% xlabel('Time (s)')
-% ylabel('y-acceleration')
-% legend('Raw acceleration', 'Inertial acceleration', 'Body frame gravity', 'Magnitude body frame gravity', 'Location', 'NorthWest')
-%  
-% figure
-% plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 4), 'b', inertial_acceleration(:, 1), inertial_acceleration(:, 4), 'r', body_frame_gravity(:, 1), body_frame_gravity(:,4), 'g', body_frame_gravity(:, 1), body_frame_gravity(:,5), 'y')
-% title('[Z] Acceleration')
-% xlabel('Time (s)')
-% ylabel('z-acceleration')
-% legend('Raw acceleration', 'Inertial acceleration', 'Body frame gravity', 'Magnitude body frame gravity', 'Location', 'NorthWest')
+%% Velocity
+m_per_sec_to_km_per_h = 36/10;
+% % Plot velocity
+figure
+%plot(my_velocity(:, 1), my_velocity(:, 2)*m_per_sec_to_km_per_h, 'b', my_velocity(:, 1), my_velocity(:, 3)*m_per_sec_to_km_per_h, 'r', my_velocity(:, 1), my_velocity(:, 4)*m_per_sec_to_km_per_h, 'g',  my_velocity(:, 1), my_velocity(:, 5)*m_per_sec_to_km_per_h, 'y')
+plot(my_velocity(:, 1), my_velocity(:, 2)*m_per_sec_to_km_per_h, 'b', my_velocity(:, 1), my_velocity(:, 3)*m_per_sec_to_km_per_h, 'r', my_velocity(:, 1), my_velocity(:, 4)*m_per_sec_to_km_per_h, 'g')
+title('Velocity')
+xlabel('Time (s)')
+ylabel('Velocity km/h')
+%legend('x-velocity', 'y-velocity', 'z-velocity', 'xy-velocity', 'Location', 'NorthWest')
+legend('x-velocity', 'y-velocity', 'z-velocity', 'Location', 'NorthWest')
 
-%% Position
+figure
+plot(my_velocity(:, 1), my_velocity(:, 2), 'b')
+title('Velocity')
+xlabel('Time (s)')
+ylabel('x-velocity')
+legend('x-velocity', 'Location', 'NorthWest')
+
+figure
+plot(my_velocity(:, 1), my_velocity(:, 2), 'b')
+title('Velocity')
+xlabel('Time (s)')
+ylabel('y-velocity')
+legend('Y-velocity', 'Location', 'NorthWest')
+
+figure
+plot(my_velocity(:, 1), my_velocity(:, 4), 'b')
+title('Velocity')
+xlabel('Time (s)')
+ylabel('z-velocity')
+legend('Z-velocity', 'Location', 'NorthWest')
+
+%% Position (from double integration of acceleration)
 delay = 0.05; % Delay in seconds in every loop
 n_loop = size(my_position, 1)
 meters_to_kilometers = 1.0/1000.0;
@@ -383,7 +324,7 @@ hold('on'); % The painting is done over this plot
 t = title('Trajectory, t=0'); % Initial title, we get a hanlder as well
 p = plot(my_position(1, 2) * meters_to_kilometers, my_position(1, 3) * meters_to_kilometers, 'b*'); % Get the plot hanlder
 %plot(my_position(i, 2) * meters_to_kilometers, my_position(i, 3) * meters_to_kilometers, 'b*') % Draw new point
-axis([-max(my_position(:, 2) * meters_to_kilometers) max(my_position(:, 2) * meters_to_kilometers) -max(my_position(:, 3) * meters_to_kilometers) max(my_position(:, 3) * meters_to_kilometers)])
+%axis([-max(my_position(:, 2) * meters_to_kilometers) max(my_position(:, 2) * meters_to_kilometers) -max(my_position(:, 3) * meters_to_kilometers) max(my_position(:, 3) * meters_to_kilometers)])
 xlabel('x (km)')
 ylabel('y (km)')
 legend('Trajectory', 'Location', 'NorthWest')
@@ -396,23 +337,35 @@ for i = 1:n_loop
     pause(delay);
 end
 
-% x-position
+% Position x vs y
 figure
-plot(my_position(:, 1), my_position(:, 2) * 1/1000, 'b', my_position(:, 1), my_position(:, 3) * 1/1000, 'r')
+plot(my_position(:, 2) * meters_to_kilometers, my_position(:, 3) * meters_to_kilometers, 'b')
 title('xy-displacement')
+xlabel('x-displacement (km)')
+ylabel('y-displacement (km)')
+legend('xy-displacement', 'Location', 'NorthWest')
+
+% x-position vs time and y-position vs time
+figure
+plot(my_position(:, 1), my_position(:, 2) * meters_to_kilometers, 'b*', my_position(:, 1), my_position(:, 3) * meters_to_kilometers, 'r*')
+title('x-displacement and y-displacement')
 xlabel('time (s)')
 ylabel('displ (km)')
 legend('x-displacement', 'y-displacement', 'Location', 'NorthWest')
 
 %% Position (Luis Chico)
 n_data = size(my_velocity,1);
+n_seconds_of_test = n_data / 15.0;
+n_minutes_of_test = n_seconds_of_test / 60.0;
+step_size = 1.0/14.0;
+step_size = n_seconds_of_test / n_data;
 x = zeros(n_data, 1);
 y = zeros(n_data, 1);
 for i=2:n_data
     %x(i) = my_velocity(i, 2)*m_per_sec_to_km_per_h * cos(my_true_course_in_degrees(i,2)*pi/180.0) + x(i-1);
     %y(i) = my_velocity(i, 2)*m_per_sec_to_km_per_h * sin(my_true_course_in_degrees(i,2)*pi/180.0) + y(i-1);
-    x(i) = -my_velocity(i, 3)*m_per_sec_to_km_per_h * cos(my_true_course_in_degrees(i,2)*pi/180.0) + x(i-1);
-    y(i) = -my_velocity(i, 3)*m_per_sec_to_km_per_h * sin(my_true_course_in_degrees(i,2)*pi/180.0) + y(i-1);
+    x(i) = step_size * my_velocity(i, 2) * cos(my_true_course_in_degrees(i,2)*pi/180.0) + x(i-1);
+    y(i) = step_size * my_velocity(i, 2) * sin(my_true_course_in_degrees(i,2)*pi/180.0) + y(i-1);
 end
 % % Plot position
 figure();
@@ -431,8 +384,8 @@ hold('on'); % The painting is done over this plot
 t = title('Trajectory, t=0'); % Initial title, we get a hanlder as well
 p = plot(x(1), y(1), 'b*'); % Get the plot hanlder
 axis([min(x) max(x) min(y) max(y)])
-xlabel('x (km)')
-ylabel('y (km)')
+xlabel('x (m)')
+ylabel('y (m)')
 legend('Trajectory', 'Location', 'NorthWest')
 
 for i = 1:n_loop
@@ -442,58 +395,26 @@ for i = 1:n_loop
     %drawnow();
     pause(delay);
 end
-
-% %% Position (Luis Chico)
-% n_data = size(my_velocity,1);
-% x = zeros(n_data, 1);
-% y = zeros(n_data, 1);
-% for i=2:n_data
-%     x(i) = my_velocity(i, 2)*m_per_sec_to_km_per_h * cos(my_roll_pitch_yaw(i,4)) + x(i-1);
-%     y(i) = my_velocity(i, 2)*m_per_sec_to_km_per_h * sin(my_roll_pitch_yaw(i,4)) + y(i-1);
-% end
-% % % Plot position
-% figure();
-% plot(y, x, 'b*')
-% title('Position')
-% xlabel('x (km)')
-% ylabel('y (km)')
-% legend('Trajectory', 'Location', 'NorthWest')
-% 
-% delay = 0.05; % Delay in seconds in every loop
-% n_loop = size(x, 1)
-% % % Plot position
-% figure();
-% hold('on'); % The painting is done over this plot
-% t = title('Trajectory, t=0'); % Initial title, we get a hanlder as well
-% p = plot(y(1), x(1), 'b*'); % Get the plot hanlder
-% axis([-max(y) max(y) -max(x) max(x)])
-% xlabel('x (km)')
-% ylabel('y (km)')
-% legend('Trajectory', 'Location', 'NorthWest')
-% 
-% for i = 1:n_loop
-%     t.String = sprintf('Trajectory, t = %.2f (%.2f, %.2f)', my_position(i, 1), y(i), x(i)); % Update title
-%     p.XData(i) = y(i);
-%     p.YData(i) = x(i);
-%     %drawnow();
-%     pause(delay);
-% end
 
 %% Position (Yo)
 n_data = size(my_velocity,1);
+n_seconds_of_test = n_data / 15.0;
+n_minutes_of_test = n_seconds_of_test / 60.0;
+step_size = 1.0/14.0;
+step_size = n_seconds_of_test / n_data;
 x = zeros(n_data, 1);
 y = zeros(n_data, 1);
 for i=2:n_data
-    x(i) = -my_velocity(i, 3)*m_per_sec_to_km_per_h * cos(my_roll_pitch_yaw(i,4)) + x(i-1);
-    y(i) = -my_velocity(i, 3)*m_per_sec_to_km_per_h * sin(my_roll_pitch_yaw(i,4)) + y(i-1);
+    x(i) = step_size * my_velocity(i, 2) * cos(my_roll_pitch_yaw(i,4)) + x(i-1);
+    y(i) = step_size * my_velocity(i, 2) * sin(my_roll_pitch_yaw(i,4)) + y(i-1);
 end
 % % Plot position
 figure();
 plot(x, y, 'b*')
 axis([min(x) max(x) min(y) max(y)])
 title('Position')
-xlabel('x (km)')
-ylabel('y (km)')
+xlabel('x (m)')
+ylabel('y (m)')
 legend('Trajectory', 'Location', 'NorthWest')
 
 delay = 0.005; % Delay in seconds in every loop
@@ -504,8 +425,8 @@ hold('on'); % The painting is done over this plot
 t = title('Trajectory, t=0'); % Initial title, we get a hanlder as well
 p = plot(x(1), y(1), 'b*'); % Get the plot hanlder
 axis([min(x) max(x) min(y) max(y)])
-xlabel('x (km)')
-ylabel('y (km)')
+xlabel('x (m)')
+ylabel('y (m)')
 legend('Trajectory', 'Location', 'NorthWest')
 
 for i = 1:n_loop
@@ -515,38 +436,6 @@ for i = 1:n_loop
     %drawnow();
     pause(delay);
 end
-
-%% Velocity
-m_per_sec_to_km_per_h = 36/10;
-% % Plot velocity
-figure
-plot(my_velocity(:, 1), my_velocity(:, 2)*m_per_sec_to_km_per_h, 'b', my_velocity(:, 1), my_velocity(:, 3)*m_per_sec_to_km_per_h, 'r', my_velocity(:, 1), my_velocity(:, 4)*m_per_sec_to_km_per_h, 'g',  my_velocity(:, 1), my_velocity(:, 5)*m_per_sec_to_km_per_h, 'y')
-title('Velocity')
-xlabel('time (s)')
-ylabel('velocity km/h')
-legend('x-velocity', 'y-velocity', 'z-velocity', 'xy-velocity', 'Location', 'NorthWest')
-
-figure
-plot(my_velocity(:, 1), my_velocity(:, 2), 'b')
-title('Velocity')
-xlabel('time (s)')
-ylabel('x-velocity')
-legend('x-velocity', 'Location', 'NorthWest')
-
-figure
-plot(my_velocity(:, 1), my_velocity(:, 2), 'b')
-xlabel('Time (s)') my_velocity(:, 3), 'b')
-title('Velocity')
-xlabel('time (s)')
-ylabel('y-velocity')
-legend('Y-velocity', 'Location', 'NorthWest')
-
-figure
-plot(my_velocity(:, 1), my_velocity(:, 4), 'b')
-title('Velocity')
-xlabel('time (s)')
-ylabel('z-velocity')
-legend('Z-velocity', 'Location', 'NorthWest')
 
 %% FFT raw gyroscope
 my_raw_gyro_no_time = my_raw_gyro(:,(2:4));

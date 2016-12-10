@@ -28,7 +28,11 @@
 //#define CORRECT_ACCELEROMETER_MISALIGNMENT
 //#define CORRECT_X_AXIS_POINTING_TO_FRONT
 #define CORRECT_INERTIAL_SENSORES_MISALIGNMENT
+
 #define GYRO_THRESHOLD 1.0 * TO_RADIANS // One degree threshold
+#define EULER_ANGLES_RATE_CHANGE_THRESHOLD 5.0 * TO_RADIANS
+
+#define ACCELERATION_THRESHOLD 1.0 // One meter per second per second
 
 #define LOWER_THRESHOLD 1.0
 //#define LOWER_THRESHOLD 9.81 * 0.1
@@ -63,7 +67,7 @@ void average(std::vector<std::vector<double> > &signal,
                  << std::endl << std::endl;
    throw ChapchomLibError(error_message.str(),
                           CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);   
+                          CHAPCHOM_EXCEPTION_LOCATION);
   }
  
  // Initialise data
@@ -504,6 +508,11 @@ void multiply_matrix_times_vector(std::vector<std::vector<double> > &A,
  
 }
 
+// ==================================================================
+// ==================================================================
+// Main function
+// ==================================================================
+// ==================================================================
 int main(int argc, char *argv[])
 {
  // Initialise chapchom
@@ -779,7 +788,7 @@ int main(int argc, char *argv[])
   {
    A[i].resize(DIM);
   }
-
+ 
 #ifdef APPLY_CONVOLUTION
  // The coefficients of the kernel signal to convolve with the
  // gyro data
@@ -828,7 +837,7 @@ int main(int argc, char *argv[])
            << " y-pos: " << y[0][2] << " y-vel: " << y[0][3]
            << " z-pos: " << y[0][4] << " z-vel: " << y[0][5]
            << " roll: " << y[0][6] << " pitch: " << y[0][7] << " yaw: " << y[0][8] << std::endl;
-
+ 
  // Flag to indicate whether to continue looping
  bool LOOP = true;
  
@@ -859,7 +868,7 @@ int main(int argc, char *argv[])
  
  // The matrices to rotate the inertial sensors' measurements to the
  // device coordinate system
- const double angle_to_rotate_gyro = M_PI/2.0;
+ const double angle_to_rotate_gyro = -M_PI/2.0;
  std::vector<std::vector<double> > rotation_matrix_gyro(3);
  for (unsigned i = 0; i < DIM; i++)
   {
@@ -980,6 +989,7 @@ int main(int argc, char *argv[])
      signal_gyro_y[current_data_index] = gyro_t[2];
      signal_gyro_z[current_data_index] = gyro_t[3];
      
+#ifdef GYRO_THRESHOLD
      if (fabs(signal_gyro_x[current_data_index]) < GYRO_THRESHOLD)
       {
        signal_gyro_x[current_data_index] = 0.0;
@@ -994,7 +1004,8 @@ int main(int argc, char *argv[])
       {
        signal_gyro_z[current_data_index] = 0.0;
       }
-      
+#endif // #ifdef GYRO_THRESHOLD
+     
      // ---------------------------------------------------
      // Accelerations
      // ---------------------------------------------------
@@ -1039,24 +1050,21 @@ int main(int argc, char *argv[])
        // 'g' units       
        acc[i][j] = acc_t[j+1] * GRAVITY;
        
+#ifdef OLD_IMPLEMENTATION
+       
 #ifdef ACCELERATION_THRESHOLD
        if (fabs(acc[i][j]) < ACCELERATION_THRESHOLD)
         {
          acc[i][j] = 0.0;
         }
 #endif // #ifdef ACCELERATION_THRESHOLD
+       
 #ifdef ACCELEROMETER_AVERAGE
        acc_average[j]+=acc[i][j];
        acc[i][j]=acc_average[j]/static_cast<double>(i+1);
 #endif // #ifdef ACCELEROMETER_AVERAGE
        
-#if 0 // TODO
-       // Filter accelerations data?
-       if (fabs(acc[i][j] - LOWER_THRESHOLD) < 0.0)
-        {
-         acc[i][j] = 0.0;
-        }
-#endif // #if 0
+#endif // #ifdef OLD_IMPLEMENTATION
        
       } // for (j < DIM)
      
@@ -1381,6 +1389,16 @@ int main(int argc, char *argv[])
        //euler_angular_rates[0] = 0.0;
        //euler_angular_rates[1] = 0.0;
        //euler_angular_rates[2] = 0.0;
+
+#ifdef EULER_ANGLES_RATE_CHANGE_THRESHOLD
+       for (unsigned j = 0; j < DIM; j++)
+        {
+         if (fabs(euler_angular_rates[j]) < EULER_ANGLES_RATE_CHANGE_THRESHOLD)
+          {
+           euler_angular_rates[j] = 0.0;
+          }
+        }
+#endif // #ifdef EULER_ANGLES_RATE_CHANGE_THRESHOLD
        
        // Set the Euler angular rates
        odes.euler_angular_rates() = euler_angular_rates;
@@ -1513,8 +1531,9 @@ int main(int argc, char *argv[])
         {
          y[0][8] = 0.0;
         }
-#endif // #if 1
-       y[0][8] = alpha * y[0][8] + (1.0 - alpha) * true_course_in_radians;
+#endif // #if 0
+       
+       //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * true_course_in_radians;
        
        //y[0][8]+= yaw_correction;
        //y[0][8] = alpha_yaw * y[0][8];// + (1.0 - alpha) * yaw_correction;
@@ -1539,7 +1558,33 @@ int main(int argc, char *argv[])
        
        // Fill rotation matrices
        //fill_rotation_matrices(R, R_t, y[0][6], y[0][7], y[0][8]);
-       fill_rotation_matrices(R, R_t, y[0][7], y[0][6], y[0][8]);
+       //fill_rotation_matrices(R, R_t, y[0][7], y[0][6], y[0][8]);
+       const double angle_zero = 0.0;
+       fill_rotation_matrices(R, R_t, y[0][7], y[0][6], angle_zero);
+#if 0
+       if (-M_PI/2.0 < y[0][8] && y[0][8] < M_PI/2.0)
+        {
+         fill_rotation_matrices(R, R_t, y[0][7], y[0][6], y[0][8]);
+        }
+       else if (y[0][8] <= -M_PI/2.0 || y[0][8] >= M_PI/2.0)
+        {
+         fill_rotation_matrices(R, R_t, y[0][6], -y[0][7], y[0][8]);
+        }
+       else
+        {
+         // Error message
+         std::ostringstream error_message;
+         error_message << "The course (Yaw) angle is neither in the interval (-pi/2.0, pi/2.0),"
+                       << "nor the intervals (-Inf, -pi/2.0], [pi/2.0, Inf)\n"
+                       << "Course angle (radians): " << y[0][8] << "\n"
+                       << "Course angle (degrees): " << y[0][8] * TO_DEGREES
+                       << std::endl << std::endl;
+         throw ChapchomLibError(error_message.str(),
+                                CHAPCHOM_CURRENT_FUNCTION,
+                                CHAPCHOM_EXCEPTION_LOCATION);
+        }
+#endif // #if 0
+       
        //fill_rotation_matrices(R, R_t, y[0][6], y[0][7], true_course_in_degrees * TO_RADIANS); // tachidok, not ntegative because that is why we are multiplying by Rt (inverse of R)
        //fill_rotation_matrices(R, R_t, -y[0][6], -y[0][7], -true_course_in_degrees * TO_RADIANS); // tachidok, not ntegative because that is why we are multiplying by Rt (inverse of R)
      
@@ -1562,6 +1607,16 @@ int main(int argc, char *argv[])
        // Substract gravity
        acc_inertial[2]-=GRAVITY;     
 #endif // #ifdef GRAVITY_TO_BODY_FRAME
+       
+#ifdef ACCELERATION_THRESHOLD
+       for (unsigned j = 0; j < DIM; j++)
+        {
+         if (fabs(acc_inertial[j]) < ACCELERATION_THRESHOLD)
+          {
+           acc_inertial[j] = 0.0;
+          }
+        }
+#endif // #ifdef ACCELERATION_THRESHOLD
        
 #if 0
        // Check whether inertial acceleration is meaningless
@@ -1595,6 +1650,7 @@ int main(int argc, char *argv[])
        //const double h_integration_step = 1.0/(m_factor*50.0); // tachidok
        //const double h_integration_step = 1.0/(0.2*15.0);
        //integrator->integrate_step(odes, h_integration_step, time, y);
+       //DEB(h);
        integrator->integrate_step(odes, h, time, y);
        // Update data
        for (unsigned j = 0; j < n_odes; j++)
