@@ -29,10 +29,15 @@
 //#define CORRECT_X_AXIS_POINTING_TO_FRONT
 #define CORRECT_INERTIAL_SENSORES_MISALIGNMENT
 
-#define GYRO_THRESHOLD 1.0 * TO_RADIANS // One degree threshold
-#define EULER_ANGLES_RATE_CHANGE_THRESHOLD 5.0 * TO_RADIANS
+#define ROTATION_MATRIX_YAW_PITCH_ROLL
+//#define ROTATION_MATRIX_ROLL_PITCH_YAW
 
+//#define THRESHOLDS
+#ifdef THRESHOLDS
+#define GYRO_THRESHOLD 1.0 * TO_RADIANS // One degree threshold
+#define EULER_ANGLES_RATE_THRESHOLD 5.0 * TO_RADIANS
 #define ACCELERATION_THRESHOLD 1.0 // One meter per second per second
+#endif // #ifdef THRESHOLDS
 
 #define LOWER_THRESHOLD 1.0
 //#define LOWER_THRESHOLD 9.81 * 0.1
@@ -409,6 +414,7 @@ void fill_angular_velocities_to_euler_rates_matrix(std::vector<std::vector<doubl
  A[2][2] = cos_phi*sec_theta;
 }
 
+#ifdef ROTATION_MATRIX_YAW_PITCH_ROLL
 // ===================================================================
 // Fills the matrices that transform from the inertial frame to the
 // body frame
@@ -450,6 +456,51 @@ void fill_rotation_matrices(std::vector<std::vector<double> > &R,
  R_t[2][1] = R[1][2];
  R_t[2][2] = R[2][2];
 }
+#endif // #ifdef ROTATION_MATRIX_YAW_PITCH_ROLL
+
+#ifdef ROTATION_MATRIX_ROLL_PITCH_YAW
+// ===================================================================
+// Fills the matrices that transform from the inertial frame to the
+// body frame
+// ===================================================================
+void fill_rotation_matrices(std::vector<std::vector<double> > &R,
+                            std::vector<std::vector<double> > &R_t,
+                            const double theta_x,
+                            const double theta_y,
+                            const double theta_z)
+{
+ const double sin_theta_x = sin(theta_x);
+ const double sin_theta_y = sin(theta_y);
+ const double sin_theta_z = sin(theta_z);
+ const double cos_theta_x = cos(theta_x);
+ const double cos_theta_y = cos(theta_y);
+ const double cos_theta_z = cos(theta_z);
+ 
+ R[0][0] = cos_theta_y*cos_theta_z;
+ R[0][1] = sin_theta_x*sin_theta_y*cos_theta_z+cos_theta_x*sin_theta_z;
+ R[0][2] = sin_theta_x*sin_theta_z-cos_theta_x*sin_theta_y*cos_theta_z;
+ 
+ R[1][0] = -cos_theta_y*sin_theta_z;
+ R[1][1] = cos_theta_x*cos_theta_z-sin_theta_x*sin_theta_y*sin_theta_z;
+ R[1][2] = cos_theta_x*sin_theta_y*sin_theta_z+sin_theta_x*cos_theta_z;
+ 
+ R[2][0] = sin_theta_y;
+ R[2][1] = -sin_theta_x*cos_theta_y;
+ R[2][2] = cos_theta_x*cos_theta_y;
+ 
+ R_t[0][0] = R[0][0];
+ R_t[0][1] = R[1][0];
+ R_t[0][2] = R[2][0];
+ 
+ R_t[1][0] = R[0][1];
+ R_t[1][1] = R[1][1];
+ R_t[1][2] = R[2][1];
+ 
+ R_t[2][0] = R[0][2];
+ R_t[2][1] = R[1][2];
+ R_t[2][2] = R[2][2];
+}
+#endif // #ifdef ROTATION_MATRIX_ROLL_PITCH_YAW
 
 // ===================================================================
 // Multiply a matrix by a vector
@@ -1390,15 +1441,15 @@ int main(int argc, char *argv[])
        //euler_angular_rates[1] = 0.0;
        //euler_angular_rates[2] = 0.0;
 
-#ifdef EULER_ANGLES_RATE_CHANGE_THRESHOLD
+#ifdef EULER_ANGLES_RATE_THRESHOLD
        for (unsigned j = 0; j < DIM; j++)
         {
-         if (fabs(euler_angular_rates[j]) < EULER_ANGLES_RATE_CHANGE_THRESHOLD)
+         if (fabs(euler_angular_rates[j]) < EULER_ANGLES_RATE_THRESHOLD)
           {
            euler_angular_rates[j] = 0.0;
           }
         }
-#endif // #ifdef EULER_ANGLES_RATE_CHANGE_THRESHOLD
+#endif // #ifdef EULER_ANGLES_RATE_THRESHOLD
        
        // Set the Euler angular rates
        odes.euler_angular_rates() = euler_angular_rates;
@@ -1559,8 +1610,15 @@ int main(int argc, char *argv[])
        // Fill rotation matrices
        //fill_rotation_matrices(R, R_t, y[0][6], y[0][7], y[0][8]);
        //fill_rotation_matrices(R, R_t, y[0][7], y[0][6], y[0][8]);
-       const double angle_zero = 0.0;
-       fill_rotation_matrices(R, R_t, y[0][7], y[0][6], angle_zero);
+       
+       const double front_of_car_angle = 0.0; // Point to the front of
+                                              // the car
+#ifdef ROTATION_MATRIX_ROLL_PITCH_YAW
+       fill_rotation_matrices(R, R_t, y[0][6], y[0][7], front_of_car_angle);
+#endif // #ifdef ROTATION_MATRIX_ROLL_PITCH_YAW
+#ifdef ROTATION_MATRIX_YAW_PITCH_ROLL
+       fill_rotation_matrices(R, R_t, y[0][7], y[0][6], front_of_car_angle);
+#endif // #ifdef ROTATION_MATRIX_YAW_PITCH_ROLL
 #if 0
        if (-M_PI/2.0 < y[0][8] && y[0][8] < M_PI/2.0)
         {
@@ -1715,7 +1773,7 @@ int main(int argc, char *argv[])
                               << " " << y[0][7]
                               << " " << y[0][8] << std::endl;
        //<< " " << true_course_in_degrees * TO_RADIANS << std::endl;
-     
+       
        // Euler angles from accelerations
        outfile_roll_pitch_yaw_from_acc << time
                                        << " " << acc_angles[0]
