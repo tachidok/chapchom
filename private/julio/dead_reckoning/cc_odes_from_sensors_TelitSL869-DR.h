@@ -98,6 +98,11 @@ namespace chapchom
   /// Set Euler angular rates for current time
   inline std::vector<double> &euler_angular_rates() {return Euler_angular_rates;}
   
+  // Set the rate of change of yaw at the current time obtained after
+  // applying a threshold to the gyro-z lecture
+  inline double &yaw_change_rate_with_threshold()
+  {return Yaw_change_rate_with_threshold;}
+  
   /// Evaluates the system of odes at the given time "t" and the values
   /// of the function in "y". The evaluation produces results in the dy
   /// vector
@@ -147,11 +152,15 @@ namespace chapchom
   double North_velocity;
   double East_velocity;
   
-  // Stores linear acceleration
+  // Stores linear acceleration (to integrate)
   std::vector<double> Linear_acceleration;
   
-  // Stores Euler angular rates
+  // Stores Euler angular rates (to integrate)
   std::vector<double> Euler_angular_rates;
+
+  // Stores the rate of change of yaw obtained after applying a
+  // threshold to the gyro-z lecture
+  double Yaw_change_rate_with_threshold;
   
   // Temporary storage for acceleration data
   std::vector<std::vector<double> > Acceleration_data;

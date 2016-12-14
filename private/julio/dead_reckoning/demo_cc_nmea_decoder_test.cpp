@@ -44,7 +44,10 @@ int main(int argc, char *argv[])
  //infile.open("./TelitSL869-DR/03_putty_110_50dps.dat", std::ios::in);
  //infile.open("./TelitSL869-DR/04_diff_vel.dat", std::ios::in);
  //infile.open("./TelitSL869-DR/05_const_vel.dat", std::ios::in);
- infile.open("./TelitSL869-DR/06_var_vel.dat", std::ios::in); 
+ //infile.open("./TelitSL869-DR/06_var_vel.dat", std::ios::in);
+ //infile.open("./TelitSL869-DR/08_diff_gyro_vel_first_try.dat", std::ios::in);
+ //infile.open("./TelitSL869-DR/09_diff_gyro_vel_second_try.dat", std::ios::in);
+ infile.open("./TelitSL869-DR/10_acc_gyro_static.dat", std::ios::in);
  if (infile.fail())
   {
    // Error message

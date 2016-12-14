@@ -20,6 +20,8 @@
 
 //#define OLD_IMPLEMENTATION
 
+#define GRAVITY 9.81
+
 #define APPLY_CONVOLUTION
 #ifndef APPLY_CONVOLUTION
 //#define APPLY_LOW_PASS_FILTER
@@ -29,19 +31,22 @@
 //#define CORRECT_X_AXIS_POINTING_TO_FRONT
 #define CORRECT_INERTIAL_SENSORES_MISALIGNMENT
 
-#define ROTATION_MATRIX_YAW_PITCH_ROLL
+#define ROTATION_MATRIX_YAW_PITCH_ROLL // Original
 //#define ROTATION_MATRIX_ROLL_PITCH_YAW
+
+#define GYRO_THRESHOLD_Z 1.0 * TO_RADIANS // One degree threshold
+#define AZGADS_CONSTANT 1.1285
+//#define ACCELERATION_OFFSET 0.2
 
 //#define THRESHOLDS
 #ifdef THRESHOLDS
-#define GYRO_THRESHOLD 1.0 * TO_RADIANS // One degree threshold
-#define EULER_ANGLES_RATE_THRESHOLD 5.0 * TO_RADIANS
-#define ACCELERATION_THRESHOLD 1.0 // One meter per second per second
+//#define GYRO_THRESHOLD 1.0 * TO_RADIANS // One degree threshold
+//#define EULER_ANGLES_RATE_THRESHOLD 5.0 * TO_RADIANS
+//#define ACCELERATION_THRESHOLD 0.4 // One meter per second per second
 #endif // #ifdef THRESHOLDS
 
-#define LOWER_THRESHOLD 1.0
-//#define LOWER_THRESHOLD 9.81 * 0.1
-#define GRAVITY 9.81
+//#define GRAVITY_TO_BODY_FRAME
+
 //#define GRAVITY_TO_BODY_FRAME
 //#define INERTIAL_ACCELERATION_THRESHOLD GRAVITY
 //#define GYRO_THRESHOLD 1.0 * TO_RADIANS // One degree threshold
@@ -935,7 +940,7 @@ int main(int argc, char *argv[])
  rotation_matrix_gyro[2][1] = 0.0;
  rotation_matrix_gyro[2][2] = 1.0;
  
- const double angle_to_rotate_acc = 0.0;
+ const double angle_to_rotate_acc = M_PI;
  std::vector<std::vector<double> > rotation_matrix_acc(3);
  for (unsigned i = 0; i < DIM; i++)
   {
@@ -1431,16 +1436,23 @@ int main(int argc, char *argv[])
        
        // Store the Euler-angles rates
        std::vector<double> gyro_filtered(DIM);
+#ifdef AZGADS_CONSTANT
+       gyro_filtered[0] = filtered_signal_gyro_x[i] * AZGADS_CONSTANT;
+       gyro_filtered[1] = filtered_signal_gyro_y[i] * AZGADS_CONSTANT;
+       gyro_filtered[2] = filtered_signal_gyro_z[i] * AZGADS_CONSTANT;
+#else
        gyro_filtered[0] = filtered_signal_gyro_x[i];
        gyro_filtered[1] = filtered_signal_gyro_y[i];
        gyro_filtered[2] = filtered_signal_gyro_z[i];
+#endif
+       
        //gyro_filtered[2] = 0.0; // HERE
        std::vector<double> euler_angular_rates(DIM);
        multiply_matrix_times_vector(A, gyro_filtered, euler_angular_rates);
        //euler_angular_rates[0] = 0.0;
        //euler_angular_rates[1] = 0.0;
        //euler_angular_rates[2] = 0.0;
-
+       
 #ifdef EULER_ANGLES_RATE_THRESHOLD
        for (unsigned j = 0; j < DIM; j++)
         {
@@ -1453,13 +1465,26 @@ int main(int argc, char *argv[])
        
        // Set the Euler angular rates
        odes.euler_angular_rates() = euler_angular_rates;
-     
+       
+#ifdef GYRO_THRESHOLD_Z
+       if (fabs(gyro_filtered[2]) < GYRO_THRESHOLD_Z)
+        {
+         gyro_filtered[2] = 0.0;
+        }
+       std::vector<double> yaw_change_rate_with_threshold(DIM);
+       multiply_matrix_times_vector(A, gyro_filtered, yaw_change_rate_with_threshold);
+       
+       // Set Yaw obtained directly from gyro angular rates after
+       // applying a threshold
+       odes.yaw_change_rate_with_threshold() = yaw_change_rate_with_threshold[2];
+#endif // #ifdef GYRO_THRESHOLD_Z
+       
        // ----------------------------------------------------------
        // ----------------------------------------------------------
        // Process the acceleration data
        // ----------------------------------------------------------
        // ----------------------------------------------------------     
-     
+       
        // Get yaw correction
        //const double bias_yaw = -0.95 * 180.0/M_PI;
        //double yaw_correction = (-1.0 * bias_yaw) / n_steps_per_second;
@@ -1585,6 +1610,7 @@ int main(int argc, char *argv[])
 #endif // #if 0
        
        //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * true_course_in_radians;
+       y[0][8] = alpha * y[0][8] + (1.0 - alpha) * y[0][9];
        
        //y[0][8]+= yaw_correction;
        //y[0][8] = alpha_yaw * y[0][8];// + (1.0 - alpha) * yaw_correction;
@@ -1617,7 +1643,8 @@ int main(int argc, char *argv[])
        fill_rotation_matrices(R, R_t, y[0][6], y[0][7], front_of_car_angle);
 #endif // #ifdef ROTATION_MATRIX_ROLL_PITCH_YAW
 #ifdef ROTATION_MATRIX_YAW_PITCH_ROLL
-       fill_rotation_matrices(R, R_t, y[0][7], y[0][6], front_of_car_angle);
+       //fill_rotation_matrices(R, R_t, y[0][7], y[0][6], front_of_car_angle);
+       fill_rotation_matrices(R, R_t, -y[0][6], -y[0][7], front_of_car_angle);
 #endif // #ifdef ROTATION_MATRIX_YAW_PITCH_ROLL
 #if 0
        if (-M_PI/2.0 < y[0][8] && y[0][8] < M_PI/2.0)
@@ -1645,25 +1672,34 @@ int main(int argc, char *argv[])
        
        //fill_rotation_matrices(R, R_t, y[0][6], y[0][7], true_course_in_degrees * TO_RADIANS); // tachidok, not ntegative because that is why we are multiplying by Rt (inverse of R)
        //fill_rotation_matrices(R, R_t, -y[0][6], -y[0][7], -true_course_in_degrees * TO_RADIANS); // tachidok, not ntegative because that is why we are multiplying by Rt (inverse of R)
-     
+       
        //fill_rotation_matrices(R, R_t, y[0][6], y[0][7], 0.0); // tachidok
-     
-       // Transform from the body reference frame to the inertial
-       // reference frame
-       std::vector<double> acc_inertial(DIM, 0.0);
+       
 #ifdef GRAVITY_TO_BODY_FRAME
+       // Store the acceleration of the body without gravity
+       std::vector<double> acc_body(DIM, 0.0);
        std::vector<double> gravity(DIM, 0.0);
        gravity[2] = GRAVITY;
        std::vector<double> body_frame_gravity(DIM, 0.0);
        multiply_matrix_times_vector(R, gravity, body_frame_gravity);
        for (unsigned j = 0; j < DIM; j++)
         {
-         acc_inertial[j] = acc_filter[i][j] - body_frame_gravity[j];
+         acc_body[j] = acc_filtered[j] - body_frame_gravity[j];
         }
 #else
-       multiply_matrix_times_vector(R_t, acc_filtered, acc_inertial);//tachidok
+       // Transform from the body reference frame to the inertial
+       // reference frame
+       std::vector<double> acc_inertial(DIM, 0.0);
+       //multiply_matrix_times_vector(R_t, acc_filtered, acc_inertial);//tachidok
+       multiply_matrix_times_vector(R, acc_filtered, acc_inertial);//tachidok       
        // Substract gravity
-       acc_inertial[2]-=GRAVITY;     
+       acc_inertial[2]-=GRAVITY;
+#ifdef ACCELERATION_OFFSET
+       for (unsigned j = 0; j < DIM; j++)
+        {
+         acc_inertial[j]+=ACCELERATION_OFFSET;
+        }
+#endif // #ifdef ACCELERATION_OFFSET
 #endif // #ifdef GRAVITY_TO_BODY_FRAME
        
 #ifdef ACCELERATION_THRESHOLD
@@ -1675,28 +1711,14 @@ int main(int argc, char *argv[])
           }
         }
 #endif // #ifdef ACCELERATION_THRESHOLD
-       
-#if 0
-       // Check whether inertial acceleration is meaningless
-       for (unsigned j = 0; j < DIM; j++)
-        {
-         if (fabs(acc_inertial[j]) < INERTIAL_ACCELERATION_THRESHOLD)
-          {
-           acc_inertial[j] = 0.0;
-          }
-        }
-#endif // #if 0
-     
-#ifdef CORRECT_X_AXIS_POINTING_TO_FRONT
-       {
-        const double tmp = -acc_inertial[1];
-        acc_inertial[1] = acc_inertial[0];
-        acc_inertial[0] = tmp;
-       }
-#endif // #ifdef CORRECT_X_AXIS_POINTING_TO_FRONT
-       
+
+#ifdef GRAVITY_TO_BODY_FRAME
+       // Set body frame acceleration
+       odes.linear_acceleration() = acc_body;
+#else
        // Set linear acceleration
        odes.linear_acceleration() = acc_inertial;
+#endif // #ifdef GRAVITY_TO_BODY_FRAME
        
        // Compute absolute velocities based on heading and relative velocities
        //odes.compute_north_east_velocities(y[0][1], y[0][3]);
@@ -1710,6 +1732,14 @@ int main(int argc, char *argv[])
        //integrator->integrate_step(odes, h_integration_step, time, y);
        //DEB(h);
        integrator->integrate_step(odes, h, time, y);
+       
+#if 0
+       if (y[0][1] > y[1][1] && y[1][1] < 5.0)
+        {
+         y[1][1] = 0.0;
+        }
+#endif // #if 0
+       
        // Update data
        for (unsigned j = 0; j < n_odes; j++)
         {
@@ -1761,11 +1791,20 @@ int main(int argc, char *argv[])
                                                       body_frame_gravity[1] * body_frame_gravity[1] + body_frame_gravity[2] * body_frame_gravity[2])
                                   << std::endl;
 #endif // #ifdef GRAVITY_TO_BODY_FRAME
+
+#ifdef GRAVITY_TO_BODY_FRAME
+       // Inertial accelerations
+       outfile_inertial_acc << time
+                            << " " << acc_body[0]
+                            << " " << acc_body[1]
+                            << " " << acc_body[2] << std::endl;
+#else
        // Inertial accelerations
        outfile_inertial_acc << time
                              << " " << acc_inertial[0]
                              << " " << acc_inertial[1]
                              << " " << acc_inertial[2] << std::endl;
+#endif // #ifdef GRAVITY_TO_BODY_FRAME
        
        // Euler angles
        outfile_roll_pitch_yaw << time

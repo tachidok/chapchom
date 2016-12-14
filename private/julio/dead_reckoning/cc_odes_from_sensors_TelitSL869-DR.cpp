@@ -22,7 +22,7 @@ namespace chapchom
  // ===================================================================
  CCODEsFromSensorsTelitSL869DR::
  CCODEsFromSensorsTelitSL869DR(const char *input_filename)
-  : ACODEs(9), North_velocity(0.0), East_velocity(0.0)
+  : ACODEs(10), North_velocity(0.0), East_velocity(0.0)
  {
   // Open the file
   Input_file.open(input_filename, std::ios::in);
@@ -261,7 +261,7 @@ namespace chapchom
       std::ostringstream error_message;
       error_message << "The angle is negative but smaller than -2pi, we can\n"
                     << "not handle that case since it should have been\n"
-                    << "represented as a positive angle\n"
+                    << "represented as cva positive angle\n"
                     << "theta: " << theta
                     << std::endl;
       
@@ -325,6 +325,7 @@ namespace chapchom
   // y[6] roll
   // y[7] pitch
   // y[8] yaw
+  // y[9] yaw with threshold
   // -----------------
   // dy[0] x-velocity
   // dy[1] x-acceleration
@@ -335,6 +336,7 @@ namespace chapchom
   // dy[6] droll
   // dy[7] dpitch
   // dy[8] dyaw
+  // dy[9] dyaw with threshold
   
   dy[0] = y[1];
   //dy[0] = North_velocity;
@@ -347,6 +349,7 @@ namespace chapchom
   dy[6] = Euler_angular_rates[0];
   dy[7] = Euler_angular_rates[1];
   dy[8] = Euler_angular_rates[2];
+  dy[9] = Yaw_change_rate_with_threshold;
   
  }
  
