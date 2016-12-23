@@ -264,7 +264,15 @@ axis([initial_time final_time -5 15])
 xlabel('Time (s)')
 ylabel('Acceleration (m/s^2)')
 legend('Filtered acceleration (device system coordinate)', 'Inertial acceleration', 'Location', 'NorthWest')
- 
+
+% figure
+% plot(my_inertial_acceleration(:, 1), my_inertial_acceleration(:, 2), 'r')
+% title('x-acceleration')
+% axis([initial_time final_time -5 15])
+% xlabel('Time (s)')
+% ylabel('Acceleration (m/s^2)')
+% legend('Inertial acceleration', 'Location', 'NorthWest')
+
 figure
 plot(my_filtered_acc(:, 1), my_filtered_acc(:, 3), 'b', my_inertial_acceleration(:, 1), my_inertial_acceleration(:, 3), 'r')
 title('y-acceleration')
@@ -282,7 +290,7 @@ ylabel('Acceleration (m/s^2)')
 legend('Filtered acceleration (device system coordinate)', 'Inertial acceleration', 'Location', 'NorthWest')
 
 %% Velocity
-m_per_sec_to_km_per_h = 36/10;
+m_per_sec_to_km_per_h = 3.6;
 % % Plot velocity
 figure
 %plot(my_velocity(:, 1), my_velocity(:, 2)*m_per_sec_to_km_per_h, 'b', my_velocity(:, 1), my_velocity(:, 3)*m_per_sec_to_km_per_h, 'r', my_velocity(:, 1), my_velocity(:, 4)*m_per_sec_to_km_per_h, 'g',  my_velocity(:, 1), my_velocity(:, 5)*m_per_sec_to_km_per_h, 'y')
@@ -298,7 +306,7 @@ plot(my_velocity(:, 1), my_velocity(:, 2), 'b')
 title('Velocity')
 xlabel('Time (s)')
 ylabel('x-velocity')
-legend('x-velocity', 'Location', 'NorthWest')
+legend('X-velocity', 'Location', 'NorthWest')
 
 figure
 plot(my_velocity(:, 1), my_velocity(:, 2), 'b')
@@ -372,8 +380,8 @@ figure();
 plot(x, y, 'b*')
 axis([min(x) max(x) min(y) max(y)])
 title('Position')
-xlabel('x (km)')
-ylabel('y (km)')
+xlabel('x (m)')
+ylabel('y (m)')
 legend('Trajectory', 'Location', 'NorthWest')
 
 delay = 0.005; % Delay in seconds in every loop
@@ -398,9 +406,8 @@ end
 
 %% Position (Yo)
 n_data = size(my_velocity,1);
-n_seconds_of_test = n_data / 15.0;
+n_seconds_of_test = n_data / 14.0;
 n_minutes_of_test = n_seconds_of_test / 60.0;
-step_size = 1.0/14.0;
 step_size = n_seconds_of_test / n_data;
 x = zeros(n_data, 1);
 y = zeros(n_data, 1);
@@ -410,7 +417,7 @@ for i=2:n_data
 end
 % % Plot position
 figure();
-plot(x, y, 'b*')
+plot(x, y, 'b')
 axis([min(x) max(x) min(y) max(y)])
 title('Position')
 xlabel('x (m)')
@@ -436,6 +443,74 @@ for i = 1:n_loop
     %drawnow();
     pause(delay);
 end
+
+%% Latitude and longitude
+% Data from GPS
+%initial_latitude=19.017476;
+%initial_longitude=-98.191140;
+% Data from Google Earth
+initial_latitude=19.0289399;
+initial_longitude=-98.3178446;
+lon = zeros(n_data, 1);
+lat = zeros(n_data, 1);
+lon(1)=initial_longitude;
+lat(1)=initial_latitude;
+cos_init_long = cos(initial_longitude*pi/180.0);
+for i=2:n_data
+    dx=-(x(i)-x(i-1));
+    dy=(y(i)-y(i-1));
+    lon(i) = lon(i-1) + (180.0/pi)*(dx/6378137)/cos_init_long;
+    lat(i) = lat(i-1) + (180.0/pi/2)*(dy/6378137);
+    %lon(i) = initial_longitude + (180.0/pi)*(dx/6378137)/cos_init_long;
+    %lat(i) = initial_latitude + (180.0/pi)*(dy/6378137);    
+end
+
+% % Plot position
+figure();
+plot(lon, lat, 'b')
+axis([min(lon) max(lon) min(lat) max(lat)])
+title('Position (earth coordinates)')
+xlabel('Longitude (degrees)')
+ylabel('Latitude (degrees)')
+legend('Trajectory', 'Location', 'NorthWest')
+
+delay = 0.005; % Delay in seconds in every loop
+n_loop = size(x, 1)
+% % Plot position
+figure();
+hold('on'); % The painting is done over this plot
+t = title('Trajectory, t=0'); % Initial title, we get a hanlder as well
+p = plot(lon(1), lat(1), 'b*'); % Get the plot hanlder
+axis([min(lon) max(lon) min(lat) max(lat)])
+xlabel('Longitude (degrees)')
+ylabel('Latitude (degrees)')
+legend('Trajectory', 'Location', 'NorthWest')
+
+for i = 1:n_loop
+    t.String = sprintf('Trajectory, t = %.2f (%.2f, %.2f)', my_position(i, 1), lon(i), lat(i)); % Update title
+    p.XData(i) = lon(i);
+    p.YData(i) = lat(i);
+    %drawnow();
+    pause(delay);
+end
+
+% Create a sub-set of data
+old_indexes = [1:size(lat,1)];
+old_n_data = size(lat,1);
+new_n_data=200-1;
+my_new_step=old_n_data/new_n_data;
+new_indexes=[1:my_new_step:old_n_data];
+new_lat=interp1(indexes, lat, new_indexes);
+new_lon=interp1(indexes, lon, new_indexes);
+
+% Create a txt file with the latitude and longitude data
+header1 = 'Latitude';
+header2 = 'Longitude';
+fid=fopen('lat_lon.txt','w');
+fprintf(fid, [ header1 '\t' header2 '\n']);
+%fprintf(fid, '%f\t%f \n', [lat lon]');
+fprintf(fid, '%f\t%f \n', [transpose(new_lat) transpose(new_lon)]');
+fclose(fid);
 
 %% FFT raw gyroscope
 my_raw_gyro_no_time = my_raw_gyro(:,(2:4));

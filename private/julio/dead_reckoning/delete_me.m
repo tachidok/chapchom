@@ -9,3 +9,16 @@ for i=2:n_data
     x(i) = step_size * my_velocity(i, 2) * cos(my_roll_pitch_yaw(i,4)) + x(i-1);
     y(i) = step_size * my_velocity(i, 2) * sin(my_roll_pitch_yaw(i,4)) + y(i-1);
 end
+
+%% Latitude and longitude
+initial_latitude=19.017476;
+initial_longitude=98.191140;
+lon = zeros(n_data, 1);
+lat = zeros(n_data, 1);
+cos_init_long = cos(initial_longitude*pi/180.0);
+for i=2:n_data
+    dx=x(i);
+    dy=y(i);
+    lon(i) = initial_longitude + (180.0/pi)*(dx/6378137)/cos_init_long;
+    lat(i) = initial_latitude + (180.0/pi)*(dy/6378137);
+end

@@ -940,7 +940,7 @@ int main(int argc, char *argv[])
  rotation_matrix_gyro[2][1] = 0.0;
  rotation_matrix_gyro[2][2] = 1.0;
  
- const double angle_to_rotate_acc = M_PI;
+ const double angle_to_rotate_acc = -M_PI;
  std::vector<std::vector<double> > rotation_matrix_acc(3);
  for (unsigned i = 0; i < DIM; i++)
   {
@@ -1610,6 +1610,7 @@ int main(int argc, char *argv[])
 #endif // #if 0
        
        //y[0][8] = alpha * y[0][8] + (1.0 - alpha) * true_course_in_radians;
+       // Complementary filter of Yaw with Yaw threshold
        y[0][8] = alpha * y[0][8] + (1.0 - alpha) * y[0][9];
        
        //y[0][8]+= yaw_correction;
@@ -1711,7 +1712,7 @@ int main(int argc, char *argv[])
           }
         }
 #endif // #ifdef ACCELERATION_THRESHOLD
-
+       
 #ifdef GRAVITY_TO_BODY_FRAME
        // Set body frame acceleration
        odes.linear_acceleration() = acc_body;
