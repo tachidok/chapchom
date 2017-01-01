@@ -19,7 +19,7 @@ IF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bin)
   FILE(MAKE_DIRECTORY "${bin}")
 ENDIF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
-# Set output directory for executables
+# Set directory where to create the executables
 set_target_properties( demo_matrix_basic_operations
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin"
@@ -31,6 +31,6 @@ set_target_properties( demo_matrix_basic_operations
 # Run the application to check it works
 ADD_TEST(NAME TEST_demo_matrix_basic_operations_run
          COMMAND demo_matrix_basic_operations)
-#WORKING_DIRECTORY TESTS
+# Validate output
 ADD_TEST(NAME TEST_demo_matrix_basic_operations_check_output
-         COMMAND ${CMAKE_COMMAND} -E compare_files ${CMAKE_CURRENT_SOURCE_DIR}/bin/output_correct.dat ${CMAKE_CURRENT_SOURCE_DIR}/bin/output_test.dat)
+         COMMAND sdiff -s ${CMAKE_CURRENT_SOURCE_DIR}/validate/validate_demo_matrix_basic_operations.dat ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)

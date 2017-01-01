@@ -16,6 +16,9 @@ int main(int argc, char *argv[])
  // Initialise chapcom
  initialise_chapchom();
  
+ // Output for testing/validation
+ std::ofstream output_test("output_test.dat", std::ios_base::out);
+ 
  // Get the wall and cpu execution time of the program
  time_t initial_wall_time = Timing::wall_time();
  clock_t initial_cpu_clock_time = Timing::cpu_clock_time();
@@ -46,6 +49,7 @@ int main(int argc, char *argv[])
  
  std::cout << std::endl << "The identity matrix (I)" << std::endl << std::endl;
  I.output();
+ I.output(output_test);
  
  // ----------------------------------------------------------
  // Matrix from vector
@@ -79,10 +83,12 @@ int main(int argc, char *argv[])
  
  std::cout << std::endl << "Matrix created from vector" << std::endl << std::endl;
  B.output();
+ B.output(output_test);
 
  std::cout << std::endl << "Matrix transposed" << std::endl << std::endl;
  B_t.print();
-
+ B_t.print(output_test);
+ 
  // ----------------------------------------------------------
  // Create a matrix where to store results
  // ----------------------------------------------------------
@@ -115,7 +121,8 @@ int main(int argc, char *argv[])
  std::cout << std::endl << "The sum of the matrices is:"
            << std::endl << std::endl;
  C.output();
-
+ C.output(output_test);
+ 
  // --------------------------------------
  // Matrix multiplication C = I * B
  // -------------------------------------- 
@@ -142,6 +149,7 @@ int main(int argc, char *argv[])
  std::cout << std::endl << "The multiplication of the matrices is:"
            << std::endl << std::endl;
  C.output();
+ C.output(output_test); 
  
  // ##############################################################################
  // Now do the same operations but using operator overloading
@@ -159,7 +167,8 @@ int main(int argc, char *argv[])
  std::cout << std::endl << "The sum of the matrices is:"
            << std::endl << std::endl;
  C.output();
-
+ C.output(output_test);
+ 
  // --------------------------------------
  // Matrix multiplication C = I * B
  // --------------------------------------
@@ -168,6 +177,7 @@ int main(int argc, char *argv[])
  std::cout << std::endl << "The multiplication of the matrices is:"
            << std::endl << std::endl;
  C.output();
+ C.output(output_test);
  
  // -----------------------------------------------------------------------------
  // Create a non square matrix
@@ -197,6 +207,7 @@ int main(int argc, char *argv[])
  std::cout << std::endl << "Non square matrix"
            << std::endl << std::endl;
  A.output();
+ A.output(output_test);
  
  // -----------------------------------------------------------------------------
  // Create a vector to multiply with the non square matrix
@@ -227,6 +238,7 @@ int main(int argc, char *argv[])
  std::cout << std::endl << "Vector"
            << std::endl << std::endl;
  x.output();
+ x.output(output_test);
  
  // --------------------------------------
  // Matrix multiplication A * x = b
@@ -244,10 +256,7 @@ int main(int argc, char *argv[])
  std::cout << std::endl << "The multiplication of the matrices is:"
            << std::endl << std::endl;
  b.output();
-
- // Output for testing
- std::ofstream outfile("output_test.dat", std::ios_base::out);
- b.output(outfile);
+ b.output(output_test);
  
  // --------------------------------------------------
  // Apply transpose
@@ -258,7 +267,7 @@ int main(int argc, char *argv[])
            << std::endl << std::endl;
  b_t.output();
  // Output for test
- b_t.output(outfile);
+ b_t.output(output_test);
  
  // Get the wall and cpu execution time of the program
  time_t final_wall_time = Timing::wall_time();
@@ -267,12 +276,12 @@ int main(int argc, char *argv[])
   Timing::diff_wall_time(initial_wall_time, final_wall_time);
  double total_cpu_clock_time =
   Timing::diff_cpu_clock_time(initial_cpu_clock_time, final_cpu_clock_time);
-
+ 
  std::cout << "Total wall time: " << total_wall_time << std::endl;
  std::cout << "Total cpu clock time: " << total_cpu_clock_time << std::endl;
  
  // Close the output for test
- outfile.close();
+ output_test.close();
  
  // Free memory
  delete [] matrix_pt;

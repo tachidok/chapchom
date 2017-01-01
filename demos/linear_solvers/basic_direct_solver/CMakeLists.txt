@@ -19,7 +19,7 @@ IF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bin)
   FILE(MAKE_DIRECTORY "${bin}")
 ENDIF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
-# Set output directory for executables
+# Set directory where to create the executables
 set_target_properties( demo_linear_solver
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin"
@@ -32,5 +32,7 @@ set_target_properties( demo_linear_solver
 ADD_TEST(NAME TEST_demo_linear_solver_run
           COMMAND demo_linear_solver)
 #WORKING_DIRECTORY TESTS
+#ADD_TEST(NAME TEST_demo_linear_solver_check_output
+#         COMMAND ${CMAKE_COMMAND} -E compare_files output_correct.dat output_test.dat)
 ADD_TEST(NAME TEST_demo_linear_solver_check_output
-         COMMAND ${CMAKE_COMMAND} -E compare_files output_correct.dat output_test.dat)
+         COMMAND sdiff -s ${CMAKE_CURRENT_SOURCE_DIR}/validate/validate_demo_linear_solver.dat ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)

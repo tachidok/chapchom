@@ -194,10 +194,25 @@ if test "$build_demos" = "TRUE" ; then
     cd $build_dir
     make test
     cd ..
+    # Once all test have been run, copy the file with the results of
+    # the test to the root directoy
+    echo ""
+    echo "============================================================= "
+    echo ""
+    echo "Copying validation files ..."
+    cp build/Testing/Temporary/LastTest.log ./validation.log
+    cp build/Testing/Temporary/CTestCostData.txt ./validation_short.log    
     echo ""
     echo "============================================================= "
     echo ""
     echo "Finishing library test process ... (make test has finished!)"
+    echo ""
+    echo "============================================================= "
+    echo ""
+    echo "Check the validation files for information regarding"
+    echo "PASSED/FAILED tests."
+    echo ""
+    echo "============================================================= "    
     echo "If you can't spot any error messages above this, the" 
     echo $lib_name" library should now be ready to use and free of errors" 
     echo " "
