@@ -90,10 +90,10 @@ namespace chapchom
    inline const unsigned long nvalues() const {return NValues;}
    
    // Return the number of entries of the vector
-   inline const unsigned long nentries() const {return nvalues();}
+   inline const unsigned long nentries() const {return NValues;}
    
    // Return the number of entries of the vector
-   inline const unsigned long size() const {return nvalues();}
+   inline const unsigned long size() const {return NValues;}
    
    // Check whether the vector should be treated as transposed (we
    // assume all vectors are created as column vectors)

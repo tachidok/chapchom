@@ -7,6 +7,8 @@
 
 // The parent class
 #include "ac_matrix.h"
+// We include the cc_vector class to deal with vector-matrices
+// operations
 #include "cc_vector.h"
 
 namespace chapchom

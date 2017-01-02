@@ -35,23 +35,48 @@ namespace chapchom
   // Empty destructor
   ~CCLUSolverNumericalRecipes();
  
+  // Solve a system of equations with input A. We
+  // specify the right-hand side B and the X matrices where the
+  // results are returned. We assume that the input/output matrices
+  // have the correct dimensions: A.ncolumns() x A.nrows() for B, and
+  // A.nrows() x A.ncolumns() for X.
+  void solve(const CCMatrix<T> &A, const CCMatrix<T> &B, CCMatrix<T> &X);
+
   // Solve a system of equations with input A. We specify the
   // right-hand side b and the x vector where the result is
-  // returned. We assume that the input/output vectors have the correct
-  // dimensions (size n).
-  void solve(const CCMatrix<T> &A, const CCMatrix<T> &b, CCMatrix<T> &x);
- 
+  // returned. We assume that the input/output vectors have the
+  // correct dimensions: A.ncolumns() for b, and A.nrows() for x.
+  void solve(const CCMatrix<T> &A, const CCVector<T> &b, CCVector<T> &x);
+  
   // Solve a system of equations with the already stored matrix A. We
-  // specify the right-hand side b and the x vector where the result is
-  // returned. We assume that the input/output vectors have the correct
-  // dimensions (size n).
-  void solve(const CCMatrix<T> &b, CCMatrix<T> &x);
- 
+  // specify the right-hand side B and the X matrices where the
+  // results are returned. We assume that the input/output matrices
+  // have the correct dimensions: A.ncolumns() x A.nrows() for B, and
+  // A.nrows() x A.ncolumns() for X.
+  void solve(const CCMatrix<T> &B, CCMatrix<T> &X);
+  
+  // Solve a system of equations with the already stored matrix A. We
+  // specify the right-hand side b and the x vectors where the result
+  // is returned. We assume that the input/output vectors have the
+  // correct dimensions: A.ncolumns() for b, and A.nrows() for x.
+  void solve(const CCVector<T> &b, CCVector<T> &x);
+  
   // Re-solve a system of equations with the already stored matrix
-  // A. Reusing the LU decomposition. We specify the right-hand side b
-  // and the x vector where the result is returned. We assume that the
-  // input/output vectors have the correct dimensions (size n).
-  void resolve(const CCMatrix<T> &b, CCMatrix<T> &x);
+  // A. Reusing the LU decomposition. We specify the right-hand
+  // side B and the X matrices where the results are returned. We
+  // assume that the input/output vectors have the correct dimensions:
+  // A.ncolumns() x A.nrows() for B, and A.nrows() x A.ncolumns() for
+  // X.
+  void resolve(const CCMatrix<T> &B, CCMatrix<T> &X);
+  
+  // Re-solve a system of equations with the already stored matrix A
+  // (re-use of the LU decomposition or call the solve method for an
+  // iterative solver). BROKEN beacuse iterative solvers may not
+  // implement it. We specify the right-hand side b and the x vector
+  // where the result is returned. We assume that the input/output
+  // vectors have the correct dimensions: A.ncolumns() for b, and
+  // A.nrows() for x.
+  void resolve(const CCVector<T> &b, CCVector<T> &x);
   
   // Performs LU factorisation of the input matrix, the factorisation
   // is internally stored such that it can be re-used when calling
@@ -62,10 +87,13 @@ namespace chapchom
   // factorisation is internally stored such that it can be re-used
   // when calling resolve
   void factorise();
- 
+  
   // Performs the back substitution with the LU decomposed matrix
-  void back_substitution(const CCMatrix<T> &b, CCMatrix<T> &x);
- 
+  void back_substitution(const CCMatrix<T> &B, CCMatrix<T> &X);
+  
+  // Performs the back substitution with the LU decomposed matrix
+  void back_substitution(const CCVector<T> &b, CCVector<T> &x);
+  
  protected:
  
   // Flag to indicate whether resolve is enabled (only after calling
