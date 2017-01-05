@@ -19,6 +19,7 @@
 #include "cc_nmea_decoder.h"
 
 //#define OLD_IMPLEMENTATION
+#define COMPUTE_ACC_FROM_GPS_VELOCITY
 
 #define GRAVITY 9.81
 
@@ -758,7 +759,10 @@ int main(int argc, char *argv[])
                           CHAPCHOM_CURRENT_FUNCTION,
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
- 
+
+ // -----------------------------------
+ // GPS DATA [BEGIN]
+ // -----------------------------------
  // True course in degrees
  char file_true_course_in_degrees_name[100];
  sprintf(file_true_course_in_degrees_name, "./RESLT/true_course_in_degrees.dat");
@@ -774,6 +778,58 @@ int main(int argc, char *argv[])
                           CHAPCHOM_CURRENT_FUNCTION,
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
+ 
+ // Speed in knots
+ char file_speed_in_knots_name[100];
+ sprintf(file_speed_in_knots_name, "./RESLT/speed_in_knots.dat");
+ std::ofstream outfile_speed_in_knots;
+ outfile_speed_in_knots.open(file_speed_in_knots_name, std::ios::out);
+ if (outfile_speed_in_knots.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_speed_in_knots_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+ // Speed in m/s
+ char file_speed_in_m_per_sec_name[100];
+ sprintf(file_speed_in_m_per_sec_name, "./RESLT/speed_in_m_per_sec.dat");
+ std::ofstream outfile_speed_in_m_per_sec;
+ outfile_speed_in_m_per_sec.open(file_speed_in_m_per_sec_name, std::ios::out);
+ if (outfile_speed_in_m_per_sec.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_speed_in_m_per_sec_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+ // Acceleration from speed in m/s from GPS
+ char file_acc_from_speed_in_m_per_sec_from_GPS_name[100];
+ sprintf(file_acc_from_speed_in_m_per_sec_from_GPS_name, "./RESLT/acc_from_speed_in_m_per_sec_from_GPS.dat");
+ std::ofstream outfile_acc_from_speed_in_m_per_sec_from_GPS;
+ outfile_acc_from_speed_in_m_per_sec_from_GPS.open(file_acc_from_speed_in_m_per_sec_from_GPS_name, std::ios::out);
+ if (outfile_acc_from_speed_in_m_per_sec_from_GPS.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_acc_from_speed_in_m_per_sec_from_GPS_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+ // -----------------------------------
+ // GPS DATA [END]
+ // -----------------------------------
  
  // Roll, pitch and yaw from accelerations
  char file_roll_pitch_yaw_from_acc_name[100];
@@ -956,6 +1012,10 @@ int main(int argc, char *argv[])
  rotation_matrix_acc[2][1] = 0.0;
  rotation_matrix_acc[2][2] = 1.0;
  
+#ifdef COMPUTE_ACC_FROM_GPS_VELOCITY
+ double previous_speed_in_m_per_sec = 0.0;
+#endif // #ifdef COMPUTE_ACC_FROM_GPS_VELOCITY
+ 
  while (LOOP)
   {
    // Retrieve data from sensors
@@ -1025,6 +1085,9 @@ int main(int argc, char *argv[])
    // Get heading information
    const double true_course_in_degrees = odes.true_course_in_degrees();
    const double true_course_in_radians = true_course_in_degrees * TO_RADIANS;
+   // Get speed in knots
+   const double speed_in_knots = odes.speed_in_knots();
+   const double speed_in_m_per_sec = speed_in_knots*0.514444;
    
    for (unsigned i = 0; i < n_acc_data; i++)
     {
@@ -1829,12 +1892,19 @@ int main(int argc, char *argv[])
                             << " " << acc_filtered[0]
                             << " " << acc_filtered[1]
                             << " " << acc_filtered[2] << std::endl;
-       
+
+       // --------------------------------------------------------------------------
+       // GPS DATA [BEGIN]
+       // --------------------------------------------------------------------------
        // True course in degrees (output here even though we have
        // repeated values, we need them to plot in Matlab, otherwise we
        // would have to interpolate in matlab)
        outfile_true_course_in_degrees << time
                                       << " " << true_course_in_degrees << std::endl;
+       
+       // --------------------------------------------------------------------------
+       // GPS DATA [END]
+       // --------------------------------------------------------------------------
        
        std::cout << "t: " << time
                  << " x-pos: " << y[0][0] << " x-vel: " << y[0][1]
@@ -1845,6 +1915,28 @@ int main(int argc, char *argv[])
       } // for (i < n_acc_data)
      
     } // if (applied_convolution)
+   
+   // --------------------------------------------------------------------------
+   // GPS DATA [BEGIN]
+   // --------------------------------------------------------------------------
+   // For each lecture of the sensors we have one for the speed
+   outfile_speed_in_knots << time
+                          << " " << speed_in_knots << std::endl;
+   
+   outfile_speed_in_m_per_sec << time
+                              << " " << speed_in_m_per_sec << std::endl;
+   
+#ifdef COMPUTE_ACC_FROM_GPS_VELOCITY
+   const double acc_from_speed_in_m_per_sec_from_gps =
+    (speed_in_m_per_sec - previous_speed_in_m_per_sec) / (time - (time - 1));
+   previous_speed_in_m_per_sec = speed_in_m_per_sec;
+   outfile_acc_from_speed_in_m_per_sec_from_GPS << time
+                                                << " " << acc_from_speed_in_m_per_sec_from_gps << std::endl;
+#endif // #ifdef COMPUTE_ACC_FROM_GPS_VELOCITY
+ 
+   // --------------------------------------------------------------------------
+   // GPS DATA [END]
+   // --------------------------------------------------------------------------
    
   } // while (LOOP)
  
@@ -1862,7 +1954,12 @@ int main(int argc, char *argv[])
 #endif // #ifdef GRAVITY_TO_BODY_FRAME
  outfile_inertial_acc.close();
  outfile_roll_pitch_yaw.close();
+ // GPS DATA [BEGIN] --------------------------------------------
  outfile_true_course_in_degrees.close();
+ outfile_speed_in_knots.close();
+ outfile_speed_in_m_per_sec.close();
+ outfile_acc_from_speed_in_m_per_sec_from_GPS.close();
+ // GPS DATA [END] ----------------------------------------------
  outfile_roll_pitch_yaw_from_acc.close();
  outfile_filtered_gyro.close();
  outfile_filtered_acc.close();

@@ -81,6 +81,9 @@ namespace chapchom
   /// Get the value of the true course (in degrees)
   inline double true_course_in_degrees(){return True_course_in_degrees;}
   
+  // Get the value of the speed (in knots)
+  inline double speed_in_knots(){return Speed_in_knots;}
+  
   // Get yaw correction as a function of time and the number of steps
   // per second
   const double get_yaw_correction(const double t,
@@ -170,6 +173,8 @@ namespace chapchom
   std::vector<std::vector<double> > Euler_angles_data;
   // Temporary storage for true course (angle in degrees)
   double True_course_in_degrees;
+  // Temporary storage for speed in knots
+  double Speed_in_knots;
   
  };
  

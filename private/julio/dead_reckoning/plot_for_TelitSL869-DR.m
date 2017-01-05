@@ -138,6 +138,9 @@ my_raw_accelerations = importfile_TelitSL869DR_3columns('RESLT/raw_accelerations
 my_roll_pitch_yaw = importfile_TelitSL869DR_3columns('RESLT/roll_pitch_yaw.dat', 1, n_output_data);
 %my_true_course_in_degrees = importfile_TelitSL869DR_2columns('RESLT/true_course_in_degrees.dat', 1, 531);
 my_true_course_in_degrees = importfile_TelitSL869DR_2columns('RESLT/true_course_in_degrees.dat', 1, n_output_data);
+my_speed_in_knots = importfile_TelitSL869DR_2columns('RESLT/speed_in_knots.dat', 1, 531);
+my_speed_in_m_per_sec = importfile_TelitSL869DR_2columns('RESLT/speed_in_m_per_sec.dat', 1, 531);
+my_acc_from_speed_in_m_per_sec = importfile_TelitSL869DR_2columns('RESLT/acc_from_speed_in_m_per_sec_from_GPS.dat', 1, 531);
 my_euler_angles_rates = importfile_TelitSL869DR_3columns('RESLT/euler_angles_rates.dat', 1, n_output_data);
 my_roll_pitch_yaw_from_acc = importfile_TelitSL869DR_3columns('RESLT/roll_pitch_yaw_from_acc.dat', 1, n_output_data);
 my_inertial_acceleration = importfile_TelitSL869DR_3columns('RESLT/inertial_accelerations.dat', 1, n_output_data);
@@ -176,13 +179,38 @@ ylabel('\theta (degrees)')
 %legend('Angle from accelerometer', 'Gyroscope and accelerometer fusion', 'Location', 'NorthWest')
 legend('Angle from accelerometer', 'Gyroscope and accelerometer fusion', 'TRUE COURSE (Heading)', 'Location', 'NorthWest')
 
-%% True course in degrees
+%% From GPS
+% True course in degrees
 figure
 plot(my_true_course_in_degrees(:,1), my_true_course_in_degrees(:,2), 'b')
 axis([initial_time final_time -180 180])
 title('True course in degrees [yaw]')
 xlabel('Time(s)')
 ylabel('\theta (degrees)')
+
+% Speed in knots
+figure
+plot(my_speed_in_knots(:,1), my_speed_in_knots(:,2), 'b')
+%axis([initial_time final_time -180 180])
+title('Speed in knots from GPS')
+xlabel('Time(s)')
+ylabel('knots')
+
+% Speed in meters per second
+figure
+plot(my_speed_in_m_per_sec(:,1), my_speed_in_m_per_sec(:,2), 'b')
+%axis([initial_time final_time -180 180])
+title('Speed from GPS')
+xlabel('Time(s)')
+ylabel('m/s')
+
+% Acceleration in meters per second^2 from GPS
+figure
+plot(my_acc_from_speed_in_m_per_sec(:,1), my_acc_from_speed_in_m_per_sec(:,2), 'b')
+%axis([initial_time final_time -180 180])
+title('Acceleration from GPS')
+xlabel('Time(s)')
+ylabel('m/s^2')
 
 %% Raw gyro and euler angles rates
 % figure
@@ -259,6 +287,7 @@ legend('Raw acceleration',  'Filtered acceleration', 'Location', 'NorthWest')
 %% Filtered and inertial acceleration
 figure
 plot(my_filtered_acc(:, 1), my_filtered_acc(:, 2), 'b', my_inertial_acceleration(:, 1), my_inertial_acceleration(:, 2), 'r')
+%plot(my_filtered_acc(:, 1), -my_filtered_acc(:, 2), 'b')
 title('x-acceleration')
 axis([initial_time final_time -5 15])
 xlabel('Time (s)')
@@ -443,6 +472,57 @@ for i = 1:n_loop
     %drawnow();
     pause(delay);
 end
+
+%% Position (From velocity from GPS)
+n_data = size(my_speed_in_m_per_sec ,1);
+n_seconds_of_test = n_data;
+n_minutes_of_test = n_seconds_of_test / 60.0;
+step_size = n_seconds_of_test / n_data;
+x = zeros(n_data, 1);
+y = zeros(n_data, 1);
+% Get the data at the specific times [1:n_data] seconds
+seconds = [1:n_data];
+angle_at_specific_second = interp1(my_roll_pitch_yaw(:,1), my_roll_pitch_yaw(:,4), seconds);
+for i=2:n_data
+    x(i) = step_size * my_speed_in_m_per_sec(i, 2) * cos(angle_at_specific_second(i)) + x(i-1);
+    y(i) = step_size * my_speed_in_m_per_sec(i, 2) * sin(angle_at_specific_second(i)) + y(i-1);
+end
+% % Plot position
+figure();
+plot(x, y, 'b')
+axis([min(x) max(x) min(y) max(y)])
+title('Position from velocity from GPS')
+xlabel('x (m)')
+ylabel('y (m)')
+legend('Trajectory', 'Location', 'NorthWest')
+
+delay = 0.005; % Delay in seconds in every loop
+n_loop = size(x, 1)
+% % Plot position
+figure();
+hold('on'); % The painting is done over this plot
+t = title('Trajectory, t=0'); % Initial title, we get a hanlder as well
+p = plot(x(1), y(1), 'b*'); % Get the plot hanlder
+axis([min(x) max(x) min(y) max(y)])
+xlabel('x (m)')
+ylabel('y (m)')
+legend('Trajectory', 'Location', 'NorthWest')
+
+for i = 1:n_loop
+    t.String = sprintf('Trajectory, t = %.2f (%.2f, %.2f)', seconds(i), x(i), y(i)); % Update title
+    p.XData(i) = x(i);
+    p.YData(i) = y(i);
+    %drawnow();
+    pause(delay);
+end
+
+% x-position vs time and y-position vs time
+figure
+plot(my_speed_in_m_per_sec(:, 1), x * meters_to_kilometers, 'b', my_speed_in_m_per_sec(:, 1), y * meters_to_kilometers, 'r')
+title('x-displacement and y-displacement')
+xlabel('time (s)')
+ylabel('displ (km)')
+legend('x-displacement', 'y-displacement', 'Location', 'NorthWest')
 
 %% Latitude and longitude
 % Data from GPS

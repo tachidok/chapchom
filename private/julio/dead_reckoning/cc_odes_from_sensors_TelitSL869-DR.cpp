@@ -160,12 +160,14 @@ namespace chapchom
       
       // Get the data structure
       struct GPRMC gprmc = nmea_decoder->get_gprmc();
-      const double latitude = gprmc.latitude;
-      const double longitude = gprmc.longitude;
-      // Set the true course variable
-      True_course_in_degrees = gprmc.course_degrees;
+      //const double latitude = gprmc.latitude;
+      //const double longitude = gprmc.longitude;
       // Consume GPRMC data
       nmea_decoder->consume_GPRMC_data();
+      // Set the true course variable
+      True_course_in_degrees = gprmc.course_degrees;
+      // Speed in knots
+      Speed_in_knots = gprmc.speed_knots;
       // Indicate GPRMC data has been read
       read_GPRMC_data = true;
       //std::cout << "GPRMC:(" << latitude << ", " << longitude << ", "
