@@ -99,7 +99,13 @@ namespace chapchom
    
    // Computes the transpose and store it in the transpose vector
    void transpose(CCVector &transposed_vector);
-      
+   
+   // Transpose the vector
+   inline void transpose()
+   {
+    this->Is_transposed=!(this->Is_transposed);
+   }
+   
    // Get the specified value from the vector (read-only)
    const T value(const unsigned long i) const;
    

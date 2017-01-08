@@ -103,9 +103,6 @@ namespace chapchom
    inline void set_transposed_status(bool status)
    {Is_transposed = status;}
    
-   // Transpose the vector
-   inline void transpose(){is_transposed=~is_transposed;}
-      
    // Checks whether the vector has been set, or allocated
    inline bool is_empty() const {return Is_empty;}
    

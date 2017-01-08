@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
       }
     }
   }
-
+ 
  // ---------------------------------------
  // Create the matrix from the vector data
  // ---------------------------------------
@@ -247,10 +247,10 @@ int main(int argc, char *argv[])
                                             // need to force the
                                             // allocation of memory to
                                             // store the entries of
-                                            // the matrix b, the
-                                            // operation* takes care
-                                            // of the allocation in
-                                            // case it is required
+                                            // the matrix b, the times
+                                            // operation (*) takes
+                                            // care of the allocation
+                                            // if it is required
  b = A * x;
  
  std::cout << std::endl << "The multiplication of the matrices is:"
