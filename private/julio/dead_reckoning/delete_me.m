@@ -29,8 +29,8 @@ n_seconds_of_test = n_data;
 n_minutes_of_test = n_seconds_of_test / 60.0;
 step_size = n_seconds_of_test / n_data;
 x = zeros(n_data, 1);
-y = zeros(n_data, 1);
+y = zeros(n_data, 1);my_roll_pitch_yaw(i,1)
 for i=2:n_data
-    x(i) = step_size * my_speed_in_m_per_sec(i, 2) * cos(my_roll_pitch_yaw(i,4)) + x(i-1);
+    x(i) = step_size * my_speed_in_m_per_sec(i, 2) * cos(my_roll_pitch_yaw(my_roll_pitch_yaw(i,1),4)) + x(i-1);
     y(i) = step_size * my_speed_in_m_per_sec(i, 2) * sin(my_roll_pitch_yaw(i,4)) + y(i-1);
 end
