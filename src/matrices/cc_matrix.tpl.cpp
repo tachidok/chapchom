@@ -191,7 +191,7 @@ namespace chapchom
  {
   // Clean any possible previously allocated memory
   clean_up();
- 
+  
   // Set the number of rows and columns
   this->NRows = m;
   this->NColumns = n;

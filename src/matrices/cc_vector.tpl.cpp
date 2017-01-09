@@ -72,7 +72,7 @@ namespace chapchom
   // Clean-up and set values
   set_vector(source_vector.vector_pt(), source_vector.nvalues());
   // Set the transposed status
-  set_transpose(source_vector.is_transposed());
+  this->set_transposed_status(source_vector.is_transposed());
   // Return this (de-referenced pointer)
   return *this;
   
@@ -550,8 +550,9 @@ namespace chapchom
   
   // Copy the vector into the tranposed vector
   transposed_vector = (*this);
-  // .. and mark it as transposed
-  transposed_vector.transpose();
+  // Get the current "transpose" status of the vector and set the
+  // transposed status of the new vector
+  transposed_vector.set_transposed_status(~(this->Is_transposed));
  }
  
  // ===================================================================

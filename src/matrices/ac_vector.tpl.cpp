@@ -11,7 +11,7 @@ namespace chapchom
  // ===================================================================
  template<class T>
  ACVector<T>::ACVector() 
-  : NValues(0), Is_transposed(false), Is_empty(true), Delete_vector(true)
+  : NValues(0), Is_empty(true), Delete_vector(true), Is_transposed(false)
  { }
  
  // ===================================================================
