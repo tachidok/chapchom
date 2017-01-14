@@ -195,12 +195,18 @@ namespace chapchom
   
   // Align/pair and scale lectures such that accelerometers and gyro
   // data are given at the same time
-  pair_and_scale_lectures();
+  //pair_and_scale_lectures();
+
+  // -----------------------------------------------------------------
+  // Scale the raw sensor data based on the values provided in the
+  // documentation
+  // -----------------------------------------------------------------
+  scale_raw_sensor_data();
   
   return true;
   
  }
-
+ 
  // ===================================================================
  /// Computes north-east velocities
  // ===================================================================
@@ -371,6 +377,43 @@ namespace chapchom
   throw ChapchomLibError(error_message.str(),
                          CHAPCHOM_CURRENT_FUNCTION,
                          CHAPCHOM_EXCEPTION_LOCATION);
+ }
+
+ // ===================================================================
+ /// Scales the raw data obtained from the sensores (gyros and
+ /// accelerometers) based on the scaling provided in the
+ /// documentation for Telit-Jupiter-SL869-DR (SL869-DR SW User Guide
+ /// 1VV0301119 Rev. 1 2015-03-03 pages 17-18)
+ // ===================================================================
+ void CCODEsFromSensorsTelitSL869DR::scale_raw_sensor_data()
+ {
+  // Get the number of lectures for gyro and accelerometer
+  const unsigned n_gyro_data = Gyro_data.size();  
+  const unsigned n_acc_data = Acceleration_data.size();
+  
+  // Scale gyros data
+  for (unsigned i = 0; i < n_gyro_data; i++)
+   {
+    // Transform to seconds
+    Gyro_data[i][0]*= 1.0e-6;
+    for (unsigned j = 1; j < DIM+1; j++) // j=0 is the time stamp
+     {
+      // Transform to radians since they are given in degrees
+      Gyro_data[i][j+1] = scale(X_MIN, X_MAX, FX_MIN_GYRO, FX_MAX_GYRO, Gyro_data[i][j+1]) * TO_RADIANS;
+     }  
+   }
+  
+  // Scale accelometers data
+  for (unsigned i = 0; i < n_acc_data; i++)
+   {
+    // Transform to seconds
+    Acceleration_data[i][0]*=1.0e-6;
+    for (unsigned j = 1; j < DIM+1; j++) // j=0 is the time stamp
+     {
+      Acceleration_data[i][j] = scale(X_MIN, X_MAX, FX_MIN_ACC, FX_MAX_ACC, Acceleration_data[i][j]);
+     }
+   }
+  
  }
  
  // ===================================================================

@@ -25,15 +25,15 @@ namespace chapchom
   /// Gets the number of odes
   unsigned nodes() const
   {return N_odes;}
- 
+  
   /// Gets the vector storing the number of calls to the odes
-  const std::vector<unsigned> &ncallsodes()
+  const std::vector<unsigned> &ncalls_odes()
   {return N_calls_ode;}
- 
+  
   /// Gets the number of calls to an specific ode
-  unsigned ncallsode(const unsigned i) const
+  unsigned ncalls_ode(const unsigned i) const
   {return N_calls_ode[i];}
- 
+  
   /// Evaluates the system of odes at the time given by "t" and the
   /// values of the function in "y". The evaluation produces results in
   /// the dy vector

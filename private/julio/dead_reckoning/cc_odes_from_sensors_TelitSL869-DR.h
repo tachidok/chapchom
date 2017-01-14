@@ -63,12 +63,20 @@ namespace chapchom
   inline std::vector<double> &get_accelerations(const unsigned i)
   {return Acceleration_data[i];}
   
+  // Get acceleration data
+  inline std::vector<std::vector<double> > &get_accelerations()
+  {return Acceleration_data;}
+  
   // Get the number of gyro data
   inline const unsigned ngyro_data() {return Gyro_data.size();}
   
   // Get gyro's data
-  inline std::vector<double> &get_angular_rates(const unsigned i)
+  inline std::vector<double> &get_angular_velocities(const unsigned i)
   {return Gyro_data[i];}
+  
+  // Get gyro's data
+  inline std::vector<std::vector<double> > &get_angular_velocities()
+  {return Gyro_data;}
   
   // Get the number of Euler angles data
   inline const unsigned neuler_angles_data()
@@ -118,7 +126,7 @@ namespace chapchom
   /// position
   void evaluate(const unsigned i, const double t,
                 const std::vector<double> &y, std::vector<double> &dy);
- 
+  
  protected:
   
   /// Copy constructor (we do not want this class to be
@@ -129,7 +137,7 @@ namespace chapchom
    {
     BrokenCopy::broken_copy("CCODEsFromSensorsTelitSL869DR");
    }
- 
+  
   /// Assignment operator (we do not want this class to be
   /// copiable. Check
   /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
@@ -144,6 +152,12 @@ namespace chapchom
   /// is also in charge of scaling the raw values obtined from the
   /// lectures and transform them into 'real' values
   void pair_and_scale_lectures();
+  
+  /// Scales the raw data obtained from the sensores (gyros and
+  /// accelerometers) based on the scaling provided in the
+  /// documentation for Telit-Jupiter-SL869-DR (SL869-DR SW User Guide
+  /// 1VV0301119 Rev. 1 2015-03-03 pages 17-18)
+  void scale_raw_sensor_data();
   
   // An nmea decoder
   CCNMEADecoder *nmea_decoder;
