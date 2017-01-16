@@ -19,14 +19,28 @@ namespace chapchom
 
   /// Empty destructor
   ~CCNewtonInterpolator();
- 
+  
   /// Does the interpolation specifying the set data points, the order
-  /// of the interpolation and the desired "x" value to interpolate
+  /// of the interpolation and the desired "x" value to
+  /// interpolate. We use Newton's polynomial formula to construct a
+  /// given order polynomial and interpolate.
+  /// N(n) = b0 + b1(x-x0) + b2(x-x0)(x-x1) + b3(x-x0)(x-x1)(x-x2) ...
   double interpolate_1D(std::vector<double> &x_points,
                         std::vector<double> &fx_points,
                         const double x,
                         const unsigned order);
- 
+  
+  /// Does the interpolation specifying the set data points, the order
+  /// of the interpolation and the desired "x" values to
+  /// interpolate. We use Newton's polynomial formula to construct a
+  /// given order polynomial and interpolate.
+  /// N(n) = b0 + b1(x-x0) + b2(x-x0)(x-x1) + b3(x-x0)(x-x1)(x-x2) ...
+  void interpolate_1D(std::vector<double> &x_points,
+                      std::vector<double> &fx_points,
+                      std::vector<double> &x,
+                      std::vector<double> &fx,
+                      const unsigned order);
+  
  protected:
  
   /// Copy constructor (we do not want this class to be
