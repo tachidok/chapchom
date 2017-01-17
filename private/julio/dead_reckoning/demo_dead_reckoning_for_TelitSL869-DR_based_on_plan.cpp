@@ -22,6 +22,7 @@
 
 //#define OLD_IMPLEMENTATION
 #define OUTPUT_RAW_AND_ROTATED_SENSORS_DATA
+#define OUTPUT_FILTERED_SENSORS_DATA
 
 
 
@@ -90,6 +91,7 @@ void rotate_sensors_to_ASIKIs_reference_frame(std::vector<std::vector<double> > 
  // Rotation matrix for acc data
  const double angle_to_rotate_acc = -M_PI;
  CCMatrix<double> R_a(DIM, DIM);
+ R_a.create_zero_matrix();
  R_a(0,0)=cos(angle_to_rotate_acc);   R_a(0,1)=sin(angle_to_rotate_acc);  R_a(0,2)=0.0;
  R_a(1,0)=-sin(angle_to_rotate_acc);  R_a(1,1)=cos(angle_to_rotate_acc);  R_a(1,2)=0.0;
  R_a(2,0)=0.0;                        R_a(2,1)=0.0;                       R_a(2,2)=1.0;
@@ -107,9 +109,9 @@ void rotate_sensors_to_ASIKIs_reference_frame(std::vector<std::vector<double> > 
   {
    // -------------------------------------------------------------------------
    // Store the gyro data in a temporary vector
-   raw_data(0) = gyro_t[i][1]; // gyro_x
-   raw_data(1) = gyro_t[i][2]; // gyro_y
-   raw_data(2) = gyro_t[i][3]; // gyro_z
+   raw_data(0) = raw_gyro_t[i][1]; // gyro_x
+   raw_data(1) = raw_gyro_t[i][2]; // gyro_y
+   raw_data(2) = raw_gyro_t[i][3]; // gyro_z
    
    // ==========================================================================
    // Rotate the gyro to match the reference frame of the ASIKI
@@ -128,9 +130,9 @@ void rotate_sensors_to_ASIKIs_reference_frame(std::vector<std::vector<double> > 
    // -------------------------------------------------------------------------   
    // Store the acc data in a temporary vector. Multiply by 9.81
    // since the data from the accelerometers are given in 'g' units
-   raw_data(0) = acc_t[i][1] * GRAVITY; // acc_x
-   raw_data(1) = acc_t[i][2] * GRAVITY; // acc_y
-   raw_data(2) = acc_t[i][3] * GRAVITY; // acc_z
+   raw_data(0) = raw_acc_t[i][1] * GRAVITY; // acc_x
+   raw_data(1) = raw_acc_t[i][2] * GRAVITY; // acc_y
+   raw_data(2) = raw_acc_t[i][3] * GRAVITY; // acc_z
    
    // ==========================================================================
    // Rotate the acc to match the reference frame of the ASIKI
@@ -163,7 +165,7 @@ void filter_signal_by_convolution(double *noisy_signal,
    filtered_signal[i] = 0.0;
    
    // Compute k-min (where the filter starts to apply)
-   const int k_min = n_kernel - n_processed_data - i - 1;
+   int k_min = n_kernel - n_processed_data - i - 1;
    
    // A counter
    unsigned j = 0;
@@ -175,7 +177,7 @@ void filter_signal_by_convolution(double *noisy_signal,
      k_min = 0;
     }
    
-   for (int k = k_min; k < n_kernel; k++)
+   for (int k = k_min; k < static_cast<int>(n_kernel); k++)
     {
      filtered_signal[i] += noisy_signal[j] * kernel[k];
      j++;
@@ -185,6 +187,7 @@ void filter_signal_by_convolution(double *noisy_signal,
  
 }
 
+#if 0
 // ===================================================================
 // Align sensor's data via linear interpolation using gyro's time
 // stamps as base.
@@ -319,6 +322,7 @@ void align_sensors_time_stamps(n_gyro_data,
 
  
 }
+#endif // #if 0
 
 // ===================================================================
 // Modified convolution method, it applies convolution to the non
@@ -356,7 +360,7 @@ void convolve_use_non_processed_data(double *original_signal, const unsigned n_s
    
    for (unsigned k = 0; k < n_kernel; k++)
     {
-     convolved_signal[i] += signal[i+k] * kernel[k];
+     convolved_signal[i] += original_signal[i+k] * kernel[k];
     }
    
   } // for (i < n_convolved_signal)
@@ -861,6 +865,38 @@ int main(int argc, char *argv[])
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
  
+ // Filtered gyro
+ char file_filtered_gyro_name[100];
+ sprintf(file_filtered_gyro_name, "./RESLT/filtered_gyro.dat");
+ std::ofstream outfile_filtered_gyro;
+ outfile_filtered_gyro.open(file_filtered_gyro_name, std::ios::out);
+ if (outfile_filtered_gyro.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_filtered_gyro_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+ // Filtered acc
+ char file_filtered_acc_name[100];
+ sprintf(file_filtered_acc_name, "./RESLT/filtered_acc.dat");
+ std::ofstream outfile_filtered_acc;
+ outfile_filtered_acc.open(file_filtered_acc_name, std::ios::out);
+ if (outfile_filtered_acc.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_filtered_acc_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
  // Position
  char file_position_name[100];
  sprintf(file_position_name, "./RESLT/position.dat");
@@ -1044,38 +1080,6 @@ int main(int argc, char *argv[])
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
  
- // Filtered gyro
- char file_filtered_gyro_name[100];
- sprintf(file_filtered_gyro_name, "./RESLT/filtered_gyro.dat");
- std::ofstream outfile_filtered_gyro;
- outfile_filtered_gyro.open(file_filtered_gyro_name, std::ios::out);
- if (outfile_filtered_gyro.fail())
-  {
-   // Error message
-   std::ostringstream error_message;
-   error_message << "Could not create the file [" << file_filtered_gyro_name << "]"
-                 << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
-  }
- 
- // Filtered acc
- char file_filtered_acc_name[100];
- sprintf(file_filtered_acc_name, "./RESLT/filtered_acc.dat");
- std::ofstream outfile_filtered_acc;
- outfile_filtered_acc.open(file_filtered_acc_name, std::ios::out);
- if (outfile_filtered_acc.fail())
-  {
-   // Error message
-   std::ostringstream error_message;
-   error_message << "Could not create the file [" << file_filtered_acc_name << "]"
-                 << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
-  }
- 
  // ----------------------------------------------------------------
  // FILES (END)
  // ----------------------------------------------------------------
@@ -1097,17 +1101,10 @@ int main(int argc, char *argv[])
  
  // Flag to indicate whether to continue processing
  bool LOOP = true;
-
+ 
  // The discretised time
  double time = 0.0;
  
- // The vectors store the lectures from gyro and accelerometer. The
- // number of non processed data indicates the starting position of
- // the data to be processed at the current time. Any data before
- // "n_non_processed_data" is understood as previous time information
- // (only used at the convolution stage)
- unsigned n_non_processed_data = 0;
-
  // ----------------------------------------------------------------
  // Filter stage [BEGIN]
  // ----------------------------------------------------------------
@@ -1276,6 +1273,16 @@ int main(int argc, char *argv[])
      filtered_acc_signal_t[i] = raw_acc_t[i][0];
     }
    
+   // The coefficients of the kernel signal to convolve with the gyro
+   // data
+   const unsigned n_kernel_gyro = 15;
+   double kernel_gyro[] = {0.0102773244275157,	0.0162263834264182,	0.0328881753317823,	0.0570814837334001,	0.0840520641122108,	0.108434325903213,	0.125345958994944,	0.131388568141032,	0.125345958994944,	0.108434325903213,	0.0840520641122108,	0.0570814837334001,	0.0328881753317823,	0.0162263834264182,	0.0102773244275157};
+ 
+   // The coefficients of the kernel signal to convolve with the
+   // accelerometer data
+   const unsigned n_kernel_acc = 15;
+   double kernel_acc[] = {0.0104226000635011,	0.0163818874099687,	0.0330775506149548,	0.0572325417966930,	0.0840719974006429,	0.108274081298100,	0.125032039259642,	0.131014604312996,	0.125032039259642,	0.108274081298100,	0.0840719974006429,	0.0572325417966930,	0.0330775506149548,	0.0163818874099687,	0.0104226000635011};
+   
    // Perform the actual convolution
    filter_signal_by_convolution(noisy_signal_gyro_x,
                                 n_processed_data_in_gyro_buffer,
@@ -1308,20 +1315,71 @@ int main(int argc, char *argv[])
                                 filtered_acc_signal_z,
                                 n_acc_data);
    
-   // TODO: Shift data in noisy signal
+   // Add the number of data to the processed data
    n_processed_data_in_gyro_buffer+=n_gyro_data;
    n_processed_data_in_acc_buffer+=n_acc_data;
    
    // If the number of processed data is larger than the kernel size
    // then shift the data to have just enough data for the next
-   // filtering step (n_kernel - 1)
-   for (unsigned i = 0; i < n_kernel - 1; i++)
+   // filtering step (n_kernel)
+   if (n_processed_data_in_gyro_buffer >= n_kernel_gyro)
     {
-     noisy_signal_gyro_x[i] = noisy_signal_gyro_x[i+n_processed_data_in_gyro_buffer-n_kernel-1];
+     // Get the number of elements that we should shift to the left
+     const unsigned n_shift_gyro_data = n_processed_data_in_gyro_buffer - n_kernel_gyro + 1;
+     for (unsigned i = 0; i < n_kernel_gyro; i++)
+      {
+       noisy_signal_gyro_x[i] = noisy_signal_gyro_x[i+n_shift_gyro_data];
+       noisy_signal_gyro_y[i] = noisy_signal_gyro_y[i+n_shift_gyro_data];
+       noisy_signal_gyro_z[i] = noisy_signal_gyro_z[i+n_shift_gyro_data];
+      }
+     // Reset the number of data processed in the gyro buffer
+     n_processed_data_in_gyro_buffer=n_kernel_gyro-1;
     }
-   n_processed_data_in_gyro_buffer=n_kernel-1;
-   n_processed_data_in_acc_buffer=n_kernel-1;
    
+   if (n_processed_data_in_acc_buffer >= n_kernel_acc)
+    {
+     // Get the number of elements that we should shift to the left
+     const unsigned n_shift_acc_data = n_processed_data_in_acc_buffer - n_kernel_acc + 1;
+     for (unsigned i = 0; i < n_kernel_acc; i++)
+      {
+       noisy_signal_acc_x[i] = noisy_signal_acc_x[i+n_shift_acc_data];
+       noisy_signal_acc_y[i] = noisy_signal_acc_y[i+n_shift_acc_data];
+       noisy_signal_acc_z[i] = noisy_signal_acc_z[i+n_shift_acc_data];
+      }
+     // Reset the number of data processed in the gyro buffer
+     n_processed_data_in_acc_buffer=n_kernel_acc-1;
+    }
+   
+#ifdef OUTPUT_FILTERED_SENSORS_DATA
+   // --------------------------------------------------------------------------
+   // OUTPUT DATA BLOCK [BEGIN]
+   // --------------------------------------------------------------------------
+   {
+    // --------------------------------------------------
+    // Output the raw and rotated data for gyro
+    for (unsigned i = 0; i < n_gyro_data; i++)
+     {
+      // Filtered gyro
+      outfile_filtered_gyro << filtered_gyro_signal_t[i]
+                            << " " << filtered_gyro_signal_x[i]
+                            << " " << filtered_gyro_signal_y[i]
+                            << " " << filtered_gyro_signal_z[i] << std::endl;
+      
+      // Filtered acceleration
+      outfile_filtered_acc << filtered_acc_signal_t[i]
+                           << " " << filtered_acc_signal_x[i]
+                           << " " << filtered_acc_signal_y[i]
+                           << " " << filtered_acc_signal_z[i] << std::endl;
+     }
+    
+   }
+   // --------------------------------------------------------------------------
+   // OUTPUT DATA BLOCK [END]
+   // --------------------------------------------------------------------------
+#endif // #ifdef OUTPUT_FILTERED_SENSORS_DATA
+
+   
+#if 0
    // ==========================================================================
    // Align time stamps for Gyro and Accelerometers
    // ==========================================================================
@@ -1393,6 +1451,8 @@ int main(int argc, char *argv[])
                             CHAPCHOM_CURRENT_FUNCTION,
                             CHAPCHOM_EXCEPTION_LOCATION);
     }
+   
+#endif
    
    
   } // while (LOOP)
