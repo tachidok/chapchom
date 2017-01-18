@@ -24,19 +24,17 @@ my_filtered_acc = importfile_TelitSL869DR_3columns('RESLT/filtered_acc.dat', 1, 
 
 %% Read data
 % putty_9_car_ride_tona_acatepec_inaoe_wait_large.log
-initial_time = 0;
-final_time = 550;
+n_input_raw_data = 7961;
+n_input_raw_data = 44;
 n_input_data = 7370;
-%n_output_data = 7901;
-n_output_data = 6839; % order 2
-n_output_data = 5246; % order 4
-n_output_data = 3122; % order 8
-n_output_data = 1005; % order 12
-n_output_data = 532; % order 14
 n_output_data = 7356; % order 14
-%n_output_data = 14804; % order 14
-my_raw_gyro = importfile_TelitSL869DR_3columns('RESLT/raw_gyro.dat', 1, n_input_data);
-my_raw_accelerations = importfile_TelitSL869DR_3columns('RESLT/raw_accelerations.dat', 1, n_input_data);
+raw_gyro = importfile_TelitSL869DR_3columns('RESLT/raw_gyro.dat', 1, n_input_raw_data);
+raw_accelerations = importfile_TelitSL869DR_3columns('RESLT/raw_accelerations.dat', 1, n_input_raw_data);
+rotated_raw_gyro = importfile_TelitSL869DR_3columns('RESLT/rotated_raw_gyro.dat', 1, n_input_raw_data);
+rotated_raw_accelerations = importfile_TelitSL869DR_3columns('RESLT/rotated_raw_accelerations.dat', 1, n_input_raw_data);
+filtered_gyro = importfile_TelitSL869DR_3columns('RESLT/filtered_gyro.dat', 1, n_input_raw_data);
+filtered_acc = importfile_TelitSL869DR_3columns('RESLT/filtered_acc.dat', 1, n_input_raw_data);
+
 my_roll_pitch_yaw = importfile_TelitSL869DR_3columns('RESLT/roll_pitch_yaw.dat', 1, n_output_data);
 %my_true_course_in_degrees = importfile_TelitSL869DR_2columns('RESLT/true_course_in_degrees.dat', 1, 531);
 my_true_course_in_degrees = importfile_TelitSL869DR_2columns('RESLT/true_course_in_degrees.dat', 1, n_output_data);
@@ -48,8 +46,168 @@ my_roll_pitch_yaw_from_acc = importfile_TelitSL869DR_3columns('RESLT/roll_pitch_
 my_inertial_acceleration = importfile_TelitSL869DR_3columns('RESLT/inertial_accelerations.dat', 1, n_output_data);
 my_position = importfile_TelitSL869DR_3columns('RESLT/position.dat', 1, n_output_data);
 my_velocity = importfile_TelitSL869DR_4columns('RESLT/velocity.dat', 1, n_output_data);
-my_filtered_gyro = importfile_TelitSL869DR_3columns('RESLT/filtered_gyro.dat', 1, n_output_data);
-my_filtered_acc = importfile_TelitSL869DR_3columns('RESLT/filtered_acc.dat', 1, n_output_data);
+
+initial_time = raw_gyro(1,1);
+final_time = raw_gyro(size(raw_gyro,1),1);
+
+%% Raw gyro and acceleration
+figure
+subplot(2,3,1)
+plot(raw_gyro(:, 1), raw_gyro(:, 2)*180.0/pi, 'b')
+title('[X] Gyro  (gyro system coordinate)')
+xlabel('Time (s)')
+ylabel('d/s')
+
+subplot(2,3,2)
+plot(raw_gyro(:, 1), raw_gyro(:, 3)*180.0/pi, 'b')
+title('[Y] Gyro  (gyro system coordinate)')
+xlabel('Time (s)')
+ylabel('d/s')
+ 
+subplot(2,3,3)
+plot(raw_gyro(:, 1), raw_gyro(:, 4)*180.0/pi, 'b')
+title('[Z] Gyro  (gyro system coordinate)')
+xlabel('Time (s)')
+ylabel('d/s')
+
+subplot(2,3,4)
+plot(raw_accelerations(:, 1), raw_accelerations(:, 2), 'b')
+axis([initial_time final_time -1.5 1.5])
+%axis([initial_time final_time -5 15])
+title('x-acceleration (acc system coordinate)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+
+subplot(2,3,5)
+plot(raw_accelerations(:, 1), raw_accelerations(:, 3), 'b')
+axis([initial_time final_time -1.5 1.5])
+%axis([initial_time final_time -5 15])
+title('y-acceleration (acc system coordinate)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+ 
+subplot(2,3,6)
+plot(raw_accelerations(:, 1), raw_accelerations(:, 4), 'b')
+axis([initial_time final_time -1.5 1.5])
+%axis([initial_time final_time -5 15])
+title('z-acceleration (acc system coordinate)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+
+%% Rotated gyro and acceleration
+figure
+subplot(2,3,1)
+plot(rotated_raw_gyro(:, 1), rotated_raw_gyro(:, 2)*180.0/pi, 'b')
+title('[X] Gyro (ASIKIs system coordinate)')
+xlabel('Time (s)')
+ylabel('d/s')
+
+subplot(2,3,2)
+plot(rotated_raw_gyro(:, 1), rotated_raw_gyro(:, 3)*180.0/pi, 'b')
+title('[Y] Gyro (ASIKIs system coordinate)')
+xlabel('Time (s)')
+ylabel('d/s')
+ 
+subplot(2,3,3)
+plot(rotated_raw_gyro(:, 1), rotated_raw_gyro(:, 4)*180.0/pi, 'b')
+title('[Z] Gyro (ASIKIs system coordinate)')
+xlabel('Time (s)')
+ylabel('d/s')
+
+subplot(2,3,4)
+plot(rotated_raw_accelerations(:, 1), rotated_raw_accelerations(:, 2), 'b')
+axis([initial_time final_time -9.8*1.5 9.8*1.5])
+title('x-acceleration (ASIKIs system coordinate)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+
+subplot(2,3,5)
+plot(rotated_raw_accelerations(:, 1), rotated_raw_accelerations(:, 3), 'b')
+axis([initial_time final_time -9.8*1.5 9.8*1.5])
+title('y-acceleration (ASIKIs system coordinate)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+ 
+subplot(2,3,6)
+plot(rotated_raw_accelerations(:, 1), rotated_raw_accelerations(:, 4), 'b')
+axis([initial_time final_time -9.8*1.5 9.8*1.5])
+title('z-acceleration (ASIKIs system coordinate)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+
+%% Rotated raw and filtered
+% Gyro
+figure
+subplot(2,3,1)
+plot(rotated_raw_gyro(:, 1), rotated_raw_gyro(:, 2)*180.0/pi, 'b', filtered_gyro(:, 1), filtered_gyro(:, 2)*180.0/pi, 'r')
+title('[X] Gyro (Raw vs filtered)')
+xlabel('Time (s)')
+ylabel('d/s')
+legend('Raw', 'Filtered', 'Location', 'NorthWest')
+
+subplot(2,3,2)
+plot(rotated_raw_gyro(:, 1), rotated_raw_gyro(:, 3)*180.0/pi, 'b', filtered_gyro(:, 1), filtered_gyro(:, 3)*180.0/pi, 'r')
+title('[Y] Gyro (Raw vs filtered)')
+xlabel('Time (s)')
+ylabel('d/s')
+legend('Raw', 'Filtered', 'Location', 'NorthWest')
+ 
+subplot(2,3,3)
+plot(rotated_raw_gyro(:, 1), rotated_raw_gyro(:, 4)*180.0/pi, 'b', filtered_gyro(:, 1), filtered_gyro(:, 4)*180.0/pi, 'r')
+title('[Z] Gyro (Raw vs filtered)')
+xlabel('Time (s)')
+ylabel('d/s')
+legend('Raw', 'Filtered', 'Location', 'NorthWest')
+
+% Acceleration
+subplot(2,3,4)
+plot(rotated_raw_accelerations(:, 1), rotated_raw_accelerations(:, 2), 'b', filtered_acc(:, 1), filtered_acc(:, 2), 'r')
+axis([initial_time final_time -9.8*1.5 9.8*1.5])
+title('x-acceleration (Raw vs filtered)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+legend('Raw', 'Filtered', 'Location', 'NorthWest')
+
+subplot(2,3,5)
+plot(rotated_raw_accelerations(:, 1), rotated_raw_accelerations(:, 3), 'b', filtered_acc(:, 1), filtered_acc(:, 3), 'r')
+axis([initial_time final_time -9.8*1.5 9.8*1.5])
+title('y-acceleration (Raw vs filtered)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+legend('Raw', 'Filtered', 'Location', 'NorthWest')
+ 
+subplot(2,3,6)
+plot(rotated_raw_accelerations(:, 1), rotated_raw_accelerations(:, 4), 'b', filtered_acc(:, 1), filtered_acc(:, 4), 'r')
+axis([initial_time final_time -9.8*1.5 9.8*1.5])
+title('z-acceleration (Raw vs filtered)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+legend('Raw', 'Filtered', 'Location', 'NorthWest')
+
+%% Raw vs filtered acceleration
+figure
+plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 2), 'b', my_filtered_acc(:, 1), my_filtered_acc(:, 2), 'r')
+axis([initial_time final_time -5 15])
+title('x-acceleration (device system coordinate)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+legend('Raw acceleration', 'Filtered acceleration', 'Location', 'NorthWest')
+
+figure
+plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 3), 'b', my_filtered_acc(:, 1), my_filtered_acc(:, 3), 'r')
+axis([initial_time final_time -5 15])
+title('y-acceleration (device system coordinate)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+legend('Raw acceleration', 'Filtered acceleration', 'Location', 'NorthWest')
+ 
+figure
+plot(my_raw_accelerations(:, 1), my_raw_accelerations(:, 4), 'b', my_filtered_acc(:, 1), my_filtered_acc(:, 4), 'r')
+axis([initial_time final_time -5 15])
+title('z-acceleration (device system coordinate)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+legend('Raw acceleration',  'Filtered acceleration', 'Location', 'NorthWest')
 
 %% Euler angles
 % Processed roll

@@ -1365,11 +1365,10 @@ namespace chapchom
     for (unsigned long k = 0; k < n_columns_matrix; k++)
      {
       solution_vector_pt[offset_vector]+=
-       matrix_pt[offset_matrix+k] * vector_pt[offset_vector+k];
+       matrix_pt[offset_matrix+k] * vector_pt[k];
      }
    }
   
  }
  
 }
-

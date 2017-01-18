@@ -100,6 +100,9 @@ void rotate_sensors_to_ASIKIs_reference_frame(std::vector<std::vector<double> > 
  CCVector<double> raw_data(DIM);
  raw_data.create_zero_vector();
  
+ CCVector<double> rotated_raw_gyro_vector(DIM);
+ CCVector<double> rotated_raw_acc_vector(DIM);
+ 
  // -------------------------------------------------------------------
  // Get the data from the input structures and copy it into a CCVector
  // to perform the rotation. Then copy the result into the output
@@ -116,13 +119,12 @@ void rotate_sensors_to_ASIKIs_reference_frame(std::vector<std::vector<double> > 
    // ==========================================================================
    // Rotate the gyro to match the reference frame of the ASIKI
    // ==========================================================================
-   CCVector<double> rotated_raw_gyro_vector(DIM);
    multiply_matrix_by_vector(R_g, raw_data, rotated_raw_gyro_vector);
    // --------------------------------------------------------------------------
    // Store data in gyro output structure
    rotated_raw_gyro[i][0] = rotated_raw_gyro_vector(0); // gyro_x
    rotated_raw_gyro[i][1] = rotated_raw_gyro_vector(1); // gyro_y
-   rotated_raw_gyro[i][2] = rotated_raw_gyro_vector(2); // gyro_z   
+   rotated_raw_gyro[i][2] = rotated_raw_gyro_vector(2); // gyro_z
   } // for (i < n_gyro)
  
  for (unsigned i = 0; i < n_acc; i++)
@@ -137,7 +139,6 @@ void rotate_sensors_to_ASIKIs_reference_frame(std::vector<std::vector<double> > 
    // ==========================================================================
    // Rotate the acc to match the reference frame of the ASIKI
    // ==========================================================================
-   CCVector<double> rotated_raw_acc_vector(DIM);
    multiply_matrix_by_vector(R_a, raw_data, rotated_raw_acc_vector);
    // --------------------------------------------------------------------------
    // Store the data in Accelerations matrix
@@ -897,6 +898,7 @@ int main(int argc, char *argv[])
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
  
+#if 0
  // Position
  char file_position_name[100];
  sprintf(file_position_name, "./RESLT/position.dat");
@@ -1079,6 +1081,8 @@ int main(int argc, char *argv[])
                           CHAPCHOM_CURRENT_FUNCTION,
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
+
+#endif
  
  // ----------------------------------------------------------------
  // FILES (END)
@@ -1376,8 +1380,7 @@ int main(int argc, char *argv[])
    // --------------------------------------------------------------------------
    // OUTPUT DATA BLOCK [END]
    // --------------------------------------------------------------------------
-#endif // #ifdef OUTPUT_FILTERED_SENSORS_DATA
-
+#endif // #ifdef OUTPUT_FILTERED_SENSORS_DATA   
    
 #if 0
    // ==========================================================================
@@ -2314,12 +2317,20 @@ int main(int argc, char *argv[])
  std::cout << "[FINISHING UP] ... " << std::endl;
  
  // Close the output file
+ outfile_raw_gyro.close();
+ outfile_raw_acc.close();
+ outfile_rotated_raw_gyro.close();
+ outfile_rotated_raw_acc.close();
+ outfile_filtered_gyro.close();
+ outfile_filtered_acc.close();
+ 
+#if 0
  outfile_position.close();
  outfile_velocity.close();
  outfile_north_east_velocity.close();
- outfile_raw_gyro.close();
+
  outfile_euler_angles_rates.close();
- outfile_raw_acc.close();
+
  outfile_inertial_acc.close();
  outfile_roll_pitch_yaw.close();
  // GPS DATA [BEGIN] --------------------------------------------
@@ -2329,8 +2340,7 @@ int main(int argc, char *argv[])
  outfile_acc_from_speed_in_m_per_sec_from_GPS.close();
  // GPS DATA [END] ----------------------------------------------
  outfile_roll_pitch_yaw_from_acc.close();
- outfile_filtered_gyro.close();
- outfile_filtered_acc.close();
+#endif
 
 #ifdef OLD_IMPLEMENTATION
  // Free memory

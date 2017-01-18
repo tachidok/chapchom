@@ -399,7 +399,7 @@ namespace chapchom
     for (unsigned j = 1; j < DIM+1; j++) // j=0 is the time stamp
      {
       // Transform to radians since they are given in degrees
-      Gyro_data[i][j+1] = scale(X_MIN, X_MAX, FX_MIN_GYRO, FX_MAX_GYRO, Gyro_data[i][j+1]) * TO_RADIANS;
+      Gyro_data[i][j] = scale(X_MIN, X_MAX, FX_MIN_GYRO, FX_MAX_GYRO, Gyro_data[i][j]) * TO_RADIANS;
      }  
    }
   
