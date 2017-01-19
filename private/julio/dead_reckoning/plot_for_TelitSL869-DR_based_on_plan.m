@@ -1,3 +1,4 @@
+
 %% Read data
 % putty_8_car_ride_square_wait_large.log
 initial_time = 0;
@@ -25,16 +26,20 @@ my_filtered_acc = importfile_TelitSL869DR_3columns('RESLT/filtered_acc.dat', 1, 
 %% Read data
 % putty_9_car_ride_tona_acatepec_inaoe_wait_large.log
 n_input_raw_data = 7961;
-n_input_raw_data = 44;
-n_input_data = 7370;
-n_output_data = 7356; % order 14
+n_input_aligned_data = 7901;
 raw_gyro = importfile_TelitSL869DR_3columns('RESLT/raw_gyro.dat', 1, n_input_raw_data);
 raw_accelerations = importfile_TelitSL869DR_3columns('RESLT/raw_accelerations.dat', 1, n_input_raw_data);
 rotated_raw_gyro = importfile_TelitSL869DR_3columns('RESLT/rotated_raw_gyro.dat', 1, n_input_raw_data);
 rotated_raw_accelerations = importfile_TelitSL869DR_3columns('RESLT/rotated_raw_accelerations.dat', 1, n_input_raw_data);
 filtered_gyro = importfile_TelitSL869DR_3columns('RESLT/filtered_gyro.dat', 1, n_input_raw_data);
 filtered_acc = importfile_TelitSL869DR_3columns('RESLT/filtered_acc.dat', 1, n_input_raw_data);
+aligned_gyro = importfile_TelitSL869DR_3columns('RESLT/aligned_gyro.dat', 1, n_input_aligned_data);
+aligned_acc = importfile_TelitSL869DR_3columns('RESLT/aligned_acc.dat', 1, n_input_aligned_data);
 
+speed_in_m_per_sec_from_gps = importfile_TelitSL869DR_2columns('RESLT/speed_in_m_per_sec_from_GPS.dat', 1, 531);
+acc_in_m_per_sec_from_speed_from_gps = importfile_TelitSL869DR_2columns('RESLT/acc_in_m_per_sec_from_speed_from_GPS.dat', 1, 531);
+
+n_output_data = 7356; % order 14
 my_roll_pitch_yaw = importfile_TelitSL869DR_3columns('RESLT/roll_pitch_yaw.dat', 1, n_output_data);
 %my_true_course_in_degrees = importfile_TelitSL869DR_2columns('RESLT/true_course_in_degrees.dat', 1, 531);
 my_true_course_in_degrees = importfile_TelitSL869DR_2columns('RESLT/true_course_in_degrees.dat', 1, n_output_data);
@@ -47,8 +52,10 @@ my_inertial_acceleration = importfile_TelitSL869DR_3columns('RESLT/inertial_acce
 my_position = importfile_TelitSL869DR_3columns('RESLT/position.dat', 1, n_output_data);
 my_velocity = importfile_TelitSL869DR_4columns('RESLT/velocity.dat', 1, n_output_data);
 
-initial_time = raw_gyro(1,1);
-final_time = raw_gyro(size(raw_gyro,1),1);
+initial_raw_time = raw_gyro(1,1);
+final_raw_time = raw_gyro(size(raw_gyro,1),1);
+initial_time = aligned_gyro(1,1);
+final_time = aligned_gyro(size(aligned_gyro,1),1);
 
 %% Raw gyro and acceleration
 figure
@@ -72,7 +79,7 @@ ylabel('d/s')
 
 subplot(2,3,4)
 plot(raw_accelerations(:, 1), raw_accelerations(:, 2), 'b')
-axis([initial_time final_time -1.5 1.5])
+axis([initial_raw_time final_raw_time -1.5 1.5])
 %axis([initial_time final_time -5 15])
 title('x-acceleration (acc system coordinate)')
 xlabel('Time (s)')
@@ -80,7 +87,7 @@ ylabel('Acceleration (m/s^2)')
 
 subplot(2,3,5)
 plot(raw_accelerations(:, 1), raw_accelerations(:, 3), 'b')
-axis([initial_time final_time -1.5 1.5])
+axis([initial_raw_time final_raw_time -1.5 1.5])
 %axis([initial_time final_time -5 15])
 title('y-acceleration (acc system coordinate)')
 xlabel('Time (s)')
@@ -88,7 +95,7 @@ ylabel('Acceleration (m/s^2)')
  
 subplot(2,3,6)
 plot(raw_accelerations(:, 1), raw_accelerations(:, 4), 'b')
-axis([initial_time final_time -1.5 1.5])
+axis([initial_raw_time final_raw_time -1.5 1.5])
 %axis([initial_time final_time -5 15])
 title('z-acceleration (acc system coordinate)')
 xlabel('Time (s)')
@@ -116,21 +123,21 @@ ylabel('d/s')
 
 subplot(2,3,4)
 plot(rotated_raw_accelerations(:, 1), rotated_raw_accelerations(:, 2), 'b')
-axis([initial_time final_time -9.8*1.5 9.8*1.5])
+axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
 title('x-acceleration (ASIKIs system coordinate)')
 xlabel('Time (s)')
 ylabel('Acceleration (m/s^2)')
 
 subplot(2,3,5)
 plot(rotated_raw_accelerations(:, 1), rotated_raw_accelerations(:, 3), 'b')
-axis([initial_time final_time -9.8*1.5 9.8*1.5])
+axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
 title('y-acceleration (ASIKIs system coordinate)')
 xlabel('Time (s)')
 ylabel('Acceleration (m/s^2)')
  
 subplot(2,3,6)
 plot(rotated_raw_accelerations(:, 1), rotated_raw_accelerations(:, 4), 'b')
-axis([initial_time final_time -9.8*1.5 9.8*1.5])
+axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
 title('z-acceleration (ASIKIs system coordinate)')
 xlabel('Time (s)')
 ylabel('Acceleration (m/s^2)')
@@ -162,7 +169,7 @@ legend('Raw', 'Filtered', 'Location', 'NorthWest')
 % Acceleration
 subplot(2,3,4)
 plot(rotated_raw_accelerations(:, 1), rotated_raw_accelerations(:, 2), 'b', filtered_acc(:, 1), filtered_acc(:, 2), 'r')
-axis([initial_time final_time -9.8*1.5 9.8*1.5])
+axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
 title('x-acceleration (Raw vs filtered)')
 xlabel('Time (s)')
 ylabel('Acceleration (m/s^2)')
@@ -170,7 +177,7 @@ legend('Raw', 'Filtered', 'Location', 'NorthWest')
 
 subplot(2,3,5)
 plot(rotated_raw_accelerations(:, 1), rotated_raw_accelerations(:, 3), 'b', filtered_acc(:, 1), filtered_acc(:, 3), 'r')
-axis([initial_time final_time -9.8*1.5 9.8*1.5])
+axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
 title('y-acceleration (Raw vs filtered)')
 xlabel('Time (s)')
 ylabel('Acceleration (m/s^2)')
@@ -178,11 +185,88 @@ legend('Raw', 'Filtered', 'Location', 'NorthWest')
  
 subplot(2,3,6)
 plot(rotated_raw_accelerations(:, 1), rotated_raw_accelerations(:, 4), 'b', filtered_acc(:, 1), filtered_acc(:, 4), 'r')
-axis([initial_time final_time -9.8*1.5 9.8*1.5])
+axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
 title('z-acceleration (Raw vs filtered)')
 xlabel('Time (s)')
 ylabel('Acceleration (m/s^2)')
 legend('Raw', 'Filtered', 'Location', 'NorthWest')
+
+%% Filtered and aligned
+% Gyro
+figure
+subplot(2,3,1)
+plot(filtered_gyro(:, 1), filtered_gyro(:, 2)*180.0/pi, 'b', aligned_gyro(:, 1), aligned_gyro(:, 2)*180.0/pi, 'r')
+title('[X] Gyro (Filtered vs Aligned Time Stamp)')
+xlabel('Time (s)')
+ylabel('d/s')
+legend('Filtered', 'Aligned Time Stamp', 'Location', 'NorthWest')
+
+subplot(2,3,2)
+plot(filtered_gyro(:, 1), filtered_gyro(:, 3)*180.0/pi, 'b', aligned_gyro(:, 1), aligned_gyro(:, 3)*180.0/pi, 'r')
+title('[Y] Gyro (Filtered vs Aligned Time Stamp)')
+xlabel('Time (s)')
+ylabel('d/s')
+legend('Filtered', 'Aligned Time Stamp', 'Location', 'NorthWest')
+ 
+subplot(2,3,3)
+plot(filtered_gyro(:, 1), filtered_gyro(:, 4)*180.0/pi, 'b', aligned_gyro(:, 1), aligned_gyro(:, 4)*180.0/pi, 'r')
+title('[Z] Gyro (Filtered vs Aligned Time Stamp)')
+xlabel('Time (s)')
+ylabel('d/s')
+legend('Filtered', 'Aligned Time Stamp', 'Location', 'NorthWest')
+
+% Acceleration
+subplot(2,3,4)
+plot(filtered_acc(:, 1), filtered_acc(:, 2), 'b', aligned_acc(:, 1), aligned_acc(:, 2), 'r')
+axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
+title('x-acceleration (Filtered vs Aligned Time Stamp)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+legend('Filtered', 'Aligned Time Stamp', 'Location', 'NorthWest')
+
+subplot(2,3,5)
+plot(filtered_acc(:, 1), filtered_acc(:, 3), 'b', aligned_acc(:, 1), aligned_acc(:, 3), 'r')
+axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
+title('y-acceleration (Filtered vs Aligned Time Stamp)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+legend('Filtered', 'Aligned Time Stamp', 'Location', 'NorthWest')
+ 
+subplot(2,3,6)
+plot(filtered_acc(:, 1), filtered_acc(:, 4), 'b', aligned_acc(:, 1), aligned_acc(:, 4), 'r')
+axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
+title('z-acceleration (Filtered vs Aligned Time Stamp)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+legend('Filtered', 'Aligned Time Stamp', 'Location', 'NorthWest')
+
+%% Speed and accleration from GPS
+% Speed in m/s from GPS
+figure
+%subplot(1,2,1)
+plot(speed_in_m_per_sec_from_gps(:,1), speed_in_m_per_sec_from_gps(:,2), 'b')
+title('[Front of car] Speed from GPS')
+xlabel('Time(s)')
+ylabel('m/s')
+
+% Acceleration in m/s^2 from speed from GPS
+figure
+%subplot(1,2,2)
+plot(acc_in_m_per_sec_from_speed_from_gps(:,1), acc_in_m_per_sec_from_speed_from_gps(:,2), 'b')
+title('[Front of car] Acceleration from GPS')
+xlabel('Time(s)')
+ylabel('m/s^2')
+
+%% Frontal accleration from GPS vs frontal acceleration from accelerometers
+% Acceleration in m/s^2 from speed from GPS vs frontal acceleration in m/s^2 from accelerometers
+figure
+%subplot(1,2,2)
+plot(acc_in_m_per_sec_from_speed_from_gps(:,1), acc_in_m_per_sec_from_speed_from_gps(:,2), 'b',  aligned_acc(:, 1), aligned_acc(:, 2), 'r')
+axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
+title('[Front of car] Acceleration from GPS vs acceleration from accelerometers')
+xlabel('Time(s)')
+ylabel('m/s^2')
+legend('Acceleration from GPS', 'Acceleration from accelerometers', 'Location', 'NorthWest')
 
 %% Raw vs filtered acceleration
 figure
