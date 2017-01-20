@@ -78,14 +78,6 @@ namespace chapchom
   inline std::vector<std::vector<double> > &get_angular_velocities()
   {return Gyro_data;}
   
-  // Get the number of Euler angles data
-  inline const unsigned neuler_angles_data()
-  {return Euler_angles_data.size();}
-  
-  /// Get the values of the Euler angles
-  inline std::vector<double> &get_euler_angles(const unsigned i)
-  {return Euler_angles_data[i];}
-  
   /// Get the value of the true course (in degrees)
   inline double true_course_in_degrees(){return True_course_in_degrees;}
   
@@ -104,28 +96,29 @@ namespace chapchom
   inline double east_velocity() const {return East_velocity;}
   
   /// Set linear acceleration for current time
-  inline std::vector<double> &linear_acceleration() {return Linear_acceleration;}
+  inline double *linear_acceleration() {return Linear_acceleration;}
   
-  /// Set Euler angular rates for current time
-  inline std::vector<double> &euler_angular_rates() {return Euler_angular_rates;}
+  /// Set Euler angles rates for current time
+  inline double *euler_angles_rates() {return Euler_angles_rates;}
   
   // Set the rate of change of yaw at the current time obtained after
   // applying a threshold to the gyro-z lecture
   inline double &yaw_change_rate_with_threshold()
   {return Yaw_change_rate_with_threshold;}
   
-  /// Evaluates the system of odes at the given time "t" and the values
-  /// of the function in "y". The evaluation produces results in the dy
-  /// vector
+  /// Evaluates the system of odes at time "t". The values of the i-th
+  /// function at previous times are accessible via y[i][t+1],
+  /// y[i][t+2] and so on. The evaluation produces results in the
+  /// vector dy.
   void evaluate(const double t,
-                const std::vector<double> &y, std::vector<double> &dy);
- 
-  /// Evaluates the specified ode by "i" of the system of odes at the
-  /// given time "t" and the values of the function in "y". The
-  /// evaluation produces results in the dy vector at the dy[i]
-  /// position
+                const std::vector<std::vector<double> > &y,
+                std::vector<double> &dy);
+
+  /// Evaluates the i-th ode at time "t". The values of the function
+  /// at previous times are stores at y[t+1], y[t+2] and so on. The
+  /// evaluation stores the result in dy.
   void evaluate(const unsigned i, const double t,
-                const std::vector<double> &y, std::vector<double> &dy);
+                const std::vector<double> &y, double &dy);
   
  protected:
   
@@ -170,11 +163,11 @@ namespace chapchom
   double East_velocity;
   
   // Stores linear acceleration (to integrate)
-  std::vector<double> Linear_acceleration;
+  double *Linear_acceleration;
   
-  // Stores Euler angular rates (to integrate)
-  std::vector<double> Euler_angular_rates;
-
+  // Stores Euler angles rates (to integrate)
+  double *Euler_angles_rates;
+  
   // Stores the rate of change of yaw obtained after applying a
   // threshold to the gyro-z lecture
   double Yaw_change_rate_with_threshold;
@@ -183,8 +176,6 @@ namespace chapchom
   std::vector<std::vector<double> > Acceleration_data;
   // Temporary storage for gyroscope data
   std::vector<std::vector<double> > Gyro_data;
-  // Temporary storage for Euler angles data
-  std::vector<std::vector<double> > Euler_angles_data;
   // Temporary storage for true course (angle in degrees)
   double True_course_in_degrees;
   // Temporary storage for speed in knots

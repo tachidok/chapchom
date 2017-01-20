@@ -53,69 +53,91 @@ namespace chapchom
                                   const double t,
                                   std::vector<std::vector<double> > &y)
  {
-  // Check whether we have enough history values to apply Euler's
-  // method
-  const unsigned n_history_values = y.size();
-  if (n_history_values < N_history_values)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "The number of history values is not enough to apply this "
-                  << "integration method" << std::endl;
-    error_message << "Required number of history values: "
-                  << N_history_values << std::endl;
-    error_message << "Number of history values in input vector 'y': "
-                  << n_history_values << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
- 
-  // Rename a variable
-  const unsigned k = n_history_values-2;
- 
   // Get the number of odes
   const unsigned n_odes = odes.nodes();
- 
+  // Check if each ode has the right number of history values to apply
+  // Euler's method
+  for (unsigned i = 0; i < n_odes; i++)
+   {
+    const unsigned n_history_values = y[i].size();
+    if (n_history_values < N_history_values)
+     {
+      // Error message
+      std::ostringstream error_message;
+      error_message << "The number of history values of ode [" << i
+                    << "] is less than the required by Euler's methods" << std::endl;
+      std::cout << "Required number of history values: "
+                << N_history_values << std::endl;
+      std::cout << "Number of history values in ode [" << i << "]: "
+                << n_history_values << std::endl;
+      throw ChapchomLibError(error_message.str(),
+                             CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
+     }
+    
+   }
+    
+  // Temporary vector to store the evaluation of the odes
+  std::vector<double> dy(n_odes);
+  
+  // Evaluate the ODE at time "t" using the current values of "y"
+  odes.evaluate(t, y, dy);
+  
+  // Index for history values
+  const unsigned k = 0;
+   
   // Temporary vector to store the K_i evaluations proper of
   // Runge-Kutta methods
   std::vector<double> K1(n_odes);
   std::vector<double> K2(n_odes);
   std::vector<double> K3(n_odes);
   std::vector<double> K4(n_odes);
- 
+  
   std::vector<double> y_temp(n_odes);
- 
+  
   // --------------------------------------------------------------------
   // Evaluate the ODE at time "t" using the current values of "y"
-  odes.evaluate(t, y[k], K1);
+  odes.evaluate(t, y, K1);
   // --------------------------------------------------------------------
   // Evaluate the ODE at time "t+(h/2)" and with "y+(h/2)K1"
   for (unsigned i = 0; i < n_odes; i++)
    {
-    y_temp[i] = y[k][i]+(h/2.0)*K1[i];
+    y_temp[i] = y[i][k]+(h/2.0)*K1[i];
    }
-  odes.evaluate(t+(h/2.0), y_temp, K2);
+  odes.evaluate(t+(h/2.0), y_temp, K2); // TODO: y_temp should be a
+                                        // two dimensional vector,
+                                        // only the information the
+                                        // current time is used to
+                                        // evaluate the derivative
+  
   // --------------------------------------------------------------------
   // Evaluate the ODE at time "t+(h/2)" and with "y+(h/2)K2"
   for (unsigned i = 0; i < n_odes; i++)
    {
-    y_temp[i] = y[k][i]+(h/2.0)*K2[i];
+    y_temp[i] = y[i][k]+(h/2.0)*K2[i];
    }
-  odes.evaluate(t+(h/2.0), y_temp, K3);
+  odes.evaluate(t+(h/2.0), y_temp, K3); // TODO: y_temp should be a
+                                        // two dimensional vector,
+                                        // only the information the
+                                        // current time is used to
+                                        // evaluate the derivative
   // -------------------------------------------------------------------- 
   // Evaluate the ODE at time "t+h" and with "y+hK3"
   for (unsigned i = 0; i < n_odes; i++)
    {
-    y_temp[i] = y[k][i]+h*K3[i];
+    y_temp[i] = y[i][k]+h*K3[i];
    }
-  odes.evaluate(t+(h/2.0), y_temp, K4);
+  odes.evaluate(t+(h/2.0), y_temp, K4); // TODO: y_temp should be a
+                                        // two dimensional vector,
+                                        // only the information the
+                                        // current time is used to
+                                        // evaluate the derivative
  
-  // Once the derivatives have been obtained compute the new "y" as the
-  // weighted sum defined by the K_i
+  // Once the derivatives have been obtained compute the new "y" as
+  // the weighted sum of the K's
   for (unsigned i = 0; i < n_odes; i++)
    {
-    y[k+1][i] = y[k][i] + (h/6.0)*(K1[i] + 2.0*K2[i] + 2.0*K3[i] + K4[i]);
+    y[i][k+1] = y[i][k] + (h/6.0)*(K1[i] + 2.0*K2[i] + 2.0*K3[i] + K4[i]);
    }
  
  }

@@ -33,22 +33,21 @@ namespace chapchom
   /// Gets the number of calls to an specific ode
   unsigned ncalls_ode(const unsigned i) const
   {return N_calls_ode[i];}
-  
-  /// Evaluates the system of odes at the time given by "t" and the
-  /// values of the function in "y". The evaluation produces results in
-  /// the dy vector
+    
+  /// Evaluates the system of odes at time "t". The values of the i-th
+  /// function at previous times are accessible via y[i][t+1],
+  /// y[i][t+2] and so on. The evaluation produces results in the
+  /// vector dy.
   virtual void evaluate(const double t,
-                        const std::vector<double> &y,
+                        const std::vector<std::vector<double> > &y,
                         std::vector<double> &dy) = 0;
- 
-  /// Evaluates the specified ode by "i" of the system of odes at the
-  /// given time "t" and the values of the function in "y". The
-  /// evaluation produces results in the dy vector at the dy[i]
-  /// position
+  
+  /// Evaluates the i-th ode at time "t". The values of the function
+  /// at previous times are stores at y[t+1], y[t+2] and so on. The
+  /// evaluation stores the result in dy.
   virtual void evaluate(const unsigned i, const double t,
-                        const std::vector<double> &y,
-                        std::vector<double> &dy) = 0;
- 
+                        const std::vector<double> &y, double &dy) = 0;
+  
  protected:
  
   /// Copy constructor (we do not want this class to be

@@ -141,15 +141,15 @@ namespace chapchom
  // ================================================================
  // Extra methods to work with vector and matrices operations
  // ================================================================
- // Multiply vector by matrix
+ // Multiply vector times matrix
  template<class T>
- void multiply_vector_by_matrix(const CCVector<T> &vector, const CCMatrix<T> &matrix,
-                                CCMatrix<T> &solution_matrix);
+ void multiply_vector_times_matrix(const CCVector<T> &vector, const CCMatrix<T> &matrix,
+                                   CCMatrix<T> &solution_matrix);
  
- // Multiply matrix by vector
+ // Multiply matrix times vector
  template<class T>
- void multiply_matrix_by_vector(const CCMatrix<T> &matrix, const CCVector<T> &vector,
-                                CCVector<T> &solution_vector);
+ void multiply_matrix_times_vector(const CCMatrix<T> &matrix, const CCVector<T> &vector,
+                                   CCVector<T> &solution_vector);
  
 }
 

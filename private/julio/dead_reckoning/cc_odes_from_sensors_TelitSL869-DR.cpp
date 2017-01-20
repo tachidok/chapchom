@@ -80,7 +80,6 @@ namespace chapchom
   // Clear the input vectors
   Acceleration_data.clear();
   Gyro_data.clear();
-  Euler_angles_data.clear();
   // Loop until eof
   while(LOOP && !Input_file.eof())
    {
@@ -322,7 +321,9 @@ namespace chapchom
  void CCODEsFromSensorsTelitSL869DR::evaluate(const double t,
                                               const std::vector<double> &y,
                                               std::vector<double> &dy)
- {  
+ // TODO: Modify method to work with two dimensional y as input, only
+ // the data at y[i][0] is used, where i indicates the ode number
+ {
   // -----------------
   // y[0] x-position
   // y[1] x-velocity

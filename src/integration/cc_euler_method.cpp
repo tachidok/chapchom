@@ -53,42 +53,46 @@ namespace chapchom
                                     const double t,
                                     std::vector<std::vector<double> > &y)
  {
-  // Check whether we have enough history values to apply Euler's
-  // method
-  const unsigned n_history_values = y.size();
-  if (n_history_values < N_history_values)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "The number of history values is not enough to apply "
-                  << "this integration method" << std::endl;
-    std::cout << "Required number of history values: "
-              << N_history_values << std::endl;
-    std::cout << "Number of history values in input vector 'y': "
-              << n_history_values << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
- 
-  // Rename a variable
-  const unsigned k = n_history_values-2;
- 
   // Get the number of odes
   const unsigned n_odes = odes.nodes();
+  // Check if each ode has the right number of history values to apply
+  // Euler's method
+  for (unsigned i = 0; i < n_odes; i++)
+   {
+    const unsigned n_history_values = y[i].size();
+    if (n_history_values < N_history_values)
+     {
+      // Error message
+      std::ostringstream error_message;
+      error_message << "The number of history values of ode [" << i
+                    << "] is less than the required by Euler's methods" << std::endl;
+      std::cout << "Required number of history values: "
+                << N_history_values << std::endl;
+      std::cout << "Number of history values in ode [" << i << "]: "
+                << n_history_values << std::endl;
+      throw ChapchomLibError(error_message.str(),
+                             CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
+     }
+    
+   }
+    
   // Temporary vector to store the evaluation of the odes
   std::vector<double> dy(n_odes);
- 
+  
   // Evaluate the ODE at time "t" using the current values of "y"
-  odes.evaluate(t, y[k], dy);
- 
+  odes.evaluate(t, y, dy);
+  
+  // Index for history values
+  const unsigned k = 0;
+  
   // Once the derivatives have been obtained do one step of Euler's
   // method
   for (unsigned i = 0; i < n_odes; i++)
    {
-    y[k+1][i] = y[k][i] + (h * dy[i]);
+    y[i][k+1] = y[i][k] + (h * dy[i]);
    }
- 
+  
  }
 
 }

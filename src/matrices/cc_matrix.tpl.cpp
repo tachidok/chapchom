@@ -1133,9 +1133,9 @@ namespace chapchom
  // Multiply vector times matrix
  // ================================================================
  template<class T>
- void multiply_vector_by_matrix(const CCVector<T> &vector,
-                                const CCMatrix<T> &matrix,
-                                CCMatrix<T> &solution_matrix)
+ void multiply_vector_times_matrix(const CCVector<T> &vector,
+                                   const CCMatrix<T> &matrix,
+                                   CCMatrix<T> &solution_matrix)
  {
   // Check that the vector and the matrix have entries to operate with
   if (vector.is_empty() || matrix.is_empty())
@@ -1249,9 +1249,9 @@ namespace chapchom
  // Multiply matrix times vector
  // ================================================================
  template<class T>
- void multiply_matrix_by_vector(const CCMatrix<T> &matrix,
-                                const CCVector<T> &vector,
-                                CCVector<T> &solution_vector)
+ void multiply_matrix_times_vector(const CCMatrix<T> &matrix,
+                                   const CCVector<T> &vector,
+                                   CCVector<T> &solution_vector)
  {
  // Check that the matrix and the vector have entries to operate with
   if (matrix.is_empty() || vector.is_empty())

@@ -33,7 +33,7 @@ namespace chapchom
   virtual void integrate(ACODEs &odes, const double h,
                          const double t_initial, const double t_final,
                          std::vector<std::vector<double> > &y) = 0;
- 
+  
   /// Applies the explicit method to the given odes from the current
   /// time "t" to the time "t+h".
   virtual void integrate_step(ACODEs &odes, const double h,

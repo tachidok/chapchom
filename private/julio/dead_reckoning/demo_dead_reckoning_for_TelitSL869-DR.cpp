@@ -1321,7 +1321,8 @@ int main(int argc, char *argv[])
        multiply_matrix_times_vector(A, gyro_filtered, yaw_change_rate_with_threshold);
        
        // Set Yaw obtained directly from gyro angular rates after
-       // applying a threshold
+       // applying a threshold (this is setting the value to compute
+       // y[0][9])
        odes.yaw_change_rate_with_threshold() = yaw_change_rate_with_threshold[2];
 #endif // #ifdef GYRO_THRESHOLD_Z
        
