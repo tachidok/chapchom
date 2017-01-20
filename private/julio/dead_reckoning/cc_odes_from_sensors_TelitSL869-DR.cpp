@@ -314,27 +314,25 @@ namespace chapchom
  }
  
  // ===================================================================
- // Evaluates the system of odes at the given time "t" and the values
- // of the function in "y". The evaluation produces results in the dy
- // vector
+ // Evaluates the system of odes at time "t". The values of the i-th
+ // function at previous times are accessible via y[i][1], y[i][2]
+ // and so on. The evaluation produces results in the vector dy.
  // ===================================================================
  void CCODEsFromSensorsTelitSL869DR::evaluate(const double t,
-                                              const std::vector<double> &y,
+                                              const std::vector<std::vector<double> > &y,
                                               std::vector<double> &dy)
- // TODO: Modify method to work with two dimensional y as input, only
- // the data at y[i][0] is used, where i indicates the ode number
  {
   // -----------------
-  // y[0] x-position
-  // y[1] x-velocity
-  // y[2] y-position
-  // y[3] y-velocity
-  // y[4] z-position
-  // y[5] z-velocity
-  // y[6] roll
-  // y[7] pitch
-  // y[8] yaw
-  // y[9] yaw with threshold
+  // y[0][0] Current x-position
+  // y[1][0] Current x-velocity
+  // y[2][0] Current y-position
+  // y[3][0] Current y-velocity
+  // y[4][0] Current z-position
+  // y[5][0] Current z-velocity
+  // y[6][0] Current roll
+  // y[7][0] Current pitch
+  // y[8][0] Current yaw
+  // y[9][0] Current yaw with threshold
   // -----------------
   // dy[0] x-velocity
   // dy[1] x-acceleration
@@ -347,29 +345,30 @@ namespace chapchom
   // dy[8] dyaw
   // dy[9] dyaw with threshold
   
-  dy[0] = y[1];
+  dy[0] = y[1][0];
   //dy[0] = North_velocity;
   dy[1] = Linear_acceleration[0];
-  dy[2] = y[3];
+  dy[2] = y[3][0];
   //dy[2] = East_velocity;
   dy[3] = Linear_acceleration[1];
-  dy[4] = y[5];
+  dy[4] = y[5][0];
   dy[5] = Linear_acceleration[2];
-  dy[6] = Euler_angular_rates[0];
-  dy[7] = Euler_angular_rates[1];
-  dy[8] = Euler_angular_rates[2];
+  dy[6] = Euler_angles_rates[0];
+  dy[7] = Euler_angles_rates[1];
+  dy[8] = Euler_angles_rates[2];
   dy[9] = Yaw_change_rate_with_threshold;
   
  }
  
  // ===================================================================
- // Evaluates the specified ode by "i" of the system of odes at the
- // given time "t" and the values of the function in "y". The
- // evaluation produces results in the dy vector at the dy[i] position
+ // Evaluates the i-th ode at time "t". The values of the function at
+ // previous times are stores at y[1], y[2] and so on. The evaluation
+ // stores the result in dy.
  // ===================================================================
- void CCODEsFromSensorsTelitSL869DR::evaluate(const unsigned i, const double t,
+ void CCODEsFromSensorsTelitSL869DR::evaluate(const unsigned i,
+                                              const double t,
                                               const std::vector<double> &y,
-                                              std::vector<double> &dy)
+                                              double &dy)
  {
   // Error message
   std::ostringstream error_message;
@@ -379,7 +378,7 @@ namespace chapchom
                          CHAPCHOM_CURRENT_FUNCTION,
                          CHAPCHOM_EXCEPTION_LOCATION);
  }
-
+ 
  // ===================================================================
  /// Scales the raw data obtained from the sensores (gyros and
  /// accelerometers) based on the scaling provided in the

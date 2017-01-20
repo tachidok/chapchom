@@ -27,6 +27,8 @@
 #define OUTPUT_RAW_AND_ROTATED_SENSORS_DATA
 #define OUTPUT_FILTERED_SENSORS_DATA
 #define OUTPUT_ALIGNED_SENSORS_DATA
+#define OUTPUT_LINEAR_ACCELERATIONS
+#define OUTPUT_EULER_ANGLES
 
 // -------------------------------------------------
 // Constants
@@ -523,7 +525,55 @@ int main(int argc, char *argv[])
                           CHAPCHOM_CURRENT_FUNCTION,
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
-
+ 
+ // Linear accelerations
+ char file_linear_accelerations_name[100];
+ sprintf(file_linear_accelerations_name, "./RESLT/linear_accelerations.dat");
+ std::ofstream outfile_linear_acc;
+ outfile_linear_acc.open(file_linear_accelerations_name, std::ios::out);
+ if (outfile_linear_acc.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_linear_accelerations_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+ // Roll, pitch and yaw
+ char file_roll_pitch_yaw_name[100];
+ sprintf(file_roll_pitch_yaw_name, "./RESLT/roll_pitch_yaw.dat");
+ std::ofstream outfile_roll_pitch_yaw;
+ outfile_roll_pitch_yaw.open(file_roll_pitch_yaw_name, std::ios::out);
+ if (outfile_roll_pitch_yaw.fail()) 
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_roll_pitch_yaw_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+  // Velocity
+ char file_velocity_name[100];
+ sprintf(file_velocity_name, "./RESLT/velocity.dat");
+ std::ofstream outfile_velocity;
+ outfile_velocity.open(file_velocity_name, std::ios::out);
+ if (outfile_velocity.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_velocity_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
 #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
  // Speed in m/s from GPS
  char file_speed_in_m_per_sec_from_GPS_name[100];
@@ -557,160 +607,6 @@ int main(int argc, char *argv[])
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
 #endif // #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
- 
-#if 0
- // Position
- char file_position_name[100];
- sprintf(file_position_name, "./RESLT/position.dat");
- std::ofstream outfile_position;
- outfile_position.open(file_position_name, std::ios::out);
- if (outfile_position.fail()) 
-  {
-   // Error message
-   std::ostringstream error_message;
-   error_message << "Could not create the file [" << file_position_name << "]"
-                 << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
-  }
- 
- // Velocity
- char file_velocity_name[100];
- sprintf(file_velocity_name, "./RESLT/velocity.dat");
- std::ofstream outfile_velocity;
- outfile_velocity.open(file_velocity_name, std::ios::out);
- if (outfile_velocity.fail())
-  {
-   // Error message
-   std::ostringstream error_message;
-   error_message << "Could not create the file [" << file_velocity_name << "]"
-                 << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
-  }
- 
- // North-East velocity
- char file_north_east_velocity_name[100];
- sprintf(file_north_east_velocity_name, "./RESLT/north_east_velocity.dat");
- std::ofstream outfile_north_east_velocity;
- outfile_north_east_velocity.open(file_north_east_velocity_name, std::ios::out);
- if (outfile_north_east_velocity.fail())
-  {
-   // Error message
-   std::ostringstream error_message;
-   error_message << "Could not create the file [" << file_north_east_velocity_name << "]"
-                 << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
-  }
- 
- // Euler-angles rates
- char file_euler_angles_rates_name[100];
- sprintf(file_euler_angles_rates_name, "./RESLT/euler_angles_rates.dat");
- std::ofstream outfile_euler_angles_rates;
- outfile_euler_angles_rates.open(file_euler_angles_rates_name, std::ios::out);
- if (outfile_euler_angles_rates.fail())
-  {
-   // Error message
-   std::ostringstream error_message;
-   error_message << "Could not create the file [" << file_euler_angles_rates_name << "]"
-                 << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
-  }
-   
- // Inertial accelerations
- char file_inertial_accelerations_name[100];
- sprintf(file_inertial_accelerations_name, "./RESLT/inertial_accelerations.dat");
- std::ofstream outfile_inertial_acc;
- outfile_inertial_acc.open(file_inertial_accelerations_name, std::ios::out);
- if (outfile_inertial_acc.fail())
-  {
-   // Error message
-   std::ostringstream error_message;
-   error_message << "Could not create the file [" << file_inertial_accelerations_name << "]"
-                 << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
-  }
-
- // Roll, pitch and yaw
- char file_roll_pitch_yaw_name[100];
- sprintf(file_roll_pitch_yaw_name, "./RESLT/roll_pitch_yaw.dat");
- std::ofstream outfile_roll_pitch_yaw;
- outfile_roll_pitch_yaw.open(file_roll_pitch_yaw_name, std::ios::out);
- if (outfile_roll_pitch_yaw.fail()) 
-  {
-   // Error message
-   std::ostringstream error_message;
-   error_message << "Could not create the file [" << file_roll_pitch_yaw_name << "]"
-                 << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
-  }
-
- // -----------------------------------
- // GPS DATA [BEGIN]
- // -----------------------------------
- // True course in degrees
- char file_true_course_in_degrees_name[100];
- sprintf(file_true_course_in_degrees_name, "./RESLT/true_course_in_degrees.dat");
- std::ofstream outfile_true_course_in_degrees;
- outfile_true_course_in_degrees.open(file_true_course_in_degrees_name, std::ios::out);
- if (outfile_true_course_in_degrees.fail())
-  {
-   // Error message
-   std::ostringstream error_message;
-   error_message << "Could not create the file [" << file_true_course_in_degrees_name << "]"
-                 << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
-  }
- 
- // Speed in knots
- char file_speed_in_knots_name[100];
- sprintf(file_speed_in_knots_name, "./RESLT/speed_in_knots.dat");
- std::ofstream outfile_speed_in_knots;
- outfile_speed_in_knots.open(file_speed_in_knots_name, std::ios::out);
- if (outfile_speed_in_knots.fail())
-  {
-   // Error message
-   std::ostringstream error_message;
-   error_message << "Could not create the file [" << file_speed_in_knots_name << "]"
-                 << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
-  }
-  
- // -----------------------------------
- // GPS DATA [END]
- // -----------------------------------
- 
- // Roll, pitch and yaw from accelerations
- char file_roll_pitch_yaw_from_acc_name[100];
- sprintf(file_roll_pitch_yaw_from_acc_name, "./RESLT/roll_pitch_yaw_from_acc.dat");
- std::ofstream outfile_roll_pitch_yaw_from_acc;
- outfile_roll_pitch_yaw_from_acc.open(file_roll_pitch_yaw_from_acc_name, std::ios::out);
- if (outfile_roll_pitch_yaw_from_acc.fail())
-  {
-   // Error message
-   std::ostringstream error_message;
-   error_message << "Could not create the file [" << file_roll_pitch_yaw_from_acc_name << "]"
-                 << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
-  }
-
-#endif
  
  // ----------------------------------------------------------------
  // FILES (END)
@@ -796,8 +692,11 @@ int main(int argc, char *argv[])
  y[8][0] = 0.0; // Initial yaw (radians)
  y[9][0] = 0.0; // Initial yaw with threshold (radians)
  
+ // Discretised time
+ double current_time = 0;
+ 
  // Output the initial data to screen
- std::cout << "t: " << time
+ std::cout << "t: " << current_time
            << " x-pos: " << y[0][0] << " x-vel: " << y[1][0]
            << " y-pos: " << y[2][0] << " y-vel: " << y[3][0]
            << " z-pos: " << y[4][0] << " z-vel: " << y[5][0]
@@ -847,7 +746,7 @@ int main(int argc, char *argv[])
    // ==========================================================================
    
    // ==========================================================================
-   // Rotate sensors data to match ASIKI's reference frame
+   // Rotate sensors data to match ASIKI's reference frame [BEGIN]
    // ==========================================================================
    // Store the rotated data for gyro and accelerometers
    std::vector<std::vector<double> > rotated_raw_gyro(n_gyro_data);
@@ -913,7 +812,11 @@ int main(int argc, char *argv[])
 #endif // #ifdef OUTPUT_RAW_AND_ROTATED_SENSORS_DATA
    
    // ==========================================================================
-   // Apply low-pass filter via convolution
+   // Rotate sensors data to match ASIKI's reference frame [END]
+   // ==========================================================================
+   
+   // ==========================================================================
+   // Apply low-pass filter via convolution [BEGIN]
    // ==========================================================================
    // Copy the data into the corresponding structure
    for (unsigned i = 0 ; i < n_gyro_data; i++)
@@ -1065,7 +968,11 @@ int main(int argc, char *argv[])
 #endif // #ifdef OUTPUT_FILTERED_SENSORS_DATA
    
    // ==========================================================================
-   // Align time stamps for Gyro and Accelerometers
+   // Apply low-pass filter via convolution [END]
+   // ==========================================================================
+   
+   // ==========================================================================
+   // Align time stamps for Gyro and Accelerometers [BEGIN]
    // ==========================================================================
    // We always have data in the following pattern
    // A G A G A G ...
@@ -1130,7 +1037,11 @@ int main(int argc, char *argv[])
    // OUTPUT DATA BLOCK [END]
    // --------------------------------------------------------------------------
 #endif // #ifdef OUTPUT_ALIGNED_SENSORS_DATA
-
+   
+   // ==========================================================================
+   // Align time stamps for Gyro and Accelerometers [BEGIN]
+   // ==========================================================================
+   
    // ==========================================================================
    // ==========================================================================
    // ==========================================================================
@@ -1156,12 +1067,26 @@ int main(int argc, char *argv[])
      Euler_angles[0] = y[6][0];
      Euler_angles[1] = y[7][0];
      Euler_angles[2] = y[8][0];
+
+#ifdef OUTPUT_EULER_ANGLES
+     // --------------------------------------------------------------------------
+     // OUTPUT DATA BLOCK [BEGIN]
+     // --------------------------------------------------------------------------
+     {
+      // Euler angles
+      outfile_roll_pitch_yaw << current_time
+                             << " " << Euler_angles[0]
+                             << " " << Euler_angles[1]
+                             << " " << Euler_angles[2] << std::endl;
+     }
+     // --------------------------------------------------------------------------
+     // OUTPUT DATA BLOCK [END]
+     // --------------------------------------------------------------------------
+#endif //#ifdef OUTPUT_EULER_ANGLES
      
-     // ------------------------------------------------------------
-     // ------------------------------------------------------------
+     // ==========================================================================
      // Process gyro's data [BEGIN]
-     // ------------------------------------------------------------
-     // ------------------------------------------------------------
+     // ==========================================================================
      
 #ifdef AZGADS_CONSTANT
      aligned_gyro_signal_x[i]*= AZGADS_CONSTANT;
@@ -1191,23 +1116,20 @@ int main(int argc, char *argv[])
      
      // Set Euler into the odes such that they are integrated later
      odes.euler_angles_rates() = Euler_angles_rates;
-
+     
 #ifdef GYRO_THRESHOLD_Z
      // Set Yaw obtained from thresholded gyro angular rates (this
      // sets the value dy[9] to later compute y[0][9])
      odes.yaw_change_rate_with_threshold() = Euler_angles_rates_thresholded[2];
 #endif // #ifdef GYRO_THRESHOLD_Z
-     // ------------------------------------------------------------
-     // ------------------------------------------------------------
+     // ==========================================================================
      // Process gyro's data [END]
-     // ------------------------------------------------------------
-     // ------------------------------------------------------------
+     // ==========================================================================
      
-     // ------------------------------------------------------------
-     // ------------------------------------------------------------
+
+     // ==========================================================================
      // Process acceleration data [BEGIN]
-     // ------------------------------------------------------------
-     // ------------------------------------------------------------
+     // ==========================================================================
      
      // Get Euler angles approximation from accelerations (we will use
      // this data after integration when applying a complementary
@@ -1221,36 +1143,31 @@ int main(int argc, char *argv[])
                                          aligned_acc_signal_y[i]*aligned_acc_signal_y[i]),
                                     aligned_acc_signal_x[i]);
      
-     // ------------------------------------------------------------
-     // ------------------------------------------------------------
+     // ==========================================================================
      // Process acceleration data [END]
-     // ------------------------------------------------------------
-     // ------------------------------------------------------------
+     // ==========================================================================
      
-     // ------------------------------------------------------------
-     // ------------------------------------------------------------
+     // ==========================================================================
      // Body frame (ASIKI) to inertial frame (EARTH) [BEGIN]
-     // ------------------------------------------------------------
-     // ------------------------------------------------------------
+     // ==========================================================================
      // Store body frame accelerations
      double body_accelerations[DIM];
+     body_accelerations[0]=aligned_acc_signal_x[i];
+     body_accelerations[1]=aligned_acc_signal_y[i];
+     body_accelerations[2]=aligned_acc_signal_z[i];
      // Store inertial frame accelerations
      double inertial_accelerations[DIM];
      // Rotate sensor's lectures from the body frame to the inertial
      // frame
      rotate(Euler_angles, body_accelerations, inertial_accelerations);
      
-     // ------------------------------------------------------------
-     // ------------------------------------------------------------
+     // ==========================================================================
      // Body frame (ASIKI) to inertial frame (EARTH) [END]
-     // ------------------------------------------------------------
-     // ------------------------------------------------------------
-
-     // ------------------------------------------------------------
-     // ------------------------------------------------------------
+     // ==========================================================================
+     
+     // ==========================================================================
      // Gravity compensation [BEGIN]
-     // ------------------------------------------------------------
-     // ------------------------------------------------------------
+     // ==========================================================================
      // Accelerations in the inertial frame without gravity
      double linear_accelerations[DIM];
      // Substract gravity (gravity compensation)
@@ -1262,23 +1179,49 @@ int main(int argc, char *argv[])
      // integrate later
      odes.linear_acceleration() = linear_accelerations;
      
-     // ------------------------------------------------------------
-     // ------------------------------------------------------------
-     // Gravity compensation [END]
-     // ------------------------------------------------------------
-     // ------------------------------------------------------------
+#ifdef OUTPUT_LINEAR_ACCELERATIONS
+     // --------------------------------------------------------------------------
+     // OUTPUT DATA BLOCK [BEGIN]
+     // --------------------------------------------------------------------------
+     {
+      // Linear accelerations
+      outfile_linear_acc << current_time
+                         << " " << linear_accelerations[0]
+                         << " " << linear_accelerations[1]
+                         << " " << linear_accelerations[2] << std::endl; 
+     }
+     // --------------------------------------------------------------------------
+     // OUTPUT DATA BLOCK [END]
+     // --------------------------------------------------------------------------
+#endif //#ifdef OUTPUT_LINEAR_ACCELERATIONS
      
-     // ------------------------------------------------------------
-     // ------------------------------------------------------------
+     // ==========================================================================
+     // Gravity compensation [END]
+     // ==========================================================================
+
+#ifdef OUTPUT_VELOCITY
+     // --------------------------------------------------------------------------
+     // OUTPUT DATA BLOCK [BEGIN]
+     // --------------------------------------------------------------------------
+     {
+      // Velocity
+      outfile_velocity << current_time
+                       << " " << y[1][0]
+                       << " " << y[3][0]
+                       << " " << y[5][0]
+                       << std::endl;
+     }
+#endif // #ifdef OUTPUT_VELOCITY
+     
+     // ==========================================================================
      // Integrate the ODE's [BEGIN]
-     // ------------------------------------------------------------
-     // ------------------------------------------------------------
+     // ==========================================================================
      // Get the discretised time for this set of data
-     const double time = aligned_time[i];
+     current_time = aligned_time[i];
      // Compute the step size
      const double step = aligned_time[i+1] - aligned_time[i];
      
-     integrator->integrate_step(odes, step, time, y);
+     integrator->integrate_step(odes, step, current_time, y);
      
      // Update data (shift the history values)
      for (unsigned j = 0; j < n_odes; j++)
@@ -1289,19 +1232,15 @@ int main(int argc, char *argv[])
         }
       }
      // Update time
-     time+=step;
+     current_time+=step;
      
-     // ------------------------------------------------------------
-     // ------------------------------------------------------------
+     // ==========================================================================
      // Integrate the ODE's [END]
-     // ------------------------------------------------------------
-     // ------------------------------------------------------------
+     // ==========================================================================
      
-     // ------------------------------------------------------------
-     // ------------------------------------------------------------
+     // ==========================================================================
      // Complementary filter [BEGIN]
-     // ------------------------------------------------------------
-     // ------------------------------------------------------------
+     // ==========================================================================
      // Complementary filter parameter
      const double alpha = 0.90;
      
@@ -1311,12 +1250,10 @@ int main(int argc, char *argv[])
      // Complementary filter of Yaw with Yaw threshold
      y[0][8] = alpha * y[0][8] + (1.0 - alpha) * y[0][9];
      
-     // ------------------------------------------------------------
-     // ------------------------------------------------------------
+     // ==========================================================================
      // Complementary filter [END]
-     // ------------------------------------------------------------
-     // ------------------------------------------------------------
-       
+     // ==========================================================================
+     
     } // for (i < n_data-1)
    
    // ==========================================================================
@@ -1329,14 +1266,20 @@ int main(int argc, char *argv[])
    
 #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
    const double speed_in_m_per_sec_from_gps = odes.speed_in_knots()*0.514444;
-   outfile_speed_in_m_per_sec_from_GPS << time
+   outfile_speed_in_m_per_sec_from_GPS << current_time
                                        << " " << speed_in_m_per_sec_from_gps << std::endl;
    const double acc_in_m_per_sec_from_speed_from_gps =
-    (speed_in_m_per_sec_from_gps - previous_speed_in_m_per_sec_from_gps) / (time - (time - 1));
+    (speed_in_m_per_sec_from_gps - previous_speed_in_m_per_sec_from_gps) / (current_time - (current_time - 1));
    previous_speed_in_m_per_sec_from_gps = speed_in_m_per_sec_from_gps;
-   outfile_acc_in_m_per_sec_from_speed_from_GPS << time
+   outfile_acc_in_m_per_sec_from_speed_from_GPS << current_time
                                                 << " " << acc_in_m_per_sec_from_speed_from_gps << std::endl;
 #endif // #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
+   
+   std::cout << "t: " << current_time
+             << " x-pos: " << y[0][0] << " x-vel: " << y[0][1]
+             << " y-pos: " << y[0][2] << " y-vel: " << y[0][3]
+             << " z-pos: " << y[0][4] << " z-vel: " << y[0][5]
+             << " roll: " << y[0][6] << " pitch: " << y[0][7] << " yaw: " << y[0][8] << std::endl;
    
   } // while (LOOP)
  
@@ -1351,6 +1294,9 @@ int main(int argc, char *argv[])
  outfile_filtered_acc.close();
  outfile_aligned_gyro.close();
  outfile_aligned_acc.close();
+ outfile_roll_pitch_yaw.close();
+ outfile_linear_acc.close();
+ outfile_velocity.close();
  
 #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
  outfile_speed_in_m_per_sec_from_GPS.close();
@@ -1359,25 +1305,20 @@ int main(int argc, char *argv[])
  
 #if 0
  outfile_position.close();
- outfile_velocity.close();
  outfile_north_east_velocity.close();
 
  outfile_euler_angles_rates.close();
 
- outfile_inertial_acc.close();
- outfile_roll_pitch_yaw.close();
  // GPS DATA [BEGIN] --------------------------------------------
  outfile_true_course_in_degrees.close();
  outfile_speed_in_knots.close();
  // GPS DATA [END] ----------------------------------------------
  outfile_roll_pitch_yaw_from_acc.close();
 #endif
-
-#ifdef OLD_IMPLEMENTATION
+ 
  // Free memory
  delete integrator;
  integrator = 0;
-#endif // #ifdef OLD_IMPLEMENTATION
  
  // Finalise chapcom
  finalise_chapchom();

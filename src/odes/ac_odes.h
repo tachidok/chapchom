@@ -35,15 +35,14 @@ namespace chapchom
   {return N_calls_ode[i];}
     
   /// Evaluates the system of odes at time "t". The values of the i-th
-  /// function at previous times are accessible via y[i][t+1],
-  /// y[i][t+2] and so on. The evaluation produces results in the
-  /// vector dy.
+  /// function at previous times are accessible via y[i][1], y[i][2]
+  /// and so on. The evaluation produces results in the vector dy.
   virtual void evaluate(const double t,
                         const std::vector<std::vector<double> > &y,
                         std::vector<double> &dy) = 0;
   
   /// Evaluates the i-th ode at time "t". The values of the function
-  /// at previous times are stores at y[t+1], y[t+2] and so on. The
+  /// at previous times are stores at y[1], y[2] and so on. The
   /// evaluation stores the result in dy.
   virtual void evaluate(const unsigned i, const double t,
                         const std::vector<double> &y, double &dy) = 0;

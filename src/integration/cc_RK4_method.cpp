@@ -93,46 +93,37 @@ namespace chapchom
   std::vector<double> K3(n_odes);
   std::vector<double> K4(n_odes);
   
-  std::vector<double> y_temp(n_odes);
+  // Create a copy of the y vector
+  std::vector<std::vector<double> > y_temp(y);
   
   // --------------------------------------------------------------------
   // Evaluate the ODE at time "t" using the current values of "y"
   odes.evaluate(t, y, K1);
   // --------------------------------------------------------------------
   // Evaluate the ODE at time "t+(h/2)" and with "y+(h/2)K1"
+  const double h_half = h*0.5;
   for (unsigned i = 0; i < n_odes; i++)
    {
-    y_temp[i] = y[i][k]+(h/2.0)*K1[i];
+    y_temp[i][k] = y[i][k]+h_half*K1[i];
    }
-  odes.evaluate(t+(h/2.0), y_temp, K2); // TODO: y_temp should be a
-                                        // two dimensional vector,
-                                        // only the information the
-                                        // current time is used to
-                                        // evaluate the derivative
+  odes.evaluate(t+h_half, y_temp, K2);
   
   // --------------------------------------------------------------------
   // Evaluate the ODE at time "t+(h/2)" and with "y+(h/2)K2"
   for (unsigned i = 0; i < n_odes; i++)
    {
-    y_temp[i] = y[i][k]+(h/2.0)*K2[i];
+    y_temp[i][k] = y[i][k]+h_half*K2[i];
    }
-  odes.evaluate(t+(h/2.0), y_temp, K3); // TODO: y_temp should be a
-                                        // two dimensional vector,
-                                        // only the information the
-                                        // current time is used to
-                                        // evaluate the derivative
+  odes.evaluate(t+h_half, y_temp, K3);
+  
   // -------------------------------------------------------------------- 
   // Evaluate the ODE at time "t+h" and with "y+hK3"
   for (unsigned i = 0; i < n_odes; i++)
    {
-    y_temp[i] = y[i][k]+h*K3[i];
+    y_temp[i][k] = y[i][k]+h*K3[i];
    }
-  odes.evaluate(t+(h/2.0), y_temp, K4); // TODO: y_temp should be a
-                                        // two dimensional vector,
-                                        // only the information the
-                                        // current time is used to
-                                        // evaluate the derivative
- 
+  odes.evaluate(t+h, y_temp, K4);
+  
   // Once the derivatives have been obtained compute the new "y" as
   // the weighted sum of the K's
   for (unsigned i = 0; i < n_odes; i++)

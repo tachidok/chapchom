@@ -27,6 +27,7 @@ my_filtered_acc = importfile_TelitSL869DR_3columns('RESLT/filtered_acc.dat', 1, 
 % putty_9_car_ride_tona_acatepec_inaoe_wait_large.log
 n_input_raw_data = 7961;
 n_input_aligned_data = 7901;
+n_output_data=7370;
 raw_gyro = importfile_TelitSL869DR_3columns('RESLT/raw_gyro.dat', 1, n_input_raw_data);
 raw_accelerations = importfile_TelitSL869DR_3columns('RESLT/raw_accelerations.dat', 1, n_input_raw_data);
 rotated_raw_gyro = importfile_TelitSL869DR_3columns('RESLT/rotated_raw_gyro.dat', 1, n_input_raw_data);
@@ -35,6 +36,9 @@ filtered_gyro = importfile_TelitSL869DR_3columns('RESLT/filtered_gyro.dat', 1, n
 filtered_acc = importfile_TelitSL869DR_3columns('RESLT/filtered_acc.dat', 1, n_input_raw_data);
 aligned_gyro = importfile_TelitSL869DR_3columns('RESLT/aligned_gyro.dat', 1, n_input_aligned_data);
 aligned_acc = importfile_TelitSL869DR_3columns('RESLT/aligned_acc.dat', 1, n_input_aligned_data);
+
+roll_pitch_yaw = importfile_TelitSL869DR_3columns('RESLT/roll_pitch_yaw.dat', 1, n_output_data);
+linear_acceleration = importfile_TelitSL869DR_3columns('RESLT/linear_accelerations.dat', 1, n_output_data);
 
 speed_in_m_per_sec_from_gps = importfile_TelitSL869DR_2columns('RESLT/speed_in_m_per_sec_from_GPS.dat', 1, 531);
 acc_in_m_per_sec_from_speed_from_gps = importfile_TelitSL869DR_2columns('RESLT/acc_in_m_per_sec_from_speed_from_GPS.dat', 1, 531);
@@ -47,8 +51,7 @@ my_speed_in_knots = importfile_TelitSL869DR_2columns('RESLT/speed_in_knots.dat',
 my_speed_in_m_per_sec = importfile_TelitSL869DR_2columns('RESLT/speed_in_m_per_sec.dat', 1, 531);
 my_acc_from_speed_in_m_per_sec = importfile_TelitSL869DR_2columns('RESLT/acc_from_speed_in_m_per_sec_from_GPS.dat', 1, 531);
 my_euler_angles_rates = importfile_TelitSL869DR_3columns('RESLT/euler_angles_rates.dat', 1, n_output_data);
-my_roll_pitch_yaw_from_acc = importfile_TelitSL869DR_3columns('RESLT/roll_pitch_yaw_from_acc.dat', 1, n_output_data);
-my_inertial_acceleration = importfile_TelitSL869DR_3columns('RESLT/inertial_accelerations.dat', 1, n_output_data);
+
 my_position = importfile_TelitSL869DR_3columns('RESLT/position.dat', 1, n_output_data);
 my_velocity = importfile_TelitSL869DR_4columns('RESLT/velocity.dat', 1, n_output_data);
 
@@ -239,6 +242,58 @@ title('z-acceleration (Filtered vs Aligned Time Stamp)')
 xlabel('Time (s)')
 ylabel('Acceleration (m/s^2)')
 legend('Filtered', 'Aligned Time Stamp', 'Location', 'NorthWest')
+
+%% Roll, pitch, yaw and aligned vs linear acceleration
+% Roll, pitch and yaw
+% Processed roll
+figure
+subplot(2,3,1)
+plot(roll_pitch_yaw(:,1), roll_pitch_yaw(:,2)*180.0/pi, 'b')
+axis([initial_raw_time final_raw_time -180 180])
+title('Euler angle [roll]')
+xlabel('Time (s)')
+ylabel('\phi (degrees)')
+
+% Processed pitch
+subplot(2,3,2)
+plot(roll_pitch_yaw(:,1), roll_pitch_yaw(:,3)*180.0/pi, 'b')
+axis([initial_raw_time final_raw_time -180 180])
+title('Euler angle [pitch]')
+xlabel('Time(s)')
+ylabel('\theta (degrees)')
+
+% Processed yaw
+subplot(2,3,3)
+plot(roll_pitch_yaw(:,1), roll_pitch_yaw(:,4)*180.0/pi, 'b')
+axis([initial_raw_time final_raw_time -180 180])
+title('Euler angle [yaw]')
+xlabel('Time(s)')
+ylabel('\theta (degrees)')
+
+% Aligned vs linear acceleration
+subplot(2,3,4)
+plot(aligned_acc(:, 1), aligned_acc(:, 2), 'b', linear_acceleration(:,1), linear_acceleration(:,2), 'r')
+axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
+title('x-acceleration (Aligned vs Linear)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+legend('Aligned', 'Linear', 'Location', 'NorthWest')
+
+subplot(2,3,5)
+plot(aligned_acc(:, 1), aligned_acc(:, 3), 'b', linear_acceleration(:,1), linear_acceleration(:,3), 'r')
+axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
+title('y-acceleration (Aligned vs Linear)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+legend('Aligned', 'Linear', 'Location', 'NorthWest')
+ 
+subplot(2,3,6)
+plot(aligned_acc(:, 1), aligned_acc(:, 4), 'b', linear_acceleration(:,1), linear_acceleration(:,4), 'r')
+axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
+title('z-acceleration (Aligned vs Linear)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+legend('Aligned', 'Linear', 'Location', 'NorthWest')
 
 %% Speed and accleration from GPS
 % Speed in m/s from GPS
