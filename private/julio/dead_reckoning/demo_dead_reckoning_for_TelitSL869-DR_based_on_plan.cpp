@@ -28,7 +28,9 @@
 #define OUTPUT_FILTERED_SENSORS_DATA
 #define OUTPUT_ALIGNED_SENSORS_DATA
 #define OUTPUT_LINEAR_ACCELERATIONS
+#define OUTPUT_VELOCITY
 #define OUTPUT_EULER_ANGLES
+#define OUTPUT_EULER_ANGLES_RATES
 
 // -------------------------------------------------
 // Constants
@@ -526,6 +528,22 @@ int main(int argc, char *argv[])
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
  
+ // Euler-angles rates
+ char file_euler_angles_rates_name[100];
+ sprintf(file_euler_angles_rates_name, "./RESLT/euler_angles_rates.dat");
+ std::ofstream outfile_euler_angles_rates;
+ outfile_euler_angles_rates.open(file_euler_angles_rates_name, std::ios::out);
+ if (outfile_euler_angles_rates.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_euler_angles_rates_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
  // Linear accelerations
  char file_linear_accelerations_name[100];
  sprintf(file_linear_accelerations_name, "./RESLT/linear_accelerations.dat");
@@ -601,6 +619,22 @@ int main(int argc, char *argv[])
    // Error message
    std::ostringstream error_message;
    error_message << "Could not create the file [" << file_acc_in_m_per_sec_from_speed_from_GPS_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+ // Error between sensors accelerations and acceleration from velocity from GPS
+ char file_error_acc_in_m_per_sec_name[100];
+ sprintf(file_error_acc_in_m_per_sec_name, "./RESLT/error_acc_in_m_per_sec.dat");
+ std::ofstream outfile_error_acc_in_m_per_sec;
+ outfile_error_acc_in_m_per_sec.open(file_error_acc_in_m_per_sec_name, std::ios::out);
+ if (outfile_error_acc_in_m_per_sec.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_error_acc_in_m_per_sec_name << "]"
                  << std::endl;
    throw ChapchomLibError(error_message.str(),
                           CHAPCHOM_CURRENT_FUNCTION,
@@ -1050,6 +1084,11 @@ int main(int argc, char *argv[])
    // ==========================================================================
    // ==========================================================================
    
+#ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
+   // Average of the frontal acceleration to get the error
+   double average_frontal_acceleration = 0;
+#endif // #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
+   
    // ==========================================================================
    // ==========================================================================
    // ==========================================================================
@@ -1117,6 +1156,22 @@ int main(int argc, char *argv[])
      // Set Euler into the odes such that they are integrated later
      odes.euler_angles_rates() = Euler_angles_rates;
      
+#ifdef OUTPUT_EULER_ANGLES_RATES
+     // --------------------------------------------------------------------------
+     // OUTPUT DATA BLOCK [BEGIN]
+     // --------------------------------------------------------------------------
+     {
+      // Euler angles rates
+      outfile_euler_angles_rates << current_time
+                                 << " " << Euler_angles_rates[0]
+                                 << " " << Euler_angles_rates[1]
+                                 << " " << Euler_angles_rates[2] << std::endl; 
+     }
+     // --------------------------------------------------------------------------
+     // OUTPUT DATA BLOCK [END]
+     // --------------------------------------------------------------------------
+#endif //#ifdef OUTPUT_EULER_ANGLES_RATES
+     
 #ifdef GYRO_THRESHOLD_Z
      // Set Yaw obtained from thresholded gyro angular rates (this
      // sets the value dy[9] to later compute y[0][9])
@@ -1159,7 +1214,13 @@ int main(int argc, char *argv[])
      double inertial_accelerations[DIM];
      // Rotate sensor's lectures from the body frame to the inertial
      // frame
-     rotate(Euler_angles, body_accelerations, inertial_accelerations);
+     //rotate(Euler_angles, body_accelerations, inertial_accelerations);
+     //inertial_accelerations[0]=body_accelerations[0]*0.875;
+     //inertial_accelerations[1]=body_accelerations[1]*0.875;
+     //inertial_accelerations[2]=body_accelerations[2]*0.875;
+     inertial_accelerations[0]=body_accelerations[0]*0.8;
+     inertial_accelerations[1]=body_accelerations[1]*0.8;
+     inertial_accelerations[2]=body_accelerations[2]*0.8;
      
      // ==========================================================================
      // Body frame (ASIKI) to inertial frame (EARTH) [END]
@@ -1178,6 +1239,11 @@ int main(int argc, char *argv[])
      // Set the values for linear acceleration into the odes to
      // integrate later
      odes.linear_acceleration() = linear_accelerations;
+     
+#ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
+     // Add on the average for frontal speed
+     average_frontal_acceleration+=linear_accelerations[0];
+#endif // #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
      
 #ifdef OUTPUT_LINEAR_ACCELERATIONS
      // --------------------------------------------------------------------------
@@ -1245,10 +1311,10 @@ int main(int argc, char *argv[])
      const double alpha = 0.90;
      
      // Update Euler angles
-     y[0][6] = alpha * y[0][6] + (1.0 - alpha) * Euler_angles_from_acc[0];
-     y[0][7] = alpha * y[0][7] + (1.0 - alpha) * Euler_angles_from_acc[1];
+     y[6][0] = alpha * y[6][0] + (1.0 - alpha) * Euler_angles_from_acc[0];
+     y[7][0] = alpha * y[7][0] + (1.0 - alpha) * Euler_angles_from_acc[1];
      // Complementary filter of Yaw with Yaw threshold
-     y[0][8] = alpha * y[0][8] + (1.0 - alpha) * y[0][9];
+     y[8][0] = alpha * y[8][0] + (1.0 - alpha) * y[9][0];
      
      // ==========================================================================
      // Complementary filter [END]
@@ -1266,13 +1332,23 @@ int main(int argc, char *argv[])
    
 #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
    const double speed_in_m_per_sec_from_gps = odes.speed_in_knots()*0.514444;
+   // OUTPUT
    outfile_speed_in_m_per_sec_from_GPS << current_time
                                        << " " << speed_in_m_per_sec_from_gps << std::endl;
    const double acc_in_m_per_sec_from_speed_from_gps =
-    (speed_in_m_per_sec_from_gps - previous_speed_in_m_per_sec_from_gps) / (current_time - (current_time - 1));
+    (speed_in_m_per_sec_from_gps - previous_speed_in_m_per_sec_from_gps) / (current_time - raw_gyro_t[0][0]);
+   // Store previous speed
    previous_speed_in_m_per_sec_from_gps = speed_in_m_per_sec_from_gps;
+   // OUTPUT
    outfile_acc_in_m_per_sec_from_speed_from_GPS << current_time
                                                 << " " << acc_in_m_per_sec_from_speed_from_gps << std::endl;
+   
+   // Get the average
+   average_frontal_acceleration/=(n_data-1);
+   // OUTPUT
+   outfile_error_acc_in_m_per_sec << current_time
+                                  << " " << acc_in_m_per_sec_from_speed_from_gps/average_frontal_acceleration << std::endl;
+   
 #endif // #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
    
    std::cout << "t: " << current_time
@@ -1294,6 +1370,8 @@ int main(int argc, char *argv[])
  outfile_filtered_acc.close();
  outfile_aligned_gyro.close();
  outfile_aligned_acc.close();
+ outfile_euler_angles_rates.close();
+ 
  outfile_roll_pitch_yaw.close();
  outfile_linear_acc.close();
  outfile_velocity.close();
@@ -1301,13 +1379,13 @@ int main(int argc, char *argv[])
 #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
  outfile_speed_in_m_per_sec_from_GPS.close();
  outfile_acc_in_m_per_sec_from_speed_from_GPS.close();
+ outfile_error_acc_in_m_per_sec.close();
 #endif // #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
  
 #if 0
  outfile_position.close();
  outfile_north_east_velocity.close();
 
- outfile_euler_angles_rates.close();
 
  // GPS DATA [BEGIN] --------------------------------------------
  outfile_true_course_in_degrees.close();
