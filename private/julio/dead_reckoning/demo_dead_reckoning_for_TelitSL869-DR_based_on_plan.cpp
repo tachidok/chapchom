@@ -27,15 +27,15 @@
 #define OUTPUT_RAW_AND_ROTATED_SENSORS_DATA
 #define OUTPUT_FILTERED_SENSORS_DATA
 #define OUTPUT_ALIGNED_SENSORS_DATA
-#define OUTPUT_LINEAR_ACCELERATIONS
-#define OUTPUT_VELOCITY
+#define OUTPUT_ACCELERATIONS
+#define OUTPUT_VELOCITIES
 #define OUTPUT_EULER_ANGLES
 #define OUTPUT_EULER_ANGLES_RATES
 
 // -------------------------------------------------
 // Constants
 // -------------------------------------------------
-#define MAX_SIGNAL_SIZE 40
+#define MAX_SIGNAL_SIZE 140
 #define GRAVITY 9.81
 #define AZGADS_CONSTANT 1.1285
 #define GYRO_THRESHOLD_Z 1.0 * TO_RADIANS // One degree threshold
@@ -65,7 +65,7 @@ void rotate_sensors_to_ASIKIs_reference_frame(std::vector<std::vector<double> > 
  // reference frame to the ASIKI's reference frame
  // -----------------------------------------------------------
  // Rotation matrix for gyro data
- const double angle_to_rotate_gyro = -(M_PI/2.0) + M_PI;
+ const double angle_to_rotate_gyro = M_PI/2.0;
  CCMatrix<double> R_g(DIM, DIM);
  R_g.create_zero_matrix();
  R_g(0,0)=cos(angle_to_rotate_gyro);  R_g(0,1)=sin(angle_to_rotate_gyro); R_g(0,2)=0.0;
@@ -73,7 +73,7 @@ void rotate_sensors_to_ASIKIs_reference_frame(std::vector<std::vector<double> > 
  R_g(2,0)=0.0;                        R_g(2,1)=0.0;                       R_g(2,2)=1.0;
  
  // Rotation matrix for acc data
- const double angle_to_rotate_acc = -M_PI + M_PI;
+ const double angle_to_rotate_acc = 0.0;
  CCMatrix<double> R_a(DIM, DIM);
  R_a.create_zero_matrix();
  R_a(0,0)=cos(angle_to_rotate_acc);   R_a(0,1)=sin(angle_to_rotate_acc);  R_a(0,2)=0.0;
@@ -544,22 +544,6 @@ int main(int argc, char *argv[])
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
  
- // Linear accelerations
- char file_linear_accelerations_name[100];
- sprintf(file_linear_accelerations_name, "./RESLT/linear_accelerations.dat");
- std::ofstream outfile_linear_acc;
- outfile_linear_acc.open(file_linear_accelerations_name, std::ios::out);
- if (outfile_linear_acc.fail())
-  {
-   // Error message
-   std::ostringstream error_message;
-   error_message << "Could not create the file [" << file_linear_accelerations_name << "]"
-                 << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
-  }
- 
  // Roll, pitch and yaw
  char file_roll_pitch_yaw_name[100];
  sprintf(file_roll_pitch_yaw_name, "./RESLT/roll_pitch_yaw.dat");
@@ -570,6 +554,54 @@ int main(int argc, char *argv[])
    // Error message
    std::ostringstream error_message;
    error_message << "Could not create the file [" << file_roll_pitch_yaw_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+ // Body frame accelerations
+ char file_body_accelerations_name[100];
+ sprintf(file_body_accelerations_name, "./RESLT/body_accelerations.dat");
+ std::ofstream outfile_body_acc;
+ outfile_body_acc.open(file_body_accelerations_name, std::ios::out);
+ if (outfile_body_acc.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_body_accelerations_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+ // Inertial accelerations
+ char file_inertial_accelerations_name[100];
+ sprintf(file_inertial_accelerations_name, "./RESLT/inertial_accelerations.dat");
+ std::ofstream outfile_inertial_acc;
+ outfile_inertial_acc.open(file_inertial_accelerations_name, std::ios::out);
+ if (outfile_inertial_acc.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_inertial_accelerations_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+ // Linear accelerations
+ char file_linear_accelerations_name[100];
+ sprintf(file_linear_accelerations_name, "./RESLT/linear_accelerations.dat");
+ std::ofstream outfile_linear_acc;
+ outfile_linear_acc.open(file_linear_accelerations_name, std::ios::out);
+ if (outfile_linear_acc.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_linear_accelerations_name << "]"
                  << std::endl;
    throw ChapchomLibError(error_message.str(),
                           CHAPCHOM_CURRENT_FUNCTION,
@@ -700,8 +732,9 @@ int main(int argc, char *argv[])
  ACIntegrationMethod *integrator =
   factory_integration_methods->create_integration_method("Euler");
  //ACIntegrationMethod *integrator =
- // factory_integration_methods->create_integration_method("RK4"); Get
- // the number of history values required by the integration method
+ // factory_integration_methods->create_integration_method("RK4");
+ // Get the number of history values required by the integration
+ // method
  const unsigned n_history_values = integrator->n_history_values();
  // Get the number of odes from the problem
  const unsigned n_odes = odes.nodes();
@@ -730,6 +763,7 @@ int main(int argc, char *argv[])
  double current_time = 0;
  
  // Output the initial data to screen
+ std::cout.precision(8);
  std::cout << "t: " << current_time
            << " x-pos: " << y[0][0] << " x-vel: " << y[1][0]
            << " y-pos: " << y[2][0] << " y-vel: " << y[3][0]
@@ -891,16 +925,84 @@ int main(int argc, char *argv[])
     {
      filtered_acc_signal_t[i] = raw_acc_t[i][0];
     }
-   
+
+#if 0
    // The coefficients of the kernel signal to convolve with the gyro
    // data
    const unsigned n_kernel_gyro = 15;
-   double kernel_gyro[] = {0.0102773244275157, 0.0162263834264182, 0.0328881753317823, 0.0570814837334001, 0.0840520641122108, 0.108434325903213, 0.125345958994944, 0.131388568141032, 0.125345958994944, 0.108434325903213, 0.0840520641122108, 0.0570814837334001, 0.0328881753317823, 0.0162263834264182, 0.0102773244275157};
+   double kernel_gyro[] = {0.0102773244275157, 0.0162263834264182, 0.0328881753317823, 0.0570814837334001, \
+                           0.0840520641122108, 0.108434325903213, 0.125345958994944, 0.131388568141032, \
+                           0.125345958994944, 0.108434325903213, 0.0840520641122108, 0.0570814837334001, \
+                           0.0328881753317823, 0.0162263834264182, 0.0102773244275157};
    
    // The coefficients of the kernel signal to convolve with the
    // accelerometer data
    const unsigned n_kernel_acc = 15;
-   double kernel_acc[] = {0.0104226000635011, 0.0163818874099687, 0.0330775506149548, 0.0572325417966930, 0.0840719974006429, 0.108274081298100, 0.125032039259642, 0.131014604312996, 0.125032039259642, 0.108274081298100, 0.0840719974006429, 0.0572325417966930, 0.0330775506149548, 0.0163818874099687, 0.0104226000635011};
+   double kernel_acc[] = {0.0104226000635011, 0.0163818874099687, 0.0330775506149548, 0.0572325417966930, \
+                          0.0840719974006429, 0.108274081298100, 0.125032039259642, 0.131014604312996, \
+                          0.125032039259642, 0.108274081298100, 0.0840719974006429, 0.0572325417966930, \
+                          0.0330775506149548, 0.0163818874099687, 0.0104226000635011};
+#endif // #if 0
+   
+#if 0
+   // The coefficients of the kernel signal to convolve with the gyro
+   // data
+   const unsigned n_kernel_gyro = 29;
+   double kernel_gyro[] = {0.0049166, 0.0056897, 0.0078865, 0.0114381, 0.0161981, 0.0219499, 0.0284179, \
+                           0.0352818, 0.0421945, 0.0488006, 0.0547570, 0.0597516, 0.0635210, 0.0658659, \
+                           0.0666616, 0.0658659, 0.0635210, 0.0597516, 0.0547570, 0.0488006, 0.0421945, \
+                           0.0352818, 0.0284179, 0.0219499, 0.0161981, 0.0114381, 0.0078865, 0.0056897, \
+                           0.0049166};
+   
+   // The coefficients of the kernel signal to convolve with the
+   // accelerometer data
+   const unsigned n_kernel_acc = 29;
+   double kernel_acc[] = {0.0051848, 0.0059470, 0.0081761, 0.0117697, 0.0165547, 0.0222962, 0.0287089, \
+                          0.0354723, 0.0422464, 0.0486897, 0.0544764, 0.0593134, 0.0629553, 0.0652172, \
+                          0.0659841, 0.0652172, 0.0629553, 0.0593134, 0.0544764, 0.0486897, 0.0422464, \
+                          0.0354723, 0.0287089, 0.0222962, 0.0165547, 0.0117697, 0.0081761, 0.0059470, \
+                          0.0051848};
+#endif // #if 0
+   
+#if 0
+   // The coefficients of the kernel signal to convolve with the gyro
+   // data
+   const unsigned n_kernel_gyro = 8;
+   double kernel_gyro[] = {0.020640, 0.065486, 0.166411, 0.247463, 0.247463, 0.166411, 0.065486, 0.020640};
+   
+   // The coefficients of the kernel signal to convolve with the
+   // accelerometer data
+   const unsigned n_kernel_acc = 8;
+   double kernel_acc[] = {0.020706, 0.065570, 0.166414, 0.247310, 0.247310, 0.166414, 0.065570, 0.020706};
+#endif // if 0
+   
+#if 1
+   // The coefficients of the kernel signal to convolve with the gyro
+   // data
+   const unsigned n_kernel_gyro = 61;
+   double kernel_gyro[] = {0.0017541, 0.0018614, 0.0020869, 0.0024376, 0.0029187, 0.0035331, 0.0042814, \
+                           0.0051623, 0.0061718, 0.0073039, 0.0085502, 0.0099002, 0.0113413, 0.0128591, \
+                           0.0144373, 0.0160586, 0.0177041, 0.0193543, 0.0209890, 0.0225877, 0.0241301, \
+                           0.0255962, 0.0269667, 0.0282234, 0.0293496, 0.0303299, 0.0311510, 0.0318016, \
+                           0.0322729, 0.0325583, 0.0326539, 0.0325583, 0.0322729, 0.0318016, 0.0311510, \
+                           0.0303299, 0.0293496, 0.0282234, 0.0269667, 0.0255962, 0.0241301, 0.0225877, \
+                           0.0209890, 0.0193543, 0.0177041, 0.0160586, 0.0144373, 0.0128591, 0.0113413, \
+                           0.0099002, 0.0085502, 0.0073039, 0.0061718, 0.0051623, 0.0042814, 0.0035331, \
+                           0.0029187, 0.0024376, 0.0020869, 0.0018614, 0.0017541};
+   
+   // The coefficients of the kernel signal to convolve with the
+   // accelerometer data
+   const unsigned n_kernel_acc = 61;
+   double kernel_acc[] = {0.0022962, 0.0023817, 0.0026131, 0.0029901, 0.0035107, 0.0041713, 0.0049663, \
+                          0.0058885, 0.0069292, 0.0080780, 0.0093232, 0.0106518, 0.0120497, 0.0135018, \
+                          0.0149923, 0.0165048, 0.0180224, 0.0195282, 0.0210052, 0.0224366, 0.0238062, \
+                          0.0250983, 0.0262981, 0.0273917, 0.0283666, 0.0292115, 0.0299166, 0.0304736, \
+                          0.0308762, 0.0311197, 0.0312012, 0.0311197, 0.0308762, 0.0304736, 0.0299166, \
+                          0.0292115, 0.0283666, 0.0273917, 0.0262981, 0.0250983, 0.0238062, 0.0224366, \
+                          0.0210052, 0.0195282, 0.0180224, 0.0165048, 0.0149923, 0.0135018, 0.0120497, \
+                          0.0106518, 0.0093232, 0.0080780, 0.0069292, 0.0058885, 0.0049663, 0.0041713, \
+                          0.0035107, 0.0029901, 0.0026131, 0.0023817, 0.0022962};
+#endif // if 1
    
    // Perform the actual convolution
    filter_signal_by_convolution(noisy_signal_gyro_x,
@@ -1207,20 +1309,43 @@ int main(int argc, char *argv[])
      // ==========================================================================
      // Store body frame accelerations
      double body_accelerations[DIM];
-     body_accelerations[0]=aligned_acc_signal_x[i];
-     body_accelerations[1]=aligned_acc_signal_y[i];
-     body_accelerations[2]=aligned_acc_signal_z[i];
-     // Store inertial frame accelerations
+     //body_accelerations[0]=aligned_acc_signal_x[i]*0.8;
+     //body_accelerations[1]=aligned_acc_signal_y[i]*0.8;
+     //body_accelerations[2]=aligned_acc_signal_z[i]*0.8;
+     //body_accelerations[0]=aligned_acc_signal_x[i]-0.26;
+     //body_accelerations[1]=aligned_acc_signal_y[i]-0.26; // TODO THIS WORK WITHOUT ROTATION (SEEMS TO WORK BETTER) (2)
+     //body_accelerations[2]=aligned_acc_signal_z[i]-0.26;
+     //body_accelerations[0]=aligned_acc_signal_x[i]-0.2892;
+     //body_accelerations[1]=aligned_acc_signal_y[i]-0.2892; // TODO THIS WORK WITHOUT ROTATION (1)
+     //body_accelerations[2]=aligned_acc_signal_z[i]-0.2892;
+     //body_accelerations[0]=aligned_acc_signal_x[i]-0.4942;
+     //body_accelerations[1]=aligned_acc_signal_y[i]-0.4942;
+     //body_accelerations[2]=aligned_acc_signal_z[i]-0.4942;
+     //body_accelerations[0]=aligned_acc_signal_x[i];
+     //body_accelerations[1]=aligned_acc_signal_y[i];
+     //body_accelerations[2]=aligned_acc_signal_z[i]; Store inertial
+     //frame accelerations
      double inertial_accelerations[DIM];
      // Rotate sensor's lectures from the body frame to the inertial
      // frame
+     //Euler_angles[2]=0.0;
      //rotate(Euler_angles, body_accelerations, inertial_accelerations);
      //inertial_accelerations[0]=body_accelerations[0]*0.875;
      //inertial_accelerations[1]=body_accelerations[1]*0.875;
      //inertial_accelerations[2]=body_accelerations[2]*0.875;
-     inertial_accelerations[0]=body_accelerations[0]*0.8;
-     inertial_accelerations[1]=body_accelerations[1]*0.8;
-     inertial_accelerations[2]=body_accelerations[2]*0.8;
+     inertial_accelerations[0]=body_accelerations[0];
+     inertial_accelerations[1]=body_accelerations[1];
+     inertial_accelerations[2]=body_accelerations[2];
+#if 0
+     if (fabs(body_accelerations[0]) < 0.3)
+      {
+       inertial_accelerations[0]=0.0;
+      }
+     if (fabs(body_accelerations[1]) < 0.3)
+      {
+       inertial_accelerations[1]=0.0;
+      }
+#endif // #if 0
      
      // ==========================================================================
      // Body frame (ASIKI) to inertial frame (EARTH) [END]
@@ -1242,30 +1367,42 @@ int main(int argc, char *argv[])
      
 #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
      // Add on the average for frontal speed
-     average_frontal_acceleration+=linear_accelerations[0];
+     average_frontal_acceleration+=body_accelerations[0];
 #endif // #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
      
-#ifdef OUTPUT_LINEAR_ACCELERATIONS
+#ifdef OUTPUT_ACCELERATIONS
      // --------------------------------------------------------------------------
      // OUTPUT DATA BLOCK [BEGIN]
      // --------------------------------------------------------------------------
      {
+      // Body frame accelerations
+      outfile_body_acc << current_time
+                         << " " << body_accelerations[0]
+                         << " " << body_accelerations[1]
+                         << " " << body_accelerations[2] << std::endl; 
+      
+      // Inertial frame accelerations
+      outfile_inertial_acc << current_time
+                         << " " << inertial_accelerations[0]
+                         << " " << inertial_accelerations[1]
+                         << " " << inertial_accelerations[2] << std::endl; 
+      
       // Linear accelerations
       outfile_linear_acc << current_time
                          << " " << linear_accelerations[0]
                          << " " << linear_accelerations[1]
-                         << " " << linear_accelerations[2] << std::endl; 
+                         << " " << linear_accelerations[2] << std::endl;
      }
      // --------------------------------------------------------------------------
      // OUTPUT DATA BLOCK [END]
      // --------------------------------------------------------------------------
-#endif //#ifdef OUTPUT_LINEAR_ACCELERATIONS
+#endif //#ifdef OUTPUT_ACCELERATIONS
      
      // ==========================================================================
      // Gravity compensation [END]
      // ==========================================================================
 
-#ifdef OUTPUT_VELOCITY
+#ifdef OUTPUT_VELOCITIES
      // --------------------------------------------------------------------------
      // OUTPUT DATA BLOCK [BEGIN]
      // --------------------------------------------------------------------------
@@ -1277,7 +1414,7 @@ int main(int argc, char *argv[])
                        << " " << y[5][0]
                        << std::endl;
      }
-#endif // #ifdef OUTPUT_VELOCITY
+#endif // #ifdef OUTPUT_VELOCITIES
      
      // ==========================================================================
      // Integrate the ODE's [BEGIN]
@@ -1346,16 +1483,23 @@ int main(int argc, char *argv[])
    // Get the average
    average_frontal_acceleration/=(n_data-1);
    // OUTPUT
-   outfile_error_acc_in_m_per_sec << current_time
-                                  << " " << acc_in_m_per_sec_from_speed_from_gps/average_frontal_acceleration << std::endl;
+   //const double error = average_frontal_acceleration - acc_in_m_per_sec_from_speed_from_gps;
+   const double abs_error = fabs(acc_in_m_per_sec_from_speed_from_gps - average_frontal_acceleration);
+   double relative_error = 0.0;
+   if (fabs(acc_in_m_per_sec_from_speed_from_gps) > 1.0e-8)
+    {
+     relative_error = abs_error / fabs(acc_in_m_per_sec_from_speed_from_gps);
+    }
+   outfile_error_acc_in_m_per_sec << current_time << " " << abs_error << " " << relative_error << std::endl;
    
 #endif // #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
    
+   std::cout.precision(8);
    std::cout << "t: " << current_time
-             << " x-pos: " << y[0][0] << " x-vel: " << y[0][1]
-             << " y-pos: " << y[0][2] << " y-vel: " << y[0][3]
-             << " z-pos: " << y[0][4] << " z-vel: " << y[0][5]
-             << " roll: " << y[0][6] << " pitch: " << y[0][7] << " yaw: " << y[0][8] << std::endl;
+             << " x-pos: " << y[0][0] << " x-vel: " << y[1][0]
+             << " y-pos: " << y[2][0] << " y-vel: " << y[3][0]
+             << " z-pos: " << y[4][0] << " z-vel: " << y[5][0]
+             << " roll: " << y[6][0] << " pitch: " << y[7][0] << " yaw: " << y[8][0] << std::endl;
    
   } // while (LOOP)
  
@@ -1373,6 +1517,8 @@ int main(int argc, char *argv[])
  outfile_euler_angles_rates.close();
  
  outfile_roll_pitch_yaw.close();
+ outfile_body_acc.close();
+ outfile_inertial_acc.close();
  outfile_linear_acc.close();
  outfile_velocity.close();
  
