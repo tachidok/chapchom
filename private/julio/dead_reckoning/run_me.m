@@ -15,7 +15,9 @@ aligned_acc = importfile_TelitSL869DR_3columns('RESLT/aligned_acc.dat', 1, n_inp
 
 euler_angles_rates = importfile_TelitSL869DR_3columns('RESLT/euler_angles_rates.dat', 1, n_output_data);
 roll_pitch_yaw = importfile_TelitSL869DR_3columns('RESLT/roll_pitch_yaw.dat', 1, n_output_data);
+gravity_in_body_frame = importfile_TelitSL869DR_3columns('RESLT/gravity_in_body_frame.dat', 1, n_output_data);
 body_acceleration = importfile_TelitSL869DR_3columns('RESLT/body_accelerations.dat', 1, n_output_data);
+body_acceleration_without_gravity = importfile_TelitSL869DR_3columns('RESLT/body_accelerations_without_gravity.dat', 1, n_output_data);
 inertial_acceleration = importfile_TelitSL869DR_3columns('RESLT/inertial_accelerations.dat', 1, n_output_data);
 linear_acceleration = importfile_TelitSL869DR_3columns('RESLT/linear_accelerations.dat', 1, n_output_data);
 velocity = importfile_TelitSL869DR_4columns('RESLT/velocity.dat', 1, n_output_data);
@@ -29,7 +31,62 @@ final_raw_time = raw_gyro(size(raw_gyro,1),1);
 initial_time = aligned_gyro(1,1);
 final_time = aligned_gyro(size(aligned_gyro,1),1);
 
-%% Roll, pitch, yaw and body acceleration vs inertial acceleration
+%% Filtered and aligned
+% Gyro
+figure
+subplot(2,3,1)
+plot(filtered_gyro(:, 1), filtered_gyro(:, 2)*180.0/pi, 'b', aligned_gyro(:, 1), aligned_gyro(:, 2)*180.0/pi, 'r')
+title('[X] Gyro (Filtered vs Aligned Time Stamp)')
+xlabel('Time (s)')
+ylabel('d/s')
+legend('Filtered', 'Aligned Time Stamp', 'Location', 'NorthWest')
+grid on
+
+subplot(2,3,2)
+plot(filtered_gyro(:, 1), filtered_gyro(:, 3)*180.0/pi, 'b', aligned_gyro(:, 1), aligned_gyro(:, 3)*180.0/pi, 'r')
+title('[Y] Gyro (Filtered vs Aligned Time Stamp)')
+xlabel('Time (s)')
+ylabel('d/s')
+legend('Filtered', 'Aligned Time Stamp', 'Location', 'NorthWest')
+grid on
+ 
+subplot(2,3,3)
+plot(filtered_gyro(:, 1), filtered_gyro(:, 4)*180.0/pi, 'b', aligned_gyro(:, 1), aligned_gyro(:, 4)*180.0/pi, 'r')
+title('[Z] Gyro (Filtered vs Aligned Time Stamp)')
+xlabel('Time (s)')
+ylabel('d/s')
+legend('Filtered', 'Aligned Time Stamp', 'Location', 'NorthWest')
+grid on
+
+% Acceleration
+subplot(2,3,4)
+plot(filtered_acc(:, 1), filtered_acc(:, 2), 'b', aligned_acc(:, 1), aligned_acc(:, 2), 'r')
+axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
+title('x-acceleration (Filtered vs Aligned Time Stamp)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+legend('Filtered', 'Aligned Time Stamp', 'Location', 'NorthWest')
+grid on
+
+subplot(2,3,5)
+plot(filtered_acc(:, 1), filtered_acc(:, 3), 'b', aligned_acc(:, 1), aligned_acc(:, 3), 'r')
+axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
+title('y-acceleration (Filtered vs Aligned Time Stamp)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+legend('Filtered', 'Aligned Time Stamp', 'Location', 'NorthWest')
+grid on
+ 
+subplot(2,3,6)
+plot(filtered_acc(:, 1), filtered_acc(:, 4), 'b', aligned_acc(:, 1), aligned_acc(:, 4), 'r')
+axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
+title('z-acceleration (Filtered vs Aligned Time Stamp)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+legend('Filtered', 'Aligned Time Stamp', 'Location', 'NorthWest')
+grid on
+
+%% Roll, pitch, yaw and body acceleration vs gravity in body frame
 % Roll, pitch and yaw
 % Processed roll
 figure
@@ -59,32 +116,91 @@ xlabel('Time(s)')
 ylabel('\theta (degrees)')
 grid on
 
-% Body acceleration
+% Body acceleration vs Gravity in body frame
 subplot(2,3,4)
-plot(body_acceleration(:, 1), body_acceleration(:, 2), 'b', inertial_acceleration(:,1), inertial_acceleration(:,2), 'r')
+plot(body_acceleration(:, 1), body_acceleration(:, 2), 'b', gravity_in_body_frame(:,1), gravity_in_body_frame(:,2), 'r')
 axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
-title('x-acceleration (Body vs Inertial)')
+title('x-acceleration (Body vs Gravity in body frame)')
 xlabel('Time (s)')
 ylabel('Acceleration (m/s^2)')
-legend('Body-frame acceleration', 'Inertial-frame acceleration', 'Location', 'NorthWest')
+legend('Body-frame acceleration', 'Gravity body frame', 'Location', 'NorthWest')
 grid on
 
 subplot(2,3,5)
-plot(body_acceleration(:, 1), body_acceleration(:, 3), 'b', inertial_acceleration(:,1), inertial_acceleration(:,3), 'r')
+plot(body_acceleration(:, 1), body_acceleration(:, 3), 'b', gravity_in_body_frame(:,1), gravity_in_body_frame(:,3), 'r')
 axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
-title('y-acceleration (Body vs Inertial)')
+title('y-acceleration (Body vs Gravity in body frame)')
 xlabel('Time (s)')
 ylabel('Acceleration (m/s^2)')
-legend('Body-frame acceleration', 'Inertial-frame acceleration', 'Location', 'NorthWest')
+legend('Body-frame acceleration', 'Gravity body frame', 'Location', 'NorthWest')
+grid on
+
+subplot(2,3,6)
+plot(body_acceleration(:, 1), body_acceleration(:, 4), 'b', gravity_in_body_frame(:,1), gravity_in_body_frame(:,4), 'r')
+axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
+title('z-acceleration (Body vs Gravity in body frame)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+legend('Body-frame acceleration', 'Gravity body frame', 'Location', 'NorthWest')
+grid on
+
+%% Body acceleration vs Body acceleration without gravity
+% Body acceleration vs Body acceleration without gravity
+figure
+subplot(2,3,1)
+plot(body_acceleration(:, 1), body_acceleration(:, 2), 'b', body_acceleration_without_gravity(:,1), body_acceleration_without_gravity(:,2), 'r')
+axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
+title('x-acceleration (Body vs Body w/o gravity)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+legend('Body-frame acceleration', 'Body-frame acceleration w/o gravity', 'Location', 'NorthWest')
+grid on
+
+subplot(2,3,2)
+plot(body_acceleration(:, 1), body_acceleration(:, 3), 'b', body_acceleration_without_gravity(:,1), body_acceleration_without_gravity(:,3), 'r')
+axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
+title('y-acceleration (Body vs Body w/o gravity)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+legend('Body-frame acceleration', 'Body-frame acceleration w/o gravity', 'Location', 'NorthWest')
+grid on
+ 
+subplot(2,3,3)
+plot(body_acceleration(:, 1), body_acceleration(:, 4), 'b', body_acceleration_without_gravity(:,1), body_acceleration_without_gravity(:,4), 'r')
+axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
+title('z-acceleration (Body vs Body w/o gravity)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+legend('Body-frame acceleration', 'Body-frame acceleration w/o gravity', 'Location', 'NorthWest')
+grid on
+
+%% Body accelerartion w/o gravity vs Inertial accelerartion vs Linear accelerartion
+% Body accelerartion w/o gravity vs Inertial accelerartion vs Linear accelerartion
+subplot(2,3,4)
+plot(body_acceleration_without_gravity(:, 1), body_acceleration_without_gravity(:, 2), 'b', inertial_acceleration(:,1), inertial_acceleration(:,2), 'r', linear_acceleration(:,1), linear_acceleration(:,2), 'g')
+axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
+title('x-acceleration (Body w/o gravity vs Inertial vs Linear)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+legend('Body w/o gravity', 'Inertial', 'Linear', 'Location', 'NorthWest')
+grid on
+
+subplot(2,3,5)
+plot(body_acceleration_without_gravity(:, 1), body_acceleration_without_gravity(:, 3), 'b', inertial_acceleration(:,1), inertial_acceleration(:,3), 'r', linear_acceleration(:,1), linear_acceleration(:,3), 'g')
+axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
+title('y-acceleration (Body w/o gravity vs Inertial vs Linear)')
+xlabel('Time (s)')
+ylabel('Acceleration (m/s^2)')
+legend('Body w/o gravity', 'Inertial', 'Linear', 'Location', 'NorthWest')
 grid on
  
 subplot(2,3,6)
-plot(body_acceleration(:, 1), body_acceleration(:, 4), 'b', inertial_acceleration(:,1), inertial_acceleration(:,4), 'r')
+plot(body_acceleration_without_gravity(:, 1), body_acceleration_without_gravity(:, 4), 'b', inertial_acceleration(:,1), inertial_acceleration(:,4), 'r', linear_acceleration(:,1), linear_acceleration(:,4), 'g')
 axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
-title('z-acceleration (Body vs Inertial)')
+title('z-acceleration (Body w/o gravity vs Inertial vs Linear)')
 xlabel('Time (s)')
 ylabel('Acceleration (m/s^2)')
-legend('Body-frame acceleration', 'Inertial-frame acceleration', 'Location', 'NorthWest')
+legend('Body w/o gravity', 'Inertial', 'Linear', 'Location', 'NorthWest')
 grid on
 
 %% Velocity
@@ -102,7 +218,7 @@ grid on
 
 %% Frontal accelerations and velocities
 figure
-plot(acc_in_m_per_sec_from_speed_from_gps(:,1), acc_in_m_per_sec_from_speed_from_gps(:,2), 'b', ...
+plotyy(acc_in_m_per_sec_from_speed_from_gps(:,1), acc_in_m_per_sec_from_speed_from_gps(:,2), 'b', ...
     speed_in_m_per_sec_from_gps(:,1), speed_in_m_per_sec_from_gps(:,2)*m_per_sec_to_km_per_h*0.01, 'b.', ...
     linear_acceleration(:, 1), linear_acceleration(:, 2), 'r', ...
     velocity(:, 1), velocity(:, 2)*m_per_sec_to_km_per_h*0.01, 'r.')
@@ -110,6 +226,21 @@ title('[Front of car] Accelerations and Velocities')
 xlabel('Time(s)')
 ylabel('m/s^2 and km/h')
 legend('Acceleration from GPS', 'Velocity from GPS', 'Acceleration from accelerometers', 'Velocity from computations', 'Location', 'NorthWest')
+grid on
+
+%% Frontal accelerations and velocities
+figure
+yyaxis left
+plot(acc_in_m_per_sec_from_speed_from_gps(:,1), acc_in_m_per_sec_from_speed_from_gps(:,2), 'b', ...
+    linear_acceleration(:, 1), linear_acceleration(:, 2), 'r')
+title('[Front of car] Accelerations and Velocities')
+xlabel('Time(s)')
+ylabel('m/s^2')
+yyaxis right
+plot(speed_in_m_per_sec_from_gps(:,1), speed_in_m_per_sec_from_gps(:,2)*m_per_sec_to_km_per_h, 'b.', ...
+     velocity(:, 1), velocity(:, 2)*m_per_sec_to_km_per_h, 'r.')
+ylabel('km/h')
+legend('Acceleration from GPS', 'Acceleration from accelerometers', 'Velocity from GPS', 'Velocity from computations', 'Location', 'NorthWest')
 grid on
 
 %% Frontal accleration from GPS vs frontal acceleration from accelerometers

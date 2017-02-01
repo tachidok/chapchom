@@ -27,6 +27,7 @@
 #define OUTPUT_RAW_AND_ROTATED_SENSORS_DATA
 #define OUTPUT_FILTERED_SENSORS_DATA
 #define OUTPUT_ALIGNED_SENSORS_DATA
+#define OUTPUT_GRAVITY_IN_BODY_FRAME
 #define OUTPUT_ACCELERATIONS
 #define OUTPUT_VELOCITIES
 #define OUTPUT_EULER_ANGLES
@@ -115,7 +116,7 @@ void rotate_sensors_to_ASIKIs_reference_frame(std::vector<std::vector<double> > 
    // -------------------------------------------------------------------------   
    // Store the acc data in a temporary vector. Multiply by 9.81
    // since the data from the accelerometers are given in 'g' units
-   r(0) = raw_acc_t[i][1] * GRAVITY; // acc_x
+   r(0) = raw_acc_t[i][1] * GRAVITY; // acc_x TODO
    r(1) = raw_acc_t[i][2] * GRAVITY; // acc_y
    r(2) = raw_acc_t[i][3] * GRAVITY; // acc_z
    // --------------------------------------------------------------------------
@@ -337,19 +338,37 @@ void transform_angular_velocities_into_euler_angles_rates(double *angular_veloci
  
 }
 
+// ===================================================================
+// Performs a rotation indicated by the rotation matrix R
+// ===================================================================
+void rotate(CCMatrix<double> &R,
+            double *original_data,
+            double *rotated_data)
+{
+ // Create a vector representation of the original data
+ CCVector<double> b(original_data, DIM);
+ // A vector representation of the rotated data
+ CCVector<double> r(DIM);
+ // Apply rotation
+ multiply_matrix_times_vector(R, b, r);
+ // Copy back result in output structure
+ rotated_data[0]=r(0);
+ rotated_data[1]=r(1);
+ rotated_data[2]=r(2);
+}
 
 // ===================================================================
-// Performs a rotation from one reference frame into another using
-// Euler angles
+// Performs a rotation/transformation from the inertial reference
+// frame to the body reference frame using Euler angles
 // ===================================================================
-void rotate(double *Euler_angles,
-            double *original_frame_data,
-            double *destination_frame_data)
+void transform_inertial_to_body(double *Euler_angles,
+                                double *inertial_frame_data,
+                                double *body_frame_data)
 {
  // Create the rotation matrix
  CCMatrix<double> R(DIM, DIM);
  R.create_zero_matrix();
-        
+ 
  const double sin_theta_x = sin(Euler_angles[0]);
  const double sin_theta_y = sin(Euler_angles[1]);
  const double sin_theta_z = sin(Euler_angles[2]);
@@ -369,20 +388,49 @@ void rotate(double *Euler_angles,
  R(2,1) = cos_theta_x*sin_theta_y*sin_theta_z-sin_theta_x*cos_theta_z;
  R(2,2) = cos_theta_x*cos_theta_y;
  
- // Transpose the matrix (to performe the inverse operation)
- R.transpose();
+ // Perform the actual transformation
+ rotate(R, inertial_frame_data, body_frame_data);
+ 
+}
 
- // The vector to transform
- CCVector<double> b(original_frame_data, DIM);
- // The resulting vector
- CCVector<double> r(DIM);
- // Apply transformation. Transform from the body reference frame to
- // the inertial reference frame
- multiply_matrix_times_vector(R, b, r);
- // Copy back result in output structure
- destination_frame_data[0]=r(0);
- destination_frame_data[1]=r(1);
- destination_frame_data[2]=r(2);
+// ===================================================================
+// Performs a rotation/transformation from the body reference frame to
+// the inertial reference frame using Euler angles
+// ===================================================================
+void transform_body_to_inertial(double *Euler_angles,
+                                double *body_frame_data,
+                                double *inertial_frame_data)
+{
+ // Create the rotation matrix
+ CCMatrix<double> R(DIM, DIM);
+ R.create_zero_matrix();
+ 
+ const double sin_theta_x = sin(Euler_angles[0]);
+ const double sin_theta_y = sin(Euler_angles[1]);
+ const double sin_theta_z = sin(Euler_angles[2]);
+ const double cos_theta_x = cos(Euler_angles[0]);
+ const double cos_theta_y = cos(Euler_angles[1]);
+ const double cos_theta_z = cos(Euler_angles[2]);
+ 
+ R(0,0) = cos_theta_y*cos_theta_z;
+ R(0,1) = cos_theta_y*sin_theta_z;
+ R(0,2) = -sin_theta_y;
+ 
+ R(1,0) = sin_theta_x*sin_theta_y*cos_theta_z - cos_theta_x*sin_theta_z;
+ R(1,1) = sin_theta_x*sin_theta_y*sin_theta_z+cos_theta_x*cos_theta_z;
+ R(1,2) = sin_theta_x*cos_theta_y;
+ 
+ R(2,0) = cos_theta_x*sin_theta_y*cos_theta_z + sin_theta_x*sin_theta_z;
+ R(2,1) = cos_theta_x*sin_theta_y*sin_theta_z-sin_theta_x*cos_theta_z;
+ R(2,2) = cos_theta_x*cos_theta_y;
+ 
+ // Transpose the matrix (to perform the inverse operation -- body to
+ // inertial --)
+ R.transpose();
+ 
+ // Perform the actual transformation
+ rotate(R, body_frame_data, inertial_frame_data);
+  
 }
 
 // ==================================================================
@@ -560,6 +608,22 @@ int main(int argc, char *argv[])
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
  
+ // Gravity in body frame
+ char file_gravity_in_body_frame_name[100];
+ sprintf(file_gravity_in_body_frame_name, "./RESLT/gravity_in_body_frame.dat");
+ std::ofstream outfile_gravity_in_body_frame;
+ outfile_gravity_in_body_frame.open(file_gravity_in_body_frame_name, std::ios::out);
+ if (outfile_gravity_in_body_frame.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_gravity_in_body_frame_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
  // Body frame accelerations
  char file_body_accelerations_name[100];
  sprintf(file_body_accelerations_name, "./RESLT/body_accelerations.dat");
@@ -570,6 +634,22 @@ int main(int argc, char *argv[])
    // Error message
    std::ostringstream error_message;
    error_message << "Could not create the file [" << file_body_accelerations_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+ // Body frame accelerations without gravity
+ char file_body_accelerations_without_gravity_name[100];
+ sprintf(file_body_accelerations_without_gravity_name, "./RESLT/body_accelerations_without_gravity.dat");
+ std::ofstream outfile_body_acc_without_gravity;
+ outfile_body_acc_without_gravity.open(file_body_accelerations_without_gravity_name, std::ios::out);
+ if (outfile_body_acc_without_gravity.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_body_accelerations_without_gravity_name << "]"
                  << std::endl;
    throw ChapchomLibError(error_message.str(),
                           CHAPCHOM_CURRENT_FUNCTION,
@@ -692,6 +772,7 @@ int main(int argc, char *argv[])
  //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_7_espera_large.dat");
  //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_8_car_ride_square_wait_large.dat");
  CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_9_car_ride_tona_acatepec_inaoe_wait_large.dat");
+ //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/11_acc_gyro_90_degrees_turns.dat");
  
  // ----------------------------------------------------------------
  // Filter data [BEGIN]
@@ -976,7 +1057,7 @@ int main(int argc, char *argv[])
    double kernel_acc[] = {0.020706, 0.065570, 0.166414, 0.247310, 0.247310, 0.166414, 0.065570, 0.020706};
 #endif // if 0
    
-#if 1
+#if 1 // TODO
    // The coefficients of the kernel signal to convolve with the gyro
    // data
    const unsigned n_kernel_gyro = 61;
@@ -1283,10 +1364,15 @@ int main(int argc, char *argv[])
      // Process gyro's data [END]
      // ==========================================================================
      
-
+     
      // ==========================================================================
      // Process acceleration data [BEGIN]
      // ==========================================================================
+     
+     // Pre-process aligned acceleration data
+     //aligned_acc_signal_x[i]-=0.26;
+     //aligned_acc_signal_y[i]-=0.01;
+     //aligned_acc_signal_z[i]+=0.16;
      
      // Get Euler angles approximation from accelerations (we will use
      // this data after integration when applying a complementary
@@ -1305,71 +1391,15 @@ int main(int argc, char *argv[])
      // ==========================================================================
      
      // ==========================================================================
-     // Body frame (ASIKI) to inertial frame (EARTH) [BEGIN]
+     // Gravity compensation, Body frame (ASIKI) to inertial frame (EARTH) [BEGIN]
      // ==========================================================================
+     
      // Store body frame accelerations
      double body_accelerations[DIM];
-     //body_accelerations[0]=aligned_acc_signal_x[i]*0.8;
-     //body_accelerations[1]=aligned_acc_signal_y[i]*0.8;
-     //body_accelerations[2]=aligned_acc_signal_z[i]*0.8;
-     //body_accelerations[0]=aligned_acc_signal_x[i]-0.26;
-     //body_accelerations[1]=aligned_acc_signal_y[i]-0.26; // TODO THIS WORK WITHOUT ROTATION (SEEMS TO WORK BETTER) (2)
-     //body_accelerations[2]=aligned_acc_signal_z[i]-0.26;
-     //body_accelerations[0]=aligned_acc_signal_x[i]-0.2892;
-     //body_accelerations[1]=aligned_acc_signal_y[i]-0.2892; // TODO THIS WORK WITHOUT ROTATION (1)
-     //body_accelerations[2]=aligned_acc_signal_z[i]-0.2892;
-     //body_accelerations[0]=aligned_acc_signal_x[i]-0.4942;
-     //body_accelerations[1]=aligned_acc_signal_y[i]-0.4942;
-     //body_accelerations[2]=aligned_acc_signal_z[i]-0.4942;
-     //body_accelerations[0]=aligned_acc_signal_x[i];
-     //body_accelerations[1]=aligned_acc_signal_y[i];
-     //body_accelerations[2]=aligned_acc_signal_z[i]; Store inertial
-     //frame accelerations
-     double inertial_accelerations[DIM];
-     // Rotate sensor's lectures from the body frame to the inertial
-     // frame
-     //Euler_angles[2]=0.0;
-     //rotate(Euler_angles, body_accelerations, inertial_accelerations);
-     //inertial_accelerations[0]=body_accelerations[0]*0.875;
-     //inertial_accelerations[1]=body_accelerations[1]*0.875;
-     //inertial_accelerations[2]=body_accelerations[2]*0.875;
-     inertial_accelerations[0]=body_accelerations[0];
-     inertial_accelerations[1]=body_accelerations[1];
-     inertial_accelerations[2]=body_accelerations[2];
-#if 0
-     if (fabs(body_accelerations[0]) < 0.3)
-      {
-       inertial_accelerations[0]=0.0;
-      }
-     if (fabs(body_accelerations[1]) < 0.3)
-      {
-       inertial_accelerations[1]=0.0;
-      }
-#endif // #if 0
-     
-     // ==========================================================================
-     // Body frame (ASIKI) to inertial frame (EARTH) [END]
-     // ==========================================================================
-     
-     // ==========================================================================
-     // Gravity compensation [BEGIN]
-     // ==========================================================================
-     // Accelerations in the inertial frame without gravity
-     double linear_accelerations[DIM];
-     // Substract gravity (gravity compensation)
-     linear_accelerations[0]=inertial_accelerations[0];
-     linear_accelerations[1]=inertial_accelerations[1];
-     linear_accelerations[2]=inertial_accelerations[2]-GRAVITY;
-     
-     // Set the values for linear acceleration into the odes to
-     // integrate later
-     odes.linear_acceleration() = linear_accelerations;
-     
-#ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
-     // Add on the average for frontal speed
-     average_frontal_acceleration+=body_accelerations[0];
-#endif // #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
-     
+     body_accelerations[0]=aligned_acc_signal_x[i];
+     body_accelerations[1]=aligned_acc_signal_y[i];
+     body_accelerations[2]=aligned_acc_signal_z[i];
+
 #ifdef OUTPUT_ACCELERATIONS
      // --------------------------------------------------------------------------
      // OUTPUT DATA BLOCK [BEGIN]
@@ -1380,6 +1410,83 @@ int main(int argc, char *argv[])
                          << " " << body_accelerations[0]
                          << " " << body_accelerations[1]
                          << " " << body_accelerations[2] << std::endl; 
+     }
+     // --------------------------------------------------------------------------
+     // OUTPUT DATA BLOCK [END]
+     // --------------------------------------------------------------------------
+#endif //#ifdef OUTPUT_ACCELERATIONS
+     
+     // -------------------------------------------
+     // Gravity compensation
+     // -------------------------------------------
+     
+     // Store the gravity in the inertial frame
+     double gravity_in_inertial_frame[DIM];
+     gravity_in_inertial_frame[0]=0.0;
+     gravity_in_inertial_frame[1]=0.0;
+     gravity_in_inertial_frame[2]=GRAVITY;
+     //gravity_in_inertial_frame[2]=1.0; // TODO
+     // Store the gravity in the body frame
+     double gravity_in_body_frame[DIM];
+     
+     // Transform gravity into body frame
+     transform_inertial_to_body(Euler_angles, gravity_in_inertial_frame, gravity_in_body_frame);
+     
+#ifdef OUTPUT_GRAVITY_IN_BODY_FRAME
+     // --------------------------------------------------------------------------
+     // OUTPUT DATA BLOCK [BEGIN]
+     // --------------------------------------------------------------------------
+     {
+      // Gravity in body frame
+      outfile_gravity_in_body_frame << current_time
+                                    << " " << gravity_in_body_frame[0]
+                                    << " " << gravity_in_body_frame[1]
+                                    << " " << gravity_in_body_frame[2] << std::endl; 
+     }
+     // --------------------------------------------------------------------------
+     // OUTPUT DATA BLOCK [END]
+     // --------------------------------------------------------------------------
+#endif //#ifdef OUTPUT_GRAVITY_IN_BODY_FRAME
+     
+     // Substract gravity (in body frame)
+     body_accelerations[0]-=gravity_in_body_frame[0];
+     body_accelerations[1]-=gravity_in_body_frame[1];
+     body_accelerations[2]-=gravity_in_body_frame[2];
+     
+     // ---------------------------------------------------------
+     // Transform acceleration from body frame to inertial frame
+     // ---------------------------------------------------------
+     
+     // Store inertial frame accelerations
+     double inertial_accelerations[DIM];
+     transform_body_to_inertial(Euler_angles, body_accelerations, inertial_accelerations);
+     
+     // Linear acceleration storage
+     double linear_accelerations[DIM];
+     // Substract gravity (gravity compensation)
+     linear_accelerations[0]=inertial_accelerations[0];
+     linear_accelerations[1]=inertial_accelerations[1];
+     linear_accelerations[2]=inertial_accelerations[2];
+     
+     // Set the values for linear acceleration into the odes to
+     // integrate later
+     odes.linear_acceleration() = linear_accelerations;
+     
+#ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
+     // Add on the average for frontal speed
+     average_frontal_acceleration+=body_accelerations[0];
+#endif // #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
+
+#ifdef OUTPUT_ACCELERATIONS
+     // --------------------------------------------------------------------------
+     // OUTPUT DATA BLOCK [BEGIN]
+     // --------------------------------------------------------------------------
+     {
+      // Body frame accelerations
+      outfile_body_acc_without_gravity << current_time
+                                       << " " << body_accelerations[0]
+                                       << " " << body_accelerations[1]
+                                       << " " << body_accelerations[2] << std::endl; 
       
       // Inertial frame accelerations
       outfile_inertial_acc << current_time
@@ -1398,16 +1505,12 @@ int main(int argc, char *argv[])
      // --------------------------------------------------------------------------
 #endif //#ifdef OUTPUT_ACCELERATIONS
      
-     // ==========================================================================
-     // Gravity compensation [END]
-     // ==========================================================================
-
 #ifdef OUTPUT_VELOCITIES
      // --------------------------------------------------------------------------
      // OUTPUT DATA BLOCK [BEGIN]
      // --------------------------------------------------------------------------
      {
-      // Velocity
+      // Linear velocity
       outfile_velocity << current_time
                        << " " << y[1][0]
                        << " " << y[3][0]
@@ -1415,6 +1518,47 @@ int main(int argc, char *argv[])
                        << std::endl;
      }
 #endif // #ifdef OUTPUT_VELOCITIES
+     
+#if 0 // TODO: Delete this #ifdef block
+     //body_accelerations[0]=aligned_acc_signal_x[i]*0.8;
+     //body_accelerations[1]=aligned_acc_signal_y[i]*0.8;
+     //body_accelerations[2]=aligned_acc_signal_z[i]*0.8;
+     //body_accelerations[0]=aligned_acc_signal_x[i]-0.26;
+     //body_accelerations[1]=aligned_acc_signal_y[i]-0.26; // TODO THIS WORK WITHOUT ROTATION (SEEMS TO WORK BETTER) (2)
+     //body_accelerations[2]=aligned_acc_signal_z[i]-0.26;
+     //body_accelerations[0]=aligned_acc_signal_x[i]-0.2892;
+     //body_accelerations[1]=aligned_acc_signal_y[i]-0.2892; // TODO THIS WORK WITHOUT ROTATION (1)
+     //body_accelerations[2]=aligned_acc_signal_z[i]-0.2892;
+     //body_accelerations[0]=aligned_acc_signal_x[i]-0.4942;
+     //body_accelerations[1]=aligned_acc_signal_y[i]-0.4942;
+     //body_accelerations[2]=aligned_acc_signal_z[i]-0.4942;
+
+     // Rotate sensor's lectures from the body frame to the inertial
+     // frame
+     //Euler_angles[2]=0.0;
+     rotate(Euler_angles, body_accelerations, inertial_accelerations);
+     //inertial_accelerations[0]=body_accelerations[0]*0.875;
+     //inertial_accelerations[1]=body_accelerations[1]*0.875;
+     //inertial_accelerations[2]=body_accelerations[2]*0.875;
+     //inertial_accelerations[0]=body_accelerations[0];
+     //inertial_accelerations[1]=body_accelerations[1];
+     //inertial_accelerations[2]=body_accelerations[2];
+#if 0
+     if (fabs(body_accelerations[0]) < 0.3)
+      {
+       inertial_accelerations[0]=0.0;
+      }
+     if (fabs(body_accelerations[1]) < 0.3)
+      {
+       inertial_accelerations[1]=0.0;
+      }
+#endif // #if 0
+     
+#endif // #if 0
+     
+     // ==========================================================================
+     // Gravity compensation, Body frame (ASIKI) to inertial frame (EARTH) [END]
+     // ==========================================================================
      
      // ==========================================================================
      // Integrate the ODE's [BEGIN]
@@ -1450,8 +1594,10 @@ int main(int argc, char *argv[])
      // Update Euler angles
      y[6][0] = alpha * y[6][0] + (1.0 - alpha) * Euler_angles_from_acc[0];
      y[7][0] = alpha * y[7][0] + (1.0 - alpha) * Euler_angles_from_acc[1];
+#ifdef GYRO_THRESHOLD_Z
      // Complementary filter of Yaw with Yaw threshold
      y[8][0] = alpha * y[8][0] + (1.0 - alpha) * y[9][0];
+#endif // #ifdef GYRO_THRESHOLD_Z
      
      // ==========================================================================
      // Complementary filter [END]
@@ -1517,7 +1663,9 @@ int main(int argc, char *argv[])
  outfile_euler_angles_rates.close();
  
  outfile_roll_pitch_yaw.close();
+ outfile_gravity_in_body_frame.close();
  outfile_body_acc.close();
+ outfile_body_acc_without_gravity.close();
  outfile_inertial_acc.close();
  outfile_linear_acc.close();
  outfile_velocity.close();
