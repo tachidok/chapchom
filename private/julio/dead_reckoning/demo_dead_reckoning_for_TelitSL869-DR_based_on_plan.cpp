@@ -46,6 +46,8 @@
 // -------------------------------------------------
 #define DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
 
+#define LOW_PASS_FILTER_ACC
+
 using namespace chapchom;
 
 // ===================================================================
@@ -640,22 +642,6 @@ int main(int argc, char *argv[])
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
  
- // Body frame accelerations without gravity
- char file_body_accelerations_without_gravity_name[100];
- sprintf(file_body_accelerations_without_gravity_name, "./RESLT/body_accelerations_without_gravity.dat");
- std::ofstream outfile_body_acc_without_gravity;
- outfile_body_acc_without_gravity.open(file_body_accelerations_without_gravity_name, std::ios::out);
- if (outfile_body_acc_without_gravity.fail())
-  {
-   // Error message
-   std::ostringstream error_message;
-   error_message << "Could not create the file [" << file_body_accelerations_without_gravity_name << "]"
-                 << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
-  }
- 
  // Inertial accelerations
  char file_inertial_accelerations_name[100];
  sprintf(file_inertial_accelerations_name, "./RESLT/inertial_accelerations.dat");
@@ -885,7 +871,15 @@ int main(int argc, char *argv[])
    std::vector<std::vector<double> > raw_gyro_t = odes.get_angular_velocities();
    // Get the raw data from accelerometers
    std::vector<std::vector<double> > raw_acc_t = odes.get_accelerations();
-
+   
+#if 0
+   // Skip this data if time is not larger than 100
+   if (raw_gyro_t[0][0] < 100.0)
+    {
+     continue;
+    }
+#endif // #if 0
+   
    // ==========================================================================
    // ==========================================================================
    // ==========================================================================
@@ -1007,7 +1001,7 @@ int main(int argc, char *argv[])
      filtered_acc_signal_t[i] = raw_acc_t[i][0];
     }
 
-#if 0
+#if 1
    // The coefficients of the kernel signal to convolve with the gyro
    // data
    const unsigned n_kernel_gyro = 15;
@@ -1019,11 +1013,34 @@ int main(int argc, char *argv[])
    // The coefficients of the kernel signal to convolve with the
    // accelerometer data
    const unsigned n_kernel_acc = 15;
+#ifdef LOW_PASS_FILTER_ACC
    double kernel_acc[] = {0.0104226000635011, 0.0163818874099687, 0.0330775506149548, 0.0572325417966930, \
                           0.0840719974006429, 0.108274081298100, 0.125032039259642, 0.131014604312996, \
                           0.125032039259642, 0.108274081298100, 0.0840719974006429, 0.0572325417966930, \
                           0.0330775506149548, 0.0163818874099687, 0.0104226000635011};
+#else
+   double kernel_acc[] = {1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+#if 0
+   double kernel_acc[] = {-0.004151183833573330282662450230191097944,
+                          -0.004222083569197301010367251450361436582,
+                          -0.004282569995648658964237931456864316715,
+                          -0.004332397709883636233163528572731593158,
+                          -0.004371364323484815302134354197960419697,
+                          -0.004399311420462344128512466312486139941,
+                          -0.004416125307385473756915938992051451351,
+                          0.991465098478902073786400706012500450015,
+                          -0.004416125307385473756915938992051451351,
+                          -0.004399311420462344128512466312486139941,
+                          -0.004371364323484815302134354197960419697,
+                          -0.004332397709883636233163528572731593158,
+                          -0.004282569995648658964237931456864316715,
+                          -0.004222083569197301010367251450361436582,
+                          -0.004151183833573330282662450230191097944};
 #endif // #if 0
+   
+#endif // #ifdef LOW_PASS_FILTER_ACC
+   
+#endif // #if 1
    
 #if 0
    // The coefficients of the kernel signal to convolve with the gyro
@@ -1057,7 +1074,7 @@ int main(int argc, char *argv[])
    double kernel_acc[] = {0.020706, 0.065570, 0.166414, 0.247310, 0.247310, 0.166414, 0.065570, 0.020706};
 #endif // if 0
    
-#if 1 // TODO
+#if 0 // TODO
    // The coefficients of the kernel signal to convolve with the gyro
    // data
    const unsigned n_kernel_gyro = 61;
@@ -1073,7 +1090,8 @@ int main(int argc, char *argv[])
    
    // The coefficients of the kernel signal to convolve with the
    // accelerometer data
-   const unsigned n_kernel_acc = 61;
+   const unsigned n_kernel_acc = 61;   
+#ifdef LOW_PASS_FILTER_ACC
    double kernel_acc[] = {0.0022962, 0.0023817, 0.0026131, 0.0029901, 0.0035107, 0.0041713, 0.0049663, \
                           0.0058885, 0.0069292, 0.0080780, 0.0093232, 0.0106518, 0.0120497, 0.0135018, \
                           0.0149923, 0.0165048, 0.0180224, 0.0195282, 0.0210052, 0.0224366, 0.0238062, \
@@ -1083,7 +1101,80 @@ int main(int argc, char *argv[])
                           0.0210052, 0.0195282, 0.0180224, 0.0165048, 0.0149923, 0.0135018, 0.0120497, \
                           0.0106518, 0.0093232, 0.0080780, 0.0069292, 0.0058885, 0.0049663, 0.0041713, \
                           0.0035107, 0.0029901, 0.0026131, 0.0023817, 0.0022962};
-#endif // if 1
+#else
+   
+#if 0
+   double kernel_acc[] = {1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, \
+                          0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, \
+                          0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, \
+                          0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+#endif // #if 0
+   
+   double kernel_acc[] = {-0.001039797554945090822184350365375848924,
+                          -0.001044186393721846690951782221645771642,
+                          -0.001048435732341843323184304992423676595,
+                          -0.001052544624388807893711206276066150167,
+                          -0.001056512154393026261048338376724586851,
+                          -0.001060337438069312550673051198657503846,
+                          -0.001064019622548412809942552925690506527,
+                          -0.001067557886599571331104341354034659162,
+                          -0.001070951440845780994887137538285060145,
+                          -0.001074199527968205903835641201737871597,
+                          -0.001077301422906462146505957022668553691,
+                          -0.001080256433046149645155198371071492147,
+                          -0.001083063898401441993088467619088532956,
+                          -0.001085723191786078364526324513406052574,
+                          -0.001088233718978797587295659354822419118,
+                          -0.001090594918877817003088903646812468651,
+                          -0.001092806263648608139371631864378286991,
+                          -0.00109486725886042790371888155931401343,
+                          -0.001096777443617160752512007526604520535,
+                          -0.001098536390677080313432734115508537798,
+                          -0.001100143706565619638668152013849521609,
+                          -0.001101599031676527701284484805910324212,
+                          -0.001102902040368170183751161950169716874,
+                          -0.001104052441047024320924796469967077428,
+                          -0.001105049976245363286750378328804345074,
+                          -0.001105894422687416162390250384817136364,
+                          -0.001106585591349075600384188611258196033,
+                          -0.001107123327506143303441965564104521036,
+                          -0.001107507510776095877372271480965082446,
+                          -0.001107738055148356406259813056180973945,
+                          0.999929753471740290216018820501631125808,
+                          -0.001107738055148356406259813056180973945,
+                          -0.001107507510776095877372271480965082446,
+                          -0.001107123327506143303441965564104521036,
+                          -0.001106585591349075600384188611258196033,
+                          -0.001105894422687416162390250384817136364,
+                          -0.001105049976245363286750378328804345074,
+                          -0.001104052441047024320924796469967077428,
+                          -0.001102902040368170183751161950169716874,
+                          -0.001101599031676527701284484805910324212,
+                          -0.001100143706565619638668152013849521609,
+                          -0.001098536390677080313432734115508537798,
+                          -0.001096777443617160752512007526604520535,
+                          -0.00109486725886042790371888155931401343,
+                          -0.001092806263648608139371631864378286991,
+                          -0.001090594918877817003088903646812468651,
+                          -0.001088233718978797587295659354822419118,
+                          -0.001085723191786078364526324513406052574,
+                          -0.001083063898401441993088467619088532956,
+                          -0.001080256433046149645155198371071492147,
+                          -0.001077301422906462146505957022668553691,
+                          -0.001074199527968205903835641201737871597,
+                          -0.001070951440845780994887137538285060145,
+                          -0.001067557886599571331104341354034659162,
+                          -0.001064019622548412809942552925690506527,
+                          -0.001060337438069312550673051198657503846,
+                          -0.001056512154393026261048338376724586851,
+                          -0.001052544624388807893711206276066150167,
+                          -0.001048435732341843323184304992423676595,
+                          -0.00104418639372184669095178222164577164,
+                          -0.001039797554945090822184350365375848924};
+   
+#endif // #ifdef LOW_PASS_FILTER_ACC
+   
+#endif // #if 0
    
    // Perform the actual convolution
    filter_signal_by_convolution(noisy_signal_gyro_x,
@@ -1279,11 +1370,14 @@ int main(int argc, char *argv[])
    // ==========================================================================
    // ==========================================================================
    // ==========================================================================
-   
+      
    // Loop over the data and process each pair of gyro-accelerometers
    // data (main processing)
    for (unsigned i = 0; i < n_data-1; i++)
-    {     
+    {
+     // Get the discretised time for this set of data
+     current_time = aligned_time[i];
+     
      // Get Euler angles at current time
      double Euler_angles[DIM];
      Euler_angles[0] = y[6][0];
@@ -1391,7 +1485,7 @@ int main(int argc, char *argv[])
      // ==========================================================================
      
      // ==========================================================================
-     // Gravity compensation, Body frame (ASIKI) to inertial frame (EARTH) [BEGIN]
+     // Gravity compensation [BEGIN]
      // ==========================================================================
      
      // Store body frame accelerations
@@ -1399,28 +1493,13 @@ int main(int argc, char *argv[])
      body_accelerations[0]=aligned_acc_signal_x[i];
      body_accelerations[1]=aligned_acc_signal_y[i];
      body_accelerations[2]=aligned_acc_signal_z[i];
-
-#ifdef OUTPUT_ACCELERATIONS
-     // --------------------------------------------------------------------------
-     // OUTPUT DATA BLOCK [BEGIN]
-     // --------------------------------------------------------------------------
-     {
-      // Body frame accelerations
-      outfile_body_acc << current_time
-                         << " " << body_accelerations[0]
-                         << " " << body_accelerations[1]
-                         << " " << body_accelerations[2] << std::endl; 
-     }
-     // --------------------------------------------------------------------------
-     // OUTPUT DATA BLOCK [END]
-     // --------------------------------------------------------------------------
-#endif //#ifdef OUTPUT_ACCELERATIONS
-     
+          
      // -------------------------------------------
      // Gravity compensation
      // -------------------------------------------
      
-     // Store the gravity in the inertial frame
+     // Store the gravity in the inertial frame (negative because we
+     // want to subtract it later)
      double gravity_in_inertial_frame[DIM];
      gravity_in_inertial_frame[0]=0.0;
      gravity_in_inertial_frame[1]=0.0;
@@ -1441,40 +1520,54 @@ int main(int argc, char *argv[])
       outfile_gravity_in_body_frame << current_time
                                     << " " << gravity_in_body_frame[0]
                                     << " " << gravity_in_body_frame[1]
-                                    << " " << gravity_in_body_frame[2] << std::endl; 
+                                    << " " << gravity_in_body_frame[2] << std::endl;
      }
      // --------------------------------------------------------------------------
      // OUTPUT DATA BLOCK [END]
      // --------------------------------------------------------------------------
 #endif //#ifdef OUTPUT_GRAVITY_IN_BODY_FRAME
      
-     // Substract gravity (in body frame)
-     body_accelerations[0]-=gravity_in_body_frame[0];
-     body_accelerations[1]-=gravity_in_body_frame[1];
-     body_accelerations[2]-=gravity_in_body_frame[2];
-     
-     // ---------------------------------------------------------
-     // Transform acceleration from body frame to inertial frame
-     // ---------------------------------------------------------
-     
-     // Store inertial frame accelerations
-     double inertial_accelerations[DIM];
-     transform_body_to_inertial(Euler_angles, body_accelerations, inertial_accelerations);
+     // -------------------------------------------------------
+     // Subtract gravity (in body frame) to generate linear
+     // acceleration (in body frame)
+     // -------------------------------------------------------
      
      // Linear acceleration storage
      double linear_accelerations[DIM];
-     // Substract gravity (gravity compensation)
-     linear_accelerations[0]=inertial_accelerations[0];
-     linear_accelerations[1]=inertial_accelerations[1];
-     linear_accelerations[2]=inertial_accelerations[2];
+     // Subtract gravity (gravity compensation)
+     //linear_accelerations[0]=body_accelerations[0] - 0.4942;
+     //linear_accelerations[0]=body_accelerations[0] * 1.3298;
+     linear_accelerations[0]=body_accelerations[0]-gravity_in_body_frame[0] + 0.06;
+     linear_accelerations[1]=body_accelerations[1]-gravity_in_body_frame[1];
+     linear_accelerations[2]=body_accelerations[2]-gravity_in_body_frame[2];
+     
+#if 0
+     if (fabs(linear_accelerations[0]) < 0.4)
+      {
+       linear_accelerations[0]=0.0;
+      }
+     if (fabs(linear_accelerations[1]) < 0.0)
+      {
+       linear_accelerations[1]=0.0;
+      }
+#endif // #if 0
      
      // Set the values for linear acceleration into the odes to
      // integrate later
      odes.linear_acceleration() = linear_accelerations;
      
+     // ----------------------------------------------------------
+     // Transform linear acceleration from body frame to inertial
+     // frame
+     // ----------------------------------------------------------
+     
+     // Store inertial frame accelerations
+     double inertial_accelerations[DIM];
+     transform_body_to_inertial(Euler_angles, linear_accelerations, inertial_accelerations);
+     
 #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
      // Add on the average for frontal speed
-     average_frontal_acceleration+=body_accelerations[0];
+     average_frontal_acceleration+=linear_accelerations[0];
 #endif // #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
 
 #ifdef OUTPUT_ACCELERATIONS
@@ -1483,41 +1576,27 @@ int main(int argc, char *argv[])
      // --------------------------------------------------------------------------
      {
       // Body frame accelerations
-      outfile_body_acc_without_gravity << current_time
-                                       << " " << body_accelerations[0]
-                                       << " " << body_accelerations[1]
-                                       << " " << body_accelerations[2] << std::endl; 
-      
-      // Inertial frame accelerations
-      outfile_inertial_acc << current_time
-                         << " " << inertial_accelerations[0]
-                         << " " << inertial_accelerations[1]
-                         << " " << inertial_accelerations[2] << std::endl; 
+      outfile_body_acc << current_time
+                       << " " << body_accelerations[0]
+                       << " " << body_accelerations[1]
+                       << " " << body_accelerations[2] << std::endl;
       
       // Linear accelerations
       outfile_linear_acc << current_time
                          << " " << linear_accelerations[0]
                          << " " << linear_accelerations[1]
                          << " " << linear_accelerations[2] << std::endl;
+      
+      // Inertial frame accelerations
+      outfile_inertial_acc << current_time
+                           << " " << inertial_accelerations[0]
+                           << " " << inertial_accelerations[1]
+                           << " " << inertial_accelerations[2] << std::endl;
      }
      // --------------------------------------------------------------------------
      // OUTPUT DATA BLOCK [END]
      // --------------------------------------------------------------------------
 #endif //#ifdef OUTPUT_ACCELERATIONS
-     
-#ifdef OUTPUT_VELOCITIES
-     // --------------------------------------------------------------------------
-     // OUTPUT DATA BLOCK [BEGIN]
-     // --------------------------------------------------------------------------
-     {
-      // Linear velocity
-      outfile_velocity << current_time
-                       << " " << y[1][0]
-                       << " " << y[3][0]
-                       << " " << y[5][0]
-                       << std::endl;
-     }
-#endif // #ifdef OUTPUT_VELOCITIES
      
 #if 0 // TODO: Delete this #ifdef block
      //body_accelerations[0]=aligned_acc_signal_x[i]*0.8;
@@ -1557,14 +1636,41 @@ int main(int argc, char *argv[])
 #endif // #if 0
      
      // ==========================================================================
-     // Gravity compensation, Body frame (ASIKI) to inertial frame (EARTH) [END]
+     // Gravity compensation [END]
+     // ==========================================================================
+     
+     // ==========================================================================
+     // Velocity processing [BEGIN]
+     // ==========================================================================
+
+#if 0
+     // Use a least-square strategy to get the closest line to the
+     // curve. These are the coefficients obtained with MatLab
+     y[1][0]-= current_time * 0.1844 - 17.2148;
+     y[2][0]-= current_time * (-0.0808) + 15.5603;
+#endif // #if 0
+     
+#ifdef OUTPUT_VELOCITIES
+     // --------------------------------------------------------------------------
+     // OUTPUT DATA BLOCK [BEGIN]
+     // --------------------------------------------------------------------------
+     {
+      // Linear velocity
+      outfile_velocity << current_time
+                       << " " << y[1][0]
+                       << " " << y[3][0]
+                       << " " << y[5][0]
+                       << std::endl;
+     }
+#endif // #ifdef OUTPUT_VELOCITIES
+     
+     // ==========================================================================
+     // Velocity processing [END]
      // ==========================================================================
      
      // ==========================================================================
      // Integrate the ODE's [BEGIN]
      // ==========================================================================
-     // Get the discretised time for this set of data
-     current_time = aligned_time[i];
      // Compute the step size
      const double step = aligned_time[i+1] - aligned_time[i];
      
@@ -1589,7 +1695,7 @@ int main(int argc, char *argv[])
      // Complementary filter [BEGIN]
      // ==========================================================================
      // Complementary filter parameter
-     const double alpha = 0.90;
+     const double alpha = 0.99;
      
      // Update Euler angles
      y[6][0] = alpha * y[6][0] + (1.0 - alpha) * Euler_angles_from_acc[0];
@@ -1615,19 +1721,22 @@ int main(int argc, char *argv[])
    
 #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
    const double speed_in_m_per_sec_from_gps = odes.speed_in_knots()*0.514444;
-   // OUTPUT
-   outfile_speed_in_m_per_sec_from_GPS << current_time
-                                       << " " << speed_in_m_per_sec_from_gps << std::endl;
    const double acc_in_m_per_sec_from_speed_from_gps =
     (speed_in_m_per_sec_from_gps - previous_speed_in_m_per_sec_from_gps) / (current_time - raw_gyro_t[0][0]);
    // Store previous speed
    previous_speed_in_m_per_sec_from_gps = speed_in_m_per_sec_from_gps;
+   
+   // ----------------------------
    // OUTPUT
+   // ----------------------------
+   outfile_speed_in_m_per_sec_from_GPS << current_time
+                                       << " " << speed_in_m_per_sec_from_gps << std::endl;
    outfile_acc_in_m_per_sec_from_speed_from_GPS << current_time
                                                 << " " << acc_in_m_per_sec_from_speed_from_gps << std::endl;
    
    // Get the average
    average_frontal_acceleration/=(n_data-1);
+   
    // OUTPUT
    //const double error = average_frontal_acceleration - acc_in_m_per_sec_from_speed_from_gps;
    const double abs_error = fabs(acc_in_m_per_sec_from_speed_from_gps - average_frontal_acceleration);
@@ -1665,7 +1774,6 @@ int main(int argc, char *argv[])
  outfile_roll_pitch_yaw.close();
  outfile_gravity_in_body_frame.close();
  outfile_body_acc.close();
- outfile_body_acc_without_gravity.close();
  outfile_inertial_acc.close();
  outfile_linear_acc.close();
  outfile_velocity.close();
