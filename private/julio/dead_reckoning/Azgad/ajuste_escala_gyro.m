@@ -42,8 +42,6 @@ a = cos(Alpha);
 d = sin(Alpha);
 % % % a = 5*pi/180
 % % % cos(a)-1,     //body_accelerations[0]=aligned_acc_signal_x[i]-0.4942;
-     //body_accelerations[1]=aligned_acc_signal_y[i]-0.4942;
-     //body_accelerations[2]=aligned_acc_signal_z[i]-0.4942;
 % % % -a^2/2
 
 % wz en el marco de referencia virtual (calculo inverso)

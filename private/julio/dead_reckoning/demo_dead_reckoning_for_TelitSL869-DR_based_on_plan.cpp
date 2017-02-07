@@ -46,7 +46,7 @@
 // -------------------------------------------------
 #define DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
 
-#define LOW_PASS_FILTER_ACC
+//#define LOW_PASS_FILTER_ACC
 
 using namespace chapchom;
 
@@ -1537,7 +1537,8 @@ int main(int argc, char *argv[])
      // Subtract gravity (gravity compensation)
      //linear_accelerations[0]=body_accelerations[0] - 0.4942;
      //linear_accelerations[0]=body_accelerations[0] * 1.3298;
-     linear_accelerations[0]=body_accelerations[0]-gravity_in_body_frame[0] + 0.06;
+     //linear_accelerations[0]=body_accelerations[0]-gravity_in_body_frame[0] + 0.06;
+     linear_accelerations[0]=body_accelerations[0]-gravity_in_body_frame[0];
      linear_accelerations[1]=body_accelerations[1]-gravity_in_body_frame[1];
      linear_accelerations[2]=body_accelerations[2]-gravity_in_body_frame[2];
      
