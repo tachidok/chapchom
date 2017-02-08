@@ -84,6 +84,12 @@ namespace chapchom
   // Get the value of the speed (in knots)
   inline double speed_in_knots(){return Speed_in_knots;}
   
+  // Get longitude
+  inline double longitude(){return Longitude;}
+  
+  // Get latitude
+  inline double latitude(){return Latitude;}
+  
   // Get yaw correction as a function of time and the number of steps
   // per second
   const double get_yaw_correction(const double t,
@@ -179,6 +185,10 @@ namespace chapchom
   double True_course_in_degrees;
   // Temporary storage for speed in knots
   double Speed_in_knots;
+  // Store longitude from GPRMC NMEA string
+  double Longitude;
+  // Store latitude from GPRMC NMEA string
+  double Latitude;
   
  };
  

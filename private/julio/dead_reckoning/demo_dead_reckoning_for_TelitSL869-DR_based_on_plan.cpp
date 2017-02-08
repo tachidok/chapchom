@@ -31,6 +31,12 @@
 #define OUTPUT_ACCELERATIONS
 #define OUTPUT_VELOCITIES
 #define OUTPUT_EULER_ANGLES
+//#define OUTPUT_EULER_ANGLES_FROM_GYRO_AND_ACCELEROMETER // TODO, when
+                                                        // ENABLE this
+                                                        // remember to
+                                                        // disable the
+                                                        // complementary
+                                                        // filter
 #define OUTPUT_EULER_ANGLES_RATES
 
 // -------------------------------------------------
@@ -594,6 +600,38 @@ int main(int argc, char *argv[])
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
  
+ // Euler-angles from gyro
+ char file_euler_angles_from_gyro_name[100];
+ sprintf(file_euler_angles_from_gyro_name, "./RESLT/euler_angles_from_gyro.dat");
+ std::ofstream outfile_euler_angles_from_gyro;
+ outfile_euler_angles_from_gyro.open(file_euler_angles_from_gyro_name, std::ios::out);
+ if (outfile_euler_angles_from_gyro.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_euler_angles_from_gyro_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+ // Euler-angles from accelerometer
+ char file_euler_angles_from_accelerometer_name[100];
+ sprintf(file_euler_angles_from_accelerometer_name, "./RESLT/euler_angles_from_accelerometer.dat");
+ std::ofstream outfile_euler_angles_from_accelerometer;
+ outfile_euler_angles_from_accelerometer.open(file_euler_angles_from_accelerometer_name, std::ios::out);
+ if (outfile_euler_angles_from_accelerometer.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_euler_angles_from_accelerometer_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
  // Roll, pitch and yaw
  char file_roll_pitch_yaw_name[100];
  sprintf(file_roll_pitch_yaw_name, "./RESLT/roll_pitch_yaw.dat");
@@ -740,6 +778,23 @@ int main(int argc, char *argv[])
   }
 #endif // #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
  
+ // Navigation data (from GPS)
+ char file_navigation_data_from_GPS_name[100];
+ sprintf(file_navigation_data_from_GPS_name, "./RESLT/navigation_data_from_GPS.dat");
+ std::ofstream outfile_navigation_data_from_GPS;
+ outfile_navigation_data_from_GPS.open(file_navigation_data_from_GPS_name, std::ios::out);
+ if (outfile_navigation_data_from_GPS.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_navigation_data_from_GPS_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+ 
  // ----------------------------------------------------------------
  // FILES (END)
  // ----------------------------------------------------------------
@@ -822,6 +877,7 @@ int main(int argc, char *argv[])
  y[4][0] = 0.0; // Initial z-position
  y[5][0] = 0.0; // Initial z-velocity
  y[6][0] = 0.0; // Initial roll (radians)
+ //y[7][0] = -0.03; // Initial pitch (radians)
  y[7][0] = 0.0; // Initial pitch (radians)
  y[8][0] = 0.0; // Initial yaw (radians)
  y[9][0] = 0.0; // Initial yaw with threshold (radians)
@@ -849,6 +905,9 @@ int main(int argc, char *argv[])
  
  // Flag to indicate whether to continue processing
  bool LOOP = true;
+ 
+ // Radial position from GPS (initialise to zero)
+ double radial_position_from_GPS_in_meters = 0.0;
  
  // Main LOOP (continue looping until all data in the input file is
  // processed)
@@ -1383,7 +1442,7 @@ int main(int argc, char *argv[])
      Euler_angles[0] = y[6][0];
      Euler_angles[1] = y[7][0];
      Euler_angles[2] = y[8][0];
-
+     
 #ifdef OUTPUT_EULER_ANGLES
      // --------------------------------------------------------------------------
      // OUTPUT DATA BLOCK [BEGIN]
@@ -1442,7 +1501,7 @@ int main(int argc, char *argv[])
       outfile_euler_angles_rates << current_time
                                  << " " << Euler_angles_rates[0]
                                  << " " << Euler_angles_rates[1]
-                                 << " " << Euler_angles_rates[2] << std::endl; 
+                                 << " " << Euler_angles_rates[2] << std::endl;
      }
      // --------------------------------------------------------------------------
      // OUTPUT DATA BLOCK [END]
@@ -1483,6 +1542,18 @@ int main(int argc, char *argv[])
      // ==========================================================================
      // Process acceleration data [END]
      // ==========================================================================
+     
+#ifdef OUTPUT_EULER_ANGLES_FROM_GYRO_AND_ACCELEROMETER
+     outfile_euler_angles_from_gyro << current_time
+                                    << " " << Euler_angles[0]
+                                    << " " << Euler_angles[1]
+                                    << " " << Euler_angles[2] << std::endl;
+     
+     outfile_euler_angles_from_accelerometer << current_time
+                                             << " " << Euler_angles_from_acc[0]
+                                             << " " << Euler_angles_from_acc[1]
+                                             << " " << Euler_angles_from_acc[2] << std::endl;
+#endif // #ifdef OUTPUT_EULER_ANGLES_FROM_GYRO_AND_ACCELEROMETER
      
      // ==========================================================================
      // Gravity compensation [BEGIN]
@@ -1696,7 +1767,17 @@ int main(int argc, char *argv[])
      // Complementary filter [BEGIN]
      // ==========================================================================
      // Complementary filter parameter
-     const double alpha = 0.99;
+     const double alpha = 0.98;
+     
+#ifndef OUTPUT_EULER_ANGLES_FROM_GYRO_AND_ACCELEROMETER // Complementary
+                                                        // filter is
+                                                        // applied if
+                                                        // no Euler
+                                                        // angles from
+                                                        // gyro and
+                                                        // accelerometers
+                                                        // are
+                                                        // required
      
      // Update Euler angles
      y[6][0] = alpha * y[6][0] + (1.0 - alpha) * Euler_angles_from_acc[0];
@@ -1705,6 +1786,8 @@ int main(int argc, char *argv[])
      // Complementary filter of Yaw with Yaw threshold
      y[8][0] = alpha * y[8][0] + (1.0 - alpha) * y[9][0];
 #endif // #ifdef GYRO_THRESHOLD_Z
+     
+#endif // #ifndef OUTPUT_EULER_ANGLES_FROM_GYRO_AND_ACCELEROMETER
      
      // ==========================================================================
      // Complementary filter [END]
@@ -1720,10 +1803,11 @@ int main(int argc, char *argv[])
    // ==========================================================================
    // ==========================================================================
    
+   const double dt = current_time - raw_gyro_t[0][0];
 #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
    const double speed_in_m_per_sec_from_gps = odes.speed_in_knots()*0.514444;
    const double acc_in_m_per_sec_from_speed_from_gps =
-    (speed_in_m_per_sec_from_gps - previous_speed_in_m_per_sec_from_gps) / (current_time - raw_gyro_t[0][0]);
+    (speed_in_m_per_sec_from_gps - previous_speed_in_m_per_sec_from_gps) / dt;
    // Store previous speed
    previous_speed_in_m_per_sec_from_gps = speed_in_m_per_sec_from_gps;
    
@@ -1757,6 +1841,27 @@ int main(int argc, char *argv[])
              << " z-pos: " << y[4][0] << " z-vel: " << y[5][0]
              << " roll: " << y[6][0] << " pitch: " << y[7][0] << " yaw: " << y[8][0] << std::endl;
    
+   // -------------------------------------------------------------------
+   // Navigation data (from GPS)
+   // -------------------------------------------------------------------
+   // Compute new radial position
+   radial_position_from_GPS_in_meters+= speed_in_m_per_sec_from_gps * dt;
+   // Get the current angle
+   const double true_course_in_degrees_from_GPS = odes.true_course_in_degrees();
+   //const double course_angle = true_course_in_degrees_from_GPS*TO_RADIANS;
+   const double course_angle = y[8][0];
+   // Compute x and y position from angle and radial position
+   const double X_from_GPS = radial_position_from_GPS_in_meters*cos(course_angle);
+   const double Y_from_GPS = radial_position_from_GPS_in_meters*sin(course_angle);
+   outfile_navigation_data_from_GPS << current_time << " "
+                                    << odes.longitude()*1.0e-2 << " "
+                                    << odes.latitude()*1.0e-2 << " "
+                                    << speed_in_m_per_sec_from_gps*3.6 << " "
+                                    << X_from_GPS << " "
+                                    << Y_from_GPS << " "
+                                    << radial_position_from_GPS_in_meters << " "
+                                    << course_angle*TO_DEGREES << std::endl;
+   
   } // while (LOOP)
  
  std::cout << "[FINISHING UP] ... " << std::endl;
@@ -1771,6 +1876,8 @@ int main(int argc, char *argv[])
  outfile_aligned_gyro.close();
  outfile_aligned_acc.close();
  outfile_euler_angles_rates.close();
+ outfile_euler_angles_from_gyro.close();
+ outfile_euler_angles_from_accelerometer.close();
  
  outfile_roll_pitch_yaw.close();
  outfile_gravity_in_body_frame.close();
@@ -1784,6 +1891,8 @@ int main(int argc, char *argv[])
  outfile_acc_in_m_per_sec_from_speed_from_GPS.close();
  outfile_error_acc_in_m_per_sec.close();
 #endif // #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
+ 
+ outfile_navigation_data_from_GPS.close();
  
 #if 0
  outfile_position.close();

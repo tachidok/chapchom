@@ -159,8 +159,10 @@ namespace chapchom
       
       // Get the data structure
       struct GPRMC gprmc = nmea_decoder->get_gprmc();
-      //const double latitude = gprmc.latitude;
-      //const double longitude = gprmc.longitude;
+      // Get longitude
+      Longitude = gprmc.longitude;
+      // Get latitude
+      Latitude = gprmc.latitude;
       // Consume GPRMC data
       nmea_decoder->consume_GPRMC_data();
       // Set the true course variable
@@ -169,8 +171,6 @@ namespace chapchom
       Speed_in_knots = gprmc.speed_knots;
       // Indicate GPRMC data has been read
       read_GPRMC_data = true;
-      //std::cout << "GPRMC:(" << latitude << ", " << longitude << ", "
-      //          <<  True_course_in_degrees << ")" << std::endl;
      }
     
     // TODO: Read Euler angles data

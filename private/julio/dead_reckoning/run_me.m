@@ -18,6 +18,8 @@ aligned_gyro = importfile_TelitSL869DR_3columns('RESLT/aligned_gyro.dat', 1, n_i
 aligned_acc = importfile_TelitSL869DR_3columns('RESLT/aligned_acc.dat', 1, n_input_aligned_data);
 
 euler_angles_rates = importfile_TelitSL869DR_3columns('RESLT/euler_angles_rates.dat', 1, n_output_data);
+euler_angles_from_gyro = importfile_TelitSL869DR_3columns('RESLT/euler_angles_from_gyro.dat', 1, n_output_data);
+euler_angles_from_accelerometer = importfile_TelitSL869DR_3columns('RESLT/euler_angles_from_accelerometer.dat', 1, n_output_data);
 roll_pitch_yaw = importfile_TelitSL869DR_3columns('RESLT/roll_pitch_yaw.dat', 1, n_output_data);
 gravity_in_body_frame = importfile_TelitSL869DR_3columns('RESLT/gravity_in_body_frame.dat', 1, n_output_data);
 body_acceleration = importfile_TelitSL869DR_3columns('RESLT/body_accelerations.dat', 1, n_output_data);
@@ -29,12 +31,14 @@ speed_in_m_per_sec_from_gps = importfile_TelitSL869DR_2columns('RESLT/speed_in_m
 acc_in_m_per_sec_from_speed_from_gps = importfile_TelitSL869DR_2columns('RESLT/acc_in_m_per_sec_from_speed_from_GPS.dat', 1, 531);
 error_acc_in_m_per_sec_between_gps_and_sensor = importfile_TelitSL869DR_3columns('RESLT/error_acc_in_m_per_sec.dat', 1, 531);
 
+navigation_data_from_GPS = importfile_TelitSL869DR_7columns('RESLT/navigation_data_from_GPS.dat', 1, 531);
+
 initial_raw_time = raw_gyro(1,1);
 final_raw_time = raw_gyro(size(raw_gyro,1),1);
 initial_time = aligned_gyro(1,1);
 final_time = aligned_gyro(size(aligned_gyro,1),1);
 
-% %% Filtered and aligned
+%% Filtered and aligned
 % % Gyro
 % figure
 % subplot(2,3,1)
@@ -87,6 +91,58 @@ final_time = aligned_gyro(size(aligned_gyro,1),1);
 % xlabel('Time (s)')
 % ylabel('Acceleration (m/s^2)')
 % legend('Filtered', 'Aligned Time Stamp', 'Location', 'NorthWest')
+% grid on
+
+%% Euler angles from gyro and accelerometer
+% % Euler angles from gyro
+% figure
+% subplot(2,3,1)
+% plot(euler_angles_from_gyro(:,1), euler_angles_from_gyro(:,2)*180.0/pi, 'b')
+% axis([initial_raw_time final_raw_time -180 180])
+% title('Euler angle from gyro [roll]')
+% xlabel('Time (s)')
+% ylabel('\phi (degrees)')
+% grid on
+% 
+% subplot(2,3,2)
+% plot(euler_angles_from_gyro(:,1), euler_angles_from_gyro(:,3)*180.0/pi, 'b')
+% axis([initial_raw_time final_raw_time -180 180])
+% title('Euler angle from gyro [pitch]')
+% xlabel('Time(s)')
+% ylabel('\theta (degrees)')
+% grid on
+% 
+% subplot(2,3,3)
+% plot(euler_angles_from_gyro(:,1), euler_angles_from_gyro(:,4)*180.0/pi, 'b')
+% axis([initial_raw_time final_raw_time -180 180])
+% title('Euler angle from gyro [yaw]')
+% xlabel('Time(s)')
+% ylabel('\theta (degrees)')
+% grid on
+% 
+% % Euler angles from accelerometers
+% subplot(2,3,4)
+% plot(euler_angles_from_accelerometer(:,1), euler_angles_from_accelerometer(:,2)*180.0/pi, 'r')
+% axis([initial_raw_time final_raw_time -180 180])
+% title('Euler angle from accelerometer [roll]')
+% xlabel('Time (s)')
+% ylabel('\phi (degrees)')
+% grid on
+% 
+% subplot(2,3,5)
+% plot(euler_angles_from_accelerometer(:,1), euler_angles_from_accelerometer(:,3)*180.0/pi, 'r')
+% axis([initial_raw_time final_raw_time -180 180])
+% title('Euler angle from accelerometer [pitch]')
+% xlabel('Time(s)')
+% ylabel('\theta (degrees)')
+% grid on
+% 
+% subplot(2,3,6)
+% plot(euler_angles_from_accelerometer(:,1), euler_angles_from_accelerometer(:,4)*180.0/pi, 'r')
+% axis([initial_raw_time final_raw_time -180 180])
+% title('Euler angle from accelerometer [yaw]')
+% xlabel('Time(s)')
+% ylabel('\theta (degrees)')
 % grid on
 
 %% Roll, pitch, yaw and body acceleration vs gravity in body frame
@@ -303,3 +359,28 @@ grid on
 
 average_abs_error = mean(error_acc_in_m_per_sec_between_gps_and_sensor(:,2),1)
 average_relative_error = mean(error_acc_in_m_per_sec_between_gps_and_sensor(:,3),1)
+
+%% DELETE
+delay = 0.05; % Delay in seconds in every loop
+n_loop = size(navigation_data_from_GPS, 1)
+% Plot position
+figure();
+hold('on'); % The painting is done over this plot
+t = title('Trajectory, t=0'); % Initial title, we get a hanlder as well
+p = plot(navigation_data_from_GPS(1,4), navigation_data_from_GPS(1,5), 'b*'); % Get the plot hanlder
+title('Position from velocity from GPS')
+axis([min(navigation_data_from_GPS(:,4)) max(navigation_data_from_GPS(:,4)) min(navigation_data_from_GPS(:,5)) max(navigation_data_from_GPS(:,5))])
+xlabel('x (m)')
+ylabel('y (m)')
+legend('Trajectory', 'Location', 'NorthWest')
+grid on
+
+for i = 1:n_loop
+    t.String = sprintf('Trajectory, t = %.2f (%.2f, %.2f)', navigation_data_from_GPS(i,1), navigation_data_from_GPS(i,4), navigation_data_from_GPS(i,5));
+    p.XData(i) = navigation_data_from_GPS(i,4);
+    p.YData(i) = navigation_data_from_GPS(i,5);
+    %drawnow();
+    pause(delay);
+end
+
+plot(navigation_data_from_GPS(:,1), navigation_data_from_GPS(:,7),'r')
