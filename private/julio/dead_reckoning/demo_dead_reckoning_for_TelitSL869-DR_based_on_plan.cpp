@@ -13,7 +13,7 @@
 // Integration methods
 #include "../../../src/integration/cc_euler_method.h"
 #include "../../../src/integration/cc_RK4_method.h"
-// The odes
+// Ode from TelitSL869-DR
 #include "cc_odes_from_sensors_TelitSL869-DR.h"
 // The nmea decoder
 #include "cc_nmea_decoder.h"
@@ -52,7 +52,7 @@
 // -------------------------------------------------
 #define DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
 
-//#define LOW_PASS_FILTER_ACC
+#define LOW_PASS_FILTER_ACC
 
 using namespace chapchom;
 
@@ -802,7 +802,7 @@ int main(int argc, char *argv[])
  // -----------------------------------------------------------------
  // Instantiation of the problem
  // -----------------------------------------------------------------
- // The ode's
+ // Odes from TelitSL869-DR
  //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/Cadenas_GNSS.dat");
  //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_1_espera.dat");
  //CCODEsFromSensorsTelitSL869DR odes("./TelitSL869-DR/putty_2_sin_espera_basura.dat");
@@ -908,6 +908,9 @@ int main(int argc, char *argv[])
  
  // Radial position from GPS (initialise to zero)
  double radial_position_from_GPS_in_meters = 0.0;
+ // Position x and y from GPS computed from radial position
+ double X_from_GPS = 0.0;
+ double Y_from_GPS = 0.0;
  
  // Main LOOP (continue looping until all data in the input file is
  // processed)
@@ -1059,27 +1062,49 @@ int main(int argc, char *argv[])
     {
      filtered_acc_signal_t[i] = raw_acc_t[i][0];
     }
-
+   
 #if 1
    // The coefficients of the kernel signal to convolve with the gyro
    // data
    const unsigned n_kernel_gyro = 15;
+#define GYRO_NEW_CUT_FREQUENCY
+#ifndef GYRO_NEW_CUT_FREQUENCY
+   // Cut-off frequency 0.5 Hz
    double kernel_gyro[] = {0.0102773244275157, 0.0162263834264182, 0.0328881753317823, 0.0570814837334001, \
                            0.0840520641122108, 0.108434325903213, 0.125345958994944, 0.131388568141032, \
                            0.125345958994944, 0.108434325903213, 0.0840520641122108, 0.0570814837334001, \
                            0.0328881753317823, 0.0162263834264182, 0.0102773244275157};
+#else
+   // Cut-off frequency 2.0 Hz
+   double kernel_gyro[] = {0.00754118897515346, 0.0132044484685228, 0.0290970359558406, 0.0539466364399804, \
+                           0.0835043687965460, 0.111562975489830, 0.131662972122815, 0.138960747502623, \
+                           0.131662972122815, 0.111562975489830, 0.0835043687965460, 0.0539466364399804, \
+                           0.0290970359558406, 0.0132044484685228, 0.00754118897515346};
+#endif // #ifndef GYRO_NEW_CUT_FREQUENCY
    
    // The coefficients of the kernel signal to convolve with the
    // accelerometer data
    const unsigned n_kernel_acc = 15;
 #ifdef LOW_PASS_FILTER_ACC
+#define NEW_CUT_FREQUENCY_ACC
+#ifndef NEW_CUT_FREQUENCY_ACC
+   // Cut-off frequency 0.25 Hz
    double kernel_acc[] = {0.0104226000635011, 0.0163818874099687, 0.0330775506149548, 0.0572325417966930, \
                           0.0840719974006429, 0.108274081298100, 0.125032039259642, 0.131014604312996, \
                           0.125032039259642, 0.108274081298100, 0.0840719974006429, 0.0572325417966930, \
                           0.0330775506149548, 0.0163818874099687, 0.0104226000635011};
 #else
+   // Cut-off frequency 1.0 Hz
+   double kernel_acc[] = {0.00970427824444292, 0.0156084398805262, 0.0321303157536757, 0.0564717288538836, \
+                          0.0839652811496886, 0.109071822344477, 0.126603636409900, 0.132888994726813, \
+                          0.126603636409900, 0.109071822344477, 0.0839652811496886, 0.0564717288538836, \
+                          0.0321303157536757, 0.0156084398805262, 0.00970427824444292};
+#endif // #ifndef NEW_CUT_FREQUENCY_ACC
+   
+#else
    double kernel_acc[] = {1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 #if 0
+   // High-pass filter
    double kernel_acc[] = {-0.004151183833573330282662450230191097944,
                           -0.004222083569197301010367251450361436582,
                           -0.004282569995648658964237931456864316715,
@@ -1767,7 +1792,7 @@ int main(int argc, char *argv[])
      // Complementary filter [BEGIN]
      // ==========================================================================
      // Complementary filter parameter
-     const double alpha = 0.98;
+     const double alpha = 0.90;
      
 #ifndef OUTPUT_EULER_ANGLES_FROM_GYRO_AND_ACCELEROMETER // Complementary
                                                         // filter is
@@ -1786,6 +1811,11 @@ int main(int argc, char *argv[])
      // Complementary filter of Yaw with Yaw threshold
      y[8][0] = alpha * y[8][0] + (1.0 - alpha) * y[9][0];
 #endif // #ifdef GYRO_THRESHOLD_Z
+     
+     const double alpha_vel = 0.90;
+     y[1][0] = y[1][0] * alpha_vel + (1.0 - alpha_vel) * previous_speed_in_m_per_sec_from_gps;
+     //y[1][0] = y[1][0] * alpha_vel + (1.0 - alpha_vel) * 5.2274;
+     //y[1][0] = y[1][0] * alpha_vel + (1.0 - alpha_vel) * 10.4548;
      
 #endif // #ifndef OUTPUT_EULER_ANGLES_FROM_GYRO_AND_ACCELEROMETER
      
@@ -1844,23 +1874,62 @@ int main(int argc, char *argv[])
    // -------------------------------------------------------------------
    // Navigation data (from GPS)
    // -------------------------------------------------------------------
-   // Compute new radial position
-   radial_position_from_GPS_in_meters+= speed_in_m_per_sec_from_gps * dt;
    // Get the current angle
    const double true_course_in_degrees_from_GPS = odes.true_course_in_degrees();
    //const double course_angle = true_course_in_degrees_from_GPS*TO_RADIANS;
    const double course_angle = y[8][0];
    // Compute x and y position from angle and radial position
-   const double X_from_GPS = radial_position_from_GPS_in_meters*cos(course_angle);
-   const double Y_from_GPS = radial_position_from_GPS_in_meters*sin(course_angle);
+   X_from_GPS+= speed_in_m_per_sec_from_gps*dt*cos(course_angle);
+   Y_from_GPS+= speed_in_m_per_sec_from_gps*dt*sin(course_angle);
+   //const double X_from_GPS = radial_position_from_GPS_in_meters*cos(course_angle);
+   //const double Y_from_GPS = radial_position_from_GPS_in_meters*sin(course_angle);
+   
+   char longitude_string[10];
+   char latitude_string[9];
+   sprintf(longitude_string, "%.8f", odes.longitude());
+   sprintf(latitude_string, "%.8f", odes.latitude());
+   char degrees_longitude[2];
+   char minutes_longitude[7];
+   degrees_longitude[0] = longitude_string[0];
+   degrees_longitude[1] = longitude_string[1];
+   minutes_longitude[0] = longitude_string[2];
+   minutes_longitude[1] = longitude_string[3];
+   minutes_longitude[2] = longitude_string[4];
+   minutes_longitude[3] = longitude_string[5];
+   minutes_longitude[4] = longitude_string[6];
+   minutes_longitude[5] = longitude_string[7];
+   minutes_longitude[6] = longitude_string[8];
+#if 0
+   std::cout << std::endl << "Degrees: " << atof(degrees_longitude);
+   std::cout << " Minutes: " << atof(minutes_longitude) << std::endl;
+#endif // #if 0
+   const double longitude = atof(degrees_longitude) + atof(minutes_longitude)/60.0;
+   
+   char degrees_latitude[2];
+   char minutes_latitude[7];
+   degrees_latitude[0] = latitude_string[0];
+   degrees_latitude[1] = latitude_string[1];
+   minutes_latitude[0] = latitude_string[2];
+   minutes_latitude[1] = latitude_string[3];
+   minutes_latitude[2] = latitude_string[4];
+   minutes_latitude[3] = latitude_string[5];
+   minutes_latitude[4] = latitude_string[6];
+   minutes_latitude[5] = latitude_string[7];
+   minutes_latitude[6] = latitude_string[8];
+#if 0
+   std::cout << std::endl << "Degrees: " << atof(degrees_latitude);
+   std::cout << " Minutes: " << atof(minutes_latitude) << std::endl;
+#endif // #if 0
+   const double latitude = atof(degrees_latitude) + atof(minutes_latitude)/60.0;
+   
    outfile_navigation_data_from_GPS << current_time << " "
-                                    << odes.longitude()*1.0e-2 << " "
-                                    << odes.latitude()*1.0e-2 << " "
+                                    << longitude << " " << latitude << " "
                                     << speed_in_m_per_sec_from_gps*3.6 << " "
-                                    << X_from_GPS << " "
-                                    << Y_from_GPS << " "
-                                    << radial_position_from_GPS_in_meters << " "
+                                    << X_from_GPS << " " << Y_from_GPS << " "
+                                    << speed_in_m_per_sec_from_gps * dt << " "
                                     << course_angle*TO_DEGREES << std::endl;
+   // Compute new radial position
+   radial_position_from_GPS_in_meters+= speed_in_m_per_sec_from_gps * dt;
    
   } // while (LOOP)
  
@@ -1897,13 +1966,10 @@ int main(int argc, char *argv[])
 #if 0
  outfile_position.close();
  outfile_north_east_velocity.close();
-
-
+ 
  // GPS DATA [BEGIN] --------------------------------------------
  outfile_true_course_in_degrees.close();
- outfile_speed_in_knots.close();
  // GPS DATA [END] ----------------------------------------------
- outfile_roll_pitch_yaw_from_acc.close();
 #endif
  
  // Free memory

@@ -31,7 +31,7 @@ speed_in_m_per_sec_from_gps = importfile_TelitSL869DR_2columns('RESLT/speed_in_m
 acc_in_m_per_sec_from_speed_from_gps = importfile_TelitSL869DR_2columns('RESLT/acc_in_m_per_sec_from_speed_from_GPS.dat', 1, 531);
 error_acc_in_m_per_sec_between_gps_and_sensor = importfile_TelitSL869DR_3columns('RESLT/error_acc_in_m_per_sec.dat', 1, 531);
 
-navigation_data_from_GPS = importfile_TelitSL869DR_7columns('RESLT/navigation_data_from_GPS.dat', 1, 531);
+navigation_data_from_GPS = importfile_TelitSL869DR_8columns('RESLT/navigation_data_from_GPS.dat', 1, 531);
 
 initial_raw_time = raw_gyro(1,1);
 final_raw_time = raw_gyro(size(raw_gyro,1),1);
@@ -361,26 +361,66 @@ average_abs_error = mean(error_acc_in_m_per_sec_between_gps_and_sensor(:,2),1)
 average_relative_error = mean(error_acc_in_m_per_sec_between_gps_and_sensor(:,3),1)
 
 %% DELETE
-delay = 0.05; % Delay in seconds in every loop
+delay = 0.005; % Delay in seconds in every loop
 n_loop = size(navigation_data_from_GPS, 1)
 % Plot position
 figure();
 hold('on'); % The painting is done over this plot
 t = title('Trajectory, t=0'); % Initial title, we get a hanlder as well
-p = plot(navigation_data_from_GPS(1,4), navigation_data_from_GPS(1,5), 'b*'); % Get the plot hanlder
+p = plot(navigation_data_from_GPS(1,5), navigation_data_from_GPS(1,6), 'b*'); % Get the plot hanlder
 title('Position from velocity from GPS')
-axis([min(navigation_data_from_GPS(:,4)) max(navigation_data_from_GPS(:,4)) min(navigation_data_from_GPS(:,5)) max(navigation_data_from_GPS(:,5))])
+axis([min(navigation_data_from_GPS(:,5)) max(navigation_data_from_GPS(:,5)) min(navigation_data_from_GPS(:,6)) max(navigation_data_from_GPS(:,6))])
 xlabel('x (m)')
 ylabel('y (m)')
 legend('Trajectory', 'Location', 'NorthWest')
 grid on
 
 for i = 1:n_loop
-    t.String = sprintf('Trajectory, t = %.2f (%.2f, %.2f)', navigation_data_from_GPS(i,1), navigation_data_from_GPS(i,4), navigation_data_from_GPS(i,5));
-    p.XData(i) = navigation_data_from_GPS(i,4);
-    p.YData(i) = navigation_data_from_GPS(i,5);
+    t.String = sprintf('Trajectory, t = %.2f (%.2f, %.2f)', navigation_data_from_GPS(i,1), navigation_data_from_GPS(i,5), navigation_data_from_GPS(i,6));
+    p.XData(i) = navigation_data_from_GPS(i,5);
+    p.YData(i) = navigation_data_from_GPS(i,6);
     %drawnow();
     pause(delay);
 end
 
-plot(navigation_data_from_GPS(:,1), navigation_data_from_GPS(:,7),'r')
+figure();
+plot(navigation_data_from_GPS(:,1), navigation_data_from_GPS(:,7),'b')
+grid on
+new_distance = sqrt(navigation_data_from_GPS(:,5).*navigation_data_from_GPS(:,5) + navigation_data_from_GPS(:,6).*navigation_data_from_GPS(:,6));
+
+figure
+plot(navigation_data_from_GPS(:,1), new_distance,'b')
+grid on
+
+%% Here for verlocity from acc
+n_data = size(velocity, 1)
+n_seconds_of_test = n_data;
+n_minutes_of_test = n_seconds_of_test / 60.0;
+step_size = n_seconds_of_test / n_data;
+x = zeros(n_data, 1);
+y = zeros(n_data, 1);
+% Get the data at the specific times [1:n_data] seconds
+seconds = [1:n_data];
+for i=2:n_data
+    x(i) = x(i-1) + velocity(i, 2) * cos(roll_pitch_yaw(i,4));
+    y(i) = y(i-1) + velocity(i, 3) * sin(roll_pitch_yaw(i,4));
+end
+% Plot position
+figure();
+hold('on'); % The painting is done over this plot
+t = title('Trajectory, t=0'); % Initial title, we get a hanlder as well
+p = plot(x(1), y(1), 'b*'); % Get the plot hanlder
+title('Position from velocity')
+axis([min(x(:)) max(x(:)) min(y(:)) max(y(:))])
+xlabel('x (m)')
+ylabel('y (m)')
+legend('Trajectory', 'Location', 'NorthWest')
+grid on
+
+for i = 1:n_data
+    t.String = sprintf('Trajectory, t = %.2f (%.2f, %.2f)', velocity(i,1), x(i), y(i));
+    p.XData(i) = x(i);
+    p.YData(i) = y(i);
+    %drawnow();
+    pause(delay);
+end
