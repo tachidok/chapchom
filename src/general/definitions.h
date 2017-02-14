@@ -11,7 +11,13 @@ namespace chapchom
  // =======================================================================
 #define DEB(x) std::cerr<<"["<<#x<<"]:"<<x<<std::endl;
 #endif // #ifdef CHAPCHOM_WITH_DEBUG
-
+ 
+ // =======================================================================
+ // Macros to transform from degrees to radians and vice versa
+ // =======================================================================
+#define TO_RADIANS (M_PI/180.0)
+#define TO_DEGREES (180.0/M_PI)
+ 
  // =======================================================================
  // The macros to deal with strings for error messages are taken from
  // oomph-lib

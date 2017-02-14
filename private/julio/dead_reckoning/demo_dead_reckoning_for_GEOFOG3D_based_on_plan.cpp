@@ -44,15 +44,16 @@
 // -------------------------------------------------
 #define MAX_SIGNAL_SIZE 140
 #define GRAVITY 9.81
-#define AZGADS_CONSTANT 1.1285
-#define GYRO_THRESHOLD_Z 1.0 * TO_RADIANS // One degree threshold
+//#define AZGADS_CONSTANT 1.1285
+//#define GYRO_THRESHOLD_Z 1.0 * TO_RADIANS // One degree threshold
 
 // -------------------------------------------------
 // Debugging flags
 // -------------------------------------------------
-#define DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
+//#define DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
+//#define NAVIGATION_FROM_GPS
 
-#define LOW_PASS_FILTER_ACC
+//#define LOW_PASS_FILTER_ACC
 
 using namespace chapchom;
 
@@ -778,6 +779,7 @@ int main(int argc, char *argv[])
   }
 #endif // #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
  
+#ifdef NAVIGATION_FROM_GPS
  // Navigation data (from GPS)
  char file_navigation_data_from_GPS_name[100];
  sprintf(file_navigation_data_from_GPS_name, "./RESLT/navigation_data_from_GPS.dat");
@@ -793,7 +795,7 @@ int main(int argc, char *argv[])
                           CHAPCHOM_CURRENT_FUNCTION,
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
- 
+#endif // #ifdef NAVIGATION_FROM_GPS
  
  // ----------------------------------------------------------------
  // FILES (END)
@@ -803,7 +805,7 @@ int main(int argc, char *argv[])
  // Instantiation of the problem
  // -----------------------------------------------------------------
  // Odes from GEOFOG3D
- CCODEsFromSensorsTelitSL869DR odes("./GEOFOG3D/GEOFOG3D.dat");
+ CCODEsFromSensorsGEOFOG3D odes("./GEOFOG3D/GEOFOG3D_raw.dat");
  
  // ----------------------------------------------------------------
  // Filter data [BEGIN]
@@ -867,7 +869,6 @@ int main(int argc, char *argv[])
  y[4][0] = 0.0; // Initial z-position
  y[5][0] = 0.0; // Initial z-velocity
  y[6][0] = 0.0; // Initial roll (radians)
- //y[7][0] = -0.03; // Initial pitch (radians)
  y[7][0] = 0.0; // Initial pitch (radians)
  y[8][0] = 0.0; // Initial yaw (radians)
  y[9][0] = 0.0; // Initial yaw with threshold (radians)
@@ -894,23 +895,27 @@ int main(int argc, char *argv[])
 #endif // #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
  
  // Flag to indicate whether to continue processing
- bool LOOP = false;
+ bool LOOP = true;
  
+#ifdef NAVIGATION_FROM_GPS
  // Radial position from GPS (initialise to zero)
  double radial_position_from_GPS_in_meters = 0.0;
  // Position x and y from GPS computed from radial position
  double X_from_GPS = 0.0;
  double Y_from_GPS = 0.0;
- 
- // Retrieve data from sensors
- LOOP = odes.get_sensors_lectures();
+#endif // #ifdef NAVIGATION_FROM_GPS
  
  // Main LOOP (continue looping until all data in the input file is
  // processed)
- do
+ while(LOOP)
   {
-   // Change the flag to avoid an infinity loop
-   LOOP = false;
+   // Retrieve data from sensors
+   LOOP = odes.get_sensors_lectures();
+   // Check if there are data to process, otherwise end the LOOP
+   if (!LOOP)
+    {
+     break;
+    }
    
    // Get the number of gyro data
    const unsigned n_gyro_data = odes.ngyro_data();
@@ -1055,63 +1060,12 @@ int main(int argc, char *argv[])
    // The coefficients of the kernel signal to convolve with the gyro
    // data
    const unsigned n_kernel_gyro = 15;
-#define GYRO_NEW_CUT_FREQUENCY
-#ifndef GYRO_NEW_CUT_FREQUENCY
-   // Cut-off frequency 0.5 Hz
-   double kernel_gyro[] = {0.0102773244275157, 0.0162263834264182, 0.0328881753317823, 0.0570814837334001, \
-                           0.0840520641122108, 0.108434325903213, 0.125345958994944, 0.131388568141032, \
-                           0.125345958994944, 0.108434325903213, 0.0840520641122108, 0.0570814837334001, \
-                           0.0328881753317823, 0.0162263834264182, 0.0102773244275157};
-#else
-   // Cut-off frequency 2.0 Hz
-   double kernel_gyro[] = {0.00754118897515346, 0.0132044484685228, 0.0290970359558406, 0.0539466364399804, \
-                           0.0835043687965460, 0.111562975489830, 0.131662972122815, 0.138960747502623, \
-                           0.131662972122815, 0.111562975489830, 0.0835043687965460, 0.0539466364399804, \
-                           0.0290970359558406, 0.0132044484685228, 0.00754118897515346};
-#endif // #ifndef GYRO_NEW_CUT_FREQUENCY
+   double kernel_gyro[] = {1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
    
    // The coefficients of the kernel signal to convolve with the
    // accelerometer data
    const unsigned n_kernel_acc = 15;
-#ifdef LOW_PASS_FILTER_ACC
-#define NEW_CUT_FREQUENCY_ACC
-#ifndef NEW_CUT_FREQUENCY_ACC
-   // Cut-off frequency 0.25 Hz
-   double kernel_acc[] = {0.0104226000635011, 0.0163818874099687, 0.0330775506149548, 0.0572325417966930, \
-                          0.0840719974006429, 0.108274081298100, 0.125032039259642, 0.131014604312996, \
-                          0.125032039259642, 0.108274081298100, 0.0840719974006429, 0.0572325417966930, \
-                          0.0330775506149548, 0.0163818874099687, 0.0104226000635011};
-#else
-   // Cut-off frequency 1.0 Hz
-   double kernel_acc[] = {0.00970427824444292, 0.0156084398805262, 0.0321303157536757, 0.0564717288538836, \
-                          0.0839652811496886, 0.109071822344477, 0.126603636409900, 0.132888994726813, \
-                          0.126603636409900, 0.109071822344477, 0.0839652811496886, 0.0564717288538836, \
-                          0.0321303157536757, 0.0156084398805262, 0.00970427824444292};
-#endif // #ifndef NEW_CUT_FREQUENCY_ACC
-   
-#else
-   double kernel_acc[] = {1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-#if 0
-   // High-pass filter
-   double kernel_acc[] = {-0.004151183833573330282662450230191097944,
-                          -0.004222083569197301010367251450361436582,
-                          -0.004282569995648658964237931456864316715,
-                          -0.004332397709883636233163528572731593158,
-                          -0.004371364323484815302134354197960419697,
-                          -0.004399311420462344128512466312486139941,
-                          -0.004416125307385473756915938992051451351,
-                          0.991465098478902073786400706012500450015,
-                          -0.004416125307385473756915938992051451351,
-                          -0.004399311420462344128512466312486139941,
-                          -0.004371364323484815302134354197960419697,
-                          -0.004332397709883636233163528572731593158,
-                          -0.004282569995648658964237931456864316715,
-                          -0.004222083569197301010367251450361436582,
-                          -0.004151183833573330282662450230191097944};
-#endif // #if 0
-   
-#endif // #ifdef LOW_PASS_FILTER_ACC
-   
+   double kernel_acc[] = {1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};   
 #endif // #if 1
    
 #if 0
@@ -1442,7 +1396,7 @@ int main(int argc, char *argv[])
    // ==========================================================================
    // ==========================================================================
    // ==========================================================================
-      
+   
    // Loop over the data and process each pair of gyro-accelerometers
    // data (main processing)
    for (unsigned i = 0; i < n_data-1; i++)
@@ -1683,43 +1637,6 @@ int main(int argc, char *argv[])
      // --------------------------------------------------------------------------
 #endif //#ifdef OUTPUT_ACCELERATIONS
      
-#if 0 // TODO: Delete this #ifdef block
-     //body_accelerations[0]=aligned_acc_signal_x[i]*0.8;
-     //body_accelerations[1]=aligned_acc_signal_y[i]*0.8;
-     //body_accelerations[2]=aligned_acc_signal_z[i]*0.8;
-     //body_accelerations[0]=aligned_acc_signal_x[i]-0.26;
-     //body_accelerations[1]=aligned_acc_signal_y[i]-0.26; // TODO THIS WORK WITHOUT ROTATION (SEEMS TO WORK BETTER) (2)
-     //body_accelerations[2]=aligned_acc_signal_z[i]-0.26;
-     //body_accelerations[0]=aligned_acc_signal_x[i]-0.2892;
-     //body_accelerations[1]=aligned_acc_signal_y[i]-0.2892; // TODO THIS WORK WITHOUT ROTATION (1)
-     //body_accelerations[2]=aligned_acc_signal_z[i]-0.2892;
-     //body_accelerations[0]=aligned_acc_signal_x[i]-0.4942;
-     //body_accelerations[1]=aligned_acc_signal_y[i]-0.4942;
-     //body_accelerations[2]=aligned_acc_signal_z[i]-0.4942;
-
-     // Rotate sensor's lectures from the body frame to the inertial
-     // frame
-     //Euler_angles[2]=0.0;
-     rotate(Euler_angles, body_accelerations, inertial_accelerations);
-     //inertial_accelerations[0]=body_accelerations[0]*0.875;
-     //inertial_accelerations[1]=body_accelerations[1]*0.875;
-     //inertial_accelerations[2]=body_accelerations[2]*0.875;
-     //inertial_accelerations[0]=body_accelerations[0];
-     //inertial_accelerations[1]=body_accelerations[1];
-     //inertial_accelerations[2]=body_accelerations[2];
-#if 0
-     if (fabs(body_accelerations[0]) < 0.3)
-      {
-       inertial_accelerations[0]=0.0;
-      }
-     if (fabs(body_accelerations[1]) < 0.3)
-      {
-       inertial_accelerations[1]=0.0;
-      }
-#endif // #if 0
-     
-#endif // #if 0
-     
      // ==========================================================================
      // Gravity compensation [END]
      // ==========================================================================
@@ -1727,13 +1644,6 @@ int main(int argc, char *argv[])
      // ==========================================================================
      // Velocity processing [BEGIN]
      // ==========================================================================
-
-#if 0
-     // Use a least-square strategy to get the closest line to the
-     // curve. These are the coefficients obtained with MatLab
-     y[1][0]-= current_time * 0.1844 - 17.2148;
-     y[2][0]-= current_time * (-0.0808) + 15.5603;
-#endif // #if 0
      
 #ifdef OUTPUT_VELOCITIES
      // --------------------------------------------------------------------------
@@ -1800,8 +1710,8 @@ int main(int argc, char *argv[])
      y[8][0] = alpha * y[8][0] + (1.0 - alpha) * y[9][0];
 #endif // #ifdef GYRO_THRESHOLD_Z
      
-     const double alpha_vel = 0.90;
-     y[1][0] = y[1][0] * alpha_vel + (1.0 - alpha_vel) * previous_speed_in_m_per_sec_from_gps;
+     //const double alpha_vel = 0.90;
+     //y[1][0] = y[1][0] * alpha_vel + (1.0 - alpha_vel) * previous_speed_in_m_per_sec_from_gps;
      //y[1][0] = y[1][0] * alpha_vel + (1.0 - alpha_vel) * 5.2274;
      //y[1][0] = y[1][0] * alpha_vel + (1.0 - alpha_vel) * 10.4548;
      
@@ -1810,6 +1720,13 @@ int main(int argc, char *argv[])
      // ==========================================================================
      // Complementary filter [END]
      // ==========================================================================
+     
+     std::cout.precision(8);
+     std::cout << "t: " << current_time
+               << " x-pos: " << y[0][0] << " x-vel: " << y[1][0]
+               << " y-pos: " << y[2][0] << " y-vel: " << y[3][0]
+               << " z-pos: " << y[4][0] << " z-vel: " << y[5][0]
+               << " roll: " << y[6][0] << " pitch: " << y[7][0] << " yaw: " << y[8][0] << std::endl;
      
     } // for (i < n_data-1)
    
@@ -1821,7 +1738,9 @@ int main(int argc, char *argv[])
    // ==========================================================================
    // ==========================================================================
    
+#if 0
    const double dt = current_time - raw_gyro_t[0][0];
+#endif // #if 0
 #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
    const double speed_in_m_per_sec_from_gps = odes.speed_in_knots()*0.514444;
    const double acc_in_m_per_sec_from_speed_from_gps =
@@ -1852,13 +1771,7 @@ int main(int argc, char *argv[])
    
 #endif // #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
    
-   std::cout.precision(8);
-   std::cout << "t: " << current_time
-             << " x-pos: " << y[0][0] << " x-vel: " << y[1][0]
-             << " y-pos: " << y[2][0] << " y-vel: " << y[3][0]
-             << " z-pos: " << y[4][0] << " z-vel: " << y[5][0]
-             << " roll: " << y[6][0] << " pitch: " << y[7][0] << " yaw: " << y[8][0] << std::endl;
-   
+#ifdef NAVIGATION_FROM_GPS
    // -------------------------------------------------------------------
    // Navigation data (from GPS)
    // -------------------------------------------------------------------
@@ -1918,8 +1831,10 @@ int main(int argc, char *argv[])
                                     << course_angle*TO_DEGREES << std::endl;
    // Compute new radial position
    radial_position_from_GPS_in_meters+= speed_in_m_per_sec_from_gps * dt;
+
+#endif // #ifdef NAVIGATION_FROM_GPS
    
-  }while(LOOP); // while (LOOP)
+  } // while(LOOP)
  
  std::cout << "[FINISHING UP] ... " << std::endl;
  
@@ -1948,17 +1863,10 @@ int main(int argc, char *argv[])
  outfile_acc_in_m_per_sec_from_speed_from_GPS.close();
  outfile_error_acc_in_m_per_sec.close();
 #endif // #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
- 
+
+#ifdef NAVIGATION_FROM_GPS
  outfile_navigation_data_from_GPS.close();
- 
-#if 0
- outfile_position.close();
- outfile_north_east_velocity.close();
- 
- // GPS DATA [BEGIN] --------------------------------------------
- outfile_true_course_in_degrees.close();
- // GPS DATA [END] ----------------------------------------------
-#endif
+#endif // #ifdef NAVIGATION_FROM_GPS
  
  // Free memory
  delete integrator;
