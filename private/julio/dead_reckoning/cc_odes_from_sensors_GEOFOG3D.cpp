@@ -12,7 +12,8 @@ namespace chapchom
   : ACODEs(10)
  {
   // Initialise the number of data in the Table
-  N_data_in_table = 78748;
+  N_data_in_table = 11592;
+  //N_data_in_table = 78748;
   
   // Read the data from file
   load_table(input_filename);
@@ -49,10 +50,22 @@ namespace chapchom
   // Resize the containers based on the Table size
   Table_acc.resize(N_data_in_table);
   Table_gyro.resize(N_data_in_table);
- 
+  Table_linear_acc.resize(N_data_in_table);
+  Table_g_force.resize(N_data_in_table);
+  Table_second_gyro.resize(N_data_in_table);
+  Table_Euler_angles.resize(N_data_in_table);
+  Table_velocity.resize(N_data_in_table);
+  Table_velocity.resize(N_data_in_table);
+  Table_latitude_longitude.resize(N_data_in_table);
+  
+  // Get rid of the first line where headers are stored
+  char *headers=NULL;
+  size_t length = 0;
+  getline(&headers, &length, file_pt);
+  
   double fixed_time = 0.0;
   double previous_read_time = 0.0;
- 
+  
   // Read the data
   for (unsigned i = 0; i < N_data_in_table; i++)
    {
@@ -63,14 +76,38 @@ namespace chapchom
     double gyro_x;
     double gyro_y;
     double gyro_z;
-    int n_read = fscanf(file_pt, "%lf %lf %lf %lf %lf %lf %lf",
-                        &time, &acc_x, &acc_y, &acc_z,
-                        &gyro_x, &gyro_y, &gyro_z);
-    if (n_read != 7)
+    double lacc_x;
+    double lacc_y;
+    double lacc_z;
+    double g_force;
+    double sgyro_x;
+    double sgyro_y;
+    double sgyro_z;
+    double roll;
+    double pitch;
+    double yaw;
+    double north_vel;
+    double east_vel;
+    double down_vel;
+    double latitude;
+    double longitude;
+    
+    const int n_read =
+     fscanf(file_pt, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
+            &time, &acc_x, &acc_y, &acc_z,
+            &gyro_x, &gyro_y, &gyro_z,
+            &lacc_x, &lacc_y, &lacc_z,
+            &g_force,
+            &sgyro_x, &sgyro_y, &sgyro_z,
+            &roll, &pitch, &yaw,
+            &north_vel, &east_vel, &down_vel,
+            &latitude, &longitude);
+    if (n_read != 22)
      {
       // Error message
       std::ostringstream error_message;
-      error_message << "Number of read values (" << n_read << ")" << std::endl;
+      error_message << "Number of read values (" << n_read << ")" << std::endl
+                    << "After reading (" << i << ") data rows" << std::endl;
       throw ChapchomLibError(error_message.str(),
                              CHAPCHOM_CURRENT_FUNCTION,
                              CHAPCHOM_EXCEPTION_LOCATION);
@@ -81,16 +118,52 @@ namespace chapchom
       fixed_time+=1.0;
      }
     
+    const double this_time = fixed_time + time * 1.0e-6;
+    
     Table_acc[i].resize(4);
-    Table_acc[i][0] = fixed_time + time * 1.0e-6;
+    Table_acc[i][0] = this_time;
     Table_acc[i][1] = acc_x;
     Table_acc[i][2] = acc_y;
     Table_acc[i][3] = acc_z;
+    
     Table_gyro[i].resize(4);
-    Table_gyro[i][0] = fixed_time + time * 1.0e-6;
-    Table_gyro[i][1] = gyro_x;
-    Table_gyro[i][2] = gyro_y;
-    Table_gyro[i][3] = gyro_z;
+    Table_gyro[i][0] = this_time;
+    Table_gyro[i][1] = gyro_x*TO_RADIANS;
+    Table_gyro[i][2] = gyro_y*TO_RADIANS;
+    Table_gyro[i][3] = gyro_z*TO_RADIANS;
+    
+    Table_linear_acc[i].resize(4);
+    Table_linear_acc[i][0] = this_time;
+    Table_linear_acc[i][1] = lacc_x;
+    Table_linear_acc[i][2] = lacc_y;
+    Table_linear_acc[i][3] = lacc_z;
+
+    Table_g_force[i].resize(2);
+    Table_g_force[i][0] = this_time;
+    Table_g_force[i][1] = g_force;
+    
+    Table_second_gyro[i].resize(4);
+    Table_second_gyro[i][0] = this_time;
+    Table_second_gyro[i][1] = sgyro_x*TO_RADIANS;
+    Table_second_gyro[i][2] = sgyro_y*TO_RADIANS;
+    Table_second_gyro[i][3] = sgyro_z*TO_RADIANS;
+    
+    Table_Euler_angles[i].resize(4);
+    Table_Euler_angles[i][0] = this_time;
+    Table_Euler_angles[i][1] = roll*TO_RADIANS;
+    Table_Euler_angles[i][2] = pitch*TO_RADIANS;
+    Table_Euler_angles[i][3] = yaw*TO_RADIANS;
+    
+    Table_velocity[i].resize(4);
+    Table_velocity[i][0] = this_time;
+    Table_velocity[i][1] = north_vel;
+    Table_velocity[i][2] = east_vel;
+    Table_velocity[i][3] = down_vel;
+
+    Table_latitude_longitude[i].resize(3);
+    Table_latitude_longitude[i][0] = this_time;
+    Table_latitude_longitude[i][1] = latitude;
+    Table_latitude_longitude[i][2] = longitude;
     
     previous_read_time = time;
     
@@ -128,25 +201,66 @@ namespace chapchom
    }
   
   // Clean return data
-  Current_acc.resize(counter);
-  Current_gyro.resize(counter);
+  Current_acc_from_table.resize(counter);
+  Current_gyro_from_table.resize(counter);
+  Current_linear_acc_from_table.resize(counter);
+  Current_g_force_from_table.resize(counter);
+  Current_second_gyro_from_table.resize(counter);
+  Current_Euler_angles_from_table.resize(counter);
+  Current_velocity_from_table.resize(counter);
+  Current_latitude_longitude_from_table.resize(counter);
   
   for (unsigned i = 0; i < counter; i++)
    {
     // Resize to store the data block
-    Current_acc[i].resize(DIM+1);
-    Current_gyro[i].resize(DIM+1);
+    Current_acc_from_table[i].resize(DIM+1);
+    Current_gyro_from_table[i].resize(DIM+1);
+    
+    Current_linear_acc_from_table[i].resize(DIM+1);
+    Current_g_force_from_table[i].resize(2);
+    Current_second_gyro_from_table[i].resize(DIM+1);
+    Current_Euler_angles_from_table[i].resize(DIM+1);
+    Current_velocity_from_table[i].resize(DIM+1);
+    Current_latitude_longitude_from_table[i].resize(3);
     
     // Copy data block
-    Current_acc[i][0] = Table_acc[Index_data+i][0];
-    Current_acc[i][1] = Table_acc[Index_data+i][1];
-    Current_acc[i][2] = Table_acc[Index_data+i][2];
-    Current_acc[i][3] = Table_acc[Index_data+i][3];
+    Current_acc_from_table[i][0] = Table_acc[Index_data+i][0];
+    Current_acc_from_table[i][1] = Table_acc[Index_data+i][1];
+    Current_acc_from_table[i][2] = Table_acc[Index_data+i][2];
+    Current_acc_from_table[i][3] = Table_acc[Index_data+i][3];
     
-    Current_gyro[i][0] = Table_gyro[Index_data+i][0];
-    Current_gyro[i][1] = Table_gyro[Index_data+i][1];
-    Current_gyro[i][2] = Table_gyro[Index_data+i][2];
-    Current_gyro[i][3] = Table_gyro[Index_data+i][3];
+    Current_gyro_from_table[i][0] = Table_gyro[Index_data+i][0];
+    Current_gyro_from_table[i][1] = Table_gyro[Index_data+i][1];
+    Current_gyro_from_table[i][2] = Table_gyro[Index_data+i][2];
+    Current_gyro_from_table[i][3] = Table_gyro[Index_data+i][3];
+
+    Current_linear_acc_from_table[i][0] = Table_linear_acc[Index_data+i][0];
+    Current_linear_acc_from_table[i][1] = Table_linear_acc[Index_data+i][1];
+    Current_linear_acc_from_table[i][2] = Table_linear_acc[Index_data+i][2];
+    Current_linear_acc_from_table[i][3] = Table_linear_acc[Index_data+i][3];
+    
+    Current_g_force_from_table[i][0] = Table_g_force[Index_data+i][0];
+    Current_g_force_from_table[i][1] = Table_g_force[Index_data+i][1];
+    
+    Current_second_gyro_from_table[i][0] = Table_second_gyro[Index_data+i][0];
+    Current_second_gyro_from_table[i][1] = Table_second_gyro[Index_data+i][1];
+    Current_second_gyro_from_table[i][2] = Table_second_gyro[Index_data+i][2];
+    Current_second_gyro_from_table[i][3] = Table_second_gyro[Index_data+i][3];
+    
+    Current_Euler_angles_from_table[i][0] = Table_Euler_angles[Index_data+i][0];
+    Current_Euler_angles_from_table[i][1] = Table_Euler_angles[Index_data+i][1];
+    Current_Euler_angles_from_table[i][2] = Table_Euler_angles[Index_data+i][2];
+    Current_Euler_angles_from_table[i][3] = Table_Euler_angles[Index_data+i][3];
+    
+    Current_velocity_from_table[i][0] = Table_velocity[Index_data+i][0];
+    Current_velocity_from_table[i][1] = Table_velocity[Index_data+i][1];
+    Current_velocity_from_table[i][2] = Table_velocity[Index_data+i][2];
+    Current_velocity_from_table[i][3] = Table_velocity[Index_data+i][3];
+    
+    Current_latitude_longitude_from_table[i][0] = Table_latitude_longitude[Index_data+i][0];
+    Current_latitude_longitude_from_table[i][1] = Table_latitude_longitude[Index_data+i][1];
+    Current_latitude_longitude_from_table[i][2] = Table_latitude_longitude[Index_data+i][2];
+    
    }
   
   // Increase the Index_data to point to the first data of the new

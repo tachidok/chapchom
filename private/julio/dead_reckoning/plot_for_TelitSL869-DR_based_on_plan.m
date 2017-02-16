@@ -1,6 +1,6 @@
 
 %% Read data
-% putty_8_car_ride_square_wait_large.log
+% putty_8_car_ride_square_wait_large.dat
 initial_time = 0;
 final_time = 478;
 n_input_data = 6651;
@@ -24,7 +24,7 @@ my_filtered_gyro = importfile_TelitSL869DR_3columns('RESLT/filtered_gyro.dat', 1
 my_filtered_acc = importfile_TelitSL869DR_3columns('RESLT/filtered_acc.dat', 1, n_output_data);
 
 %% Read data
-% putty_9_car_ride_tona_acatepec_inaoe_wait_large.log
+% putty_9_car_ride_tona_acatepec_inaoe_wait_large.dat
 n_input_raw_data = 7961;
 n_input_aligned_data = 7901;
 n_output_data=7370;

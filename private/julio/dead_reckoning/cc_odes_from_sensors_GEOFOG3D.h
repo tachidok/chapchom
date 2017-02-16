@@ -37,27 +37,51 @@ namespace chapchom
  
   // Get the number of acceleration data
   inline const unsigned nacceleration_data()
-  {return Current_acc.size();}
+  {return Current_acc_from_table.size();}
  
   // Get acceleration data
   inline std::vector<double> &get_accelerations(const unsigned i)
-  {return Current_acc[i];}
+  {return Current_acc_from_table[i];}
  
   // Get acceleration data
   inline std::vector<std::vector<double> > &get_accelerations()
-  {return Current_acc;}
+  {return Current_acc_from_table;}
  
   // Get the number of gyro data
-  inline const unsigned ngyro_data() {return Current_gyro.size();}
+  inline const unsigned ngyro_data() {return Current_gyro_from_table.size();}
  
   // Get gyro's data
   inline std::vector<double> &get_angular_velocities(const unsigned i)
-  {return Current_gyro[i];}
+  {return Current_gyro_from_table[i];}
  
   // Get gyro's data
   inline std::vector<std::vector<double> > &get_angular_velocities()
-  {return Current_gyro;}
- 
+  {return Current_gyro_from_table;}
+  
+  // Linear acceleration from Table
+  inline std::vector<std::vector<double> > &get_linear_acceleration_from_table()
+  {return Current_linear_acc_from_table;}
+  
+  // G-force from Table
+  inline std::vector<std::vector<double> > &get_g_force_from_table()
+  {return Current_g_force_from_table;}
+  
+  // Second gyro from Table
+  inline std::vector<std::vector<double> > &get_second_gyro_from_table()
+  {return Current_second_gyro_from_table;}
+  
+  // Euler angles from Table
+  inline std::vector<std::vector<double> > &get_Euler_angles_from_table()
+  {return Current_Euler_angles_from_table;}
+
+  // Velocity from Table
+  inline std::vector<std::vector<double> > &get_velocity_from_table()
+  {return Current_velocity_from_table;}
+  
+  // Latitude-longitude from Table
+  inline std::vector<std::vector<double> > &get_latitude_longitude_from_table()
+  {return Current_latitude_longitude_from_table;}
+  
   /// Set linear acceleration for current time
   inline double *&linear_acceleration() {return Linear_acceleration;}
  
@@ -119,8 +143,29 @@ namespace chapchom
   std::vector<std::vector<double> > Table_acc;
   std::vector<std::vector<double> > Table_gyro;
   
-  std::vector<std::vector<double> > Current_acc;
-  std::vector<std::vector<double> > Current_gyro;
+  std::vector<std::vector<double> > Table_linear_acc;
+  std::vector<std::vector<double> > Table_g_force;
+  std::vector<std::vector<double> > Table_second_gyro;
+  
+  // Table_Euler_angles[1] - Roll, Table_Euler_angles[2] - Pitch, Table_Euler_angles[3] - Yaw
+  std::vector<std::vector<double> > Table_Euler_angles;
+  
+  // Table_velocity[1] - North, Table_velocity[2] - East, Table_velocity[3] - Down
+  std::vector<std::vector<double> > Table_velocity;
+  
+  // Table_lat_lon[1] - Latitude, Table_lat_lon[2] - Longitude
+  std::vector<std::vector<double> > Table_latitude_longitude;
+  
+  // Used to store the data correspoding to the current second
+  std::vector<std::vector<double> > Current_acc_from_table;
+  std::vector<std::vector<double> > Current_gyro_from_table;
+  
+  std::vector<std::vector<double> > Current_linear_acc_from_table;
+  std::vector<std::vector<double> > Current_g_force_from_table;
+  std::vector<std::vector<double> > Current_second_gyro_from_table;
+  std::vector<std::vector<double> > Current_Euler_angles_from_table;
+  std::vector<std::vector<double> > Current_velocity_from_table;
+  std::vector<std::vector<double> > Current_latitude_longitude_from_table;
   
  };
  

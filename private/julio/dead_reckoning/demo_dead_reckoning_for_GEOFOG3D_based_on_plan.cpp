@@ -39,6 +39,10 @@
                                                         // filter
 #define OUTPUT_EULER_ANGLES_RATES
 
+// Data to evaluation
+#define READ_AND_OUTPUT_PROCESSED_INFO_FROM_GEOFOG3D
+#define NAVIGATION_DATA_TO_EVALUATION
+
 // -------------------------------------------------
 // Constants
 // -------------------------------------------------
@@ -46,14 +50,6 @@
 #define GRAVITY 9.81
 //#define AZGADS_CONSTANT 1.1285
 //#define GYRO_THRESHOLD_Z 1.0 * TO_RADIANS // One degree threshold
-
-// -------------------------------------------------
-// Debugging flags
-// -------------------------------------------------
-//#define DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
-//#define NAVIGATION_FROM_GPS
-
-//#define LOW_PASS_FILTER_ACC
 
 using namespace chapchom;
 
@@ -125,9 +121,9 @@ void rotate_sensors_to_ASIKIs_reference_frame(std::vector<std::vector<double> > 
    // -------------------------------------------------------------------------   
    // Store the acc data in a temporary vector. Multiply by 9.81
    // since the data from the accelerometers are given in 'g' units
-   r(0) = raw_acc_t[i][1] * GRAVITY; // acc_x TODO
-   r(1) = raw_acc_t[i][2] * GRAVITY; // acc_y
-   r(2) = raw_acc_t[i][3] * GRAVITY; // acc_z
+   r(0) = raw_acc_t[i][1]; // acc_x TODO
+   r(1) = raw_acc_t[i][2]; // acc_y
+   r(2) = raw_acc_t[i][3]; // acc_z
    // --------------------------------------------------------------------------
    // Rotate the acc to match the reference frame of the ASIKI
    // --------------------------------------------------------------------------
@@ -713,7 +709,7 @@ int main(int argc, char *argv[])
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
  
-  // Velocity
+ // Velocity
  char file_velocity_name[100];
  sprintf(file_velocity_name, "./RESLT/velocity.dat");
  std::ofstream outfile_velocity;
@@ -728,74 +724,106 @@ int main(int argc, char *argv[])
                           CHAPCHOM_CURRENT_FUNCTION,
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
- 
-#ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
- // Speed in m/s from GPS
- char file_speed_in_m_per_sec_from_GPS_name[100];
- sprintf(file_speed_in_m_per_sec_from_GPS_name, "./RESLT/speed_in_m_per_sec_from_GPS.dat");
- std::ofstream outfile_speed_in_m_per_sec_from_GPS;
- outfile_speed_in_m_per_sec_from_GPS.open(file_speed_in_m_per_sec_from_GPS_name, std::ios::out);
- if (outfile_speed_in_m_per_sec_from_GPS.fail())
+
+#ifdef READ_AND_OUTPUT_PROCESSED_INFO_FROM_GEOFOG3D
+ // Linear acceleration from table
+ char file_linear_acceleration_from_table_name[100];
+ sprintf(file_linear_acceleration_from_table_name, "./RESLT/linear_acceleration_from_table.dat");
+ std::ofstream outfile_linear_acceleration_from_table;
+ outfile_linear_acceleration_from_table.open(file_linear_acceleration_from_table_name, std::ios::out);
+ if (outfile_linear_acceleration_from_table.fail())
   {
    // Error message
    std::ostringstream error_message;
-   error_message << "Could not create the file [" << file_speed_in_m_per_sec_from_GPS_name << "]"
+   error_message << "Could not create the file [" << file_linear_acceleration_from_table_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+  
+ // G-force from table
+ char file_g_force_from_table_name[100];
+ sprintf(file_g_force_from_table_name, "./RESLT/g_force_from_table.dat");
+ std::ofstream outfile_g_force_from_table;
+ outfile_g_force_from_table.open(file_g_force_from_table_name, std::ios::out);
+ if (outfile_g_force_from_table.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_g_force_from_table_name << "]"
                  << std::endl;
    throw ChapchomLibError(error_message.str(),
                           CHAPCHOM_CURRENT_FUNCTION,
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
  
- // Acceleration from speed in m/s from GPS
- char file_acc_in_m_per_sec_from_speed_from_GPS_name[100];
- sprintf(file_acc_in_m_per_sec_from_speed_from_GPS_name, "./RESLT/acc_in_m_per_sec_from_speed_from_GPS.dat");
- std::ofstream outfile_acc_in_m_per_sec_from_speed_from_GPS;
- outfile_acc_in_m_per_sec_from_speed_from_GPS.open(file_acc_in_m_per_sec_from_speed_from_GPS_name, std::ios::out);
- if (outfile_acc_in_m_per_sec_from_speed_from_GPS.fail())
+ // Second gyro from table
+ char file_second_gyro_from_table_name[100];
+ sprintf(file_second_gyro_from_table_name, "./RESLT/second_gyro_from_table.dat");
+ std::ofstream outfile_second_gyro_from_table;
+ outfile_second_gyro_from_table.open(file_second_gyro_from_table_name, std::ios::out);
+ if (outfile_second_gyro_from_table.fail())
   {
    // Error message
    std::ostringstream error_message;
-   error_message << "Could not create the file [" << file_acc_in_m_per_sec_from_speed_from_GPS_name << "]"
+   error_message << "Could not create the file [" << file_second_gyro_from_table_name << "]"
                  << std::endl;
    throw ChapchomLibError(error_message.str(),
                           CHAPCHOM_CURRENT_FUNCTION,
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
  
- // Error between sensors accelerations and acceleration from velocity from GPS
- char file_error_acc_in_m_per_sec_name[100];
- sprintf(file_error_acc_in_m_per_sec_name, "./RESLT/error_acc_in_m_per_sec.dat");
- std::ofstream outfile_error_acc_in_m_per_sec;
- outfile_error_acc_in_m_per_sec.open(file_error_acc_in_m_per_sec_name, std::ios::out);
- if (outfile_error_acc_in_m_per_sec.fail())
+ // Euler angles from table
+ char file_euler_angles_from_table_name[100];
+ sprintf(file_euler_angles_from_table_name, "./RESLT/euler_angles_from_table.dat");
+ std::ofstream outfile_euler_angles_from_table;
+ outfile_euler_angles_from_table.open(file_euler_angles_from_table_name, std::ios::out);
+ if (outfile_euler_angles_from_table.fail())
   {
    // Error message
    std::ostringstream error_message;
-   error_message << "Could not create the file [" << file_error_acc_in_m_per_sec_name << "]"
+   error_message << "Could not create the file [" << file_euler_angles_from_table_name << "]"
                  << std::endl;
    throw ChapchomLibError(error_message.str(),
                           CHAPCHOM_CURRENT_FUNCTION,
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
-#endif // #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
  
-#ifdef NAVIGATION_FROM_GPS
- // Navigation data (from GPS)
- char file_navigation_data_from_GPS_name[100];
- sprintf(file_navigation_data_from_GPS_name, "./RESLT/navigation_data_from_GPS.dat");
- std::ofstream outfile_navigation_data_from_GPS;
- outfile_navigation_data_from_GPS.open(file_navigation_data_from_GPS_name, std::ios::out);
- if (outfile_navigation_data_from_GPS.fail())
+ // Velocity from table
+ char file_velocity_from_table_name[100];
+ sprintf(file_velocity_from_table_name, "./RESLT/velocity_from_table.dat");
+ std::ofstream outfile_velocity_from_table;
+ outfile_velocity_from_table.open(file_velocity_from_table_name, std::ios::out);
+ if (outfile_velocity_from_table.fail())
   {
    // Error message
    std::ostringstream error_message;
-   error_message << "Could not create the file [" << file_navigation_data_from_GPS_name << "]"
+   error_message << "Could not create the file [" << file_velocity_from_table_name << "]"
                  << std::endl;
    throw ChapchomLibError(error_message.str(),
                           CHAPCHOM_CURRENT_FUNCTION,
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
-#endif // #ifdef NAVIGATION_FROM_GPS
+#endif // #ifdef READ_AND_OUTPUT_PROCESSED_INFO_FROM_GEOFOG3D
+ 
+#ifdef NAVIGATION_DATA_TO_EVALUATION
+ // Navigation data (for evaluation)
+ char file_navigation_data_for_evaluation_name[100];
+ sprintf(file_navigation_data_for_evaluation_name, "./RESLT/navigation_data_for_evaluation.dat");
+ std::ofstream outfile_navigation_data_for_evaluation;
+ outfile_navigation_data_for_evaluation.open(file_navigation_data_for_evaluation_name, std::ios::out);
+ if (outfile_navigation_data_for_evaluation.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_navigation_data_for_evaluation_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+#endif // #ifdef NAVIGATION_DATA_TO_EVALUATION
  
  // ----------------------------------------------------------------
  // FILES (END)
@@ -805,11 +833,14 @@ int main(int argc, char *argv[])
  // Instantiation of the problem
  // -----------------------------------------------------------------
  // Odes from GEOFOG3D
- CCODEsFromSensorsGEOFOG3D odes("./GEOFOG3D/GEOFOG3D_raw.dat");
+ CCODEsFromSensorsGEOFOG3D odes("./GEOFOG3D/GEOFOG3D_with_lat_lon.dat");
  
  // ----------------------------------------------------------------
  // Filter data [BEGIN]
  // ----------------------------------------------------------------
+ //#define APPLY_FILTER
+#ifdef APPLY_FILTER
+ 
  // Storage for nonfiltered signal previous to filter application
  double noisy_signal_gyro_x[MAX_SIGNAL_SIZE];
  double noisy_signal_gyro_y[MAX_SIGNAL_SIZE];
@@ -831,6 +862,8 @@ int main(int argc, char *argv[])
  // accelerometers already processed in the signal buffer
  unsigned n_processed_data_in_gyro_buffer = 0;
  unsigned n_processed_data_in_acc_buffer = 0;
+ 
+#endif // #ifdef APPLY_FILTER
  
  // ----------------------------------------------------------------
  // Filter data [END]
@@ -868,8 +901,10 @@ int main(int argc, char *argv[])
  y[3][0] = 0.0; // Initial y-velocity
  y[4][0] = 0.0; // Initial z-position
  y[5][0] = 0.0; // Initial z-velocity
- y[6][0] = 0.0; // Initial roll (radians)
- y[7][0] = 0.0; // Initial pitch (radians)
+ //y[6][0] = 0.0; // Initial roll (radians)
+ y[6][0] = 0.03174143; // Initial roll (radians)
+ //y[7][0] = 0.0; // Initial pitch (radians)
+ y[7][0] = 0.044491584; // Initial pitch (radians)
  y[8][0] = 0.0; // Initial yaw (radians)
  y[9][0] = 0.0; // Initial yaw with threshold (radians)
  
@@ -887,23 +922,17 @@ int main(int argc, char *argv[])
  // ----------------------------------------------------------------
  // Integrator initialisation [END]
  // ----------------------------------------------------------------
- 
-#ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
- // Used to compute the acceleration or derivative of the speed given
- // by the GPS
- double previous_speed_in_m_per_sec_from_gps = 0;
-#endif // #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
+
+#ifdef NAVIGATION_DATA_TO_EVALUATION
+ // Previous time
+ double previous_time = 0.0;
+ // Position x and y from GPS computed from radial position
+ double X_POS = 0.0;
+ double Y_POS = 0.0;
+#endif //  #ifdef NAVIGATION_DATA_TO_EVALUATION
  
  // Flag to indicate whether to continue processing
  bool LOOP = true;
- 
-#ifdef NAVIGATION_FROM_GPS
- // Radial position from GPS (initialise to zero)
- double radial_position_from_GPS_in_meters = 0.0;
- // Position x and y from GPS computed from radial position
- double X_from_GPS = 0.0;
- double Y_from_GPS = 0.0;
-#endif // #ifdef NAVIGATION_FROM_GPS
  
  // Main LOOP (continue looping until all data in the input file is
  // processed)
@@ -926,6 +955,68 @@ int main(int argc, char *argv[])
    std::vector<std::vector<double> > raw_gyro_t = odes.get_angular_velocities();
    // Get the raw data from accelerometers
    std::vector<std::vector<double> > raw_acc_t = odes.get_accelerations();
+   
+#ifdef NAVIGATION_DATA_TO_EVALUATION
+   // Get latitude and longitude
+   std::vector<std::vector<double> > latitude_longitude_from_table = odes.get_latitude_longitude_from_table();
+#endif // #ifdef NAVIGATION_DATA_TO_EVALUATION
+   
+   // Get the data processed by GEOFOG3D
+#ifdef READ_AND_OUTPUT_PROCESSED_INFO_FROM_GEOFOG3D
+   // Get linear accelerations from table
+   std::vector<std::vector<double> > linear_acceleration_from_table = odes.get_linear_acceleration_from_table();
+   // Get g-force from table
+   std::vector<std::vector<double> > g_force_from_table = odes.get_g_force_from_table();
+   // Get second gyro from table
+   std::vector<std::vector<double> > second_gyro_from_table = odes.get_second_gyro_from_table();
+   // Get Euler angles from table
+   std::vector<std::vector<double> > Euler_angles_from_table = odes.get_Euler_angles_from_table();
+   // Get velocity from table
+   std::vector<std::vector<double> > velocity_from_table = odes.get_velocity_from_table();
+   
+   // --------------------------------------------------------------------------
+   // OUTPUT DATA BLOCK [BEGIN]
+   // --------------------------------------------------------------------------
+   {
+    // --------------------------------------------------
+    // Output data processed by GEOFOG3D
+    for (unsigned i = 0; i < n_gyro_data; i++)
+     {
+      // Linear accelerations from table
+      outfile_linear_acceleration_from_table << linear_acceleration_from_table[i][0]
+                                             << " " << linear_acceleration_from_table[i][1]
+                                             << " " << linear_acceleration_from_table[i][2]
+                                             << " " << linear_acceleration_from_table[i][3] << std::endl;
+      
+      // G-force from table
+      outfile_g_force_from_table << g_force_from_table[i][0]
+                                 << " " << g_force_from_table[i][1] << std::endl;
+      
+      // Second gyro from table
+      outfile_second_gyro_from_table << second_gyro_from_table[i][0]
+                                     << " " << second_gyro_from_table[i][1]
+                                     << " " << second_gyro_from_table[i][2]
+                                     << " " << second_gyro_from_table[i][3] << std::endl;
+      
+      // Euler angles from table
+      outfile_euler_angles_from_table << Euler_angles_from_table[i][0]
+                                      << " " << Euler_angles_from_table[i][1]
+                                      << " " << Euler_angles_from_table[i][2]
+                                      << " " << Euler_angles_from_table[i][3] << std::endl;
+      
+      // Velocity from table
+      outfile_velocity_from_table << velocity_from_table[i][0]
+                                  << " " << velocity_from_table[i][1]
+                                  << " " << velocity_from_table[i][2]
+                                  << " " << velocity_from_table[i][3] << std::endl;
+      
+     } // for (i < n_gyro_data)
+    
+   }
+   // --------------------------------------------------------------------------
+   // OUTPUT DATA BLOCK [END]
+   // --------------------------------------------------------------------------
+#endif // #ifdef READ_AND_OUTPUT_PROCESSED_INFO_FROM_GEOFOG3D
    
 #if 0
    // Skip this data if time is not larger than 100
@@ -1016,21 +1107,6 @@ int main(int argc, char *argv[])
    // ==========================================================================
    // Apply low-pass filter via convolution [BEGIN]
    // ==========================================================================
-   // Copy the data into the corresponding structure
-   for (unsigned i = 0 ; i < n_gyro_data; i++)
-    {
-     noisy_signal_gyro_x[i+n_processed_data_in_gyro_buffer] = rotated_raw_gyro[i][0];
-     noisy_signal_gyro_y[i+n_processed_data_in_gyro_buffer] = rotated_raw_gyro[i][1];
-     noisy_signal_gyro_z[i+n_processed_data_in_gyro_buffer] = rotated_raw_gyro[i][2];
-    }
-   
-   // Copy the data into the corresponding structure
-   for (unsigned i = 0 ; i < n_acc_data; i++)
-    {
-     noisy_signal_acc_x[i+n_processed_data_in_acc_buffer] = rotated_raw_acc[i][0];
-     noisy_signal_acc_y[i+n_processed_data_in_acc_buffer] = rotated_raw_acc[i][1];
-     noisy_signal_acc_z[i+n_processed_data_in_acc_buffer] = rotated_raw_acc[i][2];
-    }
    
    // The data structure where to store the filtered gyro signal
    double *filtered_gyro_signal_t = new double[n_gyro_data];
@@ -1056,6 +1132,23 @@ int main(int argc, char *argv[])
      filtered_acc_signal_t[i] = raw_acc_t[i][0];
     }
    
+#ifdef APPLY_FILTER
+   // Copy the data into the corresponding structure
+   for (unsigned i = 0 ; i < n_gyro_data; i++)
+    {
+     noisy_signal_gyro_x[i+n_processed_data_in_gyro_buffer] = rotated_raw_gyro[i][0];
+     noisy_signal_gyro_y[i+n_processed_data_in_gyro_buffer] = rotated_raw_gyro[i][1];
+     noisy_signal_gyro_z[i+n_processed_data_in_gyro_buffer] = rotated_raw_gyro[i][2];
+    }
+   
+   // Copy the data into the corresponding structure
+   for (unsigned i = 0 ; i < n_acc_data; i++)
+    {
+     noisy_signal_acc_x[i+n_processed_data_in_acc_buffer] = rotated_raw_acc[i][0];
+     noisy_signal_acc_y[i+n_processed_data_in_acc_buffer] = rotated_raw_acc[i][1];
+     noisy_signal_acc_z[i+n_processed_data_in_acc_buffer] = rotated_raw_acc[i][2];
+    }
+      
 #if 1
    // The coefficients of the kernel signal to convolve with the gyro
    // data
@@ -1116,8 +1209,7 @@ int main(int argc, char *argv[])
    
    // The coefficients of the kernel signal to convolve with the
    // accelerometer data
-   const unsigned n_kernel_acc = 61;   
-#ifdef LOW_PASS_FILTER_ACC
+   const unsigned n_kernel_acc = 61;
    double kernel_acc[] = {0.0022962, 0.0023817, 0.0026131, 0.0029901, 0.0035107, 0.0041713, 0.0049663, \
                           0.0058885, 0.0069292, 0.0080780, 0.0093232, 0.0106518, 0.0120497, 0.0135018, \
                           0.0149923, 0.0165048, 0.0180224, 0.0195282, 0.0210052, 0.0224366, 0.0238062, \
@@ -1126,81 +1218,10 @@ int main(int argc, char *argv[])
                           0.0292115, 0.0283666, 0.0273917, 0.0262981, 0.0250983, 0.0238062, 0.0224366, \
                           0.0210052, 0.0195282, 0.0180224, 0.0165048, 0.0149923, 0.0135018, 0.0120497, \
                           0.0106518, 0.0093232, 0.0080780, 0.0069292, 0.0058885, 0.0049663, 0.0041713, \
-                          0.0035107, 0.0029901, 0.0026131, 0.0023817, 0.0022962};
-#else
-   
-#if 0
-   double kernel_acc[] = {1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, \
-                          0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, \
-                          0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, \
-                          0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+                          0.0035107, 0.0029901, 0.0026131, 0.0023817, 0.0022962};   
 #endif // #if 0
    
-   double kernel_acc[] = {-0.001039797554945090822184350365375848924,
-                          -0.001044186393721846690951782221645771642,
-                          -0.001048435732341843323184304992423676595,
-                          -0.001052544624388807893711206276066150167,
-                          -0.001056512154393026261048338376724586851,
-                          -0.001060337438069312550673051198657503846,
-                          -0.001064019622548412809942552925690506527,
-                          -0.001067557886599571331104341354034659162,
-                          -0.001070951440845780994887137538285060145,
-                          -0.001074199527968205903835641201737871597,
-                          -0.001077301422906462146505957022668553691,
-                          -0.001080256433046149645155198371071492147,
-                          -0.001083063898401441993088467619088532956,
-                          -0.001085723191786078364526324513406052574,
-                          -0.001088233718978797587295659354822419118,
-                          -0.001090594918877817003088903646812468651,
-                          -0.001092806263648608139371631864378286991,
-                          -0.00109486725886042790371888155931401343,
-                          -0.001096777443617160752512007526604520535,
-                          -0.001098536390677080313432734115508537798,
-                          -0.001100143706565619638668152013849521609,
-                          -0.001101599031676527701284484805910324212,
-                          -0.001102902040368170183751161950169716874,
-                          -0.001104052441047024320924796469967077428,
-                          -0.001105049976245363286750378328804345074,
-                          -0.001105894422687416162390250384817136364,
-                          -0.001106585591349075600384188611258196033,
-                          -0.001107123327506143303441965564104521036,
-                          -0.001107507510776095877372271480965082446,
-                          -0.001107738055148356406259813056180973945,
-                          0.999929753471740290216018820501631125808,
-                          -0.001107738055148356406259813056180973945,
-                          -0.001107507510776095877372271480965082446,
-                          -0.001107123327506143303441965564104521036,
-                          -0.001106585591349075600384188611258196033,
-                          -0.001105894422687416162390250384817136364,
-                          -0.001105049976245363286750378328804345074,
-                          -0.001104052441047024320924796469967077428,
-                          -0.001102902040368170183751161950169716874,
-                          -0.001101599031676527701284484805910324212,
-                          -0.001100143706565619638668152013849521609,
-                          -0.001098536390677080313432734115508537798,
-                          -0.001096777443617160752512007526604520535,
-                          -0.00109486725886042790371888155931401343,
-                          -0.001092806263648608139371631864378286991,
-                          -0.001090594918877817003088903646812468651,
-                          -0.001088233718978797587295659354822419118,
-                          -0.001085723191786078364526324513406052574,
-                          -0.001083063898401441993088467619088532956,
-                          -0.001080256433046149645155198371071492147,
-                          -0.001077301422906462146505957022668553691,
-                          -0.001074199527968205903835641201737871597,
-                          -0.001070951440845780994887137538285060145,
-                          -0.001067557886599571331104341354034659162,
-                          -0.001064019622548412809942552925690506527,
-                          -0.001060337438069312550673051198657503846,
-                          -0.001056512154393026261048338376724586851,
-                          -0.001052544624388807893711206276066150167,
-                          -0.001048435732341843323184304992423676595,
-                          -0.00104418639372184669095178222164577164,
-                          -0.001039797554945090822184350365375848924};
-   
-#endif // #ifdef LOW_PASS_FILTER_ACC
-   
-#endif // #if 0
+   // TODO Do not apply filter
    
    // Perform the actual convolution
    filter_signal_by_convolution(noisy_signal_gyro_x,
@@ -1268,6 +1289,25 @@ int main(int argc, char *argv[])
      // Reset the number of data processed in the gyro buffer
      n_processed_data_in_acc_buffer=n_kernel_acc-1;
     }
+
+#else
+   // Copy the data
+   for (unsigned i = 0; i < n_gyro_data; i++)
+    {
+     filtered_gyro_signal_x[i] = rotated_raw_gyro[i][0];
+     filtered_gyro_signal_y[i] = rotated_raw_gyro[i][1];
+     filtered_gyro_signal_z[i] = rotated_raw_gyro[i][2];
+    }
+   
+   // Copy the data
+   for (unsigned i = 0; i < n_acc_data; i++)
+    {
+     filtered_acc_signal_x[i] = rotated_raw_acc[i][0];
+     filtered_acc_signal_y[i] = rotated_raw_acc[i][1];
+     filtered_acc_signal_z[i] = rotated_raw_acc[i][2];
+    }
+   
+#endif // #ifdef APPLY_FILTER
    
 #ifdef OUTPUT_FILTERED_SENSORS_DATA
    // --------------------------------------------------------------------------
@@ -1323,6 +1363,9 @@ int main(int argc, char *argv[])
    double *aligned_acc_signal_y = new double[n_data];
    double *aligned_acc_signal_z = new double[n_data];
    
+   //#define APPLY_TIME_STAMPS_ALIGNMENT
+#ifdef APPLY_TIME_STAMPS_ALIGNMENT
+   
    // Perform the actual alignment
    align_sensors_time_stamps(n_data,
                              aligned_time,
@@ -1342,6 +1385,22 @@ int main(int argc, char *argv[])
                              aligned_acc_signal_x,
                              aligned_acc_signal_y,
                              aligned_acc_signal_z);
+
+#else
+   
+   // Copy the data
+   for (unsigned i = 0; i < n_data; i++)
+    {
+     aligned_time[i] = filtered_gyro_signal_t[i];
+     aligned_gyro_signal_x[i] = filtered_gyro_signal_x[i];
+     aligned_gyro_signal_y[i] = filtered_gyro_signal_y[i];
+     aligned_gyro_signal_z[i] = filtered_gyro_signal_z[i];
+     aligned_acc_signal_x[i] = filtered_acc_signal_x[i];
+     aligned_acc_signal_y[i] = filtered_acc_signal_y[i];
+     aligned_acc_signal_z[i] = filtered_acc_signal_z[i];
+    }
+   
+#endif // #ifde APPLY_TIME_STAMPS_ALIGNMENT
    
 #ifdef OUTPUT_ALIGNED_SENSORS_DATA
    // --------------------------------------------------------------------------
@@ -1383,11 +1442,6 @@ int main(int argc, char *argv[])
    // ==========================================================================
    // ==========================================================================
    // ==========================================================================
-   
-#ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
-   // Average of the frontal acceleration to get the error
-   double average_frontal_acceleration = 0;
-#endif // #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
    
    // ==========================================================================
    // ==========================================================================
@@ -1457,6 +1511,11 @@ int main(int argc, char *argv[])
                                                           Euler_angles_rates_thresholded);
      
      // Set Euler into the odes such that they are integrated later
+     Euler_angles_from_table // TODO: Use Euler angles from table as
+                             // the input to compute Euler
+                             // angles. After tests use Euler angles
+                             // from Table to check if the algorithm
+                             // is correct. TODO TODO
      odes.euler_angles_rates() = Euler_angles_rates;
      
 #ifdef OUTPUT_EULER_ANGLES_RATES
@@ -1498,7 +1557,7 @@ int main(int argc, char *argv[])
      // this data after integration when applying a complementary
      // filter)
      double Euler_angles_from_acc[DIM];
-     Euler_angles_from_acc[0]=atan2(aligned_acc_signal_y[i], aligned_acc_signal_z[i]);
+     Euler_angles_from_acc[0]=atan2(aligned_acc_signal_y[i], -aligned_acc_signal_z[i]);
      Euler_angles_from_acc[1]=atan2(-aligned_acc_signal_x[i],
                                     sqrt(aligned_acc_signal_y[i]*aligned_acc_signal_y[i]+
                                          aligned_acc_signal_z[i]*aligned_acc_signal_z[i]));
@@ -1541,7 +1600,7 @@ int main(int argc, char *argv[])
      double gravity_in_inertial_frame[DIM];
      gravity_in_inertial_frame[0]=0.0;
      gravity_in_inertial_frame[1]=0.0;
-     gravity_in_inertial_frame[2]=GRAVITY;
+     gravity_in_inertial_frame[2]=-GRAVITY;
      //gravity_in_inertial_frame[2]=1.0; // TODO
      // Store the gravity in the body frame
      double gravity_in_body_frame[DIM];
@@ -1580,17 +1639,6 @@ int main(int argc, char *argv[])
      linear_accelerations[1]=body_accelerations[1]-gravity_in_body_frame[1];
      linear_accelerations[2]=body_accelerations[2]-gravity_in_body_frame[2];
      
-#if 0
-     if (fabs(linear_accelerations[0]) < 0.4)
-      {
-       linear_accelerations[0]=0.0;
-      }
-     if (fabs(linear_accelerations[1]) < 0.0)
-      {
-       linear_accelerations[1]=0.0;
-      }
-#endif // #if 0
-     
      // Set the values for linear acceleration into the odes to
      // integrate later
      odes.linear_acceleration() = linear_accelerations;
@@ -1604,11 +1652,6 @@ int main(int argc, char *argv[])
      double inertial_accelerations[DIM];
      transform_body_to_inertial(Euler_angles, linear_accelerations, inertial_accelerations);
      
-#ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
-     // Add on the average for frontal speed
-     average_frontal_acceleration+=linear_accelerations[0];
-#endif // #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
-
 #ifdef OUTPUT_ACCELERATIONS
      // --------------------------------------------------------------------------
      // OUTPUT DATA BLOCK [BEGIN]
@@ -1690,7 +1733,7 @@ int main(int argc, char *argv[])
      // Complementary filter [BEGIN]
      // ==========================================================================
      // Complementary filter parameter
-     const double alpha = 0.90;
+     const double alpha = 0.999;
      
 #ifndef OUTPUT_EULER_ANGLES_FROM_GYRO_AND_ACCELEROMETER // Complementary
                                                         // filter is
@@ -1721,14 +1764,32 @@ int main(int argc, char *argv[])
      // Complementary filter [END]
      // ==========================================================================
      
-     std::cout.precision(8);
-     std::cout << "t: " << current_time
-               << " x-pos: " << y[0][0] << " x-vel: " << y[1][0]
-               << " y-pos: " << y[2][0] << " y-vel: " << y[3][0]
-               << " z-pos: " << y[4][0] << " z-vel: " << y[5][0]
-               << " roll: " << y[6][0] << " pitch: " << y[7][0] << " yaw: " << y[8][0] << std::endl;
+#ifdef NAVIGATION_DATA_TO_EVALUATION
+     const double dt = current_time - previous_time;
+     const double speed_in_m_per_sec = y[1][0];
+     const double course_angle = y[8][0];
+     // Compute x and y position from angle and radial position
+     X_POS+= speed_in_m_per_sec*dt*cos(course_angle);
+     Y_POS+= speed_in_m_per_sec*dt*sin(course_angle);
+     outfile_navigation_data_for_evaluation << current_time << " "
+                                            << latitude_longitude_from_table[i][2] << " "
+                                            << latitude_longitude_from_table[i][1] << " "
+                                            << speed_in_m_per_sec*3.6 << " "
+                                            << X_POS << " " << Y_POS << " "
+                                            << speed_in_m_per_sec * dt << " "
+                                            << course_angle*TO_DEGREES << std::endl;
+     // Update previous time
+     previous_time=current_time;
+#endif //  #ifdef NAVIGATION_DATA_TO_EVALUATION
      
     } // for (i < n_data-1)
+   
+   std::cout.precision(8);
+   std::cout << "t: " << current_time
+             << " x-pos: " << y[0][0] << " x-vel: " << y[1][0]
+             << " y-pos: " << y[2][0] << " y-vel: " << y[3][0]
+             << " z-pos: " << y[4][0] << " z-vel: " << y[5][0]
+             << " roll: " << y[6][0] << " pitch: " << y[7][0] << " yaw: " << y[8][0] << std::endl;
    
    // ==========================================================================
    // ==========================================================================
@@ -1737,102 +1798,6 @@ int main(int argc, char *argv[])
    // ==========================================================================
    // ==========================================================================
    // ==========================================================================
-   
-#if 0
-   const double dt = current_time - raw_gyro_t[0][0];
-#endif // #if 0
-#ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
-   const double speed_in_m_per_sec_from_gps = odes.speed_in_knots()*0.514444;
-   const double acc_in_m_per_sec_from_speed_from_gps =
-    (speed_in_m_per_sec_from_gps - previous_speed_in_m_per_sec_from_gps) / dt;
-   // Store previous speed
-   previous_speed_in_m_per_sec_from_gps = speed_in_m_per_sec_from_gps;
-   
-   // ----------------------------
-   // OUTPUT
-   // ----------------------------
-   outfile_speed_in_m_per_sec_from_GPS << current_time
-                                       << " " << speed_in_m_per_sec_from_gps << std::endl;
-   outfile_acc_in_m_per_sec_from_speed_from_GPS << current_time
-                                                << " " << acc_in_m_per_sec_from_speed_from_gps << std::endl;
-   
-   // Get the average
-   average_frontal_acceleration/=(n_data-1);
-   
-   // OUTPUT
-   //const double error = average_frontal_acceleration - acc_in_m_per_sec_from_speed_from_gps;
-   const double abs_error = fabs(acc_in_m_per_sec_from_speed_from_gps - average_frontal_acceleration);
-   double relative_error = 0.0;
-   if (fabs(acc_in_m_per_sec_from_speed_from_gps) > 1.0e-8)
-    {
-     relative_error = abs_error / fabs(acc_in_m_per_sec_from_speed_from_gps);
-    }
-   outfile_error_acc_in_m_per_sec << current_time << " " << abs_error << " " << relative_error << std::endl;
-   
-#endif // #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
-   
-#ifdef NAVIGATION_FROM_GPS
-   // -------------------------------------------------------------------
-   // Navigation data (from GPS)
-   // -------------------------------------------------------------------
-   // Get the current angle
-   const double true_course_in_degrees_from_GPS = odes.true_course_in_degrees();
-   //const double course_angle = true_course_in_degrees_from_GPS*TO_RADIANS;
-   const double course_angle = y[8][0];
-   // Compute x and y position from angle and radial position
-   X_from_GPS+= speed_in_m_per_sec_from_gps*dt*cos(course_angle);
-   Y_from_GPS+= speed_in_m_per_sec_from_gps*dt*sin(course_angle);
-   //const double X_from_GPS = radial_position_from_GPS_in_meters*cos(course_angle);
-   //const double Y_from_GPS = radial_position_from_GPS_in_meters*sin(course_angle);
-   
-   char longitude_string[10];
-   char latitude_string[9];
-   sprintf(longitude_string, "%.8f", odes.longitude());
-   sprintf(latitude_string, "%.8f", odes.latitude());
-   char degrees_longitude[2];
-   char minutes_longitude[7];
-   degrees_longitude[0] = longitude_string[0];
-   degrees_longitude[1] = longitude_string[1];
-   minutes_longitude[0] = longitude_string[2];
-   minutes_longitude[1] = longitude_string[3];
-   minutes_longitude[2] = longitude_string[4];
-   minutes_longitude[3] = longitude_string[5];
-   minutes_longitude[4] = longitude_string[6];
-   minutes_longitude[5] = longitude_string[7];
-   minutes_longitude[6] = longitude_string[8];
-#if 0
-   std::cout << std::endl << "Degrees: " << atof(degrees_longitude);
-   std::cout << " Minutes: " << atof(minutes_longitude) << std::endl;
-#endif // #if 0
-   const double longitude = atof(degrees_longitude) + atof(minutes_longitude)/60.0;
-   
-   char degrees_latitude[2];
-   char minutes_latitude[7];
-   degrees_latitude[0] = latitude_string[0];
-   degrees_latitude[1] = latitude_string[1];
-   minutes_latitude[0] = latitude_string[2];
-   minutes_latitude[1] = latitude_string[3];
-   minutes_latitude[2] = latitude_string[4];
-   minutes_latitude[3] = latitude_string[5];
-   minutes_latitude[4] = latitude_string[6];
-   minutes_latitude[5] = latitude_string[7];
-   minutes_latitude[6] = latitude_string[8];
-#if 0
-   std::cout << std::endl << "Degrees: " << atof(degrees_latitude);
-   std::cout << " Minutes: " << atof(minutes_latitude) << std::endl;
-#endif // #if 0
-   const double latitude = atof(degrees_latitude) + atof(minutes_latitude)/60.0;
-   
-   outfile_navigation_data_from_GPS << current_time << " "
-                                    << longitude << " " << latitude << " "
-                                    << speed_in_m_per_sec_from_gps*3.6 << " "
-                                    << X_from_GPS << " " << Y_from_GPS << " "
-                                    << speed_in_m_per_sec_from_gps * dt << " "
-                                    << course_angle*TO_DEGREES << std::endl;
-   // Compute new radial position
-   radial_position_from_GPS_in_meters+= speed_in_m_per_sec_from_gps * dt;
-
-#endif // #ifdef NAVIGATION_FROM_GPS
    
   } // while(LOOP)
  
@@ -1858,15 +1823,17 @@ int main(int argc, char *argv[])
  outfile_linear_acc.close();
  outfile_velocity.close();
  
-#ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
- outfile_speed_in_m_per_sec_from_GPS.close();
- outfile_acc_in_m_per_sec_from_speed_from_GPS.close();
- outfile_error_acc_in_m_per_sec.close();
-#endif // #ifdef DEBUG_SPEED_AND_ACCELERATION_FROM_GPS
-
-#ifdef NAVIGATION_FROM_GPS
- outfile_navigation_data_from_GPS.close();
-#endif // #ifdef NAVIGATION_FROM_GPS
+#ifdef READ_AND_OUTPUT_PROCESSED_INFO_FROM_GEOFOG3D
+ outfile_linear_acceleration_from_table.close();
+ outfile_g_force_from_table.close();
+ outfile_second_gyro_from_table.close();
+ outfile_euler_angles_from_table.close();
+ outfile_velocity_from_table.close();
+#endif // #ifdef READ_AND_OUTPUT_PROCESSED_INFO_FROM_GEOFOG3D
+ 
+#ifdef NAVIGATION_DATA_TO_EVALUATION
+ outfile_navigation_data_for_evaluation.close();
+#endif // #ifdef NAVIGATION_DATA_TO_EVALUATION
  
  // Free memory
  delete integrator;

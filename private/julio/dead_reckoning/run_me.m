@@ -1,5 +1,5 @@
 %% Read data
-% putty_9_car_ride_tona_acatepec_inaoe_wait_large.log
+% putty_9_car_ride_tona_acatepec_inaoe_wait_large.dat
 n_input_raw_data = 7961;
 %n_input_raw_data = 6826;
 n_input_aligned_data = 7901;
@@ -359,6 +359,12 @@ grid on
 
 average_abs_error = mean(error_acc_in_m_per_sec_between_gps_and_sensor(:,2),1)
 average_relative_error = mean(error_acc_in_m_per_sec_between_gps_and_sensor(:,3),1)
+
+figure();
+plot(latlon(:,2),latlon(:,1),'.r', 'MarkerSize',5)
+hold on
+plot_google_map2('Refresh','1','maptype','terrain','AutoAxis','1')
+hold off
 
 %% DELETE
 delay = 0.005; % Delay in seconds in every loop

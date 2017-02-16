@@ -1,0 +1,12 @@
+First ten minutes of trajectory without initial noisy data
+From row State.csv and RawSensors.csv files
+4662
+to row
+16253
+
+
+15354 - 15352
+
+14860 - 14858
+
+
