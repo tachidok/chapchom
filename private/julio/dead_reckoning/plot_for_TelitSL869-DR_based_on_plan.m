@@ -418,7 +418,7 @@ grid on
 
 %% Position (Yo)
 n_data = size(velocity,1);
-n_seconds_of_test = -n_data / 14.0;
+n_seconds_of_test = n_data / 14.0;
 n_minutes_of_test = n_seconds_of_test / 60.0;
 step_size = n_seconds_of_test / n_data;
 x = zeros(n_data, 1);
@@ -827,8 +827,10 @@ ylabel('Magnitude')
 legend('Frequency', 'Location', 'NorthWest')
 
 %% Designing a filter for the Gyro data
-cut_off_frequency = 0.5/Fs/2; % Normalised to Nyquist frequency which is half the sampling rate
-order = 15; % The order of the filter
+my_cut_off_frequency = 2.0;
+%my_cut_off_frequency = 0.5;
+cut_off_frequency = my_cut_off_frequency/Fs/2; % Normalised to Nyquist frequency which is half the sampling rate
+order = 14; % The order of the filter
 %order = 128; % The order of the filter
 % Impose response of the low-pass filter
 h = fir1(order, cut_off_frequency);
@@ -891,8 +893,10 @@ ylabel('Magnitude')
 legend('Frequency', 'Location', 'NorthWest')
 
 %% Designing a filter for the Accelerometer data
-cut_off_frequency = 0.25/Fs/2; % Normalised to Nyquist frequency which is half the sampling rate
-order = 15; % The order of the filter
+my_cut_off_frequency = 1.0;
+%my_cut_off_frequency = 0.25;
+cut_off_frequency = my_cut_off_frequency/Fs/2; % Normalised to Nyquist frequency which is half the sampling rate
+order = 14; % The order of the filter
 %order = 128; % The order of the filter
 % Impose response of the low-pass filter
 h = fir1(order, cut_off_frequency);
