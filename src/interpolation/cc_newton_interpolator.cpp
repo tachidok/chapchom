@@ -207,14 +207,14 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // We check whether we have the corresponding number of data points
-  // to perform the given order interpolation
-  if (n_x_points - 1 != order)
+  // We check whether we have at least the corresponding number of
+  // data points to perform the given order interpolation
+  if (n_x_points - 1 < order)
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "The number of data points do not match with the "
-                  << "requested\ninterpolation order" << std::endl;
+    error_message << "We do not have enough points to perform this type of"
+                  << "interpolation order" << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
