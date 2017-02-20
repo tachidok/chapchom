@@ -139,6 +139,9 @@ namespace chapchom
  template<class T>
  CCMatrix<T> CCVector<T>::operator*(const CCVector<T> &vector)
  {
+  // HERE HERE Shouldn't this function return a matrix? Then why does
+  // it returns a vector
+  
   // Create two matrices, one from each vector
   CCMatrix<T> left_matrix(*this);
   CCMatrix<T> right_matrix(vector);
@@ -654,6 +657,72 @@ namespace chapchom
    }
   
  }
+
+ // ===================================================================
+ // Computes the norm-1 of the vector
+ // ===================================================================
+ template<class T>
+ const double CCVector<T>::norm_1()
+ {
+  // Sum
+  double sum = 0.0;
+  // Check whether the vector is empty or not
+  if (!this->Is_empty)
+   {
+    // Compute the dot product
+    for (unsigned long i = 0; i < this->NValues; i++)
+     {
+      sum+= Vector_pt[i];
+     }
+   }
+  else
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "We can not compute the norm of an empty vector\n"
+                  << "this->Is_empty = "
+                  << this->Is_empty << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  return sum;
+  
+ }
+ 
+ // ===================================================================
+ // Computes the norm-2 of the vector
+ // ===================================================================
+ template<class T>
+ const double CCVector<T>::norm_2()
+ {
+  // Sum
+  double sum = 0.0;
+  // Check whether the vector is empty or not
+  if (!this->Is_empty)
+   {
+    // Compute the dot product
+    for (unsigned long i = 0; i < this->NValues; i++)
+     {
+      sum+= (Vector_pt[i]*Vector_pt[i]);
+     }
+   }
+  else
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "We can not compute the norm of an empty vector\n"
+                  << "this->Is_empty = "
+                  << this->Is_empty << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  return sqrt(sum);
+  
+ }
  
  // ===================================================================
  // Creates a zero vector with the already defined number of entries
@@ -669,7 +738,7 @@ namespace chapchom
   Vector_pt = new T[this->NValues];
   
   // Mark the vector as having something
-  this->Is_empty=false;  
+  this->Is_empty=false;
  }
  
  // ================================================================
