@@ -121,6 +121,12 @@ namespace chapchom
    // Get access to the Vector_pt
    inline T *vector_pt() const {return Vector_pt;}
    
+   // Computes the norm-1 of the vector
+   const double norm_1();
+   
+   // Computes the norm-2 of the vector
+   const double norm_2();
+   
   protected:
       
    // The vector

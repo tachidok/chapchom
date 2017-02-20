@@ -115,6 +115,12 @@ namespace chapchom
    // Disables the deletion of the vector by itself
    inline void disable_delete_vector() {Delete_vector=false;}
    
+   // Computes the norm-1 of the vector
+   virtual const double norm_1() = 0;
+   
+   // Computes the norm-2 of the vector
+   virtual const double norm_2() = 0;
+   
   protected:
       
    // The size of the vector
