@@ -42,6 +42,8 @@
 // Data to evaluation
 #define READ_AND_OUTPUT_PROCESSED_INFO_FROM_GEOFOG3D
 #define NAVIGATION_DATA_TO_EVALUATION
+//#define FORCE_USING_EULER_ANGLES_FROM_GEOFOG3D
+//#define FORCE_USING_LINEAR_ACCELERATIONS_FROM_GEOFOG3D
 
 // -------------------------------------------------
 // Constants
@@ -53,6 +55,26 @@
 
 using namespace chapchom;
 
+// ===================================================================
+// Performs a rotation indicated by the rotation matrix R
+// ===================================================================
+void rotate(CCMatrix<double> &R,
+            double *original_data,
+            double *rotated_data)
+{
+ // Create a vector representation of the original data
+ CCVector<double> b(original_data, DIM);
+ // A vector representation of the rotated data
+ CCVector<double> r(DIM);
+ // Apply rotation
+ multiply_matrix_times_vector(R, b, r);
+ // Copy back result in output structure
+ rotated_data[0]=r(0);
+ rotated_data[1]=r(1);
+ rotated_data[2]=r(2);
+}
+
+#if 0
 // ===================================================================
 // Rotate sensors data to match ASIKI's reference frame
 // ===================================================================
@@ -134,6 +156,127 @@ void rotate_sensors_to_ASIKIs_reference_frame(std::vector<std::vector<double> > 
    rotated_raw_acc[i][1] = r_a(1); // acc_y
    rotated_raw_acc[i][2] = r_a(2); // acc_z
   } // for (i < n_acc)
+ 
+}
+
+#endif // #if 0
+
+// ===================================================================
+// Rotate sensors data to match ASIKI's reference frame
+// ===================================================================
+void rotate_sensors_to_ASIKIs_reference_frame(std::vector<std::vector<double> > &raw_gyro_t,
+                                              std::vector<std::vector<double> > &raw_acc_t,
+                                              std::vector<std::vector<double> > &rotated_raw_gyro,
+                                              std::vector<std::vector<double> > &rotated_raw_acc,
+                                              std::vector<double> &Euler_angles_for_gyro,
+                                              std::vector<double> &Euler_angles_for_acc)
+{ 
+ // -----------------------------------------------------------
+ // Rotation matrices to rotate the gyro's and accelerometer's
+ // reference frame to the ASIKI's reference frame
+ // -----------------------------------------------------------
+
+ {
+  // Get the number of data for gyro
+  const unsigned n_gyro = raw_gyro_t.size();
+  
+  // Rotation matrix for gyro data
+  CCMatrix<double> R_g(DIM, DIM);
+  R_g.create_zero_matrix();
+  
+  const double sin_theta_x = sin(Euler_angles_for_gyro[0]);
+  const double sin_theta_y = sin(Euler_angles_for_gyro[1]);
+  const double sin_theta_z = sin(Euler_angles_for_gyro[2]);
+  const double cos_theta_x = cos(Euler_angles_for_gyro[0]);
+  const double cos_theta_y = cos(Euler_angles_for_gyro[1]);
+  const double cos_theta_z = cos(Euler_angles_for_gyro[2]);
+  
+  R_g(0,0) = cos_theta_y*cos_theta_z;
+  R_g(0,1) = cos_theta_y*sin_theta_z;
+  R_g(0,2) = -sin_theta_y;
+  
+  R_g(1,0) = sin_theta_x*sin_theta_y*cos_theta_z - cos_theta_x*sin_theta_z;
+  R_g(1,1) = sin_theta_x*sin_theta_y*sin_theta_z+cos_theta_x*cos_theta_z;
+  R_g(1,2) = sin_theta_x*cos_theta_y;
+  
+  R_g(2,0) = cos_theta_x*sin_theta_y*cos_theta_z + sin_theta_x*sin_theta_z;
+  R_g(2,1) = cos_theta_x*sin_theta_y*sin_theta_z-sin_theta_x*cos_theta_z;
+  R_g(2,2) = cos_theta_x*cos_theta_y;
+  
+  // Compute the transpose (body to inertial -- acc measurements are
+  // in the inertial frame --)
+  R_g.transpose();
+  
+  // Rotate each of the set of data of te gyro
+  for (unsigned i = 0; i < n_gyro; i++)
+   {
+    // Copy the date in temporary structures
+    double r[DIM];
+    r[0]=raw_gyro_t[i][1]; // gyro_x
+    r[1]=raw_gyro_t[i][2]; // gyro_y
+    r[2]=raw_gyro_t[i][3]; // gyro_z
+    double r_g[DIM];
+    
+    // Perform the actual transformation
+    rotate(R_g, r, r_g);
+    
+    rotated_raw_gyro[i][0]=r_g[0];
+    rotated_raw_gyro[i][1]=r_g[1];
+    rotated_raw_gyro[i][2]=r_g[2];
+   
+   } // for (i < n_gyro)
+  
+ }
+ 
+ {
+  // Get the number of data for acc
+  const unsigned n_acc = raw_acc_t.size();
+  CCMatrix<double> R_a(DIM, DIM);
+  R_a.create_zero_matrix();
+  
+  const double sin_theta_x = sin(Euler_angles_for_acc[0]);
+  const double sin_theta_y = sin(Euler_angles_for_acc[1]);
+  const double sin_theta_z = sin(Euler_angles_for_acc[2]);
+  const double cos_theta_x = cos(Euler_angles_for_acc[0]);
+  const double cos_theta_y = cos(Euler_angles_for_acc[1]);
+  const double cos_theta_z = cos(Euler_angles_for_acc[2]);
+  
+  R_a(0,0) = cos_theta_y*cos_theta_z;
+  R_a(0,1) = cos_theta_y*sin_theta_z;
+  R_a(0,2) = -sin_theta_y;
+  
+  R_a(1,0) = sin_theta_x*sin_theta_y*cos_theta_z - cos_theta_x*sin_theta_z;
+  R_a(1,1) = sin_theta_x*sin_theta_y*sin_theta_z+cos_theta_x*cos_theta_z;
+  R_a(1,2) = sin_theta_x*cos_theta_y;
+  
+  R_a(2,0) = cos_theta_x*sin_theta_y*cos_theta_z + sin_theta_x*sin_theta_z;
+  R_a(2,1) = cos_theta_x*sin_theta_y*sin_theta_z-sin_theta_x*cos_theta_z;
+  R_a(2,2) = cos_theta_x*cos_theta_y;
+  
+  // Compute the transpose (body to inertial -- acc measurements are
+  // in the inertial frame --)
+  R_a.transpose();
+  
+  // Rotate each of the set of data of te gyro
+  for (unsigned i = 0; i < n_acc; i++)
+   {
+    // Copy the date in temporary structures
+    double r[DIM];
+    r[0]=raw_acc_t[i][1]; // acc_x
+    r[1]=raw_acc_t[i][2]; // acc_y
+    r[2]=raw_acc_t[i][3]; // acc_z
+    double r_a[DIM];
+    
+    // Perform the actual transformation
+    rotate(R_a, r, r_a);
+    
+    rotated_raw_acc[i][0]=r_a[0];
+    rotated_raw_acc[i][1]=r_a[1];
+    rotated_raw_acc[i][2]=r_a[2];
+    
+   } // for (i < n_acc)
+  
+ }
  
 }
 
@@ -341,25 +484,6 @@ void transform_angular_velocities_into_euler_angles_rates(double *angular_veloci
  Euler_angles_rates_thresholded[2]=e_th(2);
 #endif // #ifdef GYRO_THRESHOLD_Z
  
-}
-
-// ===================================================================
-// Performs a rotation indicated by the rotation matrix R
-// ===================================================================
-void rotate(CCMatrix<double> &R,
-            double *original_data,
-            double *rotated_data)
-{
- // Create a vector representation of the original data
- CCVector<double> b(original_data, DIM);
- // A vector representation of the rotated data
- CCVector<double> r(DIM);
- // Apply rotation
- multiply_matrix_times_vector(R, b, r);
- // Copy back result in output structure
- rotated_data[0]=r(0);
- rotated_data[1]=r(1);
- rotated_data[2]=r(2);
 }
 
 // ===================================================================
@@ -724,7 +848,23 @@ int main(int argc, char *argv[])
                           CHAPCHOM_CURRENT_FUNCTION,
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
-
+ 
+ // Velocity (North-East)
+ char file_velocity_north_east_name[100];
+ sprintf(file_velocity_north_east_name, "./RESLT/velocity_north_east.dat");
+ std::ofstream outfile_velocity_north_east;
+ outfile_velocity_north_east.open(file_velocity_north_east_name, std::ios::out);
+ if (outfile_velocity_north_east.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_velocity_north_east_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
 #ifdef READ_AND_OUTPUT_PROCESSED_INFO_FROM_GEOFOG3D
  // Linear acceleration from table
  char file_linear_acceleration_from_table_name[100];
@@ -896,7 +1036,7 @@ int main(int argc, char *argv[])
  
  // Set initial conditions
  y[0][0] = 0.0; // Initial x-position
- y[1][0] = 0.0; // Initial x-velocity
+ y[1][0] = 6.1;//0.0; // Initial x-velocity
  y[2][0] = 0.0; // Initial y-position
  y[3][0] = 0.0; // Initial y-velocity
  y[4][0] = 0.0; // Initial z-position
@@ -905,11 +1045,14 @@ int main(int argc, char *argv[])
  y[6][0] = 0.03174143; // Initial roll (radians)
  //y[7][0] = 0.0; // Initial pitch (radians)
  y[7][0] = 0.044491584; // Initial pitch (radians)
- y[8][0] = 0.0; // Initial yaw (radians)
- y[9][0] = 0.0; // Initial yaw with threshold (radians)
+ y[8][0] = 0.646752591;//0.924043736;//0.646752591; // Initial yaw (radians)
+ y[9][0] = 0.646752591;//0.0 // Initial yaw with threshold (radians)
+ //y[8][0] = 0.0; // Initial yaw (radians)
+ //y[9][0] = 0.0; // Initial yaw with threshold (radians)
  
  // Discretised time
  double current_time = 0;
+ double previous_step = 0.0;
  
  // Output the initial data to screen
  std::cout.precision(8);
@@ -1049,11 +1192,34 @@ int main(int argc, char *argv[])
      rotated_raw_acc[i].resize(DIM);
     }
    
+#if 0
    // Perform the actual rotatations
    rotate_sensors_to_ASIKIs_reference_frame(raw_gyro_t,
                                             raw_acc_t,
                                             rotated_raw_gyro,
                                             rotated_raw_acc);
+#endif // #if 0
+   
+   std::vector<double> Euler_angles_to_rotate_raw_gyro(DIM);
+   Euler_angles_to_rotate_raw_gyro[0]=0.0;//y[6][0];
+   Euler_angles_to_rotate_raw_gyro[1]=0.0;//y[7][0];
+   Euler_angles_to_rotate_raw_gyro[2]=0.0;//y[8][0];
+   
+   std::vector<double> Euler_angles_to_rotate_raw_acc(DIM);
+   Euler_angles_to_rotate_raw_acc[0]=0.0;
+   Euler_angles_to_rotate_raw_acc[1]=0.0;
+   Euler_angles_to_rotate_raw_acc[2]=0.0;
+   
+   // Perform the actual rotatations
+   rotate_sensors_to_ASIKIs_reference_frame(raw_gyro_t,
+                                            raw_acc_t,
+                                            rotated_raw_gyro,
+                                            rotated_raw_acc,
+                                            Euler_angles_to_rotate_raw_gyro,
+                                            Euler_angles_to_rotate_raw_acc);
+   
+   // TODO Check Euler angles difference without abs in MatLab to
+   // check "the direction" of the error
    
 #ifdef OUTPUT_RAW_AND_ROTATED_SENSORS_DATA
    // --------------------------------------------------------------------------
@@ -1453,7 +1619,7 @@ int main(int argc, char *argv[])
    
    // Loop over the data and process each pair of gyro-accelerometers
    // data (main processing)
-   for (unsigned i = 0; i < n_data-1; i++)
+   for (unsigned i = 0; i < n_data; i++)
     {
      // Get the discretised time for this set of data
      current_time = aligned_time[i];
@@ -1511,12 +1677,10 @@ int main(int argc, char *argv[])
                                                           Euler_angles_rates_thresholded);
      
      // Set Euler into the odes such that they are integrated later
-     Euler_angles_from_table // TODO: Use Euler angles from table as
-                             // the input to compute Euler
-                             // angles. After tests use Euler angles
-                             // from Table to check if the algorithm
-                             // is correct. TODO TODO
      odes.euler_angles_rates() = Euler_angles_rates;
+     
+     // TODO. Here check with Euler_angles_rates_from_table which come
+     // in the "second_gyro" information from GEOFOG3D
      
 #ifdef OUTPUT_EULER_ANGLES_RATES
      // --------------------------------------------------------------------------
@@ -1557,8 +1721,12 @@ int main(int argc, char *argv[])
      // this data after integration when applying a complementary
      // filter)
      double Euler_angles_from_acc[DIM];
-     Euler_angles_from_acc[0]=atan2(aligned_acc_signal_y[i], -aligned_acc_signal_z[i]);
-     Euler_angles_from_acc[1]=atan2(-aligned_acc_signal_x[i],
+     //Euler_angles_from_acc[0]=atan2(aligned_acc_signal_y[i], -aligned_acc_signal_z[i]);
+     Euler_angles_from_acc[0]=atan2(-aligned_acc_signal_y[i], -aligned_acc_signal_z[i]);
+     //Euler_angles_from_acc[1]=atan2(-aligned_acc_signal_x[i],
+     //                               sqrt(aligned_acc_signal_y[i]*aligned_acc_signal_y[i]+
+     //                                    aligned_acc_signal_z[i]*aligned_acc_signal_z[i]));
+     Euler_angles_from_acc[1]=atan2(aligned_acc_signal_x[i],
                                     sqrt(aligned_acc_signal_y[i]*aligned_acc_signal_y[i]+
                                          aligned_acc_signal_z[i]*aligned_acc_signal_z[i]));
      Euler_angles_from_acc[2]=atan2(sqrt(aligned_acc_signal_x[i]*aligned_acc_signal_x[i]+
@@ -1628,16 +1796,25 @@ int main(int argc, char *argv[])
      // Subtract gravity (in body frame) to generate linear
      // acceleration (in body frame)
      // -------------------------------------------------------
-     
+      
      // Linear acceleration storage
      double linear_accelerations[DIM];
      // Subtract gravity (gravity compensation)
      //linear_accelerations[0]=body_accelerations[0] - 0.4942;
      //linear_accelerations[0]=body_accelerations[0] * 1.3298;
      //linear_accelerations[0]=body_accelerations[0]-gravity_in_body_frame[0] + 0.06;
-     linear_accelerations[0]=body_accelerations[0]-gravity_in_body_frame[0];
-     linear_accelerations[1]=body_accelerations[1]-gravity_in_body_frame[1];
-     linear_accelerations[2]=body_accelerations[2]-gravity_in_body_frame[2];
+     //     linear_accelerations[0]=body_accelerations[0]-gravity_in_body_frame[0]+0.1589;
+     //     linear_accelerations[1]=body_accelerations[1]-gravity_in_body_frame[1]-0.0816;
+     //     linear_accelerations[2]=body_accelerations[2]-gravity_in_body_frame[2]-0.0041;
+     linear_accelerations[0]=body_accelerations[0]-gravity_in_body_frame[0]-0.0022;//+0.1589;
+     linear_accelerations[1]=body_accelerations[1]-gravity_in_body_frame[1]-0.1156;//-0.0816;//-0.12;//TODO shift
+     linear_accelerations[2]=body_accelerations[2]-gravity_in_body_frame[2]-0.0084;
+     
+#ifdef FORCE_USING_LINEAR_ACCELERATIONS_FROM_GEOFOG3D
+     linear_accelerations[0]=linear_acceleration_from_table[i][1];
+     linear_accelerations[1]=linear_acceleration_from_table[i][2];
+     linear_accelerations[2]=linear_acceleration_from_table[i][3];
+#endif // #ifdef FORCE_USING_LINEAR_ACCELERATIONS_FROM_GEOFOG3D
      
      // Set the values for linear acceleration into the odes to
      // integrate later
@@ -1683,7 +1860,7 @@ int main(int argc, char *argv[])
      // ==========================================================================
      // Gravity compensation [END]
      // ==========================================================================
-     
+
      // ==========================================================================
      // Velocity processing [BEGIN]
      // ==========================================================================
@@ -1699,6 +1876,20 @@ int main(int argc, char *argv[])
                        << " " << y[3][0]
                        << " " << y[5][0]
                        << std::endl;
+      
+      // North-east velocities
+      const double course_angle = y[8][0];
+      //const double north_velocity = y[1][0]*sin(course_angle);// + y[3][0]*cos(course_angle);
+      //const double east_velocity = y[1][0]*cos(course_angle);// + y[3][0]*sin(course_angle);
+      //const double down_velocity = 0.0;
+      const double north_velocity = y[1][0]*sin(M_PI/2.0 - course_angle);// + y[3][0]*sin(course_angle);
+      const double east_velocity = y[1][0]*cos(M_PI/2.0 - course_angle);// - y[3][0]*cos(course_angle);
+      const double down_velocity = 0.0;      
+      outfile_velocity_north_east << current_time
+                                  << " " << north_velocity
+                                  << " " << east_velocity
+                                  << " " << down_velocity
+                                  << std::endl;
      }
 #endif // #ifdef OUTPUT_VELOCITIES
      
@@ -1710,7 +1901,12 @@ int main(int argc, char *argv[])
      // Integrate the ODE's [BEGIN]
      // ==========================================================================
      // Compute the step size
-     const double step = aligned_time[i+1] - aligned_time[i];
+     double step = previous_step;
+     if (i < n_data - 1)
+      {
+        step = aligned_time[i+1] - aligned_time[i];
+      }
+     previous_step = step;
      
      integrator->integrate_step(odes, step, current_time, y);
      
@@ -1733,7 +1929,7 @@ int main(int argc, char *argv[])
      // Complementary filter [BEGIN]
      // ==========================================================================
      // Complementary filter parameter
-     const double alpha = 0.999;
+     const double alpha = 0.9995;
      
 #ifndef OUTPUT_EULER_ANGLES_FROM_GYRO_AND_ACCELEROMETER // Complementary
                                                         // filter is
@@ -1748,10 +1944,21 @@ int main(int argc, char *argv[])
      // Update Euler angles
      y[6][0] = alpha * y[6][0] + (1.0 - alpha) * Euler_angles_from_acc[0];
      y[7][0] = alpha * y[7][0] + (1.0 - alpha) * Euler_angles_from_acc[1];
+     //y[6][0]-=0.0374;
+     //y[7][0]-=0.0891;
 #ifdef GYRO_THRESHOLD_Z
      // Complementary filter of Yaw with Yaw threshold
      y[8][0] = alpha * y[8][0] + (1.0 - alpha) * y[9][0];
 #endif // #ifdef GYRO_THRESHOLD_Z
+     
+#ifdef FORCE_USING_EULER_ANGLES_FROM_GEOFOG3D
+     { // TODO
+      // FORCE the use of Euler angles from table
+      y[6][0]=Euler_angles_from_table[i][1];
+      y[7][0]=Euler_angles_from_table[i][2];
+      y[8][0]=Euler_angles_from_table[i][3];
+     }
+#endif // #ifdef FORCE_USING_EULER_ANGLES_FROM_GEOFOG3D
      
      //const double alpha_vel = 0.90;
      //y[1][0] = y[1][0] * alpha_vel + (1.0 - alpha_vel) * previous_speed_in_m_per_sec_from_gps;
@@ -1766,17 +1973,24 @@ int main(int argc, char *argv[])
      
 #ifdef NAVIGATION_DATA_TO_EVALUATION
      const double dt = current_time - previous_time;
-     const double speed_in_m_per_sec = y[1][0];
+     const double x_speed_in_m_per_sec = y[1][0];
+     const double y_speed_in_m_per_sec = y[3][0];
+     const double z_speed_in_m_per_sec = y[5][0];
+     //     const double total_speed_in_m_per_sec = sqrt(x_speed_in_m_per_sec*x_speed_in_m_per_sec)+
+     //      (y_speed_in_m_per_sec*y_speed_in_m_per_sec);
+     const double total_speed_in_m_per_sec = x_speed_in_m_per_sec+y_speed_in_m_per_sec;
      const double course_angle = y[8][0];
      // Compute x and y position from angle and radial position
-     X_POS+= speed_in_m_per_sec*dt*cos(course_angle);
-     Y_POS+= speed_in_m_per_sec*dt*sin(course_angle);
+     X_POS+= x_speed_in_m_per_sec*dt*cos(course_angle);
+     Y_POS+= y_speed_in_m_per_sec*dt*sin(course_angle);
      outfile_navigation_data_for_evaluation << current_time << " "
                                             << latitude_longitude_from_table[i][2] << " "
                                             << latitude_longitude_from_table[i][1] << " "
-                                            << speed_in_m_per_sec*3.6 << " "
+                                            << x_speed_in_m_per_sec*3.6 << " "
                                             << X_POS << " " << Y_POS << " "
-                                            << speed_in_m_per_sec * dt << " "
+      //<< y[0][0] << " " << y[2][0] << " "
+      //<< total_speed_in_m_per_sec * dt << " " // TODO
+                                            << x_speed_in_m_per_sec * dt << " "
                                             << course_angle*TO_DEGREES << std::endl;
      // Update previous time
      previous_time=current_time;
@@ -1822,6 +2036,7 @@ int main(int argc, char *argv[])
  outfile_inertial_acc.close();
  outfile_linear_acc.close();
  outfile_velocity.close();
+ outfile_velocity_north_east.close();
  
 #ifdef READ_AND_OUTPUT_PROCESSED_INFO_FROM_GEOFOG3D
  outfile_linear_acceleration_from_table.close();

@@ -25,9 +25,8 @@ end
 %	column2: double (%f)
 %   column3: double (%f)
 %	column4: double (%f)
-%   column5: double (%f)
 % For more information, see the TEXTSCAN documentation.
-formatSpec = '%f%f%f%f%f%[^\n\r]';
+formatSpec = '%f%f%f%f%[^\n\r]';
 
 %% Open the text file.
 fileID = fopen(filename,'r');
