@@ -555,7 +555,7 @@ lon = navigation_data(:,2);          % longitud(decimales)
 lat =  navigation_data(:,3);          % latitud(decimales) 
 
 distancia= navigation_data(:,7);      % distancia relativa entre puntos (m)
-var_rumbo= navigation_data(:,8)-37;     % rumbo del vehiculo ()
+var_rumbo= navigation_data(:,8);     % rumbo del vehiculo ()
 %var_rumbo= navigation_data(:,8)-37;     % rumbo del vehiculo ()
                         % correccion de signo 
 %% CALCULO
@@ -717,7 +717,7 @@ grid on
 %% POSITION
 % This method uses XPOS and YPOS from the file which are computes from the
 % X and Y velocities times the cos/sin, respectively, of the course angle
-delay = 0.005; % Delay in seconds in every loop
+delay = 0.0005; % Delay in seconds in every loop
 n_loop = size(navigation_data, 1);
 % Plot position
 figure();
