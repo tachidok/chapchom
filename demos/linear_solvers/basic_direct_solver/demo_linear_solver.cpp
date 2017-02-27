@@ -20,10 +20,6 @@ int main(int argc, char *argv[])
  // Output for testing/validation
  std::ofstream output_test("output_test.dat", std::ios_base::out);
  
- // Get the wall and cpu execution time of the program
- time_t initial_wall_time = Timing::wall_time();
- clock_t initial_cpu_clock_time = Timing::cpu_clock_time();
- 
  // Create a square matrix
  const unsigned n_rows = 3;
  const unsigned n_cols = n_rows;
@@ -147,17 +143,6 @@ int main(int argc, char *argv[])
   C.print();
   C.print(output_test);
  }
- 
- // Get the wall and cpu execution time of the program
- time_t final_wall_time = Timing::wall_time();
- clock_t final_cpu_clock_time = Timing::cpu_clock_time();
- double total_wall_time =
-  Timing::diff_wall_time(initial_wall_time, final_wall_time);
- double total_cpu_clock_time =
-  Timing::diff_cpu_clock_time(initial_cpu_clock_time, final_cpu_clock_time);
- 
- std::cout << "Total wall time: " << total_wall_time << std::endl;
- std::cout << "Total cpu clock time: " << total_cpu_clock_time << std::endl;
  
  // Close the output for test
  output_test.close();

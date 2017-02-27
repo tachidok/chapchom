@@ -23,10 +23,6 @@ int main(int argc, char *argv[])
  // Output for testing/validation
  std::ofstream output_test("output_test.dat", std::ios_base::out);
  
- // Get the wall and cpu execution time of the program
- time_t initial_wall_time = Timing::wall_time();
- clock_t initial_cpu_clock_time = Timing::cpu_clock_time();
- 
  // The vector with some values of the function
  const unsigned n_data = 10;
  std::vector<double> x(n_data);
@@ -132,17 +128,6 @@ int main(int argc, char *argv[])
  std::cout << "Max. linear interpolation error: " << max_linear_error << std::endl;
  std::cout << "Max. quadratic interpolation error: " << max_quadratic_error << std::endl;
  std::cout << "Max. cubic interpolation error: " << max_cubic_error << std::endl;
- 
- // Get the wall and cpu execution time of the program
- time_t final_wall_time = Timing::wall_time();
- clock_t final_cpu_clock_time = Timing::cpu_clock_time();
- double total_wall_time =
-  Timing::diff_wall_time(initial_wall_time, final_wall_time);
- double total_cpu_clock_time =
-  Timing::diff_cpu_clock_time(initial_cpu_clock_time, final_cpu_clock_time);
- 
- std::cout << "Total wall time: " << total_wall_time << std::endl;
- std::cout << "Total cpu clock time: " << total_cpu_clock_time << std::endl;
  
  // Close the output for test
  output_test.close();
