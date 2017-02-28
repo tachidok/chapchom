@@ -239,7 +239,7 @@ namespace chapchom
   // "wall_time()" method calls
   // ================================================================
   inline double diff_wall_time(time_t &initial_time, time_t &final_time)
-  {return difftime(initial_time, final_time);}
+  {return difftime(final_time, initial_time);}
   
   // ================================================================
   // Use this method when you want to know the "cpu time" a section of

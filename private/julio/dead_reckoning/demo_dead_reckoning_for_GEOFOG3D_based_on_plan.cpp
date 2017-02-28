@@ -1806,6 +1806,9 @@ int main(int argc, char *argv[])
      //     linear_accelerations[0]=body_accelerations[0]-gravity_in_body_frame[0]+0.1589;
      //     linear_accelerations[1]=body_accelerations[1]-gravity_in_body_frame[1]-0.0816;
      //     linear_accelerations[2]=body_accelerations[2]-gravity_in_body_frame[2]-0.0041;
+     
+     // The shift of the acceleartions is computed from the average
+     // errro of each acceleration axis
      linear_accelerations[0]=body_accelerations[0]-gravity_in_body_frame[0]-0.0022;//+0.1589;
      linear_accelerations[1]=body_accelerations[1]-gravity_in_body_frame[1]-0.1156;//-0.0816;//-0.12;//TODO shift
      linear_accelerations[2]=body_accelerations[2]-gravity_in_body_frame[2]-0.0084;

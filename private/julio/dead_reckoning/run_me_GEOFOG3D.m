@@ -564,9 +564,9 @@ rumbo_inicial=0;  %Rumbo inicial(�) desde el cual comienza la nevegaci�n
 [new_lat,new_lon,Error]=calc_nav(lat,lon,distancia,rumbo_inicial,var_rumbo);
 
 figure
-plot(lon, lat, '.r')
+plot(lon, lat, 'r')
 hold on
-plot(new_lon, new_lat, '.g','MarkerSize',5)
+plot(new_lon, new_lat, 'g','MarkerSize',5)
 plot_google_map2('Refresh','1','maptype','terrain','AutoAxis','1','FigureResizeUpdate','1')
 hold off
 
@@ -684,7 +684,7 @@ plot(linear_acceleration_from_table(:,1), diff_linear_accelerations(:,2), 'r', .
 title('[ERROR] Linear accelerations (m/s^2)')
 xlabel('Time (s)')
 ylabel('m/s^2')
-legend('Roll', 'Pitch', 'NorthWest')
+legend('x-acc', 'y-acc', 'NorthWest')
 grid on
 
 %% North-east-down velocity
