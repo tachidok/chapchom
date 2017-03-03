@@ -279,56 +279,56 @@ grid on
 % grid on
 
 %% Euler angles from gyro and accelerometer
-% Euler angles from gyro
-figure
-subplot(2,3,1)
-plot(euler_angles_from_gyro(:,1), euler_angles_from_gyro(:,2)*180.0/pi, 'b')
-axis([initial_raw_time final_raw_time -180 180])
-title('Euler angle from gyro [roll]')
-xlabel('Time (s)')
-ylabel('\phi (degrees)')
-grid on
-
-subplot(2,3,2)
-plot(euler_angles_from_gyro(:,1), euler_angles_from_gyro(:,3)*180.0/pi, 'b')
-axis([initial_raw_time final_raw_time -180 180])
-title('Euler angle from gyro [pitch]')
-xlabel('Time(s)')
-ylabel('\theta (degrees)')
-grid on
-
-subplot(2,3,3)
-plot(euler_angles_from_gyro(:,1), euler_angles_from_gyro(:,4)*180.0/pi, 'b')
-axis([initial_raw_time final_raw_time -180 180])
-title('Euler angle from gyro [yaw]')
-xlabel('Time(s)')
-ylabel('\theta (degrees)')
-grid on
-
-% Euler angles from accelerometers
-subplot(2,3,4)
-plot(euler_angles_from_accelerometer(:,1), euler_angles_from_accelerometer(:,2)*180.0/pi, 'r')
-axis([initial_raw_time final_raw_time -180 180])
-title('Euler angle from accelerometer [roll]')
-xlabel('Time (s)')
-ylabel('\phi (degrees)')
-grid on
-
-subplot(2,3,5)
-plot(euler_angles_from_accelerometer(:,1), euler_angles_from_accelerometer(:,3)*180.0/pi, 'r')
-axis([initial_raw_time final_raw_time -180 180])
-title('Euler angle from accelerometer [pitch]')
-xlabel('Time(s)')
-ylabel('\theta (degrees)')
-grid on
-
-subplot(2,3,6)
-plot(euler_angles_from_accelerometer(:,1), euler_angles_from_accelerometer(:,4)*180.0/pi, 'r')
-axis([initial_raw_time final_raw_time -180 180])
-title('Euler angle from accelerometer [yaw]')
-xlabel('Time(s)')
-ylabel('\theta (degrees)')
-grid on
+% % Euler angles from gyro
+% figure
+% subplot(2,3,1)
+% plot(euler_angles_from_gyro(:,1), euler_angles_from_gyro(:,2)*180.0/pi, 'b')
+% axis([initial_raw_time final_raw_time -180 180])
+% title('Euler angle from gyro [roll]')
+% xlabel('Time (s)')
+% ylabel('\phi (degrees)')
+% grid on
+% 
+% subplot(2,3,2)
+% plot(euler_angles_from_gyro(:,1), euler_angles_from_gyro(:,3)*180.0/pi, 'b')
+% axis([initial_raw_time final_raw_time -180 180])
+% title('Euler angle from gyro [pitch]')
+% xlabel('Time(s)')
+% ylabel('\theta (degrees)')
+% grid on
+% 
+% subplot(2,3,3)
+% plot(euler_angles_from_gyro(:,1), euler_angles_from_gyro(:,4)*180.0/pi, 'b')
+% axis([initial_raw_time final_raw_time -180 180])
+% title('Euler angle from gyro [yaw]')
+% xlabel('Time(s)')
+% ylabel('\theta (degrees)')
+% grid on
+% 
+% % Euler angles from accelerometers
+% subplot(2,3,4)
+% plot(euler_angles_from_accelerometer(:,1), euler_angles_from_accelerometer(:,2)*180.0/pi, 'r')
+% axis([initial_raw_time final_raw_time -180 180])
+% title('Euler angle from accelerometer [roll]')
+% xlabel('Time (s)')
+% ylabel('\phi (degrees)')
+% grid on
+% 
+% subplot(2,3,5)
+% plot(euler_angles_from_accelerometer(:,1), euler_angles_from_accelerometer(:,3)*180.0/pi, 'r')
+% axis([initial_raw_time final_raw_time -180 180])
+% title('Euler angle from accelerometer [pitch]')
+% xlabel('Time(s)')
+% ylabel('\theta (degrees)')
+% grid on
+% 
+% subplot(2,3,6)
+% plot(euler_angles_from_accelerometer(:,1), euler_angles_from_accelerometer(:,4)*180.0/pi, 'r')
+% axis([initial_raw_time final_raw_time -180 180])
+% title('Euler angle from accelerometer [yaw]')
+% xlabel('Time(s)')
+% ylabel('\theta (degrees)')
+% grid on
 
 %% Roll, pitch, yaw and body acceleration vs gravity in body frame
 % Roll, pitch and yaw
@@ -564,11 +564,23 @@ rumbo_inicial=0;  %Rumbo inicial(�) desde el cual comienza la nevegaci�n
 [new_lat,new_lon,Error]=calc_nav(lat,lon,distancia,rumbo_inicial,var_rumbo);
 
 figure
-plot(lon, lat, 'r')
+plot(lon, lat, 'r', new_lon, new_lat, 'g','MarkerSize',5)
 hold on
-plot(new_lon, new_lat, 'g','MarkerSize',5)
+title('Position')
+xlabel('Longitude')
+ylabel('Latitude')
+legend('Reference trajectory', 'Our algorithm trajectory', 'Location', 'NorthWest')
 plot_google_map2('Refresh','1','maptype','terrain','AutoAxis','1','FigureResizeUpdate','1')
 hold off
+
+figure
+plot(t,Error)
+title('Position error')
+xlabel('Time (s)')
+ylabel('Error (m)')
+grid on
+
+max(Error)
 
 %% HERE
 % figure

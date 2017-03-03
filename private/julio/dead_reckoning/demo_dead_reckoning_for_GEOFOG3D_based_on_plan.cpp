@@ -42,8 +42,12 @@
 // Data to evaluation
 #define READ_AND_OUTPUT_PROCESSED_INFO_FROM_GEOFOG3D
 #define NAVIGATION_DATA_TO_EVALUATION
+//#define FORCE_USING_EULER_ANGLES_RATES_FROM_GEOFOG3D
 //#define FORCE_USING_EULER_ANGLES_FROM_GEOFOG3D
 //#define FORCE_USING_LINEAR_ACCELERATIONS_FROM_GEOFOG3D
+
+//#define APPLY_LINEAR_ACCELERATIONS_OFFSET
+//#define APPLY_EULER_ANGLES_OFFSET
 
 // -------------------------------------------------
 // Constants
@@ -1676,11 +1680,14 @@ int main(int argc, char *argv[])
                                                           Euler_angles_rates,
                                                           Euler_angles_rates_thresholded);
      
+#ifdef FORCE_USING_EULER_ANGLES_RATES_FROM_GEOFOG3D
+     Euler_angles_rates[0]=second_gyro_from_table[i][1];
+     Euler_angles_rates[1]=second_gyro_from_table[i][2];
+     Euler_angles_rates[2]=second_gyro_from_table[i][3];
+#endif // #ifdef FORCE_USING_EULER_ANGLES_RATES_FROM_GEOFOG3D
+     
      // Set Euler into the odes such that they are integrated later
      odes.euler_angles_rates() = Euler_angles_rates;
-     
-     // TODO. Here check with Euler_angles_rates_from_table which come
-     // in the "second_gyro" information from GEOFOG3D
      
 #ifdef OUTPUT_EULER_ANGLES_RATES
      // --------------------------------------------------------------------------
@@ -1809,9 +1816,33 @@ int main(int argc, char *argv[])
      
      // The shift of the acceleartions is computed from the average
      // errro of each acceleration axis
-     linear_accelerations[0]=body_accelerations[0]-gravity_in_body_frame[0]-0.0022;//+0.1589;
-     linear_accelerations[1]=body_accelerations[1]-gravity_in_body_frame[1]-0.1156;//-0.0816;//-0.12;//TODO shift
-     linear_accelerations[2]=body_accelerations[2]-gravity_in_body_frame[2]-0.0084;
+     //linear_accelerations[0]=body_accelerations[0]-gravity_in_body_frame[0]-0.0022;//+0.1589;
+     //linear_accelerations[1]=body_accelerations[1]-gravity_in_body_frame[1]-0.1156;//-0.0816;//-0.12;//TODO shift
+     //linear_accelerations[2]=body_accelerations[2]-gravity_in_body_frame[2]-0.0084;
+     
+     linear_accelerations[0]=body_accelerations[0]-gravity_in_body_frame[0];
+     linear_accelerations[1]=body_accelerations[1]-gravity_in_body_frame[1];
+     linear_accelerations[2]=body_accelerations[2]-gravity_in_body_frame[2];
+#if 1
+     for (unsigned j = 0; j < DIM; j++)
+      {
+       if (linear_accelerations[i] < 0.0)
+        {
+         linear_accelerations[i]*=1.01;//-1.67;
+        }
+       
+       if (linear_accelerations[i] > 0.0)
+        {
+         linear_accelerations[i]=0.0;
+        }
+      }
+#endif // #if 1
+     
+#ifdef APPLY_LINEAR_ACCELERATIONS_OFFSET
+     linear_accelerations[0]-=0.0022;//+0.1589;
+     linear_accelerations[1]-=0.1156;//-0.0816;//-0.12;//TODO shift
+     linear_accelerations[2]-=0.0084;
+#endif // #ifdef APPLY_LINEAR_ACCELERATIONS_OFFSET
      
 #ifdef FORCE_USING_LINEAR_ACCELERATIONS_FROM_GEOFOG3D
      linear_accelerations[0]=linear_acceleration_from_table[i][1];
@@ -1955,13 +1986,17 @@ int main(int argc, char *argv[])
 #endif // #ifdef GYRO_THRESHOLD_Z
      
 #ifdef FORCE_USING_EULER_ANGLES_FROM_GEOFOG3D
-     { // TODO
-      // FORCE the use of Euler angles from table
-      y[6][0]=Euler_angles_from_table[i][1];
-      y[7][0]=Euler_angles_from_table[i][2];
-      y[8][0]=Euler_angles_from_table[i][3];
-     }
+     // FORCE the use of Euler angles from table
+     y[6][0]=Euler_angles_from_table[i][1];
+     y[7][0]=Euler_angles_from_table[i][2];
+     y[8][0]=Euler_angles_from_table[i][3];
 #endif // #ifdef FORCE_USING_EULER_ANGLES_FROM_GEOFOG3D
+     
+#ifdef APPLY_EULER_ANGLES_OFFSET
+     y[6][0]+=0.0012;
+     y[7][0]+=0.0091;
+     y[8][0]+=0.0752;
+#endif // #ifdef APPLY_EULER_ANGLES_OFFSET
      
      //const double alpha_vel = 0.90;
      //y[1][0] = y[1][0] * alpha_vel + (1.0 - alpha_vel) * previous_speed_in_m_per_sec_from_gps;

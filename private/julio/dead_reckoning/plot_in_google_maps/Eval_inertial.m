@@ -1,4 +1,4 @@
-%% Herramienta de Evaluacion de resultados navegación Inercial
+%% Herramienta de Evaluacion de resultados navegaciï¿½n Inercial
 %  Desarrollador X(MAJ)
 
 clear
@@ -9,32 +9,33 @@ clf
 %% CARGAR ARCHIVO DE POSICIONES
 t   =  M(:,1);          % estampa de tiempo (seg)
 
-lon = -M(:,2);          % longitud(° decimales) 
-                        % corrección de signo para (East+)
+lon = -M(:,2);          % longitud(ï¿½ decimales) 
+                        % correcciï¿½n de signo para (East+)
 
-lat =  M(:,3);          % latitud(° decimales) 
+lat =  M(:,3);          % latitud(ï¿½ decimales) 
 
 distancia= M(:,7);      % distancia relativa entre puntos (m)
-var_rumbo= -M(:,8);       % rumbo del vehículo (°) 
-                          % corrección de signo 
+var_rumbo= -M(:,8);       % rumbo del vehï¿½culo (ï¿½) 
+                          % correcciï¿½n de signo 
 %% CALCULO
-
-rumbo_inicial=122;  %Rumbo inicial(°) desde el cual comienza la nevegación 
+rumbo_inicial=122;  %Rumbo inicial(ï¿½) desde el cual comienza la nevegaciï¿½n 
 [new_lat,new_lon,Error]=calc_nav(lat,lon,distancia,rumbo_inicial,var_rumbo);
 
 %% RESULTADOS
-plot(lon,lat,'r')
+figure
+plot(lon,lat,'r', new_lon,new_lat,'.g','MarkerSize',5)
 hold on
-plot(new_lon,new_lat,'.g','MarkerSize',5)
+title('Position')
+xlabel('Longitude')
+ylabel('Latitude')
+legend('Reference trajectory', 'Our algorithm trajectory', 'Location', 'NorthWest')
 plot_google_map2('Refresh','1','maptype','terrain','AutoAxis','1')
+hold off
 
 figure
 plot(t,Error)
-grid on
+title('Position error')
 xlabel('tiempo(seg)')
 ylabel('Error(m)')
-
-
-
-
+grid on
 
