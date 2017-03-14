@@ -582,6 +582,16 @@ grid on
 
 max(Error)
 
+%% Plot lat-lon imported to show full trajectory
+figure
+plot(latlon(:,2), latlon(:,1), 'r')
+hold on
+title('Position')
+xlabel('Longitude')
+ylabel('Latitude')
+plot_google_map2('Refresh','1','maptype','terrain','AutoAxis','1','FigureResizeUpdate','1')
+hold off
+
 %% HERE
 % figure
 % plot(euler_angles_from_table(:,1), euler_angles_from_table(:,2)*180.0/pi, 'b', euler_angles_from_gyro(:,1), euler_angles_from_gyro(:,2)*180.0/pi, 'g', euler_angles_from_accelerometer(:,1), euler_angles_from_accelerometer(:,2)*180.0/pi, 'r')
