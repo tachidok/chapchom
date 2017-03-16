@@ -22,8 +22,11 @@ namespace chapchom
  
  public:
 
-  /// Constructor, sets the number of odes
-  CCODEsFromSensorsGEOFOG3D(const char *input_filename);
+  /// Constructor, sets the number of odes and the indices to read the
+  /// data from the input file
+  CCODEsFromSensorsGEOFOG3D(const char *input_filename,
+                            const unsigned initial_index,
+                            const unsigned final_index);
   
   /// Empty destructor
   virtual ~CCODEsFromSensorsGEOFOG3D();
@@ -126,6 +129,11 @@ namespace chapchom
  
   // Number of data in the loaded table
   unsigned long N_data_in_table;
+  
+  // The initial index to read from data
+  unsigned Initial_index;
+  // The final index to read from data
+  unsigned Final_index;
   
   // Stores linear acceleration (to integrate)
   double *Linear_acceleration;

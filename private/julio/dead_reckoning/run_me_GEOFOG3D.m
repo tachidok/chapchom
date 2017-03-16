@@ -3,10 +3,18 @@ clc
 clear all
 
 % GEOFOG3D.dat
-n_input_raw_data = 11592;
-n_input_aligned_data = 11592;
+%n_input_raw_data = 11592;
+%n_input_aligned_data = 11592;
+Initial_index=0;
+Final_index=11591;
+Initial_index=56242;
+Final_index=66777;
+Initial_index=68504;
+Final_index=74087;
+n_input_raw_data = Final_index-Initial_index+1;
+n_input_aligned_data = n_input_raw_data;
 %n_output_data=11030;
-n_output_data=11592;
+n_output_data=n_input_aligned_data;
 
 linear_acceleration_from_table = importfile_TelitSL869DR_4columns('RESLT/linear_acceleration_from_table.dat', 1, n_input_raw_data);
 g_force_from_table = importfile_TelitSL869DR_2columns('RESLT/g_force_from_table.dat', 1, n_input_raw_data);
@@ -448,13 +456,9 @@ grid on
 
 %% Velocity
 m_per_sec_to_km_per_h = 3.6;
-coefficients_x_velocity = polyfit(velocity(:, 1), velocity(:, 2)*m_per_sec_to_km_per_h, 1)
-coefficients_y_velocity = polyfit(velocity(:, 1), velocity(:, 3)*m_per_sec_to_km_per_h, 1)
 % % Plot velocity
 figure
-%plot(velocity(:, 1), velocity(:, 2)*m_per_sec_to_km_per_h, 'b', velocity(:, 1), velocity(:, 3)*m_per_sec_to_km_per_h, 'r', velocity(:, 1), velocity(:, 4)*m_per_sec_to_km_per_h, 'g')
 plot(velocity(:, 1), velocity(:, 2)*m_per_sec_to_km_per_h, 'b', velocity(:, 1), velocity(:, 3)*m_per_sec_to_km_per_h, 'r')
-%plot(velocity(:, 1), velocity(:, 2), 'b', velocity(:, 1), velocity(:, 3), 'r')
 title('Velocity')
 xlabel('Time (s)')
 ylabel('Velocity km/h')

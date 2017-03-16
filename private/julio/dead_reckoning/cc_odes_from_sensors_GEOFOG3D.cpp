@@ -8,11 +8,18 @@ namespace chapchom
  // Constructor, sets the number of odes. We currently have two odes,
  // one for the velocity and the other for the acceleration
  // ===================================================================
- CCODEsFromSensorsGEOFOG3D::CCODEsFromSensorsGEOFOG3D(const char *input_filename)
+ CCODEsFromSensorsGEOFOG3D::CCODEsFromSensorsGEOFOG3D(const char *input_filename,
+                                                      const unsigned initial_index,
+                                                      const unsigned final_index)
   : ACODEs(10)
  {
+  
+  Initial_index=initial_index;
+  Final_index=final_index;
+  
   // Initialise the number of data in the Table
-  N_data_in_table = 11592;
+  N_data_in_table=Final_index - Initial_index + 1;
+  //N_data_in_table = 11592;
   //N_data_in_table = 78748;
   
   // Read the data from file
@@ -62,6 +69,12 @@ namespace chapchom
   char *headers=NULL;
   size_t length = 0;
   getline(&headers, &length, file_pt);
+  
+  // Skip data until reaching the Initial_index
+  for (unsigned i = 0; i < Initial_index; i++)
+   {
+    getline(&headers, &length, file_pt);
+   }
   
   double fixed_time = 0.0;
   double previous_read_time = 0.0;

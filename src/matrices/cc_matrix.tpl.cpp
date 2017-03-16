@@ -86,7 +86,7 @@ namespace chapchom
  CCMatrix<T>::CCMatrix(const CCMatrix<T> &copy)
   : ACMatrix<T>(copy.nrows(), copy.ncolumns())
  {
-  // Copy the data from the input vector to the Matrix_pt vector
+  // Copy the data from the copy matrix to the Matrix_pt vector
   set_matrix(copy.matrix_pt(), this->NRows, this->NColumns);
  }
  

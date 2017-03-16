@@ -78,93 +78,6 @@ void rotate(CCMatrix<double> &R,
  rotated_data[2]=r(2);
 }
 
-#if 0
-// ===================================================================
-// Rotate sensors data to match ASIKI's reference frame
-// ===================================================================
-void rotate_sensors_to_ASIKIs_reference_frame(std::vector<std::vector<double> > &raw_gyro_t,
-                                              std::vector<std::vector<double> > &raw_acc_t,
-                                              std::vector<std::vector<double> > &rotated_raw_gyro,
-                                              std::vector<std::vector<double> > &rotated_raw_acc)
-{
- // Get the number of data for gyro
- const unsigned n_gyro = raw_gyro_t.size();
- // Get the number of data for acc
- const unsigned n_acc = raw_acc_t.size();
- 
- // -----------------------------------------------------------
- // Rotation matrices to rotate the gyro's and accelerometer's
- // reference frame to the ASIKI's reference frame
- // -----------------------------------------------------------
- // Rotation matrix for gyro data
- const double angle_to_rotate_gyro = 0.0;
- CCMatrix<double> R_g(DIM, DIM);
- R_g.create_zero_matrix();
- R_g(0,0)=cos(angle_to_rotate_gyro);  R_g(0,1)=sin(angle_to_rotate_gyro); R_g(0,2)=0.0;
- R_g(1,0)=-sin(angle_to_rotate_gyro); R_g(1,1)=cos(angle_to_rotate_gyro); R_g(1,2)=0.0;
- R_g(2,0)=0.0;                        R_g(2,1)=0.0;                       R_g(2,2)=1.0;
- 
- // Rotation matrix for acc data
- const double angle_to_rotate_acc = 0.0;
- CCMatrix<double> R_a(DIM, DIM);
- R_a.create_zero_matrix();
- R_a(0,0)=cos(angle_to_rotate_acc);   R_a(0,1)=sin(angle_to_rotate_acc);  R_a(0,2)=0.0;
- R_a(1,0)=-sin(angle_to_rotate_acc);  R_a(1,1)=cos(angle_to_rotate_acc);  R_a(1,2)=0.0;
- R_a(2,0)=0.0;                        R_a(2,1)=0.0;                       R_a(2,2)=1.0;
- 
- // A vector to temporary store the data read from sensors
- CCVector<double> r(DIM);
- r.create_zero_vector();
- 
- CCVector<double> r_g(DIM);
- CCVector<double> r_a(DIM);
- 
- // -------------------------------------------------------------------
- // Get the data from the input structures and copy it into a CCVector
- // to perform the rotation. Then copy the result into the output
- // structure
- // -------------------------------------------------------------------
- for (unsigned i = 0; i < n_gyro; i++)
-  {
-   // -------------------------------------------------------------------------
-   // Store the gyro data in a temporary vector
-   r(0) = raw_gyro_t[i][1]; // gyro_x
-   r(1) = raw_gyro_t[i][2]; // gyro_y
-   r(2) = raw_gyro_t[i][3]; // gyro_z
-   // --------------------------------------------------------------------------
-   // Rotate the gyro to match the reference frame of the ASIKI
-   // --------------------------------------------------------------------------
-   multiply_matrix_times_vector(R_g, r, r_g);
-   // --------------------------------------------------------------------------
-   // Store data in gyro output structure
-   rotated_raw_gyro[i][0] = r_g(0); // gyro_x
-   rotated_raw_gyro[i][1] = r_g(1); // gyro_y
-   rotated_raw_gyro[i][2] = r_g(2); // gyro_z
-  } // for (i < n_gyro)
- 
- for (unsigned i = 0; i < n_acc; i++)
-  {
-   // -------------------------------------------------------------------------   
-   // Store the acc data in a temporary vector. Multiply by 9.81
-   // since the data from the accelerometers are given in 'g' units
-   r(0) = raw_acc_t[i][1]; // acc_x TODO
-   r(1) = raw_acc_t[i][2]; // acc_y
-   r(2) = raw_acc_t[i][3]; // acc_z
-   // --------------------------------------------------------------------------
-   // Rotate the acc to match the reference frame of the ASIKI
-   // --------------------------------------------------------------------------
-   multiply_matrix_times_vector(R_a, r, r_a);
-   // --------------------------------------------------------------------------
-   // Store the data in Accelerations matrix
-   rotated_raw_acc[i][0] = r_a(0); // acc_x
-   rotated_raw_acc[i][1] = r_a(1); // acc_y
-   rotated_raw_acc[i][2] = r_a(2); // acc_z
-  } // for (i < n_acc)
- 
-}
-
-#endif // #if 0
-
 // ===================================================================
 // Rotate sensors data to match ASIKI's reference frame
 // ===================================================================
@@ -977,7 +890,28 @@ int main(int argc, char *argv[])
  // Instantiation of the problem
  // -----------------------------------------------------------------
  // Odes from GEOFOG3D
- CCODEsFromSensorsGEOFOG3D odes("./GEOFOG3D/GEOFOG3D_with_lat_lon.dat");
+ //CCODEsFromSensorsGEOFOG3D odes("./GEOFOG3D/GEOFOG3D_with_lat_lon.dat", 0, 11591);
+ 
+ //#define TONANTZINTLA_TO_CHOLULA
+ //#define TLAXCALANCINGO_TO_ACATEPEC
+#define ACATEPEC_TO_TONANTZINTLA
+ 
+#ifdef TONANTZINTLA_TO_CHOLULA
+ const unsigned Initial_index = 0;
+ const unsigned Final_index = 11591;
+#endif // #ifdef TONANTZINTLA_TO_CHOLULA
+ 
+#ifdef TLAXCALANCINGO_TO_ACATEPEC
+ const unsigned Initial_index = 56242;
+ const unsigned Final_index = 66777;
+#endif // #ifdef TLAXCALANCINGO_TO_ACATEPEC
+ 
+#ifdef ACATEPEC_TO_TONANTZINTLA
+ const unsigned Initial_index = 68504;
+ const unsigned Final_index = 74087;
+#endif // #ifdef ACATEPEC_TO_TONANTZINTLA
+ 
+ CCODEsFromSensorsGEOFOG3D odes("./GEOFOG3D/GEOFOG3DALL_with_lat_lon.dat", Initial_index, Final_index);
  
  // ----------------------------------------------------------------
  // Filter data [BEGIN]
@@ -1045,6 +979,7 @@ int main(int argc, char *argv[])
  y[3][0] = 0.0; // Initial y-velocity
  y[4][0] = 0.0; // Initial z-position
  y[5][0] = 0.0; // Initial z-velocity
+#ifdef TONANTZINTLA_TO_CHOLULA
  //y[6][0] = 0.0; // Initial roll (radians)
  y[6][0] = 0.03174143; // Initial roll (radians)
  //y[7][0] = 0.0; // Initial pitch (radians)
@@ -1053,6 +988,21 @@ int main(int argc, char *argv[])
  y[9][0] = 0.646752591;//0.0 // Initial yaw with threshold (radians)
  //y[8][0] = 0.0; // Initial yaw (radians)
  //y[9][0] = 0.0; // Initial yaw with threshold (radians)
+#endif // #ifdef TONANTZINTLA_TO_CHOLULA
+ 
+#ifdef TLAXCALANCINGO_TO_ACATEPEC
+ y[6][0] = 0.03864159; // Initial roll (radians)
+ y[7][0] = 0.056403805; // Initial pitch (radians)
+ y[8][0] = -1.878965622;//4.404219685;//0.924043736;//0.646752591; // Initial yaw (radians)
+ y[9][0] = -1.878965622;//0.0 // Initial yaw with threshold (radians)
+#endif // #ifdef TLAXCALANCINGO_TO_ACATEPEC
+ 
+#ifdef ACATEPEC_TO_TONANTZINTLA
+ y[6][0] = 0.020158553; // Initial roll (radians)
+ y[7][0] = 0.016275195; // Initial pitch (radians)
+ y[8][0] = -1.031505296; // Initial yaw (radians)
+ y[9][0] = -1.031505296; // Initial yaw with threshold (radians)
+#endif // #ifdef ACATEPEC_TO_TONANTZINTLA
  
  // Discretised time
  double current_time = 0;
@@ -1823,7 +1773,7 @@ int main(int argc, char *argv[])
      linear_accelerations[0]=body_accelerations[0]-gravity_in_body_frame[0];
      linear_accelerations[1]=body_accelerations[1]-gravity_in_body_frame[1];
      linear_accelerations[2]=body_accelerations[2]-gravity_in_body_frame[2];
-#if 1
+#if 0
      for (unsigned j = 0; j < DIM; j++)
       {
        if (linear_accelerations[i] < 0.0)
@@ -1836,7 +1786,7 @@ int main(int argc, char *argv[])
          linear_accelerations[i]=0.0;
         }
       }
-#endif // #if 1
+#endif // #if 0
      
 #ifdef APPLY_LINEAR_ACCELERATIONS_OFFSET
      linear_accelerations[0]-=0.0022;//+0.1589;
