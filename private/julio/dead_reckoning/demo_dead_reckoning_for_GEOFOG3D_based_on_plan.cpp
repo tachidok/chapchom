@@ -44,7 +44,7 @@
 #define NAVIGATION_DATA_TO_EVALUATION
 //#define FORCE_USING_EULER_ANGLES_RATES_FROM_GEOFOG3D
 //#define FORCE_USING_EULER_ANGLES_FROM_GEOFOG3D
-//#define FORCE_USING_LINEAR_ACCELERATIONS_FROM_GEOFOG3D
+#define FORCE_USING_LINEAR_ACCELERATIONS_FROM_GEOFOG3D
 
 //#define APPLY_LINEAR_ACCELERATIONS_OFFSET
 //#define APPLY_EULER_ANGLES_OFFSET
@@ -892,8 +892,8 @@ int main(int argc, char *argv[])
  // Odes from GEOFOG3D
  //CCODEsFromSensorsGEOFOG3D odes("./GEOFOG3D/GEOFOG3D_with_lat_lon.dat", 0, 11591);
  
- //#define TONANTZINTLA_TO_CHOLULA
-#define TLAXCALANCINGO_TO_ACATEPEC
+#define TONANTZINTLA_TO_CHOLULA
+ //#define TLAXCALANCINGO_TO_ACATEPEC
  //#define ACATEPEC_TO_TONANTZINTLA
  
 #ifdef TONANTZINTLA_TO_CHOLULA
@@ -980,6 +980,7 @@ int main(int argc, char *argv[])
  y[4][0] = 0.0; // Initial z-position
  y[5][0] = 0.0; // Initial z-velocity
 #ifdef TONANTZINTLA_TO_CHOLULA
+ y[1][0] = 7.729281075; // Initial x-velocity
  //y[6][0] = 0.0; // Initial roll (radians)
  y[6][0] = 0.03174143; // Initial roll (radians)
  //y[7][0] = 0.0; // Initial pitch (radians)
