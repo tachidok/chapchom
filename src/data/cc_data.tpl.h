@@ -43,6 +43,16 @@ namespace chapchom
   // Assignment operator
   CCData &operator=(const CCData<T> &source_values);
   
+  /// Get access using brackets as data(i,j). Read-only version
+  inline virtual T operator()(const unsigned &i, 
+                              const unsigned &t) const
+  {return value(i, t);}
+  
+  /// Get access using brackets as data(i,j). Read-write version
+  inline virtual T &operator()(const unsigned &i, 
+                               const unsigned &t)
+  {return value(i,t);}
+  
   // Transforms the input values vector to a Data class type
   void set_values(const T *values_pt);
   
@@ -50,13 +60,13 @@ namespace chapchom
   void clean_up();
   
   // Free allocated memory
-  void free_memory_for_values();
+  void free_memory_of_values();
   
   // Get the specified value (read-only)
-  const T value(const unsigned long i, const unsigned long j) const;
+  const T value(const unsigned &i, const unsigned t=0) const;
   
   // Set values (write version)
-  T &value(const unsigned long i, const unsigned long j);
+  T &value(const unsigned &i, const unsigned t=0);
   
   // Output the values vector (matrix)
   void output(bool output_indexes) const;
@@ -65,16 +75,17 @@ namespace chapchom
   void output(std::ofstream &outfile,
               bool output_indexes) const;
   
-  // Creates a zero Values_pt vector with the given number of elements
-  void create_zero_values_vector();
+  // Creates a zero Values_pt and Status_pt vectors with the given
+  // number of elements
+  void create_zero_values_and_status_vectors();
   
-  inline void pin(const unsigned i)
+  inline void pin(const unsigned &i)
   {return Status_pt[i]=PINNED;}
   
-  inline void unpin(const unsigned i)
+  inline void unpin(const unsigned &i)
   {return Status_pt[i]=UNPINNED;}
   
-  inline void undefine(const unsigned i)
+  inline void undefine(const unsigned &i)
   {return Status_pt[i]=UNDEFINED;}
   
   // Pins all the values associated with this data
@@ -86,6 +97,9 @@ namespace chapchom
   // Get access to the Values_pt
   inline T *values_pt() const {return Values_pt;}
   
+  // Get access to the Status_pt
+  inline Data_status *status_pt() const {return Status_pt;}
+  
   inline bool is_pinned(const unsigned i) const
   {return (Status_pt[i]==PINNED);}
   
@@ -95,8 +109,6 @@ namespace chapchom
   inline bool is_undefined(const unsigned i) const
   {return (Status_pt[i]==UNDEFINED);}
   
- protected:
-  
   // Gets the number of values
   inline unsigned n_values() const {return N_values;}
   
@@ -104,23 +116,27 @@ namespace chapchom
   inline unsigned n_history_values() const {return N_history_values;}
   
   // Checks whether values have been set, or allocated
-  inline bool is_empty() const {return Is_empty;}
+  inline bool is_empty() const {return (Is_values_empty && Is_status_empty);}
   
-  // Checks whether the values are allowed to be deleted
-  inline bool delete_values() const {return Delete_values;}
+  // Checks whether the values storage is allowed to be deleted
+  inline bool delete_values_storage() const {return Delete_values_storage;}
   
-  // Enables the deletion of values
-  inline void enable_delete_values() {Delete_values=true;}
+  // Enables the deletion of values storage
+  inline void enable_delete_values_storage() {Delete_values_storage=true;}
   
-  // Disables the deletion of values
-  inline void disable_delete_values() {Delete_values=false;}
+  // Disables the deletion of values storage
+  inline void disable_delete_values_storage() {Delete_values_storage=false;}
   
-  // Flag to indicate whether the Values_pt vector is empty or not
-  bool Is_empty;
+ protected:
+  
+  // Flag to indicate whether values vector is empty
+  bool Is_values_empty;
+  // Flag to indicate whether status vector is empty
+  bool Is_status_empty;
   
   // Flag to indicate whether to delete (free) the allocated memory
   // for values. The deletion is true by default.
-  bool Delete_values;
+  bool Delete_values_storage;
   
  private:
   
@@ -129,10 +145,10 @@ namespace chapchom
   
   const unsigned N_history_values;
   
-  // Store the values of the data, Value[i][j] is the j-th history
+  // Store the values of the data, Value[i][t] is the t-th history
   // value of the i-th data
   T **Values_pt;
-
+  
   // Indicates the status of the current (0 index history) Value
   Data_status *Status_pt;
   

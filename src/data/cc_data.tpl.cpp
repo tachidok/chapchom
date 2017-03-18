@@ -13,11 +13,15 @@ namespace chapchom
  template<class T>
  CCData<T>::CCData(const unsigned n_values,
                    const unsigned n_history_values)
-  : Is_empty(true), Delete_values(true),
+  : Is_values_empty(true), Is_status_empty(true), Delete_values_storage(true),
     N_values(n_values), N_history_values(n_history_values)
  {
   // Delete any data in memory
   clean_up();
+  
+  // Initialise with zeros and UNDEFINED status
+  create_zero_values_and_status_vectors();
+  
  }
  
  // ===================================================================
@@ -28,13 +32,24 @@ namespace chapchom
  CCData<T>::CCData(T *values_pt,
                    const unsigned n_values,
                    const unsigned n_history_values)
-  : Is_empty(true), Delete_values(true),
+  : Is_values_empty(true), Is_status_empty(true), Delete_values_storage(true),
     N_values(n_values), N_history_values(n_history_values)
  {
   // Delete any data in memory
   clean_up();
   // Copy the data from the input vector to the values_pt vector
   set_values(values_pt);
+  // Allocate memory for Status_pt
+  Status_pt = new Data_status[N_values];
+  // ... and set them to undefined
+  for (unsigned i = 0; i < N_values; i++)
+   {
+    Status_pt[i] = UNDEFINED;
+   }
+
+  // Mark status as having something
+  Is_status_empty=false;
+  
  }
  
  // ===================================================================
@@ -42,11 +57,21 @@ namespace chapchom
  // ===================================================================
  template<class T>
  CCData<T>::CCData(const CCData<T> &copy)
-  : Is_empty(true), Delete_values(true),
+  : Is_values_empty(true), Is_status_empty(true), Delete_values_storage(true),
     N_values(copy.n_values()), N_history_values(copy.n_history_values())
  {
   // Copy the data from the copy object to the Values_pt vector
   set_values(copy.values_pt());
+  
+  // Allocate memory for Status_pt
+  Status_pt = new Data_status[N_values];
+  
+  // Copy the status
+  std::memcpy(Status_pt, copy.status_pt(), N_values*sizeof(Data_status));
+  
+  // Mark status as having something
+  Is_status_empty=false;
+  
  }
  
  // ===================================================================
@@ -94,7 +119,7 @@ namespace chapchom
    }
   
   // Clean-up and set values
-  set_values(source_values.matrix_pt());
+  set_values(source_values.values_pt());
   
   // Return this (de-referenced pointer)
   return *this;
@@ -116,7 +141,7 @@ namespace chapchom
   std::memcpy(Values_pt, values_pt, N_values*N_history_values*sizeof(T));
   
   // Mark the Values_pt vector as having elements
-  Is_empty = false;
+  Is_values_empty = false;
   
  }
  
@@ -127,18 +152,27 @@ namespace chapchom
  void CCData<T>::clean_up()
  {
   // Check whether the Values_pt vector has got something in it
-  if (!Is_empty)
+  if (!Is_values_empty)
    {
     // Mark as deleteable
-    Delete_values = true;
+    Delete_values_storage = true;
     // Free memory
-    free_memory_for_values();
+    free_memory_of_values();
    }
-  else // If empty
+
+  
+  // Set the pointer to NULL
+  Values_pt = 0;
+  
+  if (!Is_status_empty)
    {
-    // Set the pointer to NULL
-    Values_pt = 0;
+    // Free memory for pin status
+    delete Status_pt;
+    // Mark the Status_pt vector as having no elements
+    Is_status_empty = true;
    }
+  
+  Status_pt = 0;
   
  }
  
@@ -146,12 +180,12 @@ namespace chapchom
  // Free allocated memory
  // ===================================================================
  template<class T>
- void CCData<T>::free_memory_for_values()
+ void CCData<T>::free_memory_of_values()
  {
   // Is the Values_pt vector allowed for deletion. If this method is
   // called from an external source we need to check whether the
   // values has been marked for deletion
-  if (Delete_values)
+  if (Delete_values_storage)
    {
     for (unsigned i = 0; i < N_values; i++)
      {
@@ -161,9 +195,9 @@ namespace chapchom
     Values_pt = 0;
     
     // Mark as empty
-    Is_empty=true;
+    Is_values_empty=true;
     
-   } // if (Delete_values)
+   } // if (Delete_values_storage)
   else
    {
     // Error message
@@ -181,22 +215,20 @@ namespace chapchom
  // Get the specified value (read-only)
  // ===================================================================
  template<class T>
- const T CCData<T>::value(const unsigned long i, const unsigned long j) const
+ const T CCData<T>::value(const unsigned &i, const unsigned t) const
  {
   // TODO: Julio - Implement range check access
-  // Return the value at row i and column j
-  return Values_pt[i*N_history_values+j];
+  return Values_pt[i*N_history_values+t];
  }
  
  // ===================================================================
  // Set values (write version)
  // ===================================================================
  template<class T>
- T &CCData<T>::value(const unsigned long i, const unsigned long j)
+ T &CCData<T>::value(const unsigned &i, const unsigned t)
  {
   // TODO: Julio - Implement range check access
-  // Return the value at row i and column j
-  return Values_pt[i*N_history_values+j];
+  return Values_pt[i*N_history_values+t];
  }
  
  // ===================================================================
@@ -205,7 +237,7 @@ namespace chapchom
  template<class T>
  void CCData<T>::output(bool output_indexes) const
  {
-  if (Is_empty)
+  if (Is_values_empty)
    {
     // Error message
     std::ostringstream error_message;
@@ -219,9 +251,9 @@ namespace chapchom
     // Check whether we should output the indexes
     if (output_indexes)
      {
-      for (unsigned long i = 0; i < N_values; i++)
+      for (unsigned i = 0; i < N_values; i++)
        {
-        for (unsigned long j = 0; j < N_history_values; j++)
+        for (unsigned j = 0; j < N_history_values; j++)
          {
           std::cout << "(" << i << ", " << j << "): "
                     << Values_pt[i*N_history_values+j]
@@ -231,9 +263,9 @@ namespace chapchom
      } // if (output_indexes)
     else
      {
-      for (unsigned long i = 0; i < N_values; i++)
+      for (unsigned i = 0; i < N_values; i++)
        {
-        for (unsigned long j = 0; j < N_history_values; j++)
+        for (unsigned j = 0; j < N_history_values; j++)
          {
           std::cout << Values_pt[i*N_history_values+j] << " ";
          } // for (j < N_history_values)
@@ -252,7 +284,7 @@ namespace chapchom
  void CCData<T>::output(std::ofstream &outfile,
                           bool output_indexes) const
  {
-  if (Is_empty)
+  if (Is_values_empty)
    {
     // Error message
     std::ostringstream error_message;
@@ -266,9 +298,9 @@ namespace chapchom
     // Check whether we should output the indexes
     if (output_indexes)
      {
-      for (unsigned long i = 0; i < N_values; i++)
+      for (unsigned i = 0; i < N_values; i++)
        {
-        for (unsigned long j = 0; j < N_history_values; j++)
+        for (unsigned j = 0; j < N_history_values; j++)
          {
           outfile << "(" << i << ", " << j << "): "
                   << Values_pt[i*N_history_values+j]
@@ -278,9 +310,9 @@ namespace chapchom
      } // if (output_indexes)
     else
      {
-      for (unsigned long i = 0; i < N_values; i++)
+      for (unsigned i = 0; i < N_values; i++)
        {
-        for (unsigned long j = 0; j < N_history_values; j++)
+        for (unsigned j = 0; j < N_history_values; j++)
          {
           outfile << Values_pt[i*N_history_values+j] << " ";
          } // for (j < N_history_values)
@@ -293,33 +325,38 @@ namespace chapchom
  }
  
  // ===================================================================
- // Creates a zero Values_pt vector with the given number of elements
+ // Creates a zero Values_pt and Status_pt vectors with the given
+ // number of elements
  // ===================================================================
  template<class T>
- void CCData<T>::create_zero_values_vector()
+ void CCData<T>::create_zero_values_and_status_vectors()
  {
   // Delete any Values_pt in memory
   clean_up();
   
   // Allocate memory for Values_pt
   Values_pt = new T*[N_values];
+  // Allocate memory for Status_pt
+  Status_pt = new Data_status[N_values];
   for (unsigned i = 0; i < N_values; i++)
    {
     Values_pt[i] = new T[N_history_values];
     Status_pt[i] = UNDEFINED;
    }
   
-  // Mark the matrix as having something
-  Is_empty=false;
+  // Mark the vectors as having something
+  Is_values_empty=false;
+  Is_status_empty=false;
+  
  }
-
+ 
  // ===================================================================
  // Pins all the values associated with this data
  // ===================================================================
  template<class T>
  void CCData<T>::pin_all()
  {
-  if (!Is_empty)
+  if (!Is_status_empty)
    {
     for (unsigned i = 0; i < N_values; i++)
      {
@@ -334,7 +371,7 @@ namespace chapchom
  template<class T>
  void CCData<T>::unpin_all()
  {
-  if (!Is_empty)
+  if (!Is_status_empty)
    {
     for (unsigned i = 0; i < N_values; i++)
      {

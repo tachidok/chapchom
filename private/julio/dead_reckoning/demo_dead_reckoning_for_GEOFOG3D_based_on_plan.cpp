@@ -893,8 +893,8 @@ int main(int argc, char *argv[])
  //CCODEsFromSensorsGEOFOG3D odes("./GEOFOG3D/GEOFOG3D_with_lat_lon.dat", 0, 11591);
  
  //#define TONANTZINTLA_TO_CHOLULA
- //#define TLAXCALANCINGO_TO_ACATEPEC
-#define ACATEPEC_TO_TONANTZINTLA
+#define TLAXCALANCINGO_TO_ACATEPEC
+ //#define ACATEPEC_TO_TONANTZINTLA
  
 #ifdef TONANTZINTLA_TO_CHOLULA
  const unsigned Initial_index = 0;
@@ -991,13 +991,15 @@ int main(int argc, char *argv[])
 #endif // #ifdef TONANTZINTLA_TO_CHOLULA
  
 #ifdef TLAXCALANCINGO_TO_ACATEPEC
+ y[1][0] = 9.230914118; // Initial x-velocity
  y[6][0] = 0.03864159; // Initial roll (radians)
  y[7][0] = 0.056403805; // Initial pitch (radians)
- y[8][0] = -1.878965622;//4.404219685;//0.924043736;//0.646752591; // Initial yaw (radians)
- y[9][0] = -1.878965622;//0.0 // Initial yaw with threshold (radians)
+ y[8][0] = -1.878965622; //4.404219685;//0.924043736;//0.646752591; // Initial yaw (radians)
+ y[9][0] = -1.878965622; // Initial yaw with threshold (radians)
 #endif // #ifdef TLAXCALANCINGO_TO_ACATEPEC
  
 #ifdef ACATEPEC_TO_TONANTZINTLA
+ y[1][0] = 9.928759692; // Initial x-velocity
  y[6][0] = 0.020158553; // Initial roll (radians)
  y[7][0] = 0.016275195; // Initial pitch (radians)
  y[8][0] = -1.031505296; // Initial yaw (radians)
