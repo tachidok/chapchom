@@ -2,8 +2,8 @@
 // with matrices. This is the simplest implementation
 
 // Check whether the class has been already defined
-#ifndef CCMATRIX_H
-#define CCMATRIX_H
+#ifndef CCMATRIX_TPL_H
+#define CCMATRIX_TPL_H
 
 // The parent class
 #include "ac_matrix.h"
@@ -153,4 +153,4 @@ namespace chapchom
  
 }
 
-#endif // #ifndef CCMATRIX_H
+#endif // #ifndef CCMATRIX_TPL_H

@@ -4,8 +4,8 @@
 // resolve()
 
 // Check whether the class has been already defined
-#ifndef ACLINEARSOLVER_H
-#define ACLINEARSOLVER_H
+#ifndef ACLINEARSOLVER_TPL_H
+#define ACLINEARSOLVER_TPL_H
 
 #include "../general/common_includes.h"
 #include "../general/utilities.h"
@@ -133,4 +133,4 @@ namespace chapchom
 
 }
  
-#endif // #ifndef ACLINEARSOLVER_H
+#endif // #ifndef ACLINEARSOLVER_TPL_H

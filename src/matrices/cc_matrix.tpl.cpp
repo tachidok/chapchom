@@ -240,7 +240,7 @@ namespace chapchom
   // marked for deletion
   if (this->Delete_matrix)
    {
-    delete Matrix_pt;
+    delete [] Matrix_pt;
     Matrix_pt = 0; 
    
     // Mark the matrix as empty

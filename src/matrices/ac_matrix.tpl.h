@@ -3,8 +3,8 @@
 // this class as the base class
 
 // Check whether the class has been already defined
-#ifndef ACMATRIX_H
-#define ACMATRIX_H
+#ifndef ACMATRIX_TPL_H
+#define ACMATRIX_TPL_H
 
 #include "../general/common_includes.h"
 #include "../general/utilities.h"
@@ -145,4 +145,4 @@ namespace chapchom
  
 }
 
-#endif // #ifndef ACMATRIX_H
+#endif // #ifndef ACMATRIX_TPL_H

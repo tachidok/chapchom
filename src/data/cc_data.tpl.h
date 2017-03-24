@@ -1,8 +1,8 @@
 // IN THIS FILE: The definition of a class to represent data
 
 // Check whether the class has been already defined
-#ifndef CCDATA_H
-#define CCDATA_H
+#ifndef CCDATA_TPL_H
+#define CCDATA_TPL_H
 
 #include "../general/common_includes.h"
 #include "../general/utilities.h"
@@ -145,9 +145,9 @@ namespace chapchom
   
   const unsigned N_history_values;
   
-  // Store the values of the data, Value[i][t] is the t-th history
-  // value of the i-th data
-  T **Values_pt;
+  // Store the values of the i-th data at th t-th history
+  // Values_pt[i*N_history_values+t];
+  T *Values_pt;
   
   // Indicates the status of the current (0 index history) Value
   Data_status *Status_pt;
@@ -156,4 +156,4 @@ namespace chapchom
  
 }
 
-#endif // #ifndef CCDATA_H
+#endif // #ifndef CCDATA_TPL_H

@@ -6,7 +6,7 @@ SET(SRC_demo_distance_matrix demo_distance_matrix.cpp)
 ADD_EXECUTABLE(demo_distance_matrix EXCLUDE_FROM_ALL ${SRC_demo_distance_matrix})
 
 # Indicate linking libraries
-SET(LIB_demo_distance_matrix general_lib matrices_lib)
+SET(LIB_demo_distance_matrix numerical_recipes_lib general_lib matrices_lib linear_solvers_lib)
 
 # ... and link againts them
 TARGET_LINK_LIBRARIES(demo_distance_matrix ${LIB_demo_distance_matrix})

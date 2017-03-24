@@ -159,7 +159,6 @@ namespace chapchom
     // Free memory
     free_memory_of_values();
    }
-
   
   // Set the pointer to NULL
   Values_pt = 0;
@@ -167,7 +166,7 @@ namespace chapchom
   if (!Is_status_empty)
    {
     // Free memory for pin status
-    delete Status_pt;
+    delete [] Status_pt;
     // Mark the Status_pt vector as having no elements
     Is_status_empty = true;
    }
@@ -187,10 +186,6 @@ namespace chapchom
   // values has been marked for deletion
   if (Delete_values_storage)
    {
-    for (unsigned i = 0; i < N_values; i++)
-     {
-      delete Values_pt[i];
-     }
     delete [] Values_pt;
     Values_pt = 0;
     
@@ -335,12 +330,12 @@ namespace chapchom
   clean_up();
   
   // Allocate memory for Values_pt
-  Values_pt = new T*[N_values];
+  Values_pt = new T[N_values*N_history_values];
   // Allocate memory for Status_pt
   Status_pt = new Data_status[N_values];
+  // Set status as undefined
   for (unsigned i = 0; i < N_values; i++)
    {
-    Values_pt[i] = new T[N_history_values];
     Status_pt[i] = UNDEFINED;
    }
   

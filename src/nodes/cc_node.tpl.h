@@ -1,8 +1,8 @@
 // IN THIS FILE: The definition of a class to represent nodes
 
 // Check whether the class has been already defined
-#ifndef CCNODE_H
-#define CCNODE_H
+#ifndef CCNODE_TPL_H
+#define CCNODE_TPL_H
 
 #include "../general/common_includes.h"
 #include "../general/utilities.h"
@@ -21,7 +21,7 @@ namespace chapchom
  public:
   
   // Empty constructor
-  CCNode(const unsigned dimension, const unsigned n_variables, const unsigned n_history_values);
+  CCNode(const unsigned dimension, const unsigned n_variables, const unsigned n_history_values); 
   
   // Empty destructor
   virtual ~CCNode();
@@ -101,4 +101,4 @@ namespace chapchom
  
 }
 
-#endif // #ifndef CCNODE_H
+#endif // #ifndef CCNODE_TPL_H

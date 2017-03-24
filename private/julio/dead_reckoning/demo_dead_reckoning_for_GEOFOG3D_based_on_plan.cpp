@@ -44,7 +44,7 @@
 #define NAVIGATION_DATA_TO_EVALUATION
 //#define FORCE_USING_EULER_ANGLES_RATES_FROM_GEOFOG3D
 //#define FORCE_USING_EULER_ANGLES_FROM_GEOFOG3D
-#define FORCE_USING_LINEAR_ACCELERATIONS_FROM_GEOFOG3D
+//#define FORCE_USING_LINEAR_ACCELERATIONS_FROM_GEOFOG3D
 
 //#define APPLY_LINEAR_ACCELERATIONS_OFFSET
 //#define APPLY_EULER_ANGLES_OFFSET
@@ -892,17 +892,28 @@ int main(int argc, char *argv[])
  // Odes from GEOFOG3D
  //CCODEsFromSensorsGEOFOG3D odes("./GEOFOG3D/GEOFOG3D_with_lat_lon.dat", 0, 11591);
  
-#define TONANTZINTLA_TO_CHOLULA
+ //#define TONANTZINTLA_TO_CHOLULA
+ //#define TLAXCALANCINGO_TO_ACATEPEC_ZERO_INITIAL_VELOCITY
  //#define TLAXCALANCINGO_TO_ACATEPEC
  //#define ACATEPEC_TO_TONANTZINTLA
- 
+ //#define UDLAP_PERIFERICO
+ #define PERIFERICO_TO_11SUR
+ //#define _11SUR_TO_TLAXCALANCINGO
+  
 #ifdef TONANTZINTLA_TO_CHOLULA
  const unsigned Initial_index = 0;
  const unsigned Final_index = 11591;
 #endif // #ifdef TONANTZINTLA_TO_CHOLULA
  
+#ifdef TLAXCALANCINGO_TO_ACATEPEC_ZERO_INITIAL_VELOCITY
+ //const unsigned Initial_index = 56242;
+ const unsigned Initial_index = 57242;
+ const unsigned Final_index = 66777;
+#endif // #ifdef TLAXCALANCINGO_TO_ACATEPEC_ZERO_INITIAL_VELOCITY
+ 
 #ifdef TLAXCALANCINGO_TO_ACATEPEC
- const unsigned Initial_index = 56242;
+ //const unsigned Initial_index = 56242;
+ const unsigned Initial_index = 58442;
  const unsigned Final_index = 66777;
 #endif // #ifdef TLAXCALANCINGO_TO_ACATEPEC
  
@@ -910,6 +921,22 @@ int main(int argc, char *argv[])
  const unsigned Initial_index = 68504;
  const unsigned Final_index = 74087;
 #endif // #ifdef ACATEPEC_TO_TONANTZINTLA
+
+#ifdef UDLAP_PERIFERICO
+ const unsigned Initial_index = 35638;
+ //const unsigned Final_index = 38482;
+ const unsigned Final_index = 39284;
+#endif// #ifdef UDLAP_PERIFERICO
+ 
+#ifdef PERIFERICO_TO_11SUR
+ const unsigned Initial_index = 40300;
+ const unsigned Final_index = 46076;
+#endif// #ifdef PERIFERICO_TO_11SUR
+ 
+#ifdef _11SUR_TO_TLAXCALANCINGO
+ const unsigned Initial_index = 48569;
+ const unsigned Final_index = 54575;
+#endif// #ifdef _11SUR_TO_TLAXCALANCINGO
  
  CCODEsFromSensorsGEOFOG3D odes("./GEOFOG3D/GEOFOG3DALL_with_lat_lon.dat", Initial_index, Final_index);
  
@@ -991,12 +1018,25 @@ int main(int argc, char *argv[])
  //y[9][0] = 0.0; // Initial yaw with threshold (radians)
 #endif // #ifdef TONANTZINTLA_TO_CHOLULA
  
+#ifdef TLAXCALANCINGO_TO_ACATEPEC_ZERO_INITIAL_VELOCITY
+ y[1][0] = 0.017278609; // Initial x-velocity
+ y[6][0] = 0.018566813; // Initial roll (radians)
+ y[7][0] = 0.079363612; // Initial pitch (radians)
+ y[8][0] = -2.017426082; //4.404219685;//0.924043736;//0.646752591; // Initial yaw (radians)
+ y[9][0] = -2.017426082; // Initial yaw with threshold (radians)
+ // y[1][0] = 9.230875187; // Initial x-velocity
+ //y[6][0] = 0.03864159; // Initial roll (radians)
+ //y[7][0] = 0.056403805; // Initial pitch (radians)
+ //y[8][0] = -1.878965622; //4.404219685;//0.924043736;//0.646752591; // Initial yaw (radians)
+ //y[9][0] = -1.878965622; // Initial yaw with threshold (radians)
+#endif // #ifdef TLAXCALANCINGO_TO_ACATEPEC_ZERO_INITIAL_VELOCITY
+ 
 #ifdef TLAXCALANCINGO_TO_ACATEPEC
- y[1][0] = 9.230914118; // Initial x-velocity
- y[6][0] = 0.03864159; // Initial roll (radians)
- y[7][0] = 0.056403805; // Initial pitch (radians)
- y[8][0] = -1.878965622; //4.404219685;//0.924043736;//0.646752591; // Initial yaw (radians)
- y[9][0] = -1.878965622; // Initial yaw with threshold (radians)
+ y[1][0] = 9.47332405; // Initial x-velocity
+ y[6][0] = 0.063093652; // Initial roll (radians)
+ y[7][0] = 0.048420669; // Initial pitch (radians)
+ y[8][0] = -1.82427573; //4.404219685;//0.924043736;//0.646752591; // Initial yaw (radians)
+ y[9][0] = -1.82427573; // Initial yaw with threshold (radians)
 #endif // #ifdef TLAXCALANCINGO_TO_ACATEPEC
  
 #ifdef ACATEPEC_TO_TONANTZINTLA
@@ -1006,6 +1046,30 @@ int main(int argc, char *argv[])
  y[8][0] = -1.031505296; // Initial yaw (radians)
  y[9][0] = -1.031505296; // Initial yaw with threshold (radians)
 #endif // #ifdef ACATEPEC_TO_TONANTZINTLA
+
+#ifdef UDLAP_PERIFERICO
+ y[1][0] = 11.422295071; // Initial x-velocity
+ y[6][0] = 0.04549096; // Initial roll (radians)
+ y[7][0] = 0.008888264; // Initial pitch (radians)
+ y[8][0] = 2.923349999; // Initial yaw (radians)
+ y[9][0] = 2.923349999; // Initial yaw with threshold (radians)
+#endif // #ifdef UDLAP_PERIFERICO
+ 
+#ifdef PERIFERICO_TO_11SUR
+ y[1][0] = 16.06923009; // Initial x-velocity
+ y[6][0] = -0.050907938; // Initial roll (radians)
+ y[7][0] = 0.062309127; // Initial pitch (radians)
+ y[8][0] = 2.777109996; // Initial yaw (radians)
+ y[9][0] = 2.777109996; // Initial yaw with threshold (radians)
+#endif// #ifdef PERIFERICO_TO_11SUR
+ 
+#ifdef _11SUR_TO_TLAXCALANCINGO
+ y[1][0] = 14.630887714; // Initial x-velocity
+ y[6][0] = -0.033215536; // Initial roll (radians)
+ y[7][0] = 0.026363547; // Initial pitch (radians)
+ y[8][0] = -1.465565365; // Initial yaw (radians)
+ y[9][0] = -1.465565365; // Initial yaw with threshold (radians)
+#endif// #ifdef _11SUR_TO_TLAXCALANCINGO
  
  // Discretised time
  double current_time = 0;

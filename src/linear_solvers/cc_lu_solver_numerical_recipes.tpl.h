@@ -5,8 +5,8 @@
 // back-substitution, respectively.
 
 // Check whether the class has been already defined
-#ifndef CCLUSOLVER_H
-#define CCLUSOLVER_H
+#ifndef CCLUSOLVER_TPL_H
+#define CCLUSOLVER_TPL_H
 
 #include "ac_linear_solver.h"
 
@@ -128,4 +128,4 @@ namespace chapchom
  
 }
 
-#endif // #ifndef CCLUSOLVER_H
+#endif // #ifndef CCLUSOLVER_TPL_H

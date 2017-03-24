@@ -2,8 +2,8 @@
 // with vectors. This is the simplest implementation
 
 // Check whether the class has been already defined
-#ifndef CCVECTOR_H
-#define CCVECTOR_H
+#ifndef CCVECTOR_TPL_H
+#define CCVECTOR_TPL_H
 
 // The parent class
 #include "ac_vector.h"
@@ -164,4 +164,4 @@ namespace chapchom
  
 }
 
-#endif // #ifndef CCVECTOR_H
+#endif // #ifndef CCVECTOR_TPL_H

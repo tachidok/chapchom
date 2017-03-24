@@ -5,12 +5,29 @@ clear all
 % GEOFOG3D.dat
 %n_input_raw_data = 11592;
 %n_input_aligned_data = 11592;
-Initial_index=0;
-Final_index=11591;
-Initial_index=56242;
-Final_index=66777;
-Initial_index=68504;
-Final_index=74087;
+% TONANTZINTLA_TO_CHOLULA
+%Initial_index=0;
+%Final_index=11591;
+% TLAXCALANCINGO_TO_ACATEPEC_ZERO_VELOCITY
+%%%%Initial_index=56242;
+%Initial_index=57242;
+%Final_index=66777;
+% TLAXCALANCINGO_TO_ACATEPEC
+%Initial_index=58442;
+%Final_index=66777;
+% ACATEPEC_TO_TONANTZINTLA
+%Initial_index=68504;
+%Final_index=74087;
+% UDLAP_PERIFERICO
+%Initial_index=35638;
+%Final_index=39284;
+% PERIFERICO_TO_11SUR
+Initial_index=40300;
+Final_index=46076;
+% 11SUR_TO_TLAXCALANCINGO
+%Initial_index=48569;
+%Final_index=54575;
+
 n_input_raw_data = Final_index-Initial_index+1;
 n_input_aligned_data = n_input_raw_data;
 %n_output_data=11030;

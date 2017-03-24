@@ -289,7 +289,7 @@ namespace chapchom
   // marked for deletion
   if (this->Delete_vector)
    {
-    delete Vector_pt;
+    delete [] Vector_pt;
     Vector_pt = 0; 
     
     // Mark the vector as empty

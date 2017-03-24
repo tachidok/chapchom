@@ -67,7 +67,8 @@ int main(int argc, char *argv[])
   // Create a linear solver
   CCLUSolverNumericalRecipes<double> linear_solver;
   
-  // The solution vector
+  // The solution vector (with the corresponding number of rows, that
+  // in this case refers to the number of cols as well)
   CCVector<double> sol(n_cols);
   
   // Solve the system of equations

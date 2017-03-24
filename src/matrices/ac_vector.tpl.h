@@ -3,8 +3,8 @@
 // this class as the base class
 
 // Check whether the class has been already defined
-#ifndef ACVECTOR_H
-#define ACVECTOR_H
+#ifndef ACVECTOR_TPL_H
+#define ACVECTOR_TPL_H
 
 #include "../general/common_includes.h"
 #include "../general/utilities.h"
@@ -164,4 +164,4 @@ namespace chapchom
  
 }
 
-#endif // #ifndef ACVECTOR_H
+#endif // #ifndef ACVECTOR_TPL_H
