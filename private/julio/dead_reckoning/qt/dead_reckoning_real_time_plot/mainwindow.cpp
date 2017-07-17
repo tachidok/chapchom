@@ -9,17 +9,17 @@ void plot_raw_gyro_x(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(0,255,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Raw_gyro_x);
+    wdg_plot->graph(0)->setData(mw->Time_raw_gyro, mw->Raw_gyro_x);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("deg/s");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_raw_gyro.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_raw_gyro[0], mw->Time_raw_gyro[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_GYRO, MAX_RAW_GYRO);
 
     // Set interactions with the plot and replot (redraw)
@@ -34,17 +34,17 @@ void plot_raw_gyro_y(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(0,255,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Raw_gyro_y);
+    wdg_plot->graph(0)->setData(mw->Time_raw_gyro, mw->Raw_gyro_y);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("deg/s");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_raw_gyro.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_raw_gyro[0], mw->Time_raw_gyro[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_GYRO, MAX_RAW_GYRO);
 
     // Set interactions with the plot and replot (redraw)
@@ -59,17 +59,17 @@ void plot_raw_gyro_z(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(0,255,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Raw_gyro_z);
+    wdg_plot->graph(0)->setData(mw->Time_raw_gyro, mw->Raw_gyro_z);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("deg/s");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_raw_gyro.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_raw_gyro[0], mw->Time_raw_gyro[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_GYRO, MAX_RAW_GYRO);
 
     // Set interactions with the plot and replot (redraw)
@@ -84,17 +84,17 @@ void plot_raw_acc_x(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(255,0,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Raw_acc_x);
+    wdg_plot->graph(0)->setData(mw->Time_raw_acc, mw->Raw_acc_x);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s^2");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_raw_acc.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_raw_acc[0], mw->Time_raw_acc[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_ACC, MAX_RAW_ACC);
 
     // Set interactions with the plot and replot (redraw)
@@ -109,17 +109,17 @@ void plot_raw_acc_y(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(255,0,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Raw_acc_y);
+    wdg_plot->graph(0)->setData(mw->Time_raw_acc, mw->Raw_acc_y);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s^2");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_raw_acc.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_raw_acc[0], mw->Time_raw_acc[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_ACC, MAX_RAW_ACC);
 
     // Set interactions with the plot and replot (redraw)
@@ -134,17 +134,17 @@ void plot_raw_acc_z(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(255,0,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Raw_acc_z);
+    wdg_plot->graph(0)->setData(mw->Time_raw_acc, mw->Raw_acc_z);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s^2");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_raw_acc.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_raw_acc[0], mw->Time_raw_acc[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_ACC, MAX_RAW_ACC);
 
     // Set interactions with the plot and replot (redraw)
@@ -159,17 +159,17 @@ void plot_rotated_gyro_x(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(0,255,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Rotated_gyro_x);
+    wdg_plot->graph(0)->setData(mw->Time_rotated_gyro, mw->Rotated_gyro_x);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("deg/s");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_rotated_gyro.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_rotated_gyro[0], mw->Time_rotated_gyro[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_GYRO, MAX_RAW_GYRO);
 
     // Set interactions with the plot and replot (redraw)
@@ -184,17 +184,17 @@ void plot_rotated_gyro_y(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(0,255,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Rotated_gyro_y);
+    wdg_plot->graph(0)->setData(mw->Time_rotated_gyro, mw->Rotated_gyro_y);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("deg/s");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_rotated_gyro.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_rotated_gyro[0], mw->Time_rotated_gyro[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_GYRO, MAX_RAW_GYRO);
 
     // Set interactions with the plot and replot (redraw)
@@ -209,17 +209,17 @@ void plot_rotated_gyro_z(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(0,255,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Rotated_gyro_z);
+    wdg_plot->graph(0)->setData(mw->Time_rotated_gyro, mw->Rotated_gyro_z);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("deg/s");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_rotated_gyro.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_rotated_gyro[0], mw->Time_rotated_gyro[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_GYRO, MAX_RAW_GYRO);
 
     // Set interactions with the plot and replot (redraw)
@@ -234,17 +234,17 @@ void plot_rotated_acc_x(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(255,0,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Rotated_acc_x);
+    wdg_plot->graph(0)->setData(mw->Time_rotated_acc, mw->Rotated_acc_x);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s^2");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_rotated_acc.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_rotated_acc[0], mw->Time_rotated_acc[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_ACC, MAX_RAW_ACC);
 
     // Set interactions with the plot and replot (redraw)
@@ -259,17 +259,17 @@ void plot_rotated_acc_y(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(255,0,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Rotated_acc_y);
+    wdg_plot->graph(0)->setData(mw->Time_rotated_acc, mw->Rotated_acc_y);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s^2");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_rotated_acc.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_rotated_acc[0], mw->Time_rotated_acc[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_ACC, MAX_RAW_ACC);
 
     // Set interactions with the plot and replot (redraw)
@@ -284,17 +284,17 @@ void plot_rotated_acc_z(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(255,0,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Rotated_acc_z);
+    wdg_plot->graph(0)->setData(mw->Time_rotated_acc, mw->Rotated_acc_z);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s^2");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_rotated_acc.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_rotated_acc[0], mw->Time_rotated_acc[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_ACC, MAX_RAW_ACC);
 
     // Set interactions with the plot and replot (redraw)
@@ -309,17 +309,17 @@ void plot_filtered_gyro_x(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(0,255,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Filtered_gyro_x);
+    wdg_plot->graph(0)->setData(mw->Time_filtered_gyro, mw->Filtered_gyro_x);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("deg/s");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_filtered_gyro.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_filtered_gyro[0], mw->Time_filtered_gyro[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_GYRO, MAX_RAW_GYRO);
 
     // Set interactions with the plot and replot (redraw)
@@ -334,17 +334,17 @@ void plot_filtered_gyro_y(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(0,255,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Filtered_gyro_y);
+    wdg_plot->graph(0)->setData(mw->Time_filtered_gyro, mw->Filtered_gyro_y);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("deg/s");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_filtered_gyro.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_filtered_gyro[0], mw->Time_filtered_gyro[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_GYRO, MAX_RAW_GYRO);
 
     // Set interactions with the plot and replot (redraw)
@@ -359,17 +359,17 @@ void plot_filtered_gyro_z(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(0,255,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Filtered_gyro_z);
+    wdg_plot->graph(0)->setData(mw->Time_filtered_gyro, mw->Filtered_gyro_z);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("deg/s");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_filtered_gyro.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_filtered_gyro[0], mw->Time_filtered_gyro[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_GYRO, MAX_RAW_GYRO);
 
     // Set interactions with the plot and replot (redraw)
@@ -384,17 +384,17 @@ void plot_filtered_acc_x(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(255,0,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Filtered_acc_x);
+    wdg_plot->graph(0)->setData(mw->Time_filtered_acc, mw->Filtered_acc_x);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s^2");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_filtered_acc.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_filtered_acc[0], mw->Time_filtered_acc[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_ACC, MAX_RAW_ACC);
 
     // Set interactions with the plot and replot (redraw)
@@ -409,17 +409,17 @@ void plot_filtered_acc_y(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(255,0,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Filtered_acc_y);
+    wdg_plot->graph(0)->setData(mw->Time_filtered_acc, mw->Filtered_acc_y);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s^2");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_filtered_acc.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_filtered_acc[0], mw->Time_filtered_acc[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_ACC, MAX_RAW_ACC);
 
     // Set interactions with the plot and replot (redraw)
@@ -434,17 +434,17 @@ void plot_filtered_acc_z(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(255,0,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Filtered_acc_z);
+    wdg_plot->graph(0)->setData(mw->Time_filtered_acc, mw->Filtered_acc_z);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s^2");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_filtered_acc.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_filtered_acc[0], mw->Time_filtered_acc[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_ACC, MAX_RAW_ACC);
 
     // Set interactions with the plot and replot (redraw)
@@ -459,17 +459,17 @@ void plot_aligned_gyro_x(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(0,255,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Aligned_gyro_x);
+    wdg_plot->graph(0)->setData(mw->Time_aligned_gyro, mw->Aligned_gyro_x);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("deg/s");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_aligned_gyro.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_aligned_gyro[0], mw->Time_aligned_gyro[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_GYRO, MAX_RAW_GYRO);
 
     // Set interactions with the plot and replot (redraw)
@@ -484,17 +484,17 @@ void plot_aligned_gyro_y(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(0,255,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Aligned_gyro_y);
+    wdg_plot->graph(0)->setData(mw->Time_aligned_gyro, mw->Aligned_gyro_y);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("deg/s");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_aligned_gyro.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_aligned_gyro[0], mw->Time_aligned_gyro[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_GYRO, MAX_RAW_GYRO);
 
     // Set interactions with the plot and replot (redraw)
@@ -509,17 +509,17 @@ void plot_aligned_gyro_z(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(0,255,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Aligned_gyro_z);
+    wdg_plot->graph(0)->setData(mw->Time_aligned_gyro, mw->Aligned_gyro_z);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("deg/s");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_aligned_gyro.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_aligned_gyro[0], mw->Time_aligned_gyro[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_GYRO, MAX_RAW_GYRO);
 
     // Set interactions with the plot and replot (redraw)
@@ -534,17 +534,17 @@ void plot_aligned_acc_x(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(255,0,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Aligned_acc_x);
+    wdg_plot->graph(0)->setData(mw->Time_aligned_acc, mw->Aligned_acc_x);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s^2");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_aligned_acc.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_aligned_acc[0], mw->Time_aligned_acc[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_ACC, MAX_RAW_ACC);
 
     // Set interactions with the plot and replot (redraw)
@@ -559,17 +559,17 @@ void plot_aligned_acc_y(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(255,0,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Aligned_acc_y);
+    wdg_plot->graph(0)->setData(mw->Time_aligned_acc, mw->Aligned_acc_y);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s^2");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_aligned_acc.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_aligned_acc[0], mw->Time_aligned_acc[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_ACC, MAX_RAW_ACC);
 
     // Set interactions with the plot and replot (redraw)
@@ -584,17 +584,17 @@ void plot_aligned_acc_z(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(255,0,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Aligned_acc_z);
+    wdg_plot->graph(0)->setData(mw->Time_aligned_acc, mw->Aligned_acc_z);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s^2");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_aligned_acc.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_aligned_acc[0], mw->Time_aligned_acc[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_ACC, MAX_RAW_ACC);
 
     // Set interactions with the plot and replot (redraw)
@@ -609,17 +609,17 @@ void plot_euler_angle_phi_gyro(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(0,255,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Euler_angle_phi_gyro);
+    wdg_plot->graph(0)->setData(mw->Time_euler_angle_gyro, mw->Euler_angle_phi_gyro);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("deg");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_euler_angle_gyro.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_euler_angle_gyro[0], mw->Time_euler_angle_gyro[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_EULER_ANGLE, MAX_EULER_ANGLE);
 
     // Set interactions with the plot and replot (redraw)
@@ -634,17 +634,17 @@ void plot_euler_angle_theta_gyro(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(0,255,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Euler_angle_theta_gyro);
+    wdg_plot->graph(0)->setData(mw->Time_euler_angle_gyro, mw->Euler_angle_theta_gyro);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("deg");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_euler_angle_gyro.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_euler_angle_gyro[0], mw->Time_euler_angle_gyro[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_EULER_ANGLE, MAX_EULER_ANGLE);
 
     // Set interactions with the plot and replot (redraw)
@@ -659,17 +659,17 @@ void plot_euler_angle_psi_gyro(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(0,255,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Euler_angle_psi_gyro);
+    wdg_plot->graph(0)->setData(mw->Time_euler_angle_gyro, mw->Euler_angle_psi_gyro);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("deg");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_euler_angle_gyro.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_euler_angle_gyro[0], mw->Time_euler_angle_gyro[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_EULER_ANGLE, MAX_EULER_ANGLE);
 
     // Set interactions with the plot and replot (redraw)
@@ -684,17 +684,17 @@ void plot_euler_angle_phi_acc(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(255,0,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Euler_angle_phi_acc);
+    wdg_plot->graph(0)->setData(mw->Time_euler_angle_acc, mw->Euler_angle_phi_acc);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("deg");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_euler_angle_acc.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_euler_angle_acc[0], mw->Time_euler_angle_acc[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_EULER_ANGLE, MAX_EULER_ANGLE);
 
     // Set interactions with the plot and replot (redraw)
@@ -709,17 +709,17 @@ void plot_euler_angle_theta_acc(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(255,0,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Euler_angle_theta_acc);
+    wdg_plot->graph(0)->setData(mw->Time_euler_angle_acc, mw->Euler_angle_theta_acc);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("deg");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_euler_angle_acc.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_euler_angle_acc[0], mw->Time_euler_angle_acc[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_EULER_ANGLE, MAX_EULER_ANGLE);
 
     // Set interactions with the plot and replot (redraw)
@@ -734,17 +734,17 @@ void plot_euler_angle_phi_fused(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(0,0,255)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Euler_angle_phi_fused);
+    wdg_plot->graph(0)->setData(mw->Time_euler_angle_fused, mw->Euler_angle_phi_fused);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("deg");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_euler_angle_fused.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_euler_angle_fused[0], mw->Time_euler_angle_fused[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_EULER_ANGLE, MAX_EULER_ANGLE);
 
     // Set interactions with the plot and replot (redraw)
@@ -759,17 +759,17 @@ void plot_euler_angle_theta_fused(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(0,0,255)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Euler_angle_theta_fused);
+    wdg_plot->graph(0)->setData(mw->Time_euler_angle_fused, mw->Euler_angle_theta_fused);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("deg");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_euler_angle_fused.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_euler_angle_fused[0], mw->Time_euler_angle_fused[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_EULER_ANGLE, MAX_EULER_ANGLE);
 
     // Set interactions with the plot and replot (redraw)
@@ -784,17 +784,17 @@ void plot_euler_angle_psi_fused(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(0,0,255)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Euler_angle_psi_fused);
+    wdg_plot->graph(0)->setData(mw->Time_euler_angle_fused, mw->Euler_angle_psi_fused);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("deg");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_euler_angle_fused.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_euler_angle_fused[0], mw->Time_euler_angle_fused[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_EULER_ANGLE, MAX_EULER_ANGLE);
 
     // Set interactions with the plot and replot (redraw)
@@ -809,17 +809,17 @@ void plot_gravity_x_body_frame(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(128,0,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Gravity_x_body_frame);
+    wdg_plot->graph(0)->setData(mw->Time_gravity_body_frame, mw->Gravity_x_body_frame);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s^2");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_gravity_body_frame.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_gravity_body_frame[0], mw->Time_gravity_body_frame[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_ACC, MAX_RAW_ACC);
 
     // Set interactions with the plot and replot (redraw)
@@ -834,17 +834,17 @@ void plot_gravity_y_body_frame(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(128,0,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Gravity_y_body_frame);
+    wdg_plot->graph(0)->setData(mw->Time_gravity_body_frame, mw->Gravity_y_body_frame);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s^2");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_gravity_body_frame.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_gravity_body_frame[0], mw->Time_gravity_body_frame[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_ACC, MAX_RAW_ACC);
 
     // Set interactions with the plot and replot (redraw)
@@ -859,17 +859,17 @@ void plot_gravity_z_body_frame(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(128,0,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Gravity_z_body_frame);
+    wdg_plot->graph(0)->setData(mw->Time_gravity_body_frame, mw->Gravity_z_body_frame);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s^2");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_gravity_body_frame.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_gravity_body_frame[0], mw->Time_gravity_body_frame[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_ACC, MAX_RAW_ACC);
 
     // Set interactions with the plot and replot (redraw)
@@ -884,17 +884,17 @@ void plot_linear_acc_x(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(64,128,64)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Linear_acc_x);
+    wdg_plot->graph(0)->setData(mw->Time_linear_acc, mw->Linear_acc_x);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s^2");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_linear_acc.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_linear_acc[0], mw->Time_linear_acc[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_ACC, MAX_RAW_ACC);
 
     // Set interactions with the plot and replot (redraw)
@@ -909,17 +909,17 @@ void plot_linear_acc_y(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(64,128,64)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Linear_acc_y);
+    wdg_plot->graph(0)->setData(mw->Time_linear_acc, mw->Linear_acc_y);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s^2");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_linear_acc.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_linear_acc[0], mw->Time_linear_acc[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_ACC, MAX_RAW_ACC);
 
     // Set interactions with the plot and replot (redraw)
@@ -934,17 +934,17 @@ void plot_linear_acc_z(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(64,128,64)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Linear_acc_z);
+    wdg_plot->graph(0)->setData(mw->Time_linear_acc, mw->Linear_acc_z);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s^2");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_linear_acc.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_linear_acc[0], mw->Time_linear_acc[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_ACC, MAX_RAW_ACC);
 
     // Set interactions with the plot and replot (redraw)
@@ -959,17 +959,17 @@ void plot_inertial_acc_x(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(128,128,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Inertial_acc_x);
+    wdg_plot->graph(0)->setData(mw->Time_inertial_acc, mw->Inertial_acc_x);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s^2");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_inertial_acc.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_inertial_acc[0], mw->Time_inertial_acc[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_ACC, MAX_RAW_ACC);
 
     // Set interactions with the plot and replot (redraw)
@@ -984,17 +984,17 @@ void plot_inertial_acc_y(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(128,128,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Inertial_acc_y);
+    wdg_plot->graph(0)->setData(mw->Time_inertial_acc, mw->Inertial_acc_y);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s^2");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_inertial_acc.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_inertial_acc[0], mw->Time_inertial_acc[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_ACC, MAX_RAW_ACC);
 
     // Set interactions with the plot and replot (redraw)
@@ -1009,17 +1009,17 @@ void plot_inertial_acc_z(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(128,128,0)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Inertial_acc_z);
+    wdg_plot->graph(0)->setData(mw->Time_inertial_acc, mw->Inertial_acc_z);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s^2");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_inertial_acc.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_inertial_acc[0], mw->Time_inertial_acc[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_RAW_ACC, MAX_RAW_ACC);
 
     // Set interactions with the plot and replot (redraw)
@@ -1034,17 +1034,17 @@ void plot_velocity_x(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(0,192,255)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Velocity_x);
+    wdg_plot->graph(0)->setData(mw->Time_velocity_body, mw->Velocity_x);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_velocity_body.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_velocity_body[0], mw->Time_velocity_body[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_VELOCITY, MAX_VELOCITY);
 
     // Set interactions with the plot and replot (redraw)
@@ -1059,17 +1059,17 @@ void plot_velocity_y(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(0,192,255)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Velocity_y);
+    wdg_plot->graph(0)->setData(mw->Time_velocity_body, mw->Velocity_y);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_velocity_body.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_velocity_body[0], mw->Time_velocity_body[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_VELOCITY, MAX_VELOCITY);
 
     // Set interactions with the plot and replot (redraw)
@@ -1084,17 +1084,17 @@ void plot_velocity_north(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(0,128,255)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Velocity_north);
+    wdg_plot->graph(0)->setData(mw->Time_velocity_inertial, mw->Velocity_north);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_velocity_inertial.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_velocity_inertial[0], mw->Time_velocity_inertial[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_VELOCITY, MAX_VELOCITY);
 
     // Set interactions with the plot and replot (redraw)
@@ -1109,17 +1109,17 @@ void plot_velocity_east(MainWindow *mw, QCustomPlot *wdg_plot)
     // ---------------------------------------------------------------
     //ui->wdg_plot->graph(0)->setLineStyle(QCPGraph::lsNone);
     wdg_plot->graph(0)->setPen(QPen(QColor(0,128,255)));
-    wdg_plot->graph(0)->setData(mw->Time, mw->Velocity_east);
+    wdg_plot->graph(0)->setData(mw->Time_velocity_inertial, mw->Velocity_east);
 
     // Assign labels to axis
     wdg_plot->xAxis->setLabel("Time (s)");
     wdg_plot->yAxis->setLabel("m/s");
 
     // Get the number of data in Time
-    const unsigned n_time = mw->Time.size();
+    const unsigned n_time = mw->Time_velocity_inertial.size();
 
     // Set range
-    wdg_plot->xAxis->setRange(mw->Time[0], mw->Time[n_time-1]);
+    wdg_plot->xAxis->setRange(mw->Time_velocity_inertial[0], mw->Time_velocity_inertial[n_time-1]);
     wdg_plot->yAxis->setRange(MIN_VELOCITY, MAX_VELOCITY);
 
     // Set interactions with the plot and replot (redraw)
@@ -1312,6 +1312,17 @@ MainWindow::MainWindow(QWidget *parent) :
     Plot_function_pt.push_back(&(plot_position_body_frame));
     Plot_function_pt.push_back(&(plot_position_inertial_frame));
 
+    // Read data from external application via ethernet/serial communication
+    Read_data_thread.setup(Original_read_data_thread);
+    // Start thread
+    Read_data_thread.moveToThread(&Original_read_data_thread);
+
+    // Initialise thread
+    Original_read_data_thread.start();
+
+    // -------------------------------------------------------------
+    // Time stuff
+    // -------------------------------------------------------------
     // Create timer
     Plot_timer = new QTimer(this);
 
@@ -1330,113 +1341,147 @@ MainWindow::~MainWindow()
 // ===================================================================
 // In charge of filling data into the data structures
 // ===================================================================
-void MainWindow::fill_data(const double time,
+void MainWindow::fill_data(const double time_raw_gyro,
                            const double raw_gyro_x,
                            const double raw_gyro_y,
                            const double raw_gyro_z,
+                           const double time_raw_acc,
                            const double raw_acc_x,
                            const double raw_acc_y,
                            const double raw_acc_z,
+                           const double time_rotated_gyro,
                            const double rotated_gyro_x,
                            const double rotated_gyro_y,
                            const double rotated_gyro_z,
+                           const double time_rotated_acc,
                            const double rotated_acc_x,
                            const double rotated_acc_y,
                            const double rotated_acc_z,
+                           const double time_filtered_gyro,
                            const double filtered_gyro_x,
                            const double filtered_gyro_y,
                            const double filtered_gyro_z,
+                           const double time_filtered_acc,
                            const double filtered_acc_x,
                            const double filtered_acc_y,
                            const double filtered_acc_z,
+                           const double time_aligned_gyro,
                            const double aligned_gyro_x,
                            const double aligned_gyro_y,
                            const double aligned_gyro_z,
+                           const double time_aligned_acc,
                            const double aligned_acc_x,
                            const double aligned_acc_y,
                            const double aligned_acc_z,
+                           const double time_euler_angle_gyro,
                            const double euler_angle_phi_gyro,
                            const double euler_angle_theta_gyro,
                            const double euler_angle_psi_gyro,
+                           const double time_euler_angle_acc,
                            const double euler_angle_phi_acc,
                            const double euler_angle_theta_acc,
+                           const double time_euler_angle_fused,
                            const double euler_angle_phi_fused,
                            const double euler_angle_theta_fused,
                            const double euler_angle_psi_fused,
+                           const double time_gravity_body_frame,
                            const double gravity_x_body_frame,
                            const double gravity_y_body_frame,
                            const double gravity_z_body_frame,
+                           const double time_linear_acc,
                            const double linear_acc_x,
                            const double linear_acc_y,
                            const double linear_acc_z,
+                           const double time_inertial_acc,
                            const double inertial_acc_x,
                            const double inertial_acc_y,
                            const double inertial_acc_z,
+                           const double time_velocity_body,
                            const double velocity_x,
                            const double velocity_y,
+                           const double time_velocity_inertial,
                            const double velocity_north,
                            const double velocity_east,
+                           const double time_position_body,
                            const double position_x_body_frame,
                            const double position_y_body_frame,
+                           const double time_position_inertial,
                            const double position_x_inertial_frame,
                            const double position_y_inertial_frame)
 {
 
     // Add new elements to the data structures
-    Time.push_back(time);
+    Time_raw_gyro.push_back(time_raw_gyro);
     Raw_gyro_x.push_back(raw_gyro_x);
     Raw_gyro_y.push_back(raw_gyro_y);
     Raw_gyro_z.push_back(raw_gyro_z);
+    Time_raw_acc.push_back(time_raw_acc);
     Raw_acc_x.push_back(raw_acc_x);
     Raw_acc_y.push_back(raw_acc_y);
     Raw_acc_z.push_back(raw_acc_z);
+    Time_rotated_gyro.push_back(time_rotated_gyro);
     Rotated_gyro_x.push_back(rotated_gyro_x);
     Rotated_gyro_y.push_back(rotated_gyro_y);
     Rotated_gyro_z.push_back(rotated_gyro_z);
+    Time_rotated_acc.push_back(time_rotated_acc);
     Rotated_acc_x.push_back(rotated_acc_x);
     Rotated_acc_y.push_back(rotated_acc_y);
     Rotated_acc_z.push_back(rotated_acc_z);
+    Time_filtered_gyro.push_back(time_filtered_gyro);
     Filtered_gyro_x.push_back(filtered_gyro_x);
     Filtered_gyro_y.push_back(filtered_gyro_y);
     Filtered_gyro_z.push_back(filtered_gyro_z);
+    Time_filtered_acc.push_back(time_filtered_acc);
     Filtered_acc_x.push_back(filtered_acc_x);
     Filtered_acc_y.push_back(filtered_acc_y);
     Filtered_acc_z.push_back(filtered_acc_z);
+    Time_aligned_gyro.push_back(time_aligned_gyro);
     Aligned_gyro_x.push_back(aligned_gyro_x);
     Aligned_gyro_y.push_back(aligned_gyro_y);
     Aligned_gyro_z.push_back(aligned_gyro_z);
+    Time_aligned_acc.push_back(time_aligned_acc);
     Aligned_acc_x.push_back(aligned_acc_x);
     Aligned_acc_y.push_back(aligned_acc_y);
     Aligned_acc_z.push_back(aligned_acc_z);
+    Time_euler_angle_gyro.push_back(time_euler_angle_gyro);
     Euler_angle_phi_gyro.push_back(euler_angle_phi_gyro);
     Euler_angle_theta_gyro.push_back(euler_angle_theta_gyro);
     Euler_angle_psi_gyro.push_back(euler_angle_psi_gyro);
+    Time_euler_angle_acc.push_back(time_euler_angle_acc);
     Euler_angle_phi_acc.push_back(euler_angle_phi_acc);
     Euler_angle_theta_acc.push_back(euler_angle_theta_acc);
+    Time_euler_angle_fused.push_back(time_euler_angle_fused);
     Euler_angle_phi_fused.push_back(euler_angle_phi_fused);
     Euler_angle_theta_fused.push_back(euler_angle_theta_fused);
     Euler_angle_psi_fused.push_back(euler_angle_psi_fused);
+    Time_gravity_body_frame.push_back(time_gravity_body_frame);
     Gravity_x_body_frame.push_back(gravity_x_body_frame);
     Gravity_y_body_frame.push_back(gravity_y_body_frame);
     Gravity_z_body_frame.push_back(gravity_z_body_frame);
+    Time_linear_acc.push_back(time_linear_acc);
     Linear_acc_x.push_back(linear_acc_x);
     Linear_acc_y.push_back(linear_acc_y);
     Linear_acc_z.push_back(linear_acc_z);
+    Time_inertial_acc.push_back(time_inertial_acc);
     Inertial_acc_x.push_back(inertial_acc_x);
     Inertial_acc_y.push_back(inertial_acc_y);
     Inertial_acc_z.push_back(inertial_acc_z);
+    Time_velocity_body.push_back(time_velocity_body);
     Velocity_x.push_back(velocity_x);
     Velocity_y.push_back(velocity_y);
+    Time_velocity_inertial.push_back(time_velocity_inertial);
     Velocity_north.push_back(velocity_north);
     Velocity_east.push_back(velocity_east);
+    Time_position_body.push_back(time_position_body);
     Position_x_body_frame.push_back(position_x_body_frame);
     Position_y_body_frame.push_back(position_y_body_frame);
+    Time_position_inertial.push_back(time_position_inertial);
     Position_x_inertial_frame.push_back(position_x_inertial_frame);
     Position_y_inertial_frame.push_back(position_y_inertial_frame);
 
-    if (!Time.empty() && Time.size() > N_data_in_history)
+    if (!Time_raw_gyro.empty() && Time_raw_gyro.size() > N_data_in_history)
     {
-        Time.pop_front();
+        Time_raw_gyro.pop_front();
     }
 
     if (!Raw_gyro_x.empty() && Raw_gyro_x.size() > N_data_in_history)
@@ -1454,6 +1499,11 @@ void MainWindow::fill_data(const double time,
         Raw_gyro_z.pop_front();
     }
 
+    if (!Time_raw_acc.empty() && Time_raw_acc.size() > N_data_in_history)
+    {
+        Time_raw_acc.pop_front();
+    }
+
     if (!Raw_acc_x.empty() && Raw_acc_x.size() > N_data_in_history)
     {
         Raw_acc_x.pop_front();
@@ -1467,6 +1517,11 @@ void MainWindow::fill_data(const double time,
     if (!Raw_acc_z.empty() && Raw_acc_z.size() > N_data_in_history)
     {
         Raw_acc_z.pop_front();
+    }
+
+    if (!Time_rotated_gyro.empty() && Time_rotated_gyro.size() > N_data_in_history)
+    {
+        Time_rotated_gyro.pop_front();
     }
 
     if (!Rotated_gyro_x.empty() && Rotated_gyro_x.size() > N_data_in_history)
@@ -1484,6 +1539,11 @@ void MainWindow::fill_data(const double time,
         Rotated_gyro_z.pop_front();
     }
 
+    if (!Time_rotated_acc.empty() && Time_rotated_acc.size() > N_data_in_history)
+    {
+        Time_rotated_acc.pop_front();
+    }
+
     if (!Rotated_acc_x.empty() && Rotated_acc_x.size() > N_data_in_history)
     {
         Rotated_acc_x.pop_front();
@@ -1497,6 +1557,11 @@ void MainWindow::fill_data(const double time,
     if (!Rotated_acc_z.empty() && Rotated_acc_z.size() > N_data_in_history)
     {
         Rotated_acc_z.pop_front();
+    }
+
+    if (!Time_filtered_gyro.empty() && Time_filtered_gyro.size() > N_data_in_history)
+    {
+        Time_filtered_gyro.pop_front();
     }
 
     if (!Filtered_gyro_x.empty() && Filtered_gyro_x.size() > N_data_in_history)
@@ -1514,6 +1579,11 @@ void MainWindow::fill_data(const double time,
         Filtered_gyro_z.pop_front();
     }
 
+    if (!Time_filtered_acc.empty() && Time_filtered_acc.size() > N_data_in_history)
+    {
+        Time_filtered_acc.pop_front();
+    }
+
     if (!Filtered_acc_x.empty() && Filtered_acc_x.size() > N_data_in_history)
     {
         Filtered_acc_x.pop_front();
@@ -1527,6 +1597,11 @@ void MainWindow::fill_data(const double time,
     if (!Filtered_acc_z.empty() && Filtered_acc_z.size() > N_data_in_history)
     {
         Filtered_acc_z.pop_front();
+    }
+
+    if (!Time_aligned_gyro.empty() && Time_aligned_gyro.size() > N_data_in_history)
+    {
+        Time_aligned_gyro.pop_front();
     }
 
     if (!Aligned_gyro_x.empty() && Aligned_gyro_x.size() > N_data_in_history)
@@ -1544,6 +1619,11 @@ void MainWindow::fill_data(const double time,
         Aligned_gyro_z.pop_front();
     }
 
+    if (!Time_aligned_acc.empty() && Time_aligned_acc.size() > N_data_in_history)
+    {
+        Time_aligned_acc.pop_front();
+    }
+
     if (!Aligned_acc_x.empty() && Aligned_acc_x.size() > N_data_in_history)
     {
         Aligned_acc_x.pop_front();
@@ -1557,6 +1637,11 @@ void MainWindow::fill_data(const double time,
     if (!Aligned_acc_z.empty() && Aligned_acc_z.size() > N_data_in_history)
     {
         Aligned_acc_z.pop_front();
+    }
+
+    if (!Time_euler_angle_gyro.empty() && Time_euler_angle_gyro.size() > N_data_in_history)
+    {
+        Time_euler_angle_gyro.pop_front();
     }
 
     if (!Euler_angle_phi_gyro.empty() && Euler_angle_phi_gyro.size() > N_data_in_history)
@@ -1574,6 +1659,11 @@ void MainWindow::fill_data(const double time,
         Euler_angle_psi_gyro.pop_front();
     }
 
+    if (!Time_euler_angle_acc.empty() && Time_euler_angle_acc.size() > N_data_in_history)
+    {
+        Time_euler_angle_acc.pop_front();
+    }
+
     if (!Euler_angle_phi_acc.empty() && Euler_angle_phi_acc.size() > N_data_in_history)
     {
         Euler_angle_phi_acc.pop_front();
@@ -1582,6 +1672,11 @@ void MainWindow::fill_data(const double time,
     if (!Euler_angle_theta_acc.empty() && Euler_angle_theta_acc.size() > N_data_in_history)
     {
         Euler_angle_theta_acc.pop_front();
+    }
+
+    if (!Time_euler_angle_fused.empty() && Time_euler_angle_fused.size() > N_data_in_history)
+    {
+        Time_euler_angle_fused.pop_front();
     }
 
     if (!Euler_angle_phi_fused.empty() && Euler_angle_phi_fused.size() > N_data_in_history)
@@ -1599,6 +1694,11 @@ void MainWindow::fill_data(const double time,
         Euler_angle_psi_fused.pop_front();
     }
 
+    if (!Time_gravity_body_frame.empty() && Time_gravity_body_frame.size() > N_data_in_history)
+    {
+        Time_gravity_body_frame.pop_front();
+    }
+
     if (!Gravity_x_body_frame.empty() && Gravity_x_body_frame.size() > N_data_in_history)
     {
         Gravity_x_body_frame.pop_front();
@@ -1612,6 +1712,11 @@ void MainWindow::fill_data(const double time,
     if (!Gravity_z_body_frame.empty() && Gravity_z_body_frame.size() > N_data_in_history)
     {
         Gravity_z_body_frame.pop_front();
+    }
+
+    if (!Time_linear_acc.empty() && Time_linear_acc.size() > N_data_in_history)
+    {
+        Time_linear_acc.pop_front();
     }
 
     if (!Linear_acc_x.empty() && Linear_acc_x.size() > N_data_in_history)
@@ -1629,6 +1734,11 @@ void MainWindow::fill_data(const double time,
         Linear_acc_z.pop_front();
     }
 
+    if (!Time_inertial_acc.empty() && Time_inertial_acc.size() > N_data_in_history)
+    {
+        Time_inertial_acc.pop_front();
+    }
+
     if (!Inertial_acc_x.empty() && Inertial_acc_x.size() > N_data_in_history)
     {
         Inertial_acc_x.pop_front();
@@ -1644,6 +1754,11 @@ void MainWindow::fill_data(const double time,
         Inertial_acc_z.pop_front();
     }
 
+    if (!Time_velocity_body.empty() && Time_velocity_body.size() > N_data_in_history)
+    {
+        Time_velocity_body.pop_front();
+    }
+
     if (!Velocity_x.empty() && Velocity_x.size() > N_data_in_history)
     {
         Velocity_x.pop_front();
@@ -1652,6 +1767,11 @@ void MainWindow::fill_data(const double time,
     if (!Velocity_y.empty() && Velocity_y.size() > N_data_in_history)
     {
         Velocity_y.pop_front();
+    }
+
+    if (!Time_velocity_inertial.empty() && Time_velocity_inertial.size() > N_data_in_history)
+    {
+        Time_velocity_inertial.pop_front();
     }
 
     if (!Velocity_north.empty() && Velocity_north.size() > N_data_in_history)
@@ -1664,6 +1784,11 @@ void MainWindow::fill_data(const double time,
         Velocity_east.pop_front();
     }
 
+    if (!Time_position_body.empty() && Time_position_body.size() > N_data_in_history)
+    {
+        Time_position_body.pop_front();
+    }
+
     if (!Position_x_body_frame.empty() && Position_x_body_frame.size() > N_data_in_history)
     {
         Position_x_body_frame.pop_front();
@@ -1672,6 +1797,11 @@ void MainWindow::fill_data(const double time,
     if (!Position_y_body_frame.empty() && Position_y_body_frame.size() > N_data_in_history)
     {
         Position_y_body_frame.pop_front();
+    }
+
+    if (!Time_position_inertial.empty() && Time_position_inertial.size() > N_data_in_history)
+    {
+        Time_position_inertial.pop_front();
     }
 
     if (!Position_x_inertial_frame.empty() && Position_x_inertial_frame.size() > N_data_in_history)
@@ -1693,24 +1823,41 @@ void MainWindow::fill_data(const double time,
 void MainWindow::slot_plot()
 {
 
-    if (!Time.empty() &&
+    if (!Time_raw_gyro.empty() &&
         !Raw_gyro_x.empty() && !Raw_gyro_y.empty() && !Raw_gyro_z.empty() &&
+        !Time_raw_acc.empty() &&
         !Raw_acc_x.empty() && !Raw_acc_y.empty() && !Raw_acc_z.empty() &&
+        !Time_rotated_gyro.empty() &&
         !Rotated_gyro_x.empty() && !Rotated_gyro_y.empty() && !Rotated_gyro_z.empty() &&
+        !Time_rotated_acc.empty() &&
         !Rotated_acc_x.empty() && !Rotated_acc_y.empty() && !Rotated_acc_z.empty() &&
+        !Time_filtered_gyro.empty() &&
         !Filtered_gyro_x.empty() && !Filtered_gyro_y.empty() && !Filtered_gyro_z.empty() &&
+        !Time_filtered_acc.empty() &&
         !Filtered_acc_x.empty() && !Filtered_acc_y.empty() && !Filtered_acc_z.empty() &&
+        !Time_aligned_gyro.empty() &&
         !Aligned_gyro_x.empty() && !Aligned_gyro_y.empty() && !Aligned_gyro_z.empty() &&
+        !Time_aligned_acc.empty() &&
         !Aligned_acc_x.empty() && !Aligned_acc_y.empty() && !Aligned_acc_z.empty() &&
+        !Time_euler_angle_gyro.empty() &&
         !Euler_angle_phi_gyro.empty() && !Euler_angle_theta_gyro.empty() && !Euler_angle_psi_gyro.empty() &&
+        !Time_euler_angle_acc.empty() &&
         !Euler_angle_phi_acc.empty() && !Euler_angle_theta_acc.empty() &&
+        !Time_euler_angle_fused.empty() &&
         !Euler_angle_phi_fused.empty() && !Euler_angle_theta_fused.empty() && !Euler_angle_psi_fused.empty() &&
+        !Time_gravity_body_frame.empty() &&
         !Gravity_x_body_frame.empty() && !Gravity_y_body_frame.empty() && !Gravity_z_body_frame.empty() &&
+        !Time_linear_acc.empty() &&
         !Linear_acc_x.empty() && !Linear_acc_y.empty() && !Linear_acc_z.empty() &&
+        !Time_inertial_acc.empty() &&
         !Inertial_acc_x.empty() && !Inertial_acc_y.empty() && !Inertial_acc_z.empty() &&
+        !Time_velocity_body.empty() &&
         !Velocity_x.empty() && !Velocity_y.empty() &&
+        !Time_velocity_inertial.empty() &&
         !Velocity_north.empty() && !Velocity_east.empty() &&
+        !Time_position_body.empty() &&
         !Position_x_body_frame.empty() && !Position_y_body_frame.empty() &&
+        !Time_position_inertial.empty() &&
         !Position_x_inertial_frame.empty() && !Position_y_inertial_frame.empty())
     {
         // Check the selected option in each combo box and call the

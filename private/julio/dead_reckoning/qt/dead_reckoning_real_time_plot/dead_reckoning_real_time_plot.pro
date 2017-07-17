@@ -11,6 +11,11 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 TARGET = dead_reckoning_real_time_plot
 TEMPLATE = app
 
+# Link to sfml library (include all)
+LIBS += -L/usr/local/lib
+#LIBS += -L/usr/local/lib -lsfml-graphics -lsfml-window \
+#        -lsfml-system -lsfml-audio -lsfml-network
+
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -25,9 +30,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    ../../../../../external_src/qcustomplot/qcustomplot/qcustomplot.cpp
+    ../../../../../external_src/qcustomplot/qcustomplot/qcustomplot.cpp \
+    cc_read_data_thread.cpp \
+    cc_nmea_decoder.cpp
 
 HEADERS  += mainwindow.h \
-    ../../../../../external_src/qcustomplot/qcustomplot/qcustomplot.h
+    ../../../../../external_src/qcustomplot/qcustomplot/qcustomplot.h \
+    cc_read_data_thread.h \
+    cc_nmea_decoder.h
 
 FORMS    += mainwindow.ui
