@@ -3,7 +3,7 @@
 SET(SRC_FILES ac_interpolator.cpp cc_newton_interpolator.cpp)
 
 # Include current directory to the path
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+#INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Create a library with the above files based on the requested library
 # version
