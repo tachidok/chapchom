@@ -1,7 +1,7 @@
 # Welcome !!!
 
 ### What the project is?
-We intend to develop a **Parallel-Pattern-Object-Oriented numerical
+We intend to develop a **Object-Oriented-Parallel numerical
 library** with aims to solve PDE's by the Finite Element Method and
 Mesh Free Methods.
 
@@ -39,21 +39,22 @@ Mmm ... that is something we need to carefully think about.
 
 Once we have something intereseting to share with you we will  make the
 project public. Please check continuously for updates or contact the
-developers :envelope: (tachidok.at.gmail.com).
+developers :construction: :envelope: (tachidok.at.gmail.com).
 
 #### Notes for contributors
-Please check the documentation for anything you need to set-up your account,
-get a copy of the latest development and start submitting your contributions ....
+Please check the documentation :construction: for anything you need to
+set-up your account, get a copy of the latest development and start
+submitting your contributions ....
 
 ### Facts
 
 #### How many developers are currently working on the library
-At Tuesdat, 13 Sept 2016 there is one and only one developer :no_mouth:
+At Monday, 07 August 2017 there is one and only one developer :no_mouth:
 
 :construction: :construction: :construction: :construction: :construction:
 
 #### When did this start?
-This project was initially uploaded to GitHub at Friday, 11 March 2016
+This project was initially uploaded to GitHub on Friday, 11 March 2016
 :smile:
 
 # Have fun and enjoy .... !!!
