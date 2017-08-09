@@ -16,7 +16,7 @@ namespace chapchom
   // Delete any data in memory
   clean_up();
  }
-
+ 
  // ===================================================================
  // Constructor to create an n X n matrix.
  // ===================================================================
@@ -1368,6 +1368,7 @@ namespace chapchom
        matrix_pt[offset_matrix+k] * vector_pt[k];
      }
    }
+  
   
  }
  
