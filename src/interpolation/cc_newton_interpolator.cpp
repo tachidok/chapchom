@@ -20,31 +20,33 @@ namespace chapchom
  }
  
  // ===================================================================
- // Does the interpolation specifying the set data points, the order
- // of the interpolation and the desired "x" value to interpolate. We
- // use Newton's polynomial formula to construct a given order
- // polynomial and interpolate.
- // N(n) = b0 + b1(x-x0) + b2(x-x0)(x-x1) + b3(x-x0)(x-x1)(x-x2) ...
+ /// Does the interpolation specifying the set data points, the order
+ /// of the interpolation and the desired "x_interpolate" value to
+ /// interpolate. We use Newton's polynomial formula to construct a
+ /// given order polynomial and interpolate.
+ /// N(n) = b0 + b1(x_interpolate-x0) +
+ /// b2(x_interpolate-x0)(x_interpolate-x1) +
+ /// b3(x_interpolate-x0)(x_interpolate-x1)(x_interpolate-x2) ...
  // ===================================================================
- double CCNewtonInterpolator::interpolate_1D(std::vector<double> &x_points,
-                                             std::vector<double> &fx_points,
-                                             const double x,
+ double CCNewtonInterpolator::interpolate_1D(std::vector<double> &x,
+                                             std::vector<double> &fx,
+                                             const double x_interpolate,
                                              const unsigned order)
  {
   // We assume the data points are in order, thus we do not check for
   // that
   
   // Get the size of the data set
-  const unsigned n_x_points = x_points.size();
-  const unsigned n_fx_points = fx_points.size();
+  const unsigned n_x = x.size();
+  const unsigned n_fx = fx.size();
   
-  if (n_x_points != n_fx_points)
+  if (n_x != n_fx)
    {
     // Error message
     std::ostringstream error_message;
     error_message << "The number of data points do not match" << std::endl
-                  << "Number of x-points: " << n_x_points << std::endl
-                  << "Number of fx-points: " << n_fx_points << std::endl;
+                  << "Number of x-points: " << n_x << std::endl
+                  << "Number of fx-points: " << n_fx << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -52,7 +54,7 @@ namespace chapchom
   
   // We check whether we have the corresponding number of data points
   // to perform the given order interpolation
-  if (n_x_points - 1 != order)
+  if (n_x - 1 != order)
    {
     // Error message
     std::ostringstream error_message;
@@ -64,14 +66,14 @@ namespace chapchom
    }
   
   // Check that the value to interpolate is within the interval
-  // [x_points[0], x_points[n-1]]
-  if (x < x_points[0] || x > x_points[n_x_points])
+  // [x[0], x[n-1]]
+  if (x_interpolate < x[0] || x_interpolate > x[n_x])
    {
     // Error message
     std::ostringstream error_message;
     error_message << "The requested interpolated value is not within the range\n"
-                  << "[" << x_points[0] << ", " << x_points[n_x_points] << "].\n"
-                  << "The requested x value is: " << x << std::endl;
+                  << "[" << x[0] << ", " << x[n_x] << "].\n"
+                  << "The requested x_interpolate value is: " << x_interpolate << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -84,19 +86,19 @@ namespace chapchom
   // What interpolation to perform
   if (order == 0) // zero interpolation or no interpolation
    {
-    b[0] = fx_points[0];
+    b[0] = fx[0];
     return b[0];
    }
   else if (order == 1) // linear interpolation
    {
-    b[0] = fx_points[0];
+    b[0] = fx[0];
     // Using divided differences notation
     const double f10 =
-     (fx_points[1] - fx_points[0]) / (x_points[1] - x_points[0]);
+     (fx[1] - fx[0]) / (x[1] - x[0]);
     b[1] = f10;
     
     // Do interpolation
-    return b[0] + b[1] * (x - x_points[0]);
+    return b[0] + b[1] * (x_interpolate - x[0]);
    }
   else if (order == 2) // quadratic interpolation
    {
@@ -110,20 +112,21 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
     
-    b[0] = fx_points[0];
+    b[0] = fx[0];
     // Using divided differences notation
     const double f10 =
-     (fx_points[1] - fx_points[0]) / (x_points[1] - x_points[0]);
+     (fx[1] - fx[0]) / (x[1] - x[0]);
     b[1] = f10;
     const double f21 =
-     (fx_points[2] - fx_points[1]) / (x_points[2] - x_points[1]);
+     (fx[2] - fx[1]) / (x[2] - x[1]);
     const double f210 =
-     (f21 - f10) / (x_points[2] - x_points[0]);
+     (f21 - f10) / (x[2] - x[0]);
     b[2] = f210;
     
     // Do interpolation
-    return b[0] + b[1] * (x - x_points[0]) +
-     b[2] * (x - x_points[0]) * (x - x_points[1]);
+    return b[0] +
+     b[1] * (x_interpolate - x[0]) +
+     b[2] * (x_interpolate - x[0]) * (x_interpolate - x[1]);
    }
   else if (order == 3) // cubic interpolation
    {
@@ -136,28 +139,29 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
     
-    b[0] = fx_points[0];
+    b[0] = fx[0];
     // Using divided differences notation
     const double f10 =
-     (fx_points[1] - fx_points[0]) / (x_points[1] - x_points[0]);
+     (fx[1] - fx[0]) / (x[1] - x[0]);
     b[1] = f10;
     const double f21 =
-     (fx_points[2] - fx_points[1]) / (x_points[2] - x_points[1]);
+     (fx[2] - fx[1]) / (x[2] - x[1]);
     const double f32 =
-     (fx_points[3] - fx_points[2]) / (x_points[3] - x_points[2]);
+     (fx[3] - fx[2]) / (x[3] - x[2]);
     const double f210 =
-     (f21 - f10) / (x_points[2] - x_points[0]);
+     (f21 - f10) / (x[2] - x[0]);
     b[2] = f210;
     const double f321 =
-     (f32 - f21) / (x_points[3] - x_points[1]);
+     (f32 - f21) / (x[3] - x[1]);
     const double f3210 =
-     (f321 - f210) / (x_points[3] - x_points[0]);
+     (f321 - f210) / (x[3] - x[0]);
     b[3] = f3210;
     
     // Do interpolation
-    return b[0] + b[1] * (x - x_points[0]) +
-     b[2] * (x - x_points[0]) * (x - x_points[1]) +
-     b[3] * (x - x_points[0]) * (x - x_points[1]) * (x - x_points[2]);
+    return b[0] +
+     b[1] * (x_interpolate - x[0]) +
+     b[2] * (x_interpolate - x[0]) * (x_interpolate - x[1]) +
+     b[3] * (x_interpolate - x[0]) * (x_interpolate - x[1]) * (x_interpolate - x[2]);
    }
   else
    {
@@ -165,8 +169,8 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "The requested interpolation order is not yet implemented"
                   << std::endl;
-    std::cout << "We only implement zero, linear, quadratic and cubic interpolation"
-              << std::endl;
+    std::cout << "We have only implemented zero, linear, quadratic and cubic "
+              << "interpolation" << std::endl;
     std::cout << "Requested interpolation order: " << order << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
@@ -176,32 +180,34 @@ namespace chapchom
  }
 
  // ===================================================================
- // Does the interpolation specifying the set data points, the order
- // of the interpolation and the desired "x" values to
- // interpolate. We use Newton's polynomial formula to construct a
- // given order polynomial and interpolate.
- // N(n) = b0 + b1(x-x0) + b2(x-x0)(x-x1) + b3(x-x0)(x-x1)(x-x2) ...
+ /// Does the interpolation specifying the set data points, the order
+ /// of the interpolation and the desired "x_interpolate" values to
+ /// interpolate. We use Newton's polynomial formula to construct a
+ /// given order polynomial and interpolate.
+ /// N(n) = b0 + b1(x_interpolate-x0) +
+ /// b2(x_interpolate-x0)(x_interpolate-x1) +
+ /// b3(x_interpolate-x0)(x_interpolate-x1)(x_interpolate-x2) ...
  // ===================================================================
- void CCNewtonInterpolator::interpolate_1D(std::vector<double> &x_points,
-                                           std::vector<double> &fx_points,
-                                           std::vector<double> &x,
+ void CCNewtonInterpolator::interpolate_1D(std::vector<double> &x,
                                            std::vector<double> &fx,
+                                           std::vector<double> &x_interpolate,
+                                           std::vector<double> &fx_interpolated,
                                            const unsigned order)
  {
   // We assume the data points are in order, thus we do not check for
   // that
   
   // Get the size of the data set
-  const unsigned n_x_points = x_points.size();
-  const unsigned n_fx_points = fx_points.size();
+  const unsigned n_x = x.size();
+  const unsigned n_fx = fx.size();
   
-  if (n_x_points != n_fx_points)
+  if (n_x != n_fx)
    {
     // Error message
     std::ostringstream error_message;
     error_message << "The number of data points do not match" << std::endl
-                  << "Number of x-points: " << n_x_points << std::endl
-                  << "Number of fx-points: " << n_fx_points << std::endl;
+                  << "Number of x-points: " << n_x << std::endl
+                  << "Number of fx-points: " << n_fx << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -209,12 +215,29 @@ namespace chapchom
   
   // We check whether we have at least the corresponding number of
   // data points to perform the given order interpolation
-  if (n_x_points - 1 < order)
+  if (n_x - 1 < order)
    {
     // Error message
     std::ostringstream error_message;
     error_message << "We do not have enough points to perform this type of"
                   << "interpolation order" << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check that the fx_interpolated vector has the same size as the x_interpolate vector
+  const unsigned n_x_interpolate = x_interpolate.size();
+  const unsigned n_fx_interpolated = fx_interpolated.size();
+  
+  if (n_x_interpolate != n_fx_interpolated)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The vectors 'x_interpolate' and 'fx_interpolated' have"
+                  << "different sizes" << std::endl
+                  << "n_x_interpolate: " << n_x_interpolate << std::endl
+                  << "n_fx_interpolated" << n_fx_interpolated << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -228,17 +251,20 @@ namespace chapchom
   if (order == 0) // zero interpolation or no interpolation
    {
     // Index for the nearest values to x
-    unsigned k = 1;
-    double min_diff = std::fabs(x_points[0] - x[0]);
-    for (unsigned i = 0; i < n_x_points; i++)
+    unsigned k = 0;
+    double min_diff = std::fabs(x[k] - x_interpolate[k]);
+    // Loop over the ""x_interpolate" values and for each one search
+    // for the closest "x" values that will be used to interpolate
+    for (unsigned i = 0; i < n_x_interpolate; i++)
      {
-      // Get the nearest value to x[i] in x_points
-      for (unsigned j = k ; j < n_x_points-order; j++)
+      // Get the nearest value to x_interpolate[i] in x
+      for (unsigned j = k ; j < n_x-order; j++)
        {
         // Get the difference to the current point
-        const double diff = std::fabs(x_points[j] - x[j]);
-        // If the difference is lower that means we are moving closer
-        // and should update the min diff
+        const double diff = std::fabs(x[j] - x_interpolate[i]);
+        // If the difference is smaller than previous one that means
+        // we are approaching the closer 'x' value to
+        // 'x_interpolate'. We must update the 'min_diff' value
         if (diff < min_diff)
          {
           min_diff = diff;
@@ -253,25 +279,28 @@ namespace chapchom
        }
       // --------------------
       // Do interpolation
-      fx[i] = fx_points[k];
+      fx_interpolated[i] = fx[k];
       
-     } // for (i < n_x_points)
+     } // for (i < n_x_interpolate)
     
    }
   else if (order == 1) // linear interpolation
    {
     // Index for the nearest values to x
-    unsigned k = 1;
-    double min_diff = std::fabs(x_points[0] - x[0]);
-    for (unsigned i = 0; i < n_x_points; i++)
+    unsigned k = 0;
+    double min_diff = std::fabs(x[k] - x_interpolate[k]);
+    // Loop over the ""x_interpolate" values and for each one search
+    // for the closest "x" values that will be used to interpolate
+    for (unsigned i = 0; i < n_x_interpolate; i++)
      {
-      // Get the nearest value to x[i] in x_points
-      for (unsigned j = k ; j < n_x_points-order; j++)
+      // Get the nearest value to x_interpolate[i] in x
+      for (unsigned j = k ; j < n_x-order; j++)
        {
         // Get the difference to the current point
-        const double diff = std::fabs(x_points[j] - x[j]);
-        // If the difference is lower that means we are moving closer
-        // and should update the min diff
+        const double diff = std::fabs(x[j] - x_interpolate[i]);
+        // If the difference is smaller than previous one that means
+        // we are approaching the closer 'x' value to
+        // 'x_interpolate'. We must update the 'min_diff' value
         if (diff < min_diff)
          {
           min_diff = diff;
@@ -287,32 +316,36 @@ namespace chapchom
       
       // --------------------
       // Do interpolation
-      b[0] = fx_points[k];
+      b[0] = fx[k];
       // Using divided differences notation
       const double f10 =
-       (fx_points[k+1] - fx_points[k]) / (x_points[k+1] - x_points[k]);
+       (fx[k+1] - fx[k]) / (x[k+1] - x[k]);
       b[1] = f10;
       
       // Do interpolation
-      fx[i] = b[0] + b[1] * (x[i] - x_points[k]);
+      fx_interpolated[i] = b[0] +
+       b[1] * (x_interpolate[i] - x[k]);
       
-     } // for (i < n_x_points)
+     } // for (i < n_x_interpolate)
     
    }
   else if (order == 2) // quadratic interpolation
    {
     // Index for the nearest values to x
-    unsigned k = 1;
-    double min_diff = std::fabs(x_points[0] - x[0]);
-    for (unsigned i = 0; i < n_x_points; i++)
+    unsigned k = 0;
+    double min_diff = std::fabs(x[k] - x_interpolate[k]);
+    // Loop over the ""x_interpolate" values and for each one search
+    // for the closest "x" values that will be used to interpolate
+    for (unsigned i = 0; i < n_x_interpolate; i++)
      {
-      // Get the nearest value to x[i] in x_points
-      for (unsigned j = k ; j < n_x_points-order; j++)
+      // Get the nearest value to x_interpolate[i] in x
+      for (unsigned j = k ; j < n_x-order; j++)
        {
         // Get the difference to the current point
-        const double diff = std::fabs(x_points[j] - x[j]);
-        // If the difference is lower that means we are moving closer
-        // and should update the min diff
+        const double diff = std::fabs(x[j] - x_interpolate[i]);
+        // If the difference is smaller than previous one that means
+        // we are approaching the closer 'x' value to
+        // 'x_interpolate'. We must update the 'min_diff' value
         if (diff < min_diff)
          {
           min_diff = diff;
@@ -329,38 +362,42 @@ namespace chapchom
       // --------------------
       // Do interpolation
       
-      b[0] = fx_points[k];
+      b[0] = fx[k];
       // Using divided differences notation
       const double f10 =
-       (fx_points[k+1] - fx_points[k]) / (x_points[k+1] - x_points[k]);
+       (fx[k+1] - fx[k]) / (x[k+1] - x[k]);
       b[1] = f10;
       const double f21 =
-       (fx_points[k+2] - fx_points[k+1]) / (x_points[k+2] - x_points[k+1]);
+       (fx[k+2] - fx[k+1]) / (x[k+2] - x[k+1]);
       const double f210 =
-       (f21 - f10) / (x_points[k+2] - x_points[k]);
+       (f21 - f10) / (x[k+2] - x[k]);
       b[2] = f210;
       
       // Do interpolation
-      fx[i] = b[0] + b[1] * (x[i] - x_points[k]) +
-       b[2] * (x[i] - x_points[k]) * (x[i] - x_points[k+1]);
+      fx_interpolated[i] = b[0] +
+       b[1] * (x_interpolate[i] - x[k]) +
+       b[2] * (x_interpolate[i] - x[k]) * (x_interpolate[i] - x[k+1]);
       
-     } // for (i < n_x_points)
+     } // for (i < n_x_interpolate)
     
    }
   else if (order == 3) // cubic interpolation
    {
     // Index for the nearest values to x
-    unsigned k = 1;
-    double min_diff = std::fabs(x_points[0] - x[0]);
-    for (unsigned i = 0; i < n_x_points; i++)
+    unsigned k = 0;
+    double min_diff = std::fabs(x[k] - x_interpolate[k]);
+    // Loop over the ""x_interpolate" values and for each one search
+    // for the closest "x" values that will be used to interpolate
+    for (unsigned i = 0; i < n_x_interpolate; i++)
      {
-      // Get the nearest value to x[i] in x_points
-      for (unsigned j = k ; j < n_x_points-order; j++)
+      // Get the nearest value to x_interpolate[i] in x
+      for (unsigned j = k ; j < n_x-order; j++)
        {
         // Get the difference to the current point
-        const double diff = std::fabs(x_points[j] - x[j]);
-        // If the difference is lower that means we are moving closer
-        // and should update the min diff
+        const double diff = std::fabs(x[j] - x_interpolate[i]);
+        // If the difference is smaller than previous one that means
+        // we are approaching the closer 'x' value to
+        // 'x_interpolate'. We must update the 'min_diff' value
         if (diff < min_diff)
          {
           min_diff = diff;
@@ -376,30 +413,31 @@ namespace chapchom
       
       // --------------------
       // Do interpolation    
-      b[0] = fx_points[k];
+      b[0] = fx[k];
       // Using divided differences notation
       const double f10 =
-       (fx_points[k+1] - fx_points[k]) / (x_points[k+1] - x_points[k]);
+       (fx[k+1] - fx[k]) / (x[k+1] - x[k]);
       b[1] = f10;
       const double f21 =
-       (fx_points[k+2] - fx_points[k+1]) / (x_points[k+2] - x_points[k+1]);
+       (fx[k+2] - fx[k+1]) / (x[k+2] - x[k+1]);
       const double f32 =
-       (fx_points[k+3] - fx_points[k+2]) / (x_points[k+3] - x_points[k+2]);
+       (fx[k+3] - fx[k+2]) / (x[k+3] - x[k+2]);
       const double f210 =
-       (f21 - f10) / (x_points[k+2] - x_points[k]);
+       (f21 - f10) / (x[k+2] - x[k]);
       b[2] = f210;
       const double f321 =
-       (f32 - f21) / (x_points[k+3] - x_points[k+1]);
+       (f32 - f21) / (x[k+3] - x[k+1]);
       const double f3210 =
-       (f321 - f210) / (x_points[k+3] - x_points[k]);
+       (f321 - f210) / (x[k+3] - x[k]);
       b[3] = f3210;
     
       // Do interpolation
-      fx[i] = b[0] + b[1] * (x[i] - x_points[k]) +
-       b[2] * (x[i] - x_points[k]) * (x[i] - x_points[k+1]) +
-       b[3] * (x[i] - x_points[k]) * (x[i] - x_points[k+1]) * (x[i] - x_points[k+2]);
+      fx_interpolated[i] = b[0] +
+       b[1] * (x_interpolate[i] - x[k]) +
+       b[2] * (x_interpolate[i] - x[k]) * (x_interpolate[i] - x[k+1]) +
+       b[3] * (x_interpolate[i] - x[k]) * (x_interpolate[i] - x[k+1]) * (x_interpolate[i] - x[k+2]);
       
-     }  // for (i < n_x_points)
+     }  // for (i < n_x_interpolate)
     
    }
   else
@@ -408,8 +446,8 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "The requested interpolation order is not yet implemented"
                   << std::endl;
-    std::cout << "We only implement zero, linear, quadratic and cubic interpolation"
-              << std::endl;
+    std::cout << "We have only implemented zero, linear, quadratic and cubic "
+              << "interpolation" << std::endl;
     std::cout << "Requested interpolation order: " << order << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
