@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
  nodes_pt[0]->set_variable(0.0, 0);
  nodes_pt[n_nodes-1]->set_position(0.0, 0);
  nodes_pt[n_nodes-1]->set_variable(1.0, 0);
-
+ 
  // --------------------------------------------------------------
  // Set the problem and solve it
  // --------------------------------------------------------------
@@ -143,6 +143,8 @@ int main(int argc, char *argv[])
  // Set right-hand side
  CCVector<double> b(n_nodes);
  b.create_zero_vector();
+ 
+ // Take the position of the centers
  
  // The solution vector (with the respective number of rows)
  CCVector<double> sol(n_nodes);

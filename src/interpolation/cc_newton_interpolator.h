@@ -21,24 +21,28 @@ namespace chapchom
   ~CCNewtonInterpolator();
   
   /// Does the interpolation specifying the set data points, the order
-  /// of the interpolation and the desired "x" value to
+  /// of the interpolation and the desired "x_interpolate" value to
   /// interpolate. We use Newton's polynomial formula to construct a
   /// given order polynomial and interpolate.
-  /// N(n) = b0 + b1(x-x0) + b2(x-x0)(x-x1) + b3(x-x0)(x-x1)(x-x2) ...
-  double interpolate_1D(std::vector<double> &x_points,
-                        std::vector<double> &fx_points,
-                        const double x,
+  /// N(n) = b0 + b1(x_interpolate-x0) +
+  /// b2(x_interpolate-x0)(x_interpolate-x1) +
+  /// b3(x_interpolate-x0)(x_interpolate-x1)(x_interpolate-x2) ...
+  double interpolate_1D(std::vector<double> &x,
+                        std::vector<double> &fx,
+                        const double x_interpolate,
                         const unsigned order);
   
   /// Does the interpolation specifying the set data points, the order
-  /// of the interpolation and the desired "x" values to
+  /// of the interpolation and the desired "x_interpolate" values to
   /// interpolate. We use Newton's polynomial formula to construct a
   /// given order polynomial and interpolate.
-  /// N(n) = b0 + b1(x-x0) + b2(x-x0)(x-x1) + b3(x-x0)(x-x1)(x-x2) ...
-  void interpolate_1D(std::vector<double> &x_points,
-                      std::vector<double> &fx_points,
-                      std::vector<double> &x,
+  /// N(n) = b0 + b1(x_interpolate-x0) +
+  /// b2(x_interpolate-x0)(x_interpolate-x1) +
+  /// b3(x_interpolate-x0)(x_interpolate-x1)(x_interpolate-x2) ...
+  void interpolate_1D(std::vector<double> &x,
                       std::vector<double> &fx,
+                      std::vector<double> &x_interpolate,
+                      std::vector<double> &fx_interpolated,
                       const unsigned order);
   
  protected:

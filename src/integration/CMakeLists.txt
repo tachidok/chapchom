@@ -3,7 +3,7 @@
 SET(SRC_FILES ac_integration_method.cpp ac_explicit_integration_method.cpp cc_euler_method.cpp cc_RK4_method.cpp ac_factory_integration_method.cpp cc_factory_integration_method.cpp)
 
 # Include current directory to the path
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+#INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Create a library with the above files based on the requested library
 # version

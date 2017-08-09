@@ -10,6 +10,14 @@ namespace chapchom
  // Macros for debugging
  // =======================================================================
 #define DEB(x) std::cerr<<"["<<#x<<"]:"<<x<<std::endl;
+#define DEB2(x,y) std::cerr<<x<<" "<<y<<std::endl;
+#define DEB3(x,y,z) std::cerr<<x<<" "<<y<<" "<<z<<std::endl;
+#define DEB4(t,x,y,z) std::cerr<<t<<" "<<x<<" "<<y<<" "<<z<<std::endl;
+#define DEB_TO_FILE(F,x) F<<"["<<#x<<"]:"<<x<<std::endl;
+#define DEB_TO_FILE1(F,x) F<<x<<std::endl;
+#define DEB_TO_FILE2(F,x,y) F<<x<<" "<<y<<std::endl;
+#define DEB_TO_FILE3(F,x,y,z) F<<x<<" "<<y<<" "<<z<<std::endl;
+#define DEB_TO_FILE4(F,t,x,y,z) F<<t<<" "<<x<<" "<<y<<" "<<z<<std::endl;
 #endif // #ifdef CHAPCHOM_WITH_DEBUG
  
  // =======================================================================
