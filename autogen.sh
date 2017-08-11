@@ -4,14 +4,14 @@
 # A few helper functions
 #====================================================================
 
-# A little function 'borrowed' from the oomph-lib installation
+# An small function 'borrowed' from the oomph-lib installation
 # script...
 OptionPrompt() 
 { 
  printf "%s " "$1" 
 }
 
-# Another little function 'borrowed' from the oomph-lib installation
+# Another small function 'borrowed' from the oomph-lib installation
 # script...
 OptionRead()
 {
@@ -144,7 +144,8 @@ echo ""
 cmake ../ \
       -DCHAPCHOM_LIB_TYPE=$lib_type \
       -DCHAPCHOM_BUILD_VERSION=$lib_version \
-      -DCHAPCHOM_BUILD_DEMOS=$build_demos
+      -DCHAPCHOM_BUILD_DEMOS=$build_demos \
+      -DCMAKE_EXPORT_COMPILE_COMMANDS=1
 make clean
 make
 
@@ -157,6 +158,7 @@ echo "============================================================= "
 # Finishing up !!!
 #====================================================================
 
+# Go to the root directory
 cd ..
 
 echo ""
