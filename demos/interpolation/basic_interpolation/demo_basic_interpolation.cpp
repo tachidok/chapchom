@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
  std::ofstream output_test("output_test.dat", std::ios_base::out);
  
  // Output for testing/validation
- std::ofstream deb_file("deb_file.dat", std::ios_base::out);
+ std::ofstream deb("deb.dat", std::ios_base::out);
  
  // -------------------------------------------------------------------
  // Original function
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
    {
     error[i]=std::fabs(fx_interpolated[i]-f(x_to_interpolate[i]));
     DEB3(x_to_interpolate[i], fx_interpolated[i], f(x_to_interpolate[i]));
-    DEB_TO_FILE3(deb_file, x_to_interpolate[i], fx_interpolated[i], f(x_to_interpolate[i]));
+    DEB_TO_FILE3(deb, x_to_interpolate[i], fx_interpolated[i], f(x_to_interpolate[i]));
     if (error[i]>max_linear_error)
      {
       max_linear_error=error[i];
@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
  // Close the output for test
  output_test.close();
  
- deb_file.close();
+ deb.close();
  
  // Finalise chapcom
  finalise_chapchom(); 

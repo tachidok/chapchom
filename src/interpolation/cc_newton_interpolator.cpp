@@ -252,11 +252,11 @@ namespace chapchom
    {
     // Index for the nearest values to x
     unsigned k = 0;
-    double min_diff = std::fabs(x[k] - x_interpolate[k]);
     // Loop over the ""x_interpolate" values and for each one search
     // for the closest "x" values that will be used to interpolate
     for (unsigned i = 0; i < n_x_interpolate; i++)
      {
+      double min_diff = std::fabs(x[k] - x_interpolate[i]);
       // Get the nearest value to x_interpolate[i] in x
       for (unsigned j = k ; j < n_x-order; j++)
        {
@@ -288,11 +288,11 @@ namespace chapchom
    {
     // Index for the nearest values to x
     unsigned k = 0;
-    double min_diff = std::fabs(x[k] - x_interpolate[k]);
     // Loop over the ""x_interpolate" values and for each one search
     // for the closest "x" values that will be used to interpolate
     for (unsigned i = 0; i < n_x_interpolate; i++)
      {
+      double min_diff = std::fabs(x[k] - x_interpolate[i]);
       // Get the nearest value to x_interpolate[i] in x
       for (unsigned j = k ; j < n_x-order; j++)
        {
@@ -333,11 +333,11 @@ namespace chapchom
    {
     // Index for the nearest values to x
     unsigned k = 0;
-    double min_diff = std::fabs(x[k] - x_interpolate[k]);
     // Loop over the ""x_interpolate" values and for each one search
     // for the closest "x" values that will be used to interpolate
     for (unsigned i = 0; i < n_x_interpolate; i++)
      {
+      double min_diff = std::fabs(x[k] - x_interpolate[i]);
       // Get the nearest value to x_interpolate[i] in x
       for (unsigned j = k ; j < n_x-order; j++)
        {
@@ -385,11 +385,11 @@ namespace chapchom
    {
     // Index for the nearest values to x
     unsigned k = 0;
-    double min_diff = std::fabs(x[k] - x_interpolate[k]);
     // Loop over the ""x_interpolate" values and for each one search
     // for the closest "x" values that will be used to interpolate
     for (unsigned i = 0; i < n_x_interpolate; i++)
      {
+      double min_diff = std::fabs(x[k] - x_interpolate[i]);
       // Get the nearest value to x_interpolate[i] in x
       for (unsigned j = k ; j < n_x-order; j++)
        {
