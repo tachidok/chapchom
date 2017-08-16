@@ -109,7 +109,7 @@ namespace chapchom
                              CHAPCHOM_EXCEPTION_LOCATION);
      }
     // The case for the same number of columns on the rhs vector and
-    // the solution vector is tested in the back_substition() method
+    // the solution vector is tested in the back_substitution() method
     
     // Factorise
     factorise();
@@ -174,7 +174,7 @@ namespace chapchom
                              CHAPCHOM_EXCEPTION_LOCATION);
      }
     // The case for the same number of columns on the rhs vector and
-    // the solution vector is tested in the back_substition() method
+    // the solution vector is tested in the back_substitution() method
     
     // Factorise
     factorise();
