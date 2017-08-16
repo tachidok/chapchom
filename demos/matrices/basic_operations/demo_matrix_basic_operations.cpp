@@ -18,7 +18,7 @@ void rotate(double *input_vector,
             double *rotated_vector,
             const double roll, const double pitch, const double yaw,
             bool inverse_rotation = false)
-{
+{ 
  // The number of elements in the input vector is three
  const unsigned DIM = 3;
  
@@ -93,13 +93,13 @@ int main(int argc, char *argv[])
   // entries of the matrix. Otherwise we could not use the I(i,i)
   // assignement without previous memory allocation
   I.create_zero_matrix();
- 
+  
   // Feed some data to the matrix (the identity)
   for (unsigned i = 0; i < n_rows; i++)
    {
     I(i,i) = 1;
    }
- 
+  
   std::cout << std::endl << "The identity matrix (I)" << std::endl << std::endl;
   I.output();
   I.output(output_test);

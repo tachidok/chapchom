@@ -54,11 +54,11 @@ int main(int argc, char *argv[])
 {
  // Initialise chapchom
  initialise_chapchom();
-
+ 
  // --------------------------------------------------------------
  // Domain specification
  // --------------------------------------------------------------
- // TODO: Create a domain type class
+ // TODO: Create a DOMAIN (mesh?) type class
  
  // Dimension of the problem
  const unsigned dim = 1;
