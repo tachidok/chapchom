@@ -65,6 +65,7 @@ int main(int argc, char *argv[])
  
  // The interpolator object
  CCNewtonInterpolator interpolator;
+ 
  double max_linear_error = 0.0;
  double max_quadratic_error = 0.0;
  double max_cubic_error = 0.0;
