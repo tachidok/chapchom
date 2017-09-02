@@ -19,11 +19,11 @@ clear all
 %Initial_index=68504;
 %Final_index=74087;
 % UDLAP_PERIFERICO
-%Initial_index=35638;
-%Final_index=39284;
+Initial_index=35638;
+Final_index=39284;
 % PERIFERICO_TO_11SUR
-Initial_index=40300;
-Final_index=46076;
+%Initial_index=40300;
+%Final_index=46076;
 % 11SUR_TO_TLAXCALANCINGO
 %Initial_index=48569;
 %Final_index=54575;
@@ -60,6 +60,7 @@ velocity = importfile_TelitSL869DR_4columns('RESLT/velocity.dat', 1, n_output_da
 velocity_north_east_down = importfile_TelitSL869DR_4columns('RESLT/velocity_north_east.dat', 1, n_output_data);
 
 navigation_data = importfile_GEOFOG3D_8columns('RESLT/navigation_data_for_evaluation.dat', 1, n_output_data);
+latitude_and_longitude = importfile_TelitSL869DR_3columns('RESLT/latitude_and_longitude.dat', 1, n_output_data);
 
 initial_raw_time = raw_gyro(1,1);
 final_raw_time = raw_gyro(size(raw_gyro,1),1);
@@ -585,7 +586,7 @@ rumbo_inicial=0;  %Rumbo inicial(�) desde el cual comienza la nevegaci�n
 [new_lat,new_lon,Error]=calc_nav(lat,lon,distancia,rumbo_inicial,var_rumbo);
 
 figure
-plot(lon, lat, 'r', new_lon, new_lat, 'g','MarkerSize',5)
+plot(lon, lat, 'r', new_lon, new_lat, 'g', latitude_and_longitude(:,3), latitude_and_longitude(:,2), 'b')
 hold on
 title('Position')
 xlabel('Longitude')

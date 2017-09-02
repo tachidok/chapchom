@@ -21,8 +21,8 @@ MESSAGE( STATUS "PROJECT_PATCH_LEVEL:          " ${chapchom_PATCH_LEVEL})
 
 # Modify compilation variables
 IF(${CHAPCHOM_BUILD_VERSION} STREQUAL DEBUG)
-  SET(CHAPCHOM_C_FLAGS "-O0 -g -Wall -pedantic")
-  SET(CHAPCHOM_CXX_FLAGS "-O0 -g -Wall -pedantic")
+  SET(CHAPCHOM_C_FLAGS "-O0 -g -Wall -pedantic -std=c++11")
+  SET(CHAPCHOM_CXX_FLAGS "-O0 -g -Wall -pedantic -std=c++11")
 ELSEIF(${CHAPCHOM_BUILD_VERSION} STREQUAL RELEASE)
   SET(CHAPCHOM_C_FLAGS "-O3 -Wall -Wextra -Wshadow -Wconversion -pedantic -DNDEBUG")
   SET(CHAPCHOM_CXX_FLAGS "-O3 -Wall -Wextra -Wshadow -Wconversion -pedantic -DNDEBUG")

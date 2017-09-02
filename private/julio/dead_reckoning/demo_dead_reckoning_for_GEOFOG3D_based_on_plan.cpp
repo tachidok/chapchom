@@ -2122,9 +2122,6 @@ int main(int argc, char *argv[])
        // Initialise current latitude and longitude data
        current_latitude = initial_latitude * TO_RADIANS;
        current_longitude = initial_longitude * TO_RADIANS;
-
-       DEB(initial_latitude);
-       DEB(initial_longitude);
        
        initialised_navigation_reference_data = true;
       }
@@ -2148,14 +2145,12 @@ int main(int argc, char *argv[])
      
     } // for (i < n_data-1)
 
-#if 1áá
    std::cout.precision(8);
    std::cout << "t: " << current_time
              << " x-pos: " << y[0][0] << " x-vel: " << y[1][0]
              << " y-pos: " << y[2][0] << " y-vel: " << y[3][0]
              << " z-pos: " << y[4][0] << " z-vel: " << y[5][0]
              << " roll: " << y[6][0] << " pitch: " << y[7][0] << " yaw: " << y[8][0] << std::endl;
-#endif // #if 0
    
    // ==========================================================================
    // ==========================================================================
