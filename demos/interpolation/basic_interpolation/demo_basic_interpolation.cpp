@@ -76,6 +76,7 @@ int main(int argc, char *argv[])
   std::vector<double> fx_interpolated(n_interpolated_data);
   // Do interpolation
   interpolator.interpolate_1D(x, fx, x_to_interpolate, fx_interpolated, 1);
+  
   // Get errors
   std::vector<double> error(n_interpolated_data);
   std::cout << std::endl;
