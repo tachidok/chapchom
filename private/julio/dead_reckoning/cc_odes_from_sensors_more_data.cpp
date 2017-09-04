@@ -85,6 +85,9 @@ namespace chapchom
     double gyro_x;
     double gyro_y;
     double gyro_z;
+    double vel_x;
+    double vel_y;
+    double vel_z;
     double latitude;
     double altitude;
     double longitude;
@@ -99,16 +102,17 @@ namespace chapchom
     double distance_AGL;
     
     const int n_read =
-     fscanf(file_pt, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
+     fscanf(file_pt, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
             &time,
             &acc_x, &acc_y, &acc_z,
             &gyro_x, &gyro_y, &gyro_z,
+            &vel_x, &vel_y, &vel_z,
             &latitude, &altitude, &longitude,
             &roll, &pitch, &yaw,
             &total_vel, &inertial_vel,
             &north_vel, &east_vel, &down_vel,
             &distance_AGL);
-    if (n_read != 19)
+    if (n_read != 22)
      {
       // Error message
       std::ostringstream error_message;
@@ -146,6 +150,12 @@ namespace chapchom
     Table_inertial_velocity[i][0] = time;
     Table_inertial_velocity[i][1] = total_vel * FEETS_TO_METERS;
     Table_inertial_velocity[i][2] = inertial_vel * FEETS_TO_METERS;
+    
+    Table_body_velocity[i].resize(4);
+    Table_body_velocity[i][0] = time;
+    Table_body_velocity[i][1] = vel_x * FEETS_TO_METERS;
+    Table_body_velocity[i][2] = vel_y * FEETS_TO_METERS;
+    Table_body_velocity[i][3] = vel_z * FEETS_TO_METERS; 
     
     Table_velocity[i].resize(4);
     Table_velocity[i][0] = time;
@@ -222,6 +232,7 @@ namespace chapchom
   Current_gyro_from_table.resize(counter);
   Current_Euler_angles_from_table.resize(counter);
   Current_velocity_from_table.resize(counter);
+  Current_body_velocity_from_table.resize(counter);
   Current_inertial_velocity_from_table.resize(counter);
   Current_latitude_longitude_from_table.resize(counter);
   
@@ -256,6 +267,11 @@ namespace chapchom
     Current_velocity_from_table[i][1] = Table_velocity[Index_data+i][1];
     Current_velocity_from_table[i][2] = Table_velocity[Index_data+i][2];
     Current_velocity_from_table[i][3] = Table_velocity[Index_data+i][3];
+    
+    Current_body_velocity_from_table[i][0] = Table_body_velocity[Index_data+i][0];
+    Current_body_velocity_from_table[i][1] = Table_body_velocity[Index_data+i][1];
+    Current_body_velocity_from_table[i][2] = Table_body_velocity[Index_data+i][2];
+    Current_body_velocity_from_table[i][3] = Table_body_velocity[Index_data+i][3];
     
     Current_inertial_velocity_from_table[i][0] = Table_inertial_velocity[Index_data+i][0];
     Current_inertial_velocity_from_table[i][1] = Table_inertial_velocity[Index_data+i][1];

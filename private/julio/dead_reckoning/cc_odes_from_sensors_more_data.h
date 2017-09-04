@@ -71,6 +71,10 @@ namespace chapchom
   inline std::vector<std::vector<double> > &get_velocity_from_table()
   {return Current_velocity_from_table;}
   
+  // Velocity from Table
+  inline std::vector<std::vector<double> > &get_body_velocity_from_table()
+  {return Current_body_velocity_from_table;}
+  
   // Inertial velocity from Table
   inline std::vector<std::vector<double> > &get_inertial_velocity_from_table()
   {return Current_inertial_velocity_from_table;}
@@ -147,9 +151,12 @@ namespace chapchom
   
   // Table_Euler_angles[1] - Roll, Table_Euler_angles[2] - Pitch, Table_Euler_angles[3] - Yaw
   std::vector<std::vector<double> > Table_Euler_angles;
-  
+    
   // Table_velocity[1] - North, Table_velocity[2] - East, Table_velocity[3] - Down
   std::vector<std::vector<double> > Table_velocity;
+  
+  // Table_body_velocity[1] - vel_x, Table_body_velocity[2] - vel_y, Table_body_velocity[3] - vel_z
+  std::vector<std::vector<double> > Table_body_velocity;
   
   // Table_inertial_velocity[1] - Total velocity,
   // Table_inertial_velocity[2] - Inertial velocity
@@ -164,6 +171,7 @@ namespace chapchom
   
   std::vector<std::vector<double> > Current_Euler_angles_from_table;
   std::vector<std::vector<double> > Current_velocity_from_table;
+  std::vector<std::vector<double> > Current_body_velocity_from_table;
   std::vector<std::vector<double> > Current_inertial_velocity_from_table;
   std::vector<std::vector<double> > Current_latitude_longitude_from_table;
   

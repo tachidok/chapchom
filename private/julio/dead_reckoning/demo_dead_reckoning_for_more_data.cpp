@@ -876,6 +876,22 @@ int main(int argc, char *argv[])
                           CHAPCHOM_CURRENT_FUNCTION,
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
+ 
+ // Body belocity from table
+ char file_body_velocity_from_table_name[100];
+ sprintf(file_body_velocity_from_table_name, "./RESLT/body_velocity_from_table.dat");
+ std::ofstream outfile_body_velocity_from_table;
+ outfile_body_velocity_from_table.open(file_body_velocity_from_table_name, std::ios::out);
+ if (outfile_body_velocity_from_table.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_body_velocity_from_table_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
 #endif // #ifdef READ_AND_OUTPUT_PROCESSED_INFO_FROM_MORE_DATA
  
 #ifdef NAVIGATION_DATA_TO_EVALUATION
@@ -1191,6 +1207,9 @@ int main(int argc, char *argv[])
    // Get velocity from table
    std::vector<std::vector<double> > velocity_from_table = odes.get_velocity_from_table();
    
+   // Get body velocity from table
+   std::vector<std::vector<double> > body_velocity_from_table = odes.get_body_velocity_from_table();
+   
    // --------------------------------------------------------------------------
    // OUTPUT DATA BLOCK [BEGIN]
    // --------------------------------------------------------------------------
@@ -1210,6 +1229,12 @@ int main(int argc, char *argv[])
                                   << " " << velocity_from_table[i][1]
                                   << " " << velocity_from_table[i][2]
                                   << " " << velocity_from_table[i][3] << std::endl;
+      
+      // Body velocity from table
+      outfile_body_velocity_from_table << body_velocity_from_table[i][0]
+                                       << " " << body_velocity_from_table[i][1]
+                                       << " " << body_velocity_from_table[i][2]
+                                       << " " << body_velocity_from_table[i][3] << std::endl;
       
      } // for (i < n_gyro_data)
     
@@ -2173,6 +2198,7 @@ int main(int argc, char *argv[])
  outfile_inertial_acc.close();
  outfile_linear_acc.close();
  outfile_velocity.close();
+ outfile_body_velocity.close();
  outfile_velocity_north_east.close();
  
 #ifdef READ_AND_OUTPUT_PROCESSED_INFO_FROM_MORE_DATA
