@@ -23,6 +23,9 @@ namespace chapchom
   
   //N_data_in_table = 11592;
   //N_data_in_table = 78748;
+
+  // Data have not been load from table
+  Loaded_data_from_table = false;
   
   // Read the data from file
   load_table(input_filename);
@@ -61,6 +64,7 @@ namespace chapchom
   Table_gyro.resize(N_data_in_table);
   Table_Euler_angles.resize(N_data_in_table);
   Table_velocity.resize(N_data_in_table);
+  Table_body_velocity.resize(N_data_in_table);
   Table_inertial_velocity.resize(N_data_in_table);
   Table_latitude_longitude.resize(N_data_in_table);
   
@@ -106,9 +110,9 @@ namespace chapchom
             &time,
             &acc_x, &acc_y, &acc_z,
             &gyro_x, &gyro_y, &gyro_z,
-            &vel_x, &vel_y, &vel_z,
             &latitude, &altitude, &longitude,
             &roll, &pitch, &yaw,
+            &vel_x, &vel_y, &vel_z,
             &total_vel, &inertial_vel,
             &north_vel, &east_vel, &down_vel,
             &distance_AGL);
@@ -169,16 +173,17 @@ namespace chapchom
     for (unsigned j = 0; j < n_skip; j++)
      {
       const int n_read =
-       fscanf(file_pt, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
+       fscanf(file_pt, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
               &time,
               &acc_x, &acc_y, &acc_z,
               &gyro_x, &gyro_y, &gyro_z,
               &latitude, &altitude, &longitude,
               &roll, &pitch, &yaw,
+              &vel_x, &vel_y, &vel_z,
               &total_vel, &inertial_vel,
               &north_vel, &east_vel, &down_vel,
               &distance_AGL);
-      if (n_read != 19)
+      if (n_read != 22)
        {
         // Error message
         std::ostringstream error_message;
@@ -186,20 +191,22 @@ namespace chapchom
                       << "After reading (" << i << ") data rows" << std::endl;
         throw ChapchomLibError(error_message.str(),
                                CHAPCHOM_CURRENT_FUNCTION,
-                               CHAPCHOM_EXCEPTION_LOCATION);
-        
+                               CHAPCHOM_EXCEPTION_LOCATION); 
        }
       
      } // for (j < n_skip)
 #endif // #if 1
     
    }
- 
+  
   // Close the file
   fclose(file_pt);
- 
+  
+  // Indicates that data have been loaded from table
+  Loaded_data_from_table = true;
+  
  }
-
+ 
  // ======================================================================
  /// Store the values of the sensors in arrays
  // ======================================================================
@@ -244,6 +251,7 @@ namespace chapchom
     
     Current_Euler_angles_from_table[i].resize(DIM+1);
     Current_velocity_from_table[i].resize(DIM+1);
+    Current_body_velocity_from_table[i].resize(DIM+1);
     Current_inertial_velocity_from_table[i].resize(3);
     Current_latitude_longitude_from_table[i].resize(3);
     
@@ -288,6 +296,69 @@ namespace chapchom
   Index_data+=counter;
   
   return true;
+ }
+ 
+ // ======================================================================
+ /// Set initial conditions
+ // ======================================================================
+ void CCODEsFromSensorsMoreData::set_initial_conditions(std::vector<std::vector<double> > &y)
+ {
+  // Only assing initial conditions if data have been loadad from table
+  if (Loaded_data_from_table)
+   {
+    // Set initial conditions
+    y[0][0] = 0.0; // Initial x-position
+    y[1][0] = 0.0; // Initial x-velocity
+    y[2][0] = 0.0; // Initial y-position
+    y[3][0] = 0.0; // Initial y-velocity
+    y[4][0] = 0.0; // Initial z-position
+    y[5][0] = 0.0; // Initial z-velocity
+    y[6][0] = 0.0; // Initial roll (radians)
+    y[7][0] = 2.660363 * TO_RADIANS; // Initial pitch (radians)
+    y[8][0] = 297.900238 * TO_RADIANS; // Initial yaw (radians)
+    y[9][0] = 297.900238 * TO_RADIANS; // Initial yaw with threshold (radians)
+   }
+  else
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "Data have not been loaded from table thus we can not set\n"
+                  << "initial conditions" << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);  
+   }
+  
+ }
+
+ // ======================================================================
+ /// Reset initial contidions
+ // ======================================================================
+ void CCODEsFromSensorsMoreData::reset_initial_conditions_at_current_time(std::vector<std::vector<double> > &y)
+ {
+  // Only assing initial conditions if data have been loadad from table
+  if (Loaded_data_from_table)
+   {
+    // Reset initial conditions
+    y[1][0] = Table_body_velocity[Index_data][1]; // Initial x-velocity
+    y[3][0] = Table_body_velocity[Index_data][2]; // Initial y-velocity
+    y[5][0] = Table_body_velocity[Index_data][3]; // Initial z-velocity
+    y[6][0] = Table_Euler_angles[Index_data][1]; // Roll (radians)
+    y[7][0] = Table_Euler_angles[Index_data][2]; // Pitch (radians)
+    y[8][0] = Table_Euler_angles[Index_data][3]; // Yaw (radians)
+    y[9][0] = y[8][0]; // Yaw with threshold (radians)
+   }
+  else
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "Data have not been loaded from table thus we can not reset\n"
+                  << "initial conditions" << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);  
+   }
+   
  }
  
  // ===================================================================

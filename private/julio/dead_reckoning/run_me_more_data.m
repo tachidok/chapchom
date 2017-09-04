@@ -15,6 +15,7 @@ n_output_data=n_input_aligned_data;
 
 euler_angles_from_table = importfile_TelitSL869DR_4columns('RESLT/euler_angles_from_table.dat', 1, n_input_raw_data);
 velocity_from_table = importfile_TelitSL869DR_4columns('RESLT/velocity_from_table.dat', 1, n_input_raw_data);
+body_velocity_from_table = importfile_TelitSL869DR_4columns('RESLT/body_velocity_from_table.dat', 1, n_input_raw_data);
 
 raw_gyro = importfile_TelitSL869DR_3columns('RESLT/raw_gyro.dat', 1, n_input_raw_data);
 raw_accelerations = importfile_TelitSL869DR_3columns('RESLT/raw_accelerations.dat', 1, n_input_raw_data);
@@ -51,7 +52,7 @@ figure
 subplot(2,3,1)
 plot(euler_angles_from_table(:,1), euler_angles_from_table(:,2)*180.0/pi, 'b')
 axis([initial_raw_time final_raw_time -180 180])
-title('MORE_DATA - Euler angle [roll]')
+title('Euler angle [roll] - from table')
 xlabel('Time (s)')
 ylabel('\phi (degrees)')
 grid on
@@ -60,7 +61,7 @@ grid on
 subplot(2,3,2)
 plot(euler_angles_from_table(:,1), euler_angles_from_table(:,3)*180.0/pi, 'b')
 axis([initial_raw_time final_raw_time -180 180])
-title('MORE_DATA - Euler angle [pitch]')
+title('Euler angle [pitch] - from table')
 xlabel('Time(s)')
 ylabel('\theta (degrees)')
 grid on
@@ -69,7 +70,7 @@ grid on
 subplot(2,3,3)
 plot(euler_angles_from_table(:,1), euler_angles_from_table(:,4)*180.0/pi, 'b')
 %axis([initial_raw_time final_raw_time -180 180])
-title('MORE_DATA - Euler angle [yaw]')
+title('Euler angle [yaw] - from table')
 xlabel('Time(s)')
 ylabel('\theta (degrees)')
 grid on
@@ -79,10 +80,21 @@ grid on
 m_per_sec_to_km_per_h = 3.6;
 figure
 plot(velocity_from_table(:, 1), velocity_from_table(:, 2)*m_per_sec_to_km_per_h, 'b', velocity_from_table(:, 1), velocity_from_table(:, 3)*m_per_sec_to_km_per_h, 'r', velocity_from_table(:, 1), velocity_from_table(:, 4)*m_per_sec_to_km_per_h, 'g')
-title('Velocity')
+title('Velocity from table')
 xlabel('Time (s)')
 ylabel('Velocity km/h')
 legend('North-velocity', 'East-velocity', 'Down-velocity', 'Location', 'NorthWest')
+grid on
+
+% -------------------------------------------------------------------------------
+% Body velocity
+m_per_sec_to_km_per_h = 3.6;
+figure
+plot(body_velocity_from_table(:, 1), body_velocity_from_table(:, 2)*m_per_sec_to_km_per_h, 'b', body_velocity_from_table(:, 1), body_velocity_from_table(:, 3)*m_per_sec_to_km_per_h, 'r', body_velocity_from_table(:, 1), body_velocity_from_table(:, 4)*m_per_sec_to_km_per_h, 'g')
+title('Body velocity from table')
+xlabel('Time (s)')
+ylabel('Velocity km/h')
+legend('x-velocity', 'y-velocity', 'z-velocity', 'Location', 'NorthWest')
 grid on
 
 % Raw and aligned
@@ -594,53 +606,14 @@ ylabel('\theta (degrees)')
 legend('MORE_DATA', 'Ours', 'Location', 'NorthWest')
 grid on
 
-% Linear accelerations
-% X-acc
-subplot(2,3,4)
-plot(linear_acceleration_from_table(:, 1), linear_acceleration_from_table(:, 2), 'b', linear_acceleration(:,1), linear_acceleration(:,2), 'r')
-axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
-title('x-acceleration')
-xlabel('Time (s)')
-ylabel('Acceleration (m/s^2)')
-legend('MORE_DATA', 'Ours', 'Location', 'NorthWest')
-grid on
-
-% Y-acc
-subplot(2,3,5)
-plot(linear_acceleration_from_table(:, 1), linear_acceleration_from_table(:, 3), 'b', linear_acceleration(:,1), linear_acceleration(:,3), 'r')
-axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
-title('y-acceleration')
-xlabel('Time (s)')
-ylabel('Acceleration (m/s^2)')
-legend('MORE_DATA', 'Ours', 'Location', 'NorthWest')
-grid on
- 
-% Z-acc
-subplot(2,3,6)
-plot(linear_acceleration_from_table(:, 1), linear_acceleration_from_table(:, 4), 'b', linear_acceleration(:,1), linear_acceleration(:,4), 'r')
-axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
-title('z-acceleration')
-xlabel('Time (s)')
-ylabel('Acceleration (m/s^2)')
-legend('MORE_DATA', 'Ours', 'Location', 'NorthWest')
-grid on
-
 diff_euler_angles = (euler_angles_from_table - roll_pitch_yaw);
-diff_linear_accelerations = (linear_acceleration_from_table - linear_acceleration);
 
-max_diff_euler_angles_roll = max(diff_euler_angles(:,2))
-max_diff_euler_angles_pitch = max(diff_euler_angles(:,3))
-max_diff_euler_angles_yaw = max(diff_euler_angles(:,4))
-mean_diff_euler_angles_roll = mean(diff_euler_angles(:,2))
-mean_diff_euler_angles_pitch = mean(diff_euler_angles(:,3))
-mean_diff_euler_angles_yaw = mean(diff_euler_angles(:,4))
-
-max_diff_linear_acc_x = max(diff_linear_accelerations(:,2))
-max_diff_linear_acc_y = max(diff_linear_accelerations(:,3))
-max_diff_linear_acc_z = max(diff_linear_accelerations(:,4))
-mean_diff_linear_acc_x = mean(diff_linear_accelerations(:,2))
-mean_diff_linear_acc_y = mean(diff_linear_accelerations(:,3))
-mean_diff_linear_acc_z = mean(diff_linear_accelerations(:,4))
+max_diff_euler_angles_roll = max(diff_euler_angles(:,2))*180.0/pi
+max_diff_euler_angles_pitch = max(diff_euler_angles(:,3))*180.0/pi
+max_diff_euler_angles_yaw = max(diff_euler_angles(:,4))*180.0/pi
+mean_diff_euler_angles_roll = mean(diff_euler_angles(:,2))*180.0/pi
+mean_diff_euler_angles_pitch = mean(diff_euler_angles(:,3))*180.0/pi
+mean_diff_euler_angles_yaw = mean(diff_euler_angles(:,4))*180.0/pi
 
 figure
 plot(euler_angles_from_table(:,1), diff_euler_angles(:,2)*180.0/pi, 'r', ...
@@ -651,13 +624,50 @@ ylabel('d')
 legend('Roll', 'Pitch', 'NorthWest')
 grid on
 
+%% x-y-z velocity
+% x-velocity
+m_per_sec_to_km_per_h = 3.6;
 figure
-plot(linear_acceleration_from_table(:,1), diff_linear_accelerations(:,2), 'r', ...
-     linear_acceleration_from_table(:,1), diff_linear_accelerations(:,3), 'g')
-title('[ERROR] Linear accelerations (m/s^2)')
+plot(body_velocity_from_table(:, 1), body_velocity_from_table(:, 2)*m_per_sec_to_km_per_h, 'b', velocity(:, 1), velocity(:, 2)*m_per_sec_to_km_per_h, 'r')
+title('X velocity comparison')
 xlabel('Time (s)')
-ylabel('m/s^2')
-legend('x-acc', 'y-acc', 'NorthWest')
+ylabel('Velocity km/h')
+legend('MORE_DATA', 'Ours', 'Location', 'NorthWest')
+grid on
+% y-velocity
+figure
+plot(body_velocity_from_table(:, 1), body_velocity_from_table(:, 3)*m_per_sec_to_km_per_h, 'b', velocity(:, 1), velocity(:, 3)*m_per_sec_to_km_per_h, 'r')
+title('Y velocity comparison')
+xlabel('Time (s)')
+ylabel('Velocity km/h')
+legend('MORE_DATA', 'Ours', 'Location', 'NorthWest')
+grid on
+% z-velocity
+figure
+plot(body_velocity_from_table(:, 1), body_velocity_from_table(:, 4)*m_per_sec_to_km_per_h, 'b', velocity(:, 1), velocity(:, 4)*m_per_sec_to_km_per_h, 'r')
+title('Z velocity comparison')
+xlabel('Time (s)')
+ylabel('Velocity km/h')
+legend('MORE_DATA', 'Ours', 'Location', 'NorthWest')
+grid on
+
+m_per_sec_to_km_per_h = 3.6;
+diff_body_velocities = (body_velocity_from_table - velocity);
+
+max_diff_euler_angles_roll = max(diff_body_velocities(:,2))*m_per_sec_to_km_per_h
+max_diff_euler_angles_pitch = max(diff_body_velocities(:,3))*m_per_sec_to_km_per_h
+max_diff_euler_angles_yaw = max(diff_body_velocities(:,4))*m_per_sec_to_km_per_h
+mean_diff_euler_angles_roll = mean(diff_body_velocities(:,2))*m_per_sec_to_km_per_h
+mean_diff_euler_angles_pitch = mean(diff_body_velocities(:,3))*m_per_sec_to_km_per_h
+mean_diff_euler_angles_yaw = mean(diff_body_velocities(:,4))*m_per_sec_to_km_per_h
+
+figure
+plot(body_velocity_from_table(:,1), diff_body_velocities(:,2)*m_per_sec_to_km_per_h, 'r', ...
+     body_velocity_from_table(:,1), diff_body_velocities(:,3)*m_per_sec_to_km_per_h, 'g')
+title('[ERROR] Body velocities (km/h)')
+xlabel('Time (s)')
+ylabel('d')
+legend('X-velocity', 'Y-velocity', 'NorthWest')
 grid on
 
 %% North-east-down velocity

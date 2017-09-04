@@ -39,7 +39,13 @@ namespace chapchom
   
   /// Get the values of the sensors
   bool get_sensors_lectures();
- 
+  
+  /// Set initial conditions
+  void set_initial_conditions(std::vector<std::vector<double> > &y);
+  
+  /// Reset initial contidions
+  void reset_initial_conditions_at_current_time(std::vector<std::vector<double> > &y);
+  
   // Get the number of acceleration data
   inline const unsigned nacceleration_data()
   {return Current_acc_from_table.size();}
@@ -127,6 +133,9 @@ namespace chapchom
  
   // Number of data in the loaded table
   unsigned long N_data_in_table;
+
+  // Indicates whether data have been load from table or not
+  bool Loaded_data_from_table;
   
   // The initial index to read from data
   unsigned Initial_index;

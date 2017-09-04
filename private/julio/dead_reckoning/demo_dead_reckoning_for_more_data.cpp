@@ -990,7 +990,8 @@ int main(int argc, char *argv[])
  //const unsigned Final_index = 72020; // Ten minute of data
  
  //const unsigned Final_index = 72020; // Ten minute of data
- CCODEsFromSensorsMoreData odes("./MORE_DATA/data.dat", Initial_index, Final_index);
+ CCODEsFromSensorsMoreData odes("./MORE_DATA/data2.dat", Initial_index, Final_index);
+ //CCODEsFromSensorsMoreData odes("./MORE_DATA/data.dat", Initial_index, Final_index);
  
  // ----------------------------------------------------------------
  // Filter data [BEGIN]
@@ -1051,84 +1052,19 @@ int main(int argc, char *argv[])
    y[i].resize(n_history_values+1);
   }
  
- // Set initial conditions
+ // Iniatilise
  y[0][0] = 0.0; // Initial x-position
- y[1][0] = 6.1;//0.0; // Initial x-velocity
+ y[1][0] = 0.0; // Initial x-velocity
  y[2][0] = 0.0; // Initial y-position
  y[3][0] = 0.0; // Initial y-velocity
  y[4][0] = 0.0; // Initial z-position
  y[5][0] = 0.0; // Initial z-velocity
-#ifdef TONANTZINTLA_TO_CHOLULA
- y[1][0] = 7.729281075; // Initial x-velocity
- //y[6][0] = 0.0; // Initial roll (radians)
- y[6][0] = 0.03174143; // Initial roll (radians)
- //y[7][0] = 0.0; // Initial pitch (radians)
- y[7][0] = 0.044491584; // Initial pitch (radians)
- y[8][0] = 0.646752591;//0.924043736;//0.646752591; // Initial yaw (radians)
- y[9][0] = 0.646752591;//0.0 // Initial yaw with threshold (radians)
- //y[8][0] = 0.0; // Initial yaw (radians)
- //y[9][0] = 0.0; // Initial yaw with threshold (radians)
-#endif // #ifdef TONANTZINTLA_TO_CHOLULA
+ y[6][0] = 0.0; // Initial roll
+ y[7][0] = 0.0; // Initial pitch
+ y[8][0] = 0.0; // Initial yaw
+ y[9][0] = 0.0; // Initial yaw-threshold
  
-#ifdef TLAXCALANCINGO_TO_ACATEPEC_ZERO_INITIAL_VELOCITY
- y[1][0] = 0.017278609; // Initial x-velocity
- y[6][0] = 0.018566813; // Initial roll (radians)
- y[7][0] = 0.079363612; // Initial pitch (radians)
- y[8][0] = -2.017426082; //4.404219685;//0.924043736;//0.646752591; // Initial yaw (radians)
- y[9][0] = -2.017426082; // Initial yaw with threshold (radians)
- // y[1][0] = 9.230875187; // Initial x-velocity
- //y[6][0] = 0.03864159; // Initial roll (radians)
- //y[7][0] = 0.056403805; // Initial pitch (radians)
- //y[8][0] = -1.878965622; //4.404219685;//0.924043736;//0.646752591; // Initial yaw (radians)
- //y[9][0] = -1.878965622; // Initial yaw with threshold (radians)
-#endif // #ifdef TLAXCALANCINGO_TO_ACATEPEC_ZERO_INITIAL_VELOCITY
- 
-#ifdef TLAXCALANCINGO_TO_ACATEPEC
- y[1][0] = 9.47332405; // Initial x-velocity
- y[6][0] = 0.063093652; // Initial roll (radians)
- y[7][0] = 0.048420669; // Initial pitch (radians)
- y[8][0] = -1.82427573; //4.404219685;//0.924043736;//0.646752591; // Initial yaw (radians)
- y[9][0] = -1.82427573; // Initial yaw with threshold (radians)
-#endif // #ifdef TLAXCALANCINGO_TO_ACATEPEC
- 
-#ifdef ACATEPEC_TO_TONANTZINTLA
- y[1][0] = 9.928759692; // Initial x-velocity
- y[6][0] = 0.020158553; // Initial roll (radians)
- y[7][0] = 0.016275195; // Initial pitch (radians)
- y[8][0] = -1.031505296; // Initial yaw (radians)
- y[9][0] = -1.031505296; // Initial yaw with threshold (radians)
-#endif // #ifdef ACATEPEC_TO_TONANTZINTLA
-
-#ifdef UDLAP_PERIFERICO
- y[1][0] = 11.422295071; // Initial x-velocity
- y[6][0] = 0.04549096; // Initial roll (radians)
- y[7][0] = 0.008888264; // Initial pitch (radians)
- y[8][0] = 2.923349999; // Initial yaw (radians)
- y[9][0] = 2.923349999; // Initial yaw with threshold (radians)
-#endif // #ifdef UDLAP_PERIFERICO
- 
-#ifdef PERIFERICO_TO_11SUR
- y[1][0] = 16.06923009; // Initial x-velocity
- y[6][0] = -0.050907938; // Initial roll (radians)
- y[7][0] = 0.062309127; // Initial pitch (radians)
- y[8][0] = 2.777109996; // Initial yaw (radians)
- y[9][0] = 2.777109996; // Initial yaw with threshold (radians)
-#endif// #ifdef PERIFERICO_TO_11SUR
- 
-#ifdef _11SUR_TO_TLAXCALANCINGO
- y[1][0] = 14.630887714; // Initial x-velocity
- y[6][0] = -0.033215536; // Initial roll (radians)
- y[7][0] = 0.026363547; // Initial pitch (radians)
- y[8][0] = -1.465565365; // Initial yaw (radians)
- y[9][0] = -1.465565365; // Initial yaw with threshold (radians) 
-#endif// #ifdef _11SUR_TO_TLAXCALANCINGO
-
- // HERE
- y[1][0] = 0.0; // Initial x-velocity
- y[6][0] = 0.0; // Initial roll (radians)
- y[7][0] = 2.660363 * TO_RADIANS; // Initial pitch (radians)
- y[8][0] = 297.900238 * TO_RADIANS; // Initial yaw (radians)
- y[9][0] = 297.900238 * TO_RADIANS; // Initial yaw with threshold (radians)
+ odes.set_initial_conditions(y);
  
  // Discretised time
  double current_time = 0;
@@ -1173,10 +1109,23 @@ int main(int argc, char *argv[])
  // Flag to indicate whether to continue processing
  bool LOOP = true;
  
+ // Reset initial conditions every n_seconds_to_reset_initial_conditions
+ const unsigned n_seconds_to_reset_initial_conditions = 10000;
+ // Count the number of seconds since last reset of initial conditions
+ unsigned n_seconds = 0;
+ 
  // Main LOOP (continue looping until all data in the input file is
  // processed)
  while(LOOP)
   {
+   // Check whether we should reset initial conditions
+   if (n_seconds >= n_seconds_to_reset_initial_conditions)
+    {
+     std::cout << "Reseting initial conditions for current time" << std::endl;
+     odes.reset_initial_conditions_at_current_time(y);
+     n_seconds = 0;
+    }
+   
    // Retrieve data from sensors
    LOOP = odes.get_sensors_lectures();
    // Check if there are data to process, otherwise end the LOOP
@@ -1206,7 +1155,6 @@ int main(int argc, char *argv[])
    std::vector<std::vector<double> > Euler_angles_from_table = odes.get_Euler_angles_from_table();
    // Get velocity from table
    std::vector<std::vector<double> > velocity_from_table = odes.get_velocity_from_table();
-   
    // Get body velocity from table
    std::vector<std::vector<double> > body_velocity_from_table = odes.get_body_velocity_from_table();
    
@@ -2025,11 +1973,13 @@ int main(int argc, char *argv[])
      // Integrate the ODE's [BEGIN]
      // ==========================================================================
      // Compute the step size
-     double step = previous_step;
+     double step = previous_step; 
+     DEB(step);
      if (i < n_data - 1)
       {
         step = aligned_time[i+1] - aligned_time[i];
       }
+     step = 1.0e-6;
      previous_step = step;
      
      integrator->integrate_step(odes, step, current_time, y);
@@ -2159,7 +2109,10 @@ int main(int argc, char *argv[])
 #endif //  #ifdef NAVIGATION_DATA_TO_EVALUATION
      
     } // for (i < n_data-1)
-
+   
+   // Increase the number of seconds since last reset of initial conditions
+   n_seconds++; 
+   
    std::cout.precision(8);
    std::cout << "t: " << current_time
              << " x-pos: " << y[0][0] << " x-vel: " << y[1][0]
@@ -2198,12 +2151,12 @@ int main(int argc, char *argv[])
  outfile_inertial_acc.close();
  outfile_linear_acc.close();
  outfile_velocity.close();
- outfile_body_velocity.close();
  outfile_velocity_north_east.close();
  
 #ifdef READ_AND_OUTPUT_PROCESSED_INFO_FROM_MORE_DATA
  outfile_euler_angles_from_table.close();
  outfile_velocity_from_table.close();
+ outfile_body_velocity_from_table.close();
 #endif // #ifdef READ_AND_OUTPUT_PROCESSED_INFO_FROM_MORE_DATA
  
 #ifdef NAVIGATION_DATA_TO_EVALUATION
