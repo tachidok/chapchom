@@ -22,6 +22,9 @@ namespace chapchom
   //N_data_in_table = 11592;
   //N_data_in_table = 78748;
   
+  // Data have not been load from table
+  Loaded_data_from_table = false;
+  
   // Read the data from file
   load_table(input_filename);
   
@@ -184,7 +187,10 @@ namespace chapchom
  
   // Close the file
   fclose(file_pt);
- 
+  
+  // Indicates that data have been loaded from table
+  Loaded_data_from_table = true;
+  
  }
 
  // ======================================================================
@@ -281,6 +287,111 @@ namespace chapchom
   Index_data+=counter;
   
   return true;
+ }
+ 
+ // ======================================================================
+ /// Set initial conditions
+ // ======================================================================
+ void CCODEsFromSensorsGEOFOG3D::set_initial_conditions(std::vector<std::vector<double> > &y)
+ {
+  // Only assing initial conditions if data have been loadad from table
+  if (Loaded_data_from_table)
+   {
+    // Set initial conditions
+#ifdef TONANTZINTLA_TO_CHOLULA
+    y[1][0] = 7.729281075; // Initial x-velocity
+    y[6][0] = 0.03174143; // Initial roll (radians)
+    y[7][0] = 0.044491584; // Initial pitch (radians)
+    y[8][0] = 0.646752591;//0.924043736;//0.646752591; // Initial yaw (radians)
+    y[9][0] = 0.646752591;//0.0 // Initial yaw with threshold (radians)
+#endif // #ifdef TONANTZINTLA_TO_CHOLULA
+    
+#ifdef TLAXCALANCINGO_TO_ACATEPEC_ZERO_INITIAL_VELOCITY
+    y[1][0] = 0.017278609; // Initial x-velocity
+    y[6][0] = 0.018566813; // Initial roll (radians)
+    y[7][0] = 0.079363612; // Initial pitch (radians)
+    y[8][0] = -2.017426082; //4.404219685;//0.924043736;//0.646752591; // Initial yaw (radians)
+    y[9][0] = -2.017426082; // Initial yaw with threshold (radians)
+#endif // #ifdef TLAXCALANCINGO_TO_ACATEPEC_ZERO_INITIAL_VELOCITY
+ 
+#ifdef TLAXCALANCINGO_TO_ACATEPEC
+    y[1][0] = 9.47332405; // Initial x-velocity
+    y[6][0] = 0.063093652; // Initial roll (radians)
+    y[7][0] = 0.048420669; // Initial pitch (radians)
+    y[8][0] = -1.82427573; //4.404219685;//0.924043736;//0.646752591; // Initial yaw (radians)
+    y[9][0] = -1.82427573; // Initial yaw with threshold (radians)
+#endif // #ifdef TLAXCALANCINGO_TO_ACATEPEC
+ 
+#ifdef ACATEPEC_TO_TONANTZINTLA
+    y[1][0] = 9.928759692; // Initial x-velocity
+    y[6][0] = 0.020158553; // Initial roll (radians)
+    y[7][0] = 0.016275195; // Initial pitch (radians)
+    y[8][0] = -1.031505296; // Initial yaw (radians)
+    y[9][0] = -1.031505296; // Initial yaw with threshold (radians)
+#endif // #ifdef ACATEPEC_TO_TONANTZINTLA
+
+#ifdef UDLAP_PERIFERICO
+    y[1][0] = 11.422295071; // Initial x-velocity
+    y[6][0] = 0.04549096; // Initial roll (radians)
+    y[7][0] = 0.008888264; // Initial pitch (radians)
+    y[8][0] = 2.923349999; // Initial yaw (radians)
+    y[9][0] = 2.923349999; // Initial yaw with threshold (radians)
+#endif // #ifdef UDLAP_PERIFERICO
+ 
+#ifdef PERIFERICO_TO_11SUR
+    y[1][0] = 16.06923009; // Initial x-velocity
+    y[6][0] = -0.050907938; // Initial roll (radians)
+    y[7][0] = 0.062309127; // Initial pitch (radians)
+    y[8][0] = 2.777109996; // Initial yaw (radians)
+    y[9][0] = 2.777109996; // Initial yaw with threshold (radians)
+#endif// #ifdef PERIFERICO_TO_11SUR
+ 
+#ifdef _11SUR_TO_TLAXCALANCINGO
+    y[1][0] = 14.630887714; // Initial x-velocity
+    y[6][0] = -0.033215536; // Initial roll (radians)
+    y[7][0] = 0.026363547; // Initial pitch (radians)
+    y[8][0] = -1.465565365; // Initial yaw (radians)
+    y[9][0] = -1.465565365; // Initial yaw with threshold (radians)
+#endif// #ifdef _11SUR_TO_TLAXCALANCINGO 
+   }
+  else
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "Data have not been loaded from table thus we can not set\n"
+                  << "initial conditions" << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);  
+   }
+  
+ }
+
+ // ======================================================================
+ /// Reset initial contidions
+ // ======================================================================
+ void CCODEsFromSensorsGEOFOG3D::reset_initial_conditions_at_current_time(std::vector<std::vector<double> > &y)
+ {
+  // Only assing initial conditions if data have been loadad from table
+  if (Loaded_data_from_table)
+   {
+    // Reset initial conditions
+    y[6][0] = Table_Euler_angles[Index_data][1]; // Roll (radians)
+    y[7][0] = Table_Euler_angles[Index_data][2]; // Pitch (radians)
+    y[8][0] = Table_Euler_angles[Index_data][3]; // Yaw (radians)
+    y[9][0] = y[8][0]; // Yaw with threshold (radians)
+   }
+  else
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "Data have not been loaded from table thus we can not reset\n"
+                  << "initial conditions" << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);  
+   }
+   
  }
  
  // ===================================================================

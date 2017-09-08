@@ -48,11 +48,14 @@
 //#define FORCE_USING_EULER_ANGLES_RATES_FROM_GEOFOG3D
 //#define FORCE_USING_EULER_ANGLES_FROM_GEOFOG3D
 //#define FORCE_USING_LINEAR_ACCELERATIONS_FROM_GEOFOG3D
+//#define FORCE_USING_LINEAR_VELOCITIES_FROM_MORE_DATA
 
 //#define APPLY_LINEAR_ACCELERATIONS_OFFSET
 //#define APPLY_EULER_ANGLES_OFFSET
 
 //#define APPLY_GAUSSIAN_NOISE
+
+//#define APPLY_VELOCITY_FACTOR
 
 // -------------------------------------------------
 // Constants
@@ -1110,7 +1113,7 @@ int main(int argc, char *argv[])
  bool LOOP = true;
  
  // Reset initial conditions every n_seconds_to_reset_initial_conditions
- const unsigned n_seconds_to_reset_initial_conditions = 10000;
+ const unsigned n_seconds_to_reset_initial_conditions = 15;
  // Count the number of seconds since last reset of initial conditions
  unsigned n_seconds = 0;
  
@@ -1123,6 +1126,9 @@ int main(int argc, char *argv[])
     {
      std::cout << "Reseting initial conditions for current time" << std::endl;
      odes.reset_initial_conditions_at_current_time(y);
+#ifdef APPLY_VELOCITY_FACTOR
+     y[1][0]*= 1.18;
+#endif // #ifdef APPLY_VELOCITY_FACTOR
      n_seconds = 0;
     }
    
@@ -1936,6 +1942,12 @@ int main(int argc, char *argv[])
      // ==========================================================================
      // Velocity processing [BEGIN]
      // ==========================================================================
+
+#ifdef FORCE_USING_LINEAR_VELOCITIES_FROM_MORE_DATA
+     y[1][0] = linear_velocities_from_table[i][1];
+     y[3][0] = linear_velocities_from_table[i][2];
+     y[5][0] = linear_velocities_from_table[i][3];
+#endif // #ifdef FORCE_USING_LINEAR_VELOCITIES_FROM_MORE_DATA
      
 #ifdef OUTPUT_VELOCITIES
      // --------------------------------------------------------------------------
@@ -1974,12 +1986,12 @@ int main(int argc, char *argv[])
      // ==========================================================================
      // Compute the step size
      double step = previous_step; 
-     DEB(step);
+     //DEB(step);
      if (i < n_data - 1)
       {
         step = aligned_time[i+1] - aligned_time[i];
       }
-     step = 1.0e-6;
+     //step = 1.0e-6;
      previous_step = step;
      
      integrator->integrate_step(odes, step, current_time, y);
