@@ -697,6 +697,18 @@ ylabel('Velocity km/h')
 legend('MORE_DATA', 'Ours', 'Location', 'NorthWest')
 grid on
 
+diff_north_east_down_velocity = velocity_from_table - velocity_north_east_down;
+
+figure
+plot(velocity_from_table(:,1), diff_north_east_down_velocity(:,2)*m_per_sec_to_km_per_h, 'b',...
+velocity_from_table(:,1), diff_north_east_down_velocity(:,3)*m_per_sec_to_km_per_h, 'r',...
+velocity_from_table(:,1), diff_north_east_down_velocity(:,4)*m_per_sec_to_km_per_h, 'g')
+title('[ERROR] Inertial velocity (km/h)')
+xlabel('Time (s)')
+ylabel('km/h')
+legend('North vel', 'East vel', 'Down vel', 'Location', 'NorthWest')
+grid on
+
 %% POSITION
 % This method uses XPOS and YPOS from the file which are computes from the
 % X and Y velocities times the cos/sin, respectively, of the course angle

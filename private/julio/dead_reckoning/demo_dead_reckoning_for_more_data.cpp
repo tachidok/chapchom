@@ -1113,7 +1113,7 @@ int main(int argc, char *argv[])
  bool LOOP = true;
  
  // Reset initial conditions every n_seconds_to_reset_initial_conditions
- const unsigned n_seconds_to_reset_initial_conditions = 15;
+ const unsigned n_seconds_to_reset_initial_conditions = 100000;
  // Count the number of seconds since last reset of initial conditions
  unsigned n_seconds = 0;
  
@@ -1960,7 +1960,8 @@ int main(int argc, char *argv[])
                        << " " << y[3][0]
                        << " " << y[5][0]
                        << std::endl;
-      
+
+#if 1
       // North-east velocities
       const double course_angle = y[8][0];
       //const double north_velocity = y[1][0]*sin(course_angle);// + y[3][0]*cos(course_angle);
@@ -1968,7 +1969,20 @@ int main(int argc, char *argv[])
       //const double down_velocity = 0.0;
       const double north_velocity = y[1][0]*sin(M_PI/2.0 - course_angle);// + y[3][0]*sin(course_angle);
       const double east_velocity = y[1][0]*cos(M_PI/2.0 - course_angle);// - y[3][0]*cos(course_angle);
-      const double down_velocity = 0.0;      
+      const double down_velocity = 0.0;
+#else
+      // North-east-down velocities
+      const double vx = y[1][0];
+      const double pitch = y[7][0];
+      const double yaw = y[8][0];
+      const double alpha_c = M_PI/2.0 - yaw;
+      //const double north_velocity = y[1][0]*sin(course_angle);// + y[3][0]*cos(course_angle);
+      //const double east_velocity = y[1][0]*cos(course_angle);// + y[3][0]*sin(course_angle);
+      //const double down_velocity = 0.0;
+      const double north_velocity = vx*cos(pitch)*sin(alpha_c);// + y[3][0]*sin(course_angle);
+      const double east_velocity = vx*cos(pitch)*cos(alpha_c);// - y[3][0]*cos(course_angle);
+      const double down_velocity = vx*sin(pitch);
+#endif
       outfile_velocity_north_east << current_time
                                   << " " << north_velocity
                                   << " " << east_velocity
