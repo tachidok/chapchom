@@ -588,7 +588,7 @@ rumbo_inicial=0;  %Rumbo inicial(�) desde el cual comienza la nevegaci�n
 [new_lat,new_lon,Error]=calc_nav(lat,lon,distancia,rumbo_inicial,var_rumbo);
 
 figure
-plot(lon, lat, 'r', new_lon, new_lat, 'g', latitude_and_longitude(:,3), latitude_and_longitude(:,2), 'b')
+plot(lon, lat, 'r', new_lon, new_lat, 'g')
 hold on
 title('Position')
 xlabel('Longitude')
