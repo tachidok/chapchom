@@ -48,11 +48,14 @@
 //#define FORCE_USING_EULER_ANGLES_RATES_FROM_GEOFOG3D
 //#define FORCE_USING_EULER_ANGLES_FROM_GEOFOG3D
 //#define FORCE_USING_LINEAR_ACCELERATIONS_FROM_GEOFOG3D
+//#define FORCE_USING_LINEAR_VELOCITIES_FROM_MORE_DATA
 
 //#define APPLY_LINEAR_ACCELERATIONS_OFFSET
 //#define APPLY_EULER_ANGLES_OFFSET
 
 //#define APPLY_GAUSSIAN_NOISE
+
+//#define APPLY_VELOCITY_FACTOR
 
 // -------------------------------------------------
 // Constants
@@ -876,6 +879,22 @@ int main(int argc, char *argv[])
                           CHAPCHOM_CURRENT_FUNCTION,
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
+ 
+ // Body belocity from table
+ char file_body_velocity_from_table_name[100];
+ sprintf(file_body_velocity_from_table_name, "./RESLT/body_velocity_from_table.dat");
+ std::ofstream outfile_body_velocity_from_table;
+ outfile_body_velocity_from_table.open(file_body_velocity_from_table_name, std::ios::out);
+ if (outfile_body_velocity_from_table.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_body_velocity_from_table_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
 #endif // #ifdef READ_AND_OUTPUT_PROCESSED_INFO_FROM_MORE_DATA
  
 #ifdef NAVIGATION_DATA_TO_EVALUATION
@@ -974,7 +993,8 @@ int main(int argc, char *argv[])
  //const unsigned Final_index = 72020; // Ten minute of data
  
  //const unsigned Final_index = 72020; // Ten minute of data
- CCODEsFromSensorsMoreData odes("./MORE_DATA/data.dat", Initial_index, Final_index);
+ CCODEsFromSensorsMoreData odes("./MORE_DATA/data2.dat", Initial_index, Final_index);
+ //CCODEsFromSensorsMoreData odes("./MORE_DATA/data.dat", Initial_index, Final_index);
  
  // ----------------------------------------------------------------
  // Filter data [BEGIN]
@@ -1035,84 +1055,19 @@ int main(int argc, char *argv[])
    y[i].resize(n_history_values+1);
   }
  
- // Set initial conditions
+ // Iniatilise
  y[0][0] = 0.0; // Initial x-position
- y[1][0] = 6.1;//0.0; // Initial x-velocity
+ y[1][0] = 0.0; // Initial x-velocity
  y[2][0] = 0.0; // Initial y-position
  y[3][0] = 0.0; // Initial y-velocity
  y[4][0] = 0.0; // Initial z-position
  y[5][0] = 0.0; // Initial z-velocity
-#ifdef TONANTZINTLA_TO_CHOLULA
- y[1][0] = 7.729281075; // Initial x-velocity
- //y[6][0] = 0.0; // Initial roll (radians)
- y[6][0] = 0.03174143; // Initial roll (radians)
- //y[7][0] = 0.0; // Initial pitch (radians)
- y[7][0] = 0.044491584; // Initial pitch (radians)
- y[8][0] = 0.646752591;//0.924043736;//0.646752591; // Initial yaw (radians)
- y[9][0] = 0.646752591;//0.0 // Initial yaw with threshold (radians)
- //y[8][0] = 0.0; // Initial yaw (radians)
- //y[9][0] = 0.0; // Initial yaw with threshold (radians)
-#endif // #ifdef TONANTZINTLA_TO_CHOLULA
+ y[6][0] = 0.0; // Initial roll
+ y[7][0] = 0.0; // Initial pitch
+ y[8][0] = 0.0; // Initial yaw
+ y[9][0] = 0.0; // Initial yaw-threshold
  
-#ifdef TLAXCALANCINGO_TO_ACATEPEC_ZERO_INITIAL_VELOCITY
- y[1][0] = 0.017278609; // Initial x-velocity
- y[6][0] = 0.018566813; // Initial roll (radians)
- y[7][0] = 0.079363612; // Initial pitch (radians)
- y[8][0] = -2.017426082; //4.404219685;//0.924043736;//0.646752591; // Initial yaw (radians)
- y[9][0] = -2.017426082; // Initial yaw with threshold (radians)
- // y[1][0] = 9.230875187; // Initial x-velocity
- //y[6][0] = 0.03864159; // Initial roll (radians)
- //y[7][0] = 0.056403805; // Initial pitch (radians)
- //y[8][0] = -1.878965622; //4.404219685;//0.924043736;//0.646752591; // Initial yaw (radians)
- //y[9][0] = -1.878965622; // Initial yaw with threshold (radians)
-#endif // #ifdef TLAXCALANCINGO_TO_ACATEPEC_ZERO_INITIAL_VELOCITY
- 
-#ifdef TLAXCALANCINGO_TO_ACATEPEC
- y[1][0] = 9.47332405; // Initial x-velocity
- y[6][0] = 0.063093652; // Initial roll (radians)
- y[7][0] = 0.048420669; // Initial pitch (radians)
- y[8][0] = -1.82427573; //4.404219685;//0.924043736;//0.646752591; // Initial yaw (radians)
- y[9][0] = -1.82427573; // Initial yaw with threshold (radians)
-#endif // #ifdef TLAXCALANCINGO_TO_ACATEPEC
- 
-#ifdef ACATEPEC_TO_TONANTZINTLA
- y[1][0] = 9.928759692; // Initial x-velocity
- y[6][0] = 0.020158553; // Initial roll (radians)
- y[7][0] = 0.016275195; // Initial pitch (radians)
- y[8][0] = -1.031505296; // Initial yaw (radians)
- y[9][0] = -1.031505296; // Initial yaw with threshold (radians)
-#endif // #ifdef ACATEPEC_TO_TONANTZINTLA
-
-#ifdef UDLAP_PERIFERICO
- y[1][0] = 11.422295071; // Initial x-velocity
- y[6][0] = 0.04549096; // Initial roll (radians)
- y[7][0] = 0.008888264; // Initial pitch (radians)
- y[8][0] = 2.923349999; // Initial yaw (radians)
- y[9][0] = 2.923349999; // Initial yaw with threshold (radians)
-#endif // #ifdef UDLAP_PERIFERICO
- 
-#ifdef PERIFERICO_TO_11SUR
- y[1][0] = 16.06923009; // Initial x-velocity
- y[6][0] = -0.050907938; // Initial roll (radians)
- y[7][0] = 0.062309127; // Initial pitch (radians)
- y[8][0] = 2.777109996; // Initial yaw (radians)
- y[9][0] = 2.777109996; // Initial yaw with threshold (radians)
-#endif// #ifdef PERIFERICO_TO_11SUR
- 
-#ifdef _11SUR_TO_TLAXCALANCINGO
- y[1][0] = 14.630887714; // Initial x-velocity
- y[6][0] = -0.033215536; // Initial roll (radians)
- y[7][0] = 0.026363547; // Initial pitch (radians)
- y[8][0] = -1.465565365; // Initial yaw (radians)
- y[9][0] = -1.465565365; // Initial yaw with threshold (radians) 
-#endif// #ifdef _11SUR_TO_TLAXCALANCINGO
-
- // HERE
- y[1][0] = 0.0; // Initial x-velocity
- y[6][0] = 0.0; // Initial roll (radians)
- y[7][0] = 2.660363 * TO_RADIANS; // Initial pitch (radians)
- y[8][0] = 297.900238 * TO_RADIANS; // Initial yaw (radians)
- y[9][0] = 297.900238 * TO_RADIANS; // Initial yaw with threshold (radians)
+ odes.set_initial_conditions(y);
  
  // Discretised time
  double current_time = 0;
@@ -1157,10 +1112,26 @@ int main(int argc, char *argv[])
  // Flag to indicate whether to continue processing
  bool LOOP = true;
  
+ // Reset initial conditions every n_seconds_to_reset_initial_conditions
+ const unsigned n_seconds_to_reset_initial_conditions = 100000;
+ // Count the number of seconds since last reset of initial conditions
+ unsigned n_seconds = 0;
+ 
  // Main LOOP (continue looping until all data in the input file is
  // processed)
  while(LOOP)
   {
+   // Check whether we should reset initial conditions
+   if (n_seconds >= n_seconds_to_reset_initial_conditions)
+    {
+     std::cout << "Reseting initial conditions for current time" << std::endl;
+     odes.reset_initial_conditions_at_current_time(y);
+#ifdef APPLY_VELOCITY_FACTOR
+     y[1][0]*= 1.18;
+#endif // #ifdef APPLY_VELOCITY_FACTOR
+     n_seconds = 0;
+    }
+   
    // Retrieve data from sensors
    LOOP = odes.get_sensors_lectures();
    // Check if there are data to process, otherwise end the LOOP
@@ -1190,6 +1161,8 @@ int main(int argc, char *argv[])
    std::vector<std::vector<double> > Euler_angles_from_table = odes.get_Euler_angles_from_table();
    // Get velocity from table
    std::vector<std::vector<double> > velocity_from_table = odes.get_velocity_from_table();
+   // Get body velocity from table
+   std::vector<std::vector<double> > body_velocity_from_table = odes.get_body_velocity_from_table();
    
    // --------------------------------------------------------------------------
    // OUTPUT DATA BLOCK [BEGIN]
@@ -1210,6 +1183,12 @@ int main(int argc, char *argv[])
                                   << " " << velocity_from_table[i][1]
                                   << " " << velocity_from_table[i][2]
                                   << " " << velocity_from_table[i][3] << std::endl;
+      
+      // Body velocity from table
+      outfile_body_velocity_from_table << body_velocity_from_table[i][0]
+                                       << " " << body_velocity_from_table[i][1]
+                                       << " " << body_velocity_from_table[i][2]
+                                       << " " << body_velocity_from_table[i][3] << std::endl;
       
      } // for (i < n_gyro_data)
     
@@ -1963,6 +1942,12 @@ int main(int argc, char *argv[])
      // ==========================================================================
      // Velocity processing [BEGIN]
      // ==========================================================================
+
+#ifdef FORCE_USING_LINEAR_VELOCITIES_FROM_MORE_DATA
+     y[1][0] = linear_velocities_from_table[i][1];
+     y[3][0] = linear_velocities_from_table[i][2];
+     y[5][0] = linear_velocities_from_table[i][3];
+#endif // #ifdef FORCE_USING_LINEAR_VELOCITIES_FROM_MORE_DATA
      
 #ifdef OUTPUT_VELOCITIES
      // --------------------------------------------------------------------------
@@ -1975,7 +1960,8 @@ int main(int argc, char *argv[])
                        << " " << y[3][0]
                        << " " << y[5][0]
                        << std::endl;
-      
+
+#if 1
       // North-east velocities
       const double course_angle = y[8][0];
       //const double north_velocity = y[1][0]*sin(course_angle);// + y[3][0]*cos(course_angle);
@@ -1983,7 +1969,20 @@ int main(int argc, char *argv[])
       //const double down_velocity = 0.0;
       const double north_velocity = y[1][0]*sin(M_PI/2.0 - course_angle);// + y[3][0]*sin(course_angle);
       const double east_velocity = y[1][0]*cos(M_PI/2.0 - course_angle);// - y[3][0]*cos(course_angle);
-      const double down_velocity = 0.0;      
+      const double down_velocity = 0.0;
+#else
+      // North-east-down velocities
+      const double vx = y[1][0];
+      const double pitch = y[7][0];
+      const double yaw = y[8][0];
+      const double alpha_c = M_PI/2.0 - yaw;
+      //const double north_velocity = y[1][0]*sin(course_angle);// + y[3][0]*cos(course_angle);
+      //const double east_velocity = y[1][0]*cos(course_angle);// + y[3][0]*sin(course_angle);
+      //const double down_velocity = 0.0;
+      const double north_velocity = vx*cos(pitch)*sin(alpha_c);// + y[3][0]*sin(course_angle);
+      const double east_velocity = vx*cos(pitch)*cos(alpha_c);// - y[3][0]*cos(course_angle);
+      const double down_velocity = vx*sin(pitch);
+#endif
       outfile_velocity_north_east << current_time
                                   << " " << north_velocity
                                   << " " << east_velocity
@@ -2000,11 +1999,13 @@ int main(int argc, char *argv[])
      // Integrate the ODE's [BEGIN]
      // ==========================================================================
      // Compute the step size
-     double step = previous_step;
+     double step = previous_step; 
+     //DEB(step);
      if (i < n_data - 1)
       {
         step = aligned_time[i+1] - aligned_time[i];
       }
+     //step = 1.0e-6;
      previous_step = step;
      
      integrator->integrate_step(odes, step, current_time, y);
@@ -2134,7 +2135,10 @@ int main(int argc, char *argv[])
 #endif //  #ifdef NAVIGATION_DATA_TO_EVALUATION
      
     } // for (i < n_data-1)
-
+   
+   // Increase the number of seconds since last reset of initial conditions
+   n_seconds++; 
+   
    std::cout.precision(8);
    std::cout << "t: " << current_time
              << " x-pos: " << y[0][0] << " x-vel: " << y[1][0]
@@ -2178,6 +2182,7 @@ int main(int argc, char *argv[])
 #ifdef READ_AND_OUTPUT_PROCESSED_INFO_FROM_MORE_DATA
  outfile_euler_angles_from_table.close();
  outfile_velocity_from_table.close();
+ outfile_body_velocity_from_table.close();
 #endif // #ifdef READ_AND_OUTPUT_PROCESSED_INFO_FROM_MORE_DATA
  
 #ifdef NAVIGATION_DATA_TO_EVALUATION

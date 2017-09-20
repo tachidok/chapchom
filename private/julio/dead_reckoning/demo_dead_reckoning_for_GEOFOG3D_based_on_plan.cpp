@@ -671,195 +671,195 @@ int main(int argc, char *argv[])
  outfile_euler_angles_from_gyro.open(file_euler_angles_from_gyro_name, std::ios::out);
  if (outfile_euler_angles_from_gyro.fail())
   {
-                                               // Error message
-                                               std::ostringstream error_message;
-                                               error_message << "Could not create the file [" << file_euler_angles_from_gyro_name << "]"
-                                                             << std::endl;
-                                               throw ChapchomLibError(error_message.str(),
-                                                                      CHAPCHOM_CURRENT_FUNCTION,
-                                                                      CHAPCHOM_EXCEPTION_LOCATION);
-                                              }
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_euler_angles_from_gyro_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
  
-                                             // Euler-angles from accelerometer
-                                             char file_euler_angles_from_accelerometer_name[100];
-                                             sprintf(file_euler_angles_from_accelerometer_name, "./RESLT/euler_angles_from_accelerometer.dat");
-                                             std::ofstream outfile_euler_angles_from_accelerometer;
-                                             outfile_euler_angles_from_accelerometer.open(file_euler_angles_from_accelerometer_name, std::ios::out);
-                                             if (outfile_euler_angles_from_accelerometer.fail())
-                                              {
-                                               // Error message
-                                               std::ostringstream error_message;
-                                               error_message << "Could not create the file [" << file_euler_angles_from_accelerometer_name << "]"
-                                                             << std::endl;
-                                               throw ChapchomLibError(error_message.str(),
-                                                                      CHAPCHOM_CURRENT_FUNCTION,
-                                                                      CHAPCHOM_EXCEPTION_LOCATION);
-                                              }
+ // Euler-angles from accelerometer
+ char file_euler_angles_from_accelerometer_name[100];
+ sprintf(file_euler_angles_from_accelerometer_name, "./RESLT/euler_angles_from_accelerometer.dat");
+ std::ofstream outfile_euler_angles_from_accelerometer;
+ outfile_euler_angles_from_accelerometer.open(file_euler_angles_from_accelerometer_name, std::ios::out);
+ if (outfile_euler_angles_from_accelerometer.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_euler_angles_from_accelerometer_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
  
-                                             // Roll, pitch and yaw
-                                             char file_roll_pitch_yaw_name[100];
-                                             sprintf(file_roll_pitch_yaw_name, "./RESLT/roll_pitch_yaw.dat");
-                                             std::ofstream outfile_roll_pitch_yaw;
-                                             outfile_roll_pitch_yaw.open(file_roll_pitch_yaw_name, std::ios::out);
-                                             if (outfile_roll_pitch_yaw.fail()) 
-                                              {
-                                               // Error message
-                                               std::ostringstream error_message;
-                                               error_message << "Could not create the file [" << file_roll_pitch_yaw_name << "]"
-                                                             << std::endl;
-                                               throw ChapchomLibError(error_message.str(),
-                                                                      CHAPCHOM_CURRENT_FUNCTION,
-                                                                      CHAPCHOM_EXCEPTION_LOCATION);
-                                              }
+ // Roll, pitch and yaw
+ char file_roll_pitch_yaw_name[100];
+ sprintf(file_roll_pitch_yaw_name, "./RESLT/roll_pitch_yaw.dat");
+ std::ofstream outfile_roll_pitch_yaw;
+ outfile_roll_pitch_yaw.open(file_roll_pitch_yaw_name, std::ios::out);
+ if (outfile_roll_pitch_yaw.fail()) 
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_roll_pitch_yaw_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
  
-                                             // Gravity in body frame
-                                             char file_gravity_in_body_frame_name[100];
-                                             sprintf(file_gravity_in_body_frame_name, "./RESLT/gravity_in_body_frame.dat");
-                                             std::ofstream outfile_gravity_in_body_frame;
-                                             outfile_gravity_in_body_frame.open(file_gravity_in_body_frame_name, std::ios::out);
-                                             if (outfile_gravity_in_body_frame.fail())
-                                              {
-                                               // Error message
-                                               std::ostringstream error_message;
-                                               error_message << "Could not create the file [" << file_gravity_in_body_frame_name << "]"
-                                                             << std::endl;
-                                               throw ChapchomLibError(error_message.str(),
-                                                                      CHAPCHOM_CURRENT_FUNCTION,
-                                                                      CHAPCHOM_EXCEPTION_LOCATION);
-                                              }
+ // Gravity in body frame
+ char file_gravity_in_body_frame_name[100];
+ sprintf(file_gravity_in_body_frame_name, "./RESLT/gravity_in_body_frame.dat");
+ std::ofstream outfile_gravity_in_body_frame;
+ outfile_gravity_in_body_frame.open(file_gravity_in_body_frame_name, std::ios::out);
+ if (outfile_gravity_in_body_frame.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_gravity_in_body_frame_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
  
-                                             // Body frame accelerations
-                                             char file_body_accelerations_name[100];
-                                             sprintf(file_body_accelerations_name, "./RESLT/body_accelerations.dat");
-                                             std::ofstream outfile_body_acc;
-                                             outfile_body_acc.open(file_body_accelerations_name, std::ios::out);
-                                             if (outfile_body_acc.fail())
-                                              {
-                                               // Error message
-                                               std::ostringstream error_message;
-                                               error_message << "Could not create the file [" << file_body_accelerations_name << "]"
-                                                             << std::endl;
-                                               throw ChapchomLibError(error_message.str(),
-                                                                      CHAPCHOM_CURRENT_FUNCTION,
-                                                                      CHAPCHOM_EXCEPTION_LOCATION);
-                                              }
+ // Body frame accelerations
+ char file_body_accelerations_name[100];
+ sprintf(file_body_accelerations_name, "./RESLT/body_accelerations.dat");
+ std::ofstream outfile_body_acc;
+ outfile_body_acc.open(file_body_accelerations_name, std::ios::out);
+ if (outfile_body_acc.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_body_accelerations_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
  
-                                             // Inertial accelerations
-                                             char file_inertial_accelerations_name[100];
-                                             sprintf(file_inertial_accelerations_name, "./RESLT/inertial_accelerations.dat");
-                                             std::ofstream outfile_inertial_acc;
-                                             outfile_inertial_acc.open(file_inertial_accelerations_name, std::ios::out);
-                                             if (outfile_inertial_acc.fail())
-                                              {
-                                               // Error message
-                                               std::ostringstream error_message;
-                                               error_message << "Could not create the file [" << file_inertial_accelerations_name << "]"
-                                                             << std::endl;
-                                               throw ChapchomLibError(error_message.str(),
-                                                                      CHAPCHOM_CURRENT_FUNCTION,
-                                                                      CHAPCHOM_EXCEPTION_LOCATION);
-                                              }
+ // Inertial accelerations
+ char file_inertial_accelerations_name[100];
+ sprintf(file_inertial_accelerations_name, "./RESLT/inertial_accelerations.dat");
+ std::ofstream outfile_inertial_acc;
+ outfile_inertial_acc.open(file_inertial_accelerations_name, std::ios::out);
+ if (outfile_inertial_acc.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_inertial_accelerations_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
  
-                                             // Linear accelerations
-                                             char file_linear_accelerations_name[100];
-                                             sprintf(file_linear_accelerations_name, "./RESLT/linear_accelerations.dat");
-                                             std::ofstream outfile_linear_acc;
-                                             outfile_linear_acc.open(file_linear_accelerations_name, std::ios::out);
-                                             if (outfile_linear_acc.fail())
-                                              {
-                                               // Error message
-                                               std::ostringstream error_message;
-                                               error_message << "Could not create the file [" << file_linear_accelerations_name << "]"
-                                                             << std::endl;
-                                               throw ChapchomLibError(error_message.str(),
-                                                                      CHAPCHOM_CURRENT_FUNCTION,
-                                                                      CHAPCHOM_EXCEPTION_LOCATION);
-                                              }
+ // Linear accelerations
+ char file_linear_accelerations_name[100];
+ sprintf(file_linear_accelerations_name, "./RESLT/linear_accelerations.dat");
+ std::ofstream outfile_linear_acc;
+ outfile_linear_acc.open(file_linear_accelerations_name, std::ios::out);
+ if (outfile_linear_acc.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_linear_accelerations_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
  
-                                             // Velocity
-                                             char file_velocity_name[100];
-                                             sprintf(file_velocity_name, "./RESLT/velocity.dat");
-                                             std::ofstream outfile_velocity;
-                                             outfile_velocity.open(file_velocity_name, std::ios::out);
-                                             if (outfile_velocity.fail())
-                                              {
-                                               // Error message
-                                               std::ostringstream error_message;
-                                               error_message << "Could not create the file [" << file_velocity_name << "]"
-                                                             << std::endl;
-                                               throw ChapchomLibError(error_message.str(),
-                                                                      CHAPCHOM_CURRENT_FUNCTION,
-                                                                      CHAPCHOM_EXCEPTION_LOCATION);
-                                              }
+ // Velocity
+ char file_velocity_name[100];
+ sprintf(file_velocity_name, "./RESLT/velocity.dat");
+ std::ofstream outfile_velocity;
+ outfile_velocity.open(file_velocity_name, std::ios::out);
+ if (outfile_velocity.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_velocity_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
  
-                                             // Velocity (North-East)
-                                             char file_velocity_north_east_name[100];
-                                             sprintf(file_velocity_north_east_name, "./RESLT/velocity_north_east.dat");
-                                             std::ofstream outfile_velocity_north_east;
-                                             outfile_velocity_north_east.open(file_velocity_north_east_name, std::ios::out);
-                                             if (outfile_velocity_north_east.fail())
-                                              {
-                                               // Error message
-                                               std::ostringstream error_message;
-                                               error_message << "Could not create the file [" << file_velocity_north_east_name << "]"
-                                                             << std::endl;
-                                               throw ChapchomLibError(error_message.str(),
-                                                                      CHAPCHOM_CURRENT_FUNCTION,
-                                                                      CHAPCHOM_EXCEPTION_LOCATION);
-                                              }
+ // Velocity (North-East)
+ char file_velocity_north_east_name[100];
+ sprintf(file_velocity_north_east_name, "./RESLT/velocity_north_east.dat");
+ std::ofstream outfile_velocity_north_east;
+ outfile_velocity_north_east.open(file_velocity_north_east_name, std::ios::out);
+ if (outfile_velocity_north_east.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_velocity_north_east_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
  
 #ifdef READ_AND_OUTPUT_PROCESSED_INFO_FROM_GEOFOG3D
-                                             // Linear acceleration from table
-                                             char file_linear_acceleration_from_table_name[100];
-                                             sprintf(file_linear_acceleration_from_table_name, "./RESLT/linear_acceleration_from_table.dat");
-                                             std::ofstream outfile_linear_acceleration_from_table;
-                                             outfile_linear_acceleration_from_table.open(file_linear_acceleration_from_table_name, std::ios::out);
-                                             if (outfile_linear_acceleration_from_table.fail())
-                                              {
-                                               // Error message
-                                               std::ostringstream error_message;
-                                               error_message << "Could not create the file [" << file_linear_acceleration_from_table_name << "]"
-                                                             << std::endl;
-                                               throw ChapchomLibError(error_message.str(),
-                                                                      CHAPCHOM_CURRENT_FUNCTION,
-                                                                      CHAPCHOM_EXCEPTION_LOCATION);
-                                              }
+ // Linear acceleration from table
+ char file_linear_acceleration_from_table_name[100];
+ sprintf(file_linear_acceleration_from_table_name, "./RESLT/linear_acceleration_from_table.dat");
+ std::ofstream outfile_linear_acceleration_from_table;
+ outfile_linear_acceleration_from_table.open(file_linear_acceleration_from_table_name, std::ios::out);
+ if (outfile_linear_acceleration_from_table.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_linear_acceleration_from_table_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
   
-                                             // G-force from table
-                                             char file_g_force_from_table_name[100];
-                                             sprintf(file_g_force_from_table_name, "./RESLT/g_force_from_table.dat");
-                                             std::ofstream outfile_g_force_from_table;
-                                             outfile_g_force_from_table.open(file_g_force_from_table_name, std::ios::out);
-                                             if (outfile_g_force_from_table.fail())
-                                              {
-                                               // Error message
-                                               std::ostringstream error_message;
-                                               error_message << "Could not create the file [" << file_g_force_from_table_name << "]"
-                                                             << std::endl;
-                                               throw ChapchomLibError(error_message.str(),
-                                                                      CHAPCHOM_CURRENT_FUNCTION,
-                                                                      CHAPCHOM_EXCEPTION_LOCATION);
-                                              }
+ // G-force from table
+ char file_g_force_from_table_name[100];
+ sprintf(file_g_force_from_table_name, "./RESLT/g_force_from_table.dat");
+ std::ofstream outfile_g_force_from_table;
+ outfile_g_force_from_table.open(file_g_force_from_table_name, std::ios::out);
+ if (outfile_g_force_from_table.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_g_force_from_table_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
  
-                                             // Second gyro from table
-                                             char file_second_gyro_from_table_name[100];
-                                             sprintf(file_second_gyro_from_table_name, "./RESLT/second_gyro_from_table.dat");
-                                             std::ofstream outfile_second_gyro_from_table;
-                                             outfile_second_gyro_from_table.open(file_second_gyro_from_table_name, std::ios::out);
-                                             if (outfile_second_gyro_from_table.fail())
-                                              {
-                                               // Error message
-                                               std::ostringstream error_message;
-                                               error_message << "Could not create the file [" << file_second_gyro_from_table_name << "]"
-                                                             << std::endl;
-                                               throw ChapchomLibError(error_message.str(),
-                                                                      CHAPCHOM_CURRENT_FUNCTION,
-                                                                      CHAPCHOM_EXCEPTION_LOCATION);
-                                              }
+ // Second gyro from table
+ char file_second_gyro_from_table_name[100];
+ sprintf(file_second_gyro_from_table_name, "./RESLT/second_gyro_from_table.dat");
+ std::ofstream outfile_second_gyro_from_table;
+ outfile_second_gyro_from_table.open(file_second_gyro_from_table_name, std::ios::out);
+ if (outfile_second_gyro_from_table.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_second_gyro_from_table_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
  
-                                             // Euler angles from table
-                                             char file_euler_angles_from_table_name[100];
-                                             sprintf(file_euler_angles_from_table_name, "./RESLT/euler_angles_from_table.dat");
+ // Euler angles from table
+ char file_euler_angles_from_table_name[100];
+ sprintf(file_euler_angles_from_table_name, "./RESLT/euler_angles_from_table.dat");
  std::ofstream outfile_euler_angles_from_table;
  outfile_euler_angles_from_table.open(file_euler_angles_from_table_name, std::ios::out);
  if (outfile_euler_angles_from_table.fail())
@@ -933,18 +933,10 @@ int main(int argc, char *argv[])
  // -----------------------------------------------------------------
  // Odes from GEOFOG3D
  //CCODEsFromSensorsGEOFOG3D odes("./GEOFOG3D/GEOFOG3D_with_lat_lon.dat", 0, 11591);
- 
- //#define TONANTZINTLA_TO_CHOLULA
- //#define TLAXCALANCINGO_TO_ACATEPEC_ZERO_INITIAL_VELOCITY
- //#define TLAXCALANCINGO_TO_ACATEPEC
- //#define ACATEPEC_TO_TONANTZINTLA
- #define UDLAP_PERIFERICO
- //#define PERIFERICO_TO_11SUR
- //#define _11SUR_TO_TLAXCALANCINGO
-  
+   
 #ifdef TONANTZINTLA_TO_CHOLULA
-  const unsigned Initial_index = 0;
-  const unsigned Final_index = 11591;
+ const unsigned Initial_index = 0;
+ const unsigned Final_index = 11591;
 #endif // #ifdef TONANTZINTLA_TO_CHOLULA
  
 #ifdef TLAXCALANCINGO_TO_ACATEPEC_ZERO_INITIAL_VELOCITY
@@ -1040,78 +1032,20 @@ int main(int argc, char *argv[])
   {
    y[i].resize(n_history_values+1);
   }
- 
- // Set initial conditions
+
+ // Iniatilise
  y[0][0] = 0.0; // Initial x-position
- y[1][0] = 6.1;//0.0; // Initial x-velocity
+ y[1][0] = 0.0; // Initial x-velocity
  y[2][0] = 0.0; // Initial y-position
  y[3][0] = 0.0; // Initial y-velocity
  y[4][0] = 0.0; // Initial z-position
  y[5][0] = 0.0; // Initial z-velocity
-#ifdef TONANTZINTLA_TO_CHOLULA
- y[1][0] = 7.729281075; // Initial x-velocity
- //y[6][0] = 0.0; // Initial roll (radians)
- y[6][0] = 0.03174143; // Initial roll (radians)
- //y[7][0] = 0.0; // Initial pitch (radians)
- y[7][0] = 0.044491584; // Initial pitch (radians)
- y[8][0] = 0.646752591;//0.924043736;//0.646752591; // Initial yaw (radians)
- y[9][0] = 0.646752591;//0.0 // Initial yaw with threshold (radians)
- //y[8][0] = 0.0; // Initial yaw (radians)
- //y[9][0] = 0.0; // Initial yaw with threshold (radians)
-#endif // #ifdef TONANTZINTLA_TO_CHOLULA
+ y[6][0] = 0.0; // Initial roll
+ y[7][0] = 0.0; // Initial pitch
+ y[8][0] = 0.0; // Initial yaw
+ y[9][0] = 0.0; // Initial yaw-threshold
  
-#ifdef TLAXCALANCINGO_TO_ACATEPEC_ZERO_INITIAL_VELOCITY
- y[1][0] = 0.017278609; // Initial x-velocity
- y[6][0] = 0.018566813; // Initial roll (radians)
- y[7][0] = 0.079363612; // Initial pitch (radians)
- y[8][0] = -2.017426082; //4.404219685;//0.924043736;//0.646752591; // Initial yaw (radians)
- y[9][0] = -2.017426082; // Initial yaw with threshold (radians)
- // y[1][0] = 9.230875187; // Initial x-velocity
- //y[6][0] = 0.03864159; // Initial roll (radians)
- //y[7][0] = 0.056403805; // Initial pitch (radians)
- //y[8][0] = -1.878965622; //4.404219685;//0.924043736;//0.646752591; // Initial yaw (radians)
- //y[9][0] = -1.878965622; // Initial yaw with threshold (radians)
-#endif // #ifdef TLAXCALANCINGO_TO_ACATEPEC_ZERO_INITIAL_VELOCITY
- 
-#ifdef TLAXCALANCINGO_TO_ACATEPEC
- y[1][0] = 9.47332405; // Initial x-velocity
- y[6][0] = 0.063093652; // Initial roll (radians)
- y[7][0] = 0.048420669; // Initial pitch (radians)
- y[8][0] = -1.82427573; //4.404219685;//0.924043736;//0.646752591; // Initial yaw (radians)
- y[9][0] = -1.82427573; // Initial yaw with threshold (radians)
-#endif // #ifdef TLAXCALANCINGO_TO_ACATEPEC
- 
-#ifdef ACATEPEC_TO_TONANTZINTLA
- y[1][0] = 9.928759692; // Initial x-velocity
- y[6][0] = 0.020158553; // Initial roll (radians)
- y[7][0] = 0.016275195; // Initial pitch (radians)
- y[8][0] = -1.031505296; // Initial yaw (radians)
- y[9][0] = -1.031505296; // Initial yaw with threshold (radians)
-#endif // #ifdef ACATEPEC_TO_TONANTZINTLA
-
-#ifdef UDLAP_PERIFERICO
- y[1][0] = 11.422295071; // Initial x-velocity
- y[6][0] = 0.04549096; // Initial roll (radians)
- y[7][0] = 0.008888264; // Initial pitch (radians)
- y[8][0] = 2.923349999; // Initial yaw (radians)
- y[9][0] = 2.923349999; // Initial yaw with threshold (radians)
-#endif // #ifdef UDLAP_PERIFERICO
- 
-#ifdef PERIFERICO_TO_11SUR
- y[1][0] = 16.06923009; // Initial x-velocity
- y[6][0] = -0.050907938; // Initial roll (radians)
- y[7][0] = 0.062309127; // Initial pitch (radians)
- y[8][0] = 2.777109996; // Initial yaw (radians)
- y[9][0] = 2.777109996; // Initial yaw with threshold (radians)
-#endif// #ifdef PERIFERICO_TO_11SUR
- 
-#ifdef _11SUR_TO_TLAXCALANCINGO
- y[1][0] = 14.630887714; // Initial x-velocity
- y[6][0] = -0.033215536; // Initial roll (radians)
- y[7][0] = 0.026363547; // Initial pitch (radians)
- y[8][0] = -1.465565365; // Initial yaw (radians)
- y[9][0] = -1.465565365; // Initial yaw with threshold (radians)
-#endif// #ifdef _11SUR_TO_TLAXCALANCINGO
+ odes.set_initial_conditions(y);
  
  // Discretised time
  double current_time = 0;
@@ -1156,10 +1090,23 @@ int main(int argc, char *argv[])
  // Flag to indicate whether to continue processing
  bool LOOP = true;
  
+ // Reset initial conditions every n_seconds_to_reset_initial_conditions
+ const unsigned n_seconds_to_reset_initial_conditions = 100000;
+ // Count the number of seconds since last reset of initial conditions
+ unsigned n_seconds = 0;
+ 
  // Main LOOP (continue looping until all data in the input file is
  // processed)
  while(LOOP)
   {
+   // Check whether we should reset initial conditions
+   if (n_seconds >= n_seconds_to_reset_initial_conditions)
+    {
+     std::cout << "Reseting initial conditions for current time" << std::endl;
+     odes.reset_initial_conditions_at_current_time(y);
+     n_seconds = 0;
+    }
+   
    // Retrieve data from sensors
    LOOP = odes.get_sensors_lectures();
    // Check if there are data to process, otherwise end the LOOP
@@ -2144,7 +2091,10 @@ int main(int argc, char *argv[])
 #endif //  #ifdef NAVIGATION_DATA_TO_EVALUATION
      
     } // for (i < n_data-1)
-
+   
+   // Increase the number of seconds since last reset of initial conditions
+   n_seconds++; 
+   
    std::cout.precision(8);
    std::cout << "t: " << current_time
              << " x-pos: " << y[0][0] << " x-vel: " << y[1][0]
