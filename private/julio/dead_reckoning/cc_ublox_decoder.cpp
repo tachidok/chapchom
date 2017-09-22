@@ -6,73 +6,74 @@ namespace chapchom
 {
  
  // ===================================================================
- // Constructor, establish the maximum number of fields, the maximum
- // size of the fields, and the size of the checksum (in bytes)
+ // Constructor, establish the size of the checksum (in bytes)
  // ===================================================================
- CCUBLOXDecoder::CCUBLOXDecoder(const unsigned max_fields,
-                                const unsigned max_fields_size,
-                                const unsigned checksum_size)
-  : Max_fields(max_fields), Max_fields_size(max_fields_size),
-    Max_UBX_block_size(max_fields*max_fields_size), Checksum_size(checksum_size),
-    NStates(4), NTransitions(4),
+ CCUBLOXDecoder::CCUBLOXDecoder(const unsigned checksum_size)
+  : NGeneral_states(10), NGeneral_transitions(5),
+    Checksum_size(checksum_size),
+    NUBX_ESF_RAW_states(3),
+    NUBX_ESF_RAW_transitions(1),
     UBX_ESF_RAW_data_ready(false)
  {
   // ----------------------------------------------------------
   // Finite state machine
   // ----------------------------------------------------------
   // Resize the transition matrix
-  const unsigned n_states = NStates;
-  const unsigned n_transitions = NTransitions;
+  const unsigned n_general_states = NGeneral_states;
+  const unsigned n_general_transitions = NGeneral_transitions;
   
   // The transition matrix
-  unsigned transition_matrix[] =
+  int general_transition_matrix[] =
    {
-    1, 0, 0, 0,
-    0, 2, 0, 0,
-    0, 0, 3, 0,
-    0, 0, 0, 2
+    1, 0, 0, 0, 0,
+    1, 2, 0, 0, 0,
+    1, 0, 3, 0, 0,
+    1, 0, 0, 4, 0,
+    1, -1, -1, -1, 5,
+    1, -1, -1, -1, 6,
+    6, 6, 6, 6, 6,
+    -1, -1, -1, -1, 8,
+    -1, -1, -1, -1, 9,
+    -1, -1, -1, -1, -1
    };
   
-  // Allocate memory for the State transition matrix
-  State_machine_transitions = new unsigned[n_states*n_transitions];
-  // Copy the "transition_matrix" into the "State_machine_transitions"
+  // Allocate memory for the general transition matrix
+  General_transition_matrix = new int[n_general_states*n_general_transitions];
+  // Copy the "general_transition_matrix" into the "General_transition_matrix"
   // structure
   unsigned k = 0;
-  for (unsigned i = 0; i < n_states; i++)
+  for (unsigned i = 0; i < n_general_states; i++)
    {
-    for (unsigned j = 0; j < n_transitions; j++)
+    for (unsigned j = 0; j < n_general_transitions; j++)
      {
-      State_machine_transitions[i*n_transitions+j] = transition_matrix[k++];
-     } // for (j < n_transitions)
+      General_transition_matrix[i*n_general_transitions+j] = general_transition_matrix[k++];
+     } // for (j < n_general_transitions)
     
-   } // for (i < n_states)
+   } // for (i < n_general_states)
   
-  // Allocate memory for the Fields matrix
-  Fields = new char*[max_fields];
-  // Allocate memory for each row of the Fields matrix
-  for (unsigned i = 0; i < max_fields; i++)
-   {
-    Fields[i] = new char[max_fields_size];
-   }
-  
-  // Allocate memory for checsum entries
-  Input_checksum = new char[checksum_size];
+  // Allocate memory to store checksum entries
+  Read_checksum = new unsigned char[checksum_size];
   
   // Initialise/reset state machine and checksum vector
-  reset_state_machine();
+  reset_general_state_machine();
+  
   // Establish the final state
-  Final_state = 3;
+  General_final_state = 10;
+
+  // ----------------------------------------------------------
+  // Reset all particular state machines
+  // ----------------------------------------------------------
+  reset_UBX_ESF_RAW_state_machine();
   
   // ----------------------------------------------------------
-  // Read data (initialise structures)
+  // Mark all data structures as invalid
   // ----------------------------------------------------------
-  ubx_esf_raw.valid_gyroscope_temperature = false;
-  ubx_esf_raw.valid_gyroscope_x = false;
-  ubx_esf_raw.valid_gyroscope_y = false;
-  ubx_esf_raw.valid_gyroscope_z = false;
-  ubx_esf_raw.valid_accelerometer_x = false;
-  ubx_esf_raw.valid_accelerometer_y = false;
-  ubx_esf_raw.valid_accelerometer_z = false;
+  set_UBX_ESF_RAW_data_as_invalid();
+
+  // ----------------------------------------------------------
+  // Fill the sets with the class and ids that are decoded
+  // ----------------------------------------------------------
+  fill_class_and_ids();
   
  }
  
@@ -82,151 +83,132 @@ namespace chapchom
  CCUBLOXDecoder::~CCUBLOXDecoder()
  {
   // Free memory for state machien transitions
-  delete State_machine_transitions;
-  State_machine_transitions = 0;
+  delete General_transition_matrix;
+  General_transition_matrix = 0;
   
-  // Free memory allocated for entries in the Fields matrix
-  for (unsigned i = 0; i < Max_fields; i++)
-   {
-    delete Fields[i];
-    Fields[i] = 0;
-   }
+  // Free memory for checksum (read/computed)
+  delete Read_checksum;
+  Read_checksum = 0;
   
-  delete [] Fields;
-  Fields = 0;
-  
-  // Free memory for checksum
-  delete Input_checksum;
-  Input_checksum = 0;
+  // Free memory for all particular state machines
+  delete UBX_ESF_RAW_transition_matrix;
+  UBX_ESF_RAW_transition_matrix = 0;
   
  }
  
  // ===================================================================
- // Initialise any variables (of the state machine). This method is
- // called any time a non-valid UBX protocol data is identified
+ // Eats a byte, validates the bytes as part of the UBX
+ // protocol. Also in charge of calling the proper methods to store
+ // the info. in the corresponding data structures
  // ===================================================================
- void CCUBLOXDecoder::reset_state_machine()
+ void CCUBLOXDecoder::parse(const unsigned byte)
  {
-  // Reset number of fields variables
-  Total_number_of_fields = 0;
-  Counter_n_current_fields = 0;
-  // Reset state information of the state machine
-  Current_state = 0;
-  Last_state = 0;
-  // Initialise the number of read characters
-  Counter_n_read_characters = 0;
-  // Reset checksum
-  Computed_checksum = 0;
-  
-  // Clean fields
-  clean_fields_matrix();
-  
- }
-
- // ===================================================================
- // Clean-up any info. stored in the Fields matrix
- // ===================================================================
- void CCUBLOXDecoder::clean_fields_matrix()
- {
-  // Loop over the fields and fill with zeroes
-  for (unsigned i = 0; i < Max_fields; i++)
-   {
-    memset(Fields[i], 0, Max_fields_size);
-   }
-  
-  // Clean the stored checksum as well
-  memset(Input_checksum, 0, Checksum_size);
-  
- }
- 
- // ===================================================================
- // Eats a byte, validates the byte as part of the UBX protocol and
- // stores its entry in a matrix structure containing the parsed
- // information
- // ===================================================================
- void CCUBLOXDecoder::parse(const unsigned char character)
- {
-  // Keep track of the last state
-  Last_state = Current_state;
+  // Keep track of the last state of the general state machine (before
+  // doing the change to the next state)
+  Last_general_state = Current_general_state;
   // Increase the number of read chacacters
-  Counter_n_read_characters++;
+  Counter_n_read_bytes++;
   
-  // Check whether we have exceed the maximum number of read
-  // characters
-  if (Counter_n_read_characters > Max_UBX_block_size)
-   {
-    // Reset all
-    reset_state_machine();
-    // Error message
-    std::ostringstream error_message;
-    error_message << "The maximum number of the UBX block size has been exceeded.\n"
-                  << "The maximum UBX block size is: [" << Max_UBX_block_size << "]"
-                  << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
+  // Check whether the parsed-byte is part of the Class_id set
+  std::set<unsigned char>::iterator it_class = Class_id.find(byte);
+  // Check whether the parsed-byte is part of the Class_id set
+  std::set<unsigned char>::iterator it_id = IDs.find(byte);
   
   // ------------------------------------------------------------------
-  // Identify the group that the input character is part of, and
-  // transition accordingly
+  // Identify the read byte and transition accordingly
   // ------------------------------------------------------------------
-  if (character == 0xB5) // Start of UBX Protocol, Header first part
+  if (byte == 0xB5) // Indicates the beggining of the header of
+   // the UBX Protocol. Header first part
    {
-    Current_state = State_machine_transitions[NTransitions*Current_state+0];
+    Current_general_state = General_transition_matrix[NGeneral_transitions*Current_general_state+0];
    }
-  else if (character == 0x62) // Header second part
+  else if (byte == 0x62) // Header second part
    {
-    Current_state = State_machine_transitions[NTransitions*Current_state+1];
+    Current_general_state = General_transition_matrix[NGeneral_transitions*Current_general_state+1];
    }
-  else if (character == 0x62) // Class
+  else if (it_class != Class_id.end()) // Class
    {
-    Current_state = State_machine_transitions[NTransitions*Current_state+2];
+    Current_general_state = General_transition_matrix[NGeneral_transitions*Current_general_state+2];
    }
-  else if (character == 0x03) // ID
+  else if (it_id != IDs.end()) // ID
    {
-    Current_state = State_machine_transitions[NTransitions*Current_state+3];
+    Current_general_state = General_transition_matrix[NGeneral_transitions*Current_general_state+3];
    }
-  else if (character == 0x2A) // GROUP E // TODO HERE
+  else if (byte == 0x2A) // Any byte
    {
-    Current_state = State_machine_transitions[NTransitions*Current_state+4];
+    Current_general_state = General_transition_matrix[NGeneral_transitions*Current_general_state+4];
    }
-   
+  
   // -----------------------------------------------------------------------
   // Is there something we need to do in each state?
   // -----------------------------------------------------------------------
-  if (Current_state == 1) // eat characters, add them tot he Fields
-                          // structure and and compute the checksum
+  if (Current_general_state == 3)
    {
-    if (character == 0x2C) // , (coma)), end of field by found
-                           // delimiter
+    // Save the class id
+    Class_id_c = byte;
+   }
+  else if (Current_general_state == 4)
+   {
+    // Save the ID
+    ID_c = byte;
+   }
+  else if (Current_general_state == 5)
+   {
+    // Save the payload byte 1
+    Payload_byte1 = byte;
+    // Add the byte to the payload storage
+    Payload_length = 0xFF00 & (byte << 8);
+   }
+  else if (Current_general_state == 6 && Last_general_state == 5)
+   {
+    // Save the payload byte 2
+    Payload_byte2 = byte;
+    // Add the byte to the payload storage
+    Payload_length = 0x00FF & byte;
+    // Based on the size of the payload allocate storage for the
+    // checksum
+    Computed_checksum = new unsigned char[Payload_length+4];
+    // Add the stored bytes until now that are part of the checksum
+    Computed_checksum[0] = Class_id_c;
+    Computed_checksum[1] = ID_c;
+    Computed_checksum[2] = Payload_byte1;
+    Computed_checksum[3] = Payload_byte2;
+    Computed_checksum_index = 4;
+   }
+  // This is not the first time we are in this state - thus ...
+  else if (Current_general_state == 6 && Last_general_state == 6)
+   {
+    // Add the element to the checksum list
+    Computed_checksum[Computed_checksum_index++] = byte;
+    // Call the sub-parser method and check whether we should override
+    // the transition to the next state
+    bool override_transition_to_the_next_state = true;
+    if (override_transition_to_the_next_state)
      {
-      Computed_checksum ^= character;
-      Fields[Total_number_of_fields][Counter_n_current_fields] = 0;
-      Total_number_of_fields++;
-      Counter_n_current_fields = 0;
-     }
-    else if (character != 0x24) // Include to the fields structure any
-                                // other thing different from $
-     {
-      Computed_checksum ^= character;
-      Fields[Total_number_of_fields][Counter_n_current_fields] = character;
-      Counter_n_current_fields++;
+      // Treat the read byte as if we were already in state 7 and do
+      // the corresponding transition
+      Current_general_state = 8;
+      Read_checksum[0] = byte; // CK_A
      }
    }
-  else if (Current_state == 3) // First checksum character
+  else if (Current_general_state == 8)
    {
-    Total_number_of_fields++;
-    Input_checksum[0] = character;
-   }
-  else if (Current_state == 4) // Second checksum character
-   {
-    Input_checksum[1] = character;
+    // Add the element to the checksum list
+    Computed_checksum[Computed_checksum_index++] = byte;
+    Read_checksum[1] = byte; // CK_B
    }
   
   // Check whether we have reached a final state
-  if (Current_state == Final_state) // TODO IMPLEMENT THE DECODING OF THE CHECKSUM
+  if (Current_general_state == General_final_state) // TODO IMPLEMENT THE DECODING OF THE CHECKSUM
    {
+    unsigned CK_A = 0;
+    unsigned CK_B = 0;
+    // Loop over the elements used to create the checksum
+    for (int i = 0; i < Payload_length + 4; i++)
+     {
+      
+      
+     }
     // Validate the checksum
     char *computed_checksum_hex = new char[Checksum_size];
     // Transform to hexadecimal
@@ -260,37 +242,98 @@ namespace chapchom
  }
  
  // ===================================================================
- // Decode message and fill the corresponding data structure
+ // Initialise any variables (of the state machine). This method is
+ // called any time a non-valid UBX protocol data is identified
  // ===================================================================
- void CCUBLOXDecoder::decode_message_and_fill_structure()
+ void CCUBLOXDecoder::reset_general_state_machine()
  {
-  // Based on the first field in the Fields matrix call the
-  // correspoing method in charge of filling the data structure
-  if (Fields[2] == 0x10 && Fields[3] == 0x03)
+  // Reset state information of the general state machine
+  Current_general_state = 0;
+  Last_general_state = 0;
+  // Initialise the number of read bytes
+  Counter_n_read_bytes = 0;
+  // Reset checksum
+  reset_checksum();
+  // Reset the payload length
+  Payload_length = 0;
+ }
+ 
+ // ===================================================================
+ // In charge of cleaning the checksum
+ // ===================================================================
+ void CCUBLOXDecoder::reset_checksum()
+ {
+  for (unsigned i = 0; i < Checksum_size; i++)
    {
-    decode_UBX_ESF_RAW_and_fill_structure();
-    //print_UBX_ESF_RAW_structure();
+    Read_checksum[i] = 0;
    }
-  
+ }
+ 
+ // ===================================================================
+ // In charge of filling the class and IDs numbers of the data blocks
+ // that are decoded
+ // ===================================================================
+ void CCUBLOXDecoder::fill_class_and_ids()
+ {
+  // Fill the data structures with the corresponding data blocks to
+  // decode
+  Class_id.insert(0x10);
+  IDs.insert(0x03);
+ }
+ 
+ // ===================================================================
+ // Initialise any variables (of the UBX-ESF-RAW state machine). This
+ // method is called any time a non-valid UBX protocol data is
+ // identified
+ // ===================================================================
+ void CCUBLOXDecoder::reset_UBX_ESF_RAW_state_machine()
+ {
+  // The number of read bytes from the input UBLOX data block
+  // Reset state information of the UBX-ESF-RAW state machine
+  Counter_UBX_ESF_RAW_n_read_bytes = 0;
+  Current_UBX_ESF_RAW_general_state = 0;
+  Last_UBX_ESF_RAW_general_state = 0;
+ }
+ 
+ // ===================================================================
+ // Set all data in UBX-ESF-RAW block as invalid
+ // ===================================================================
+ void CCUBLOXDecoder::set_UBX_ESF_RAW_data_as_invalid()
+ {
+  UBX_ESF_RAW.valid_gyroscope_temperature = false;
+  UBX_ESF_RAW.valid_gyroscope_x = false;
+  UBX_ESF_RAW.valid_gyroscope_y = false;
+  UBX_ESF_RAW.valid_gyroscope_z = false;
+  UBX_ESF_RAW.valid_accelerometer_x = false;
+  UBX_ESF_RAW.valid_accelerometer_y = false;
+  UBX_ESF_RAW.valid_accelerometer_z = false;
+ }
+
+ // ===================================================================
+ // Set all data in UBX-ESF-RAW block as valid
+ // ===================================================================
+ void CCUBLOXDecoder::set_UBX_ESF_RAW_data_as_valid()
+ {
+  UBX_ESF_RAW.valid_gyroscope_temperature = true;
+  UBX_ESF_RAW.valid_gyroscope_x = true;
+  UBX_ESF_RAW.valid_gyroscope_y = true;
+  UBX_ESF_RAW.valid_gyroscope_z = true;
+  UBX_ESF_RAW.valid_accelerometer_x = true;
+  UBX_ESF_RAW.valid_accelerometer_y = true;
+  UBX_ESF_RAW.valid_accelerometer_z = true;
  }
  
  // ===================================================================
  // Decode the UBX-ESF-RAW block and fill the corresponding data
  // structure
  // ===================================================================
- bool CCUBLOXDecoder::decode_PSTM3DACC_and_fill_structure()
+ bool CCUBLOXDecoder::decode_UBX_ESF_RAW_and_fill_structure()
  {
   // Indicate that UBX-ESF-RAW data is not ready
   UBX_ESF_RAW_data_ready = false;
   
   // Reset valid status of data
-  ubx_esf_raw.valid_gyroscope_temperature = false;
-  ubx_esf_raw.valid_gyroscope_x = false;
-  ubx_esf_raw.valid_gyroscope_y = false;
-  ubx_esf_raw.valid_gyroscope_z = false;
-  ubx_esf_raw.valid_accelerometer_x = false;
-  ubx_esf_raw.valid_accelerometer_y = false;
-  ubx_esf_raw.valid_accelerometer_z = false;
+  set_UBX_ESF_RAW_data_as_invalid();
   
   // Start decoding data
   if (transform_helper(pstm3dacc.time, Fields[1]))

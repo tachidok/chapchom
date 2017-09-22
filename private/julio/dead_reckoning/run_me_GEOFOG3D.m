@@ -19,14 +19,14 @@ clear all
 %Initial_index=68504;
 %Final_index=74087;
 % UDLAP_PERIFERICO
-Initial_index=35638;
-Final_index=39284;
+%Initial_index=35638;
+%Final_index=39284;
 % PERIFERICO_TO_11SUR
 %Initial_index=40300;
 %Final_index=46076;
 % 11SUR_TO_TLAXCALANCINGO
-%Initial_index=48569;
-%Final_index=54575;
+Initial_index=48569;
+Final_index=54575;
 
 n_input_raw_data = Final_index-Initial_index+1;
 n_input_aligned_data = n_input_raw_data;
@@ -615,6 +615,39 @@ ylabel('Error (m)')
 grid on
 
 max(Error)
+
+%% Plots for report
+Error(1) = 0
+figure
+plot(lon, lat, 'r', latitude_and_longitude(:,3), latitude_and_longitude(:,2), 'b', 'LineWidth', 2)
+hold on
+title('Posición')
+xlabel('Longitud')
+ylabel('Latitud')
+legend('Trayectoria de referencia', 'Trayectoria obtenida', 'Location', 'NorthWest')
+plot_google_map2('Refresh','1','maptype','terrain','AutoAxis','1','FigureResizeUpdate','1')
+hold off
+
+figure
+plot(t,Error, 'LineWidth', 2)
+title('Error en posición')
+xlabel('Tiempo (s)')
+ylabel('Error (m)')
+grid on 
+
+max(Error)
+max(t)
+
+cumulative_error = cumsum(Error);
+
+figure
+plot(t,cumulative_error)
+title('Error acumulado en posición')
+xlabel('Tiempo (s)')
+ylabel('Error (m)')
+grid on
+
+max(cumulative_error)
 
 %% Plot lat-lon imported to show full trajectory
 figure

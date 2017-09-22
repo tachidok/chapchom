@@ -48,96 +48,126 @@ namespace chapchom
   
  public:
   
-  // Constructor, establish the maximum number of fields, the maximum
-  // size of the fields, and the size of the checksum (in bytes)
-  CCUBLOXDecoder(const unsigned max_fields = 7,
-                 const unsigned max_fields_size = 4,
-                 const unsigned checksum_size = 2);
+  // Constructor, establish the size of the checksum (in bytes)
+  CCUBLOXDecoder(const unsigned checksum_size = 2);
   
   // Destructor (release allocated memory)
   virtual ~CCUBLOXDecoder();
   
-  // Eats a byte, validates the byte as part of the UBX protocol and
-  // stores its entry in a matrix structure containing the parsed
-  // information
-  void parse(const unsigned char character);
+  // Eats a byte, validates the bytes as part of the UBX
+  // protocol. Also in charge of calling the proper methods to store
+  // the info. in the corresponding data structures
+  void parse(const unsigned byte);
   
   // Method to check whether new values from ubx-esf-raw block are ready
   // or not
-  inline bool is_ubx_esf_raw_data_ready() {return UBX_ESF_RAW_data_ready;}
+  inline bool is_UBX_ESF_RAW_data_ready() {return UBX_ESF_RAW_data_ready;}
   
-  // Indicate that the ubx-esf-raw block data has been processed
-  inline void consume_ubx_esf_raw_data() {UBX_ESF_RAW_data_ready = false;}
+  // Indicate that the UBX-ESF-RAW block data has been processed
+  inline void consume_UBX_ESF_RAW_data() {UBX_ESF_RAW_data_ready = false;}
   
-  // Return a reference to the structure PSTM3DACC
-  inline struct UBX_ESF_RAW &get_ubx_esf_raw() {return ubx_esf_raw;}
+  // Return a reference to the structure UBX-ESF-RAW
+  inline struct UBX_ESF_RAW &get_UBX_ESF_RAW() {return UBX_ESF_RAW;}
   
  protected:
   
   // Initialise any variables (of the state machine). This method is
   // called any time a non-valid UBX protocol data is identified
-  void reset_state_machine();
+  void reset_general_state_machine();
   
-  // Clean-up any info. stored in the Fields matrix
-  void clean_fields_matrix();
+  // In charge of cleaning the checksum
+  void reset_checksum();
   
-  // Decode message and fill the corresponding data structure
-  void decode_message_and_fill_structure();
+  // In charge of filling the class and IDs numbers of the data blocks
+  // that are decoded
+  void fill_class_and_ids();
   
-  // The maximum number of fields
-  const unsigned Max_fields;
+  // The number of read bytes from the input UBLOX data block
+  unsigned Counter_n_read_bytes;
   
-  // The maximum size of each field
-  const unsigned Max_fields_size;
+  // Current state on the state machine
+  int Current_general_state;
   
-  // Stores the maximum number of entries of the NMEA string
-  const unsigned Max_UBX_block_size;
+  // The last state on the state machine
+  int Last_general_state;
+    
+  // Matrix with the transitions of the general state machine
+  int *General_transition_matrix;
+  
+  // The number of states in the general state machine
+  const unsigned NGeneral_states;
+  
+  // The number of transitions of the general state machine
+  const unsigned NGeneral_transitions;
+  
+  // Final state of the general state machine
+  int General_final_state;
   
   // Stores the allowed size for the checksum
   const unsigned Checksum_size;
   
-  // The number of read bytes from the input UBLOX data block
-  unsigned Counter_n_read_characters;
-  
-  // Total number of fields identified in the UBLOX data block
-  unsigned Total_number_of_fields;
-  
-  // The current number of fields identified in the UBLOX data block
-  unsigned Counter_n_current_fields;
-  
-  // Current state on the state machine
-  unsigned Current_state;
-  
-  // The last state on the state machine
-  unsigned Last_state;
-  
   // Stores the checksum read from the UBLOX data block
-  char* Input_checksum;
-  
-  // Stores the identified fields of the UBLOX data block. It
-  // stores each identified data of the UBLOX data block in a cell o the matrix
-  // Fields[0] = number
-  // Fields[1] = number
-  // Fields[2] = number
-  char **Fields;
-  
-  // Matrix with the transitions of the state machine
-  unsigned *State_machine_transitions;
-  
-  // The number of states in the state machine
-  const unsigned NStates;
-  
-  // The number of transitions on of the state machine
-  const unsigned NTransitions;
-  
-  // Final state of the state machine
-  unsigned Final_state;
+  unsigned char* Read_checksum;
   
   // Stores the computed checksum of the currently reading UBLOX data
   // block
-  unsigned Computed_checksum;
-   
+  unsigned char *Computed_checksum;
+  
+  // The index of the computed checksum
+  unsigned Computed_checksum_index;
+  
+  // Stores the two bytes of the payload
+  unsigned char Payload_byte1;
+  unsigned char Payload_byte2;
+  
+  // Store the length of the payload
+  int Payload_length;
+  
+  // Store the class_id
+  unsigned char Class_id_c;
+  
+  // Set with the class ids that are decoded
+  std::set<unsigned char> Class_id;
+  
+  // Store the id
+  unsigned char ID_c;
+  
+  // Set with the ids decoded
+  std::set<unsigned char> IDs;
+  
  private:
+  
+  // Initialise any variables (of the UBX-ESF-RAW state machine). This
+  // method is called any time a non-valid UBX protocol data is
+  // identified
+  void reset_UBX_ESF_RAW_state_machine(); 
+  
+  // The number of read bytes from the input UBLOX data block
+  unsigned Counter_UBX_ESF_RAW_n_read_bytes;
+  
+  // Current state on the UBX-ESF-RAW state machine
+  unsigned Current_UBX_ESF_RAW_general_state;
+  
+  // The last state on the UBX-ESF-RAW state machine
+  unsigned Last_UBX_ESF_RAW_general_state;
+
+  // Matrix with the transitions of the UBX-ESF-RAW state machine
+  unsigned *UBX_ESF_RAW_transition_matrix;
+  
+  // The number of states in the UBX-ESF-RAW state machine
+  const unsigned NUBX_ESF_RAW_states;
+  
+  // The number of transitions of the UBX-ESF-RAW state machine
+  const unsigned NUBX_ESF_RAW_transitions;
+  
+  // Final state of the UBX-ESF-RAW state machine
+  unsigned UBX_ESF_RAW_final_state;
+  
+  // Set all data in UBX-ESF-RAW block as invalid
+  void set_UBX_ESF_RAW_data_as_invalid();
+  
+  // Set all data in UBX-ESF-RAW block as valid
+  void set_UBX_ESF_RAW_data_as_valid();
   
   // Decode the UBX-ESF-RAW block and fill the corresponding data
   // structure
@@ -148,11 +178,11 @@ namespace chapchom
   
   // Structure to store the values received from the UBX-ESF-RAW data
   // block
-  struct UBX_ESF_RAW ubx_esf_raw;
+  struct UBX_ESF_RAW UBX_ESF_RAW;
   
   // Flag to indicate that new values from the UBX-ESF-RAW data block
   // are ready
-  bool UBX_ESF_RAW_data_ready; 
+  bool UBX_ESF_RAW_data_ready;
   
  };
   
