@@ -11,8 +11,6 @@ namespace chapchom
  CCUBLOXDecoder::CCUBLOXDecoder(const unsigned checksum_size)
   : NGeneral_states(10), NGeneral_transitions(5),
     Checksum_size(checksum_size),
-    NUBX_ESF_RAW_states(3),
-    NUBX_ESF_RAW_transitions(1),
     UBX_ESF_RAW_data_ready(false)
  {
   // ----------------------------------------------------------
@@ -29,8 +27,8 @@ namespace chapchom
     1, 2, 0, 0, 0,
     1, 0, 3, 0, 0,
     1, 0, 0, 4, 0,
-    1, -1, -1, -1, 5,
-    1, -1, -1, -1, 6,
+    1, 5, 5, 5, 5,
+    1, 6, 6, 6, 6,
     6, 6, 6, 6, 6,
     -1, -1, -1, -1, 8,
     -1, -1, -1, -1, 9,
@@ -89,11 +87,7 @@ namespace chapchom
   // Free memory for checksum (read/computed)
   delete Read_checksum;
   Read_checksum = 0;
-  
-  // Free memory for all particular state machines
-  delete UBX_ESF_RAW_transition_matrix;
-  UBX_ESF_RAW_transition_matrix = 0;
-  
+    
  }
  
  // ===================================================================
@@ -101,7 +95,7 @@ namespace chapchom
  // protocol. Also in charge of calling the proper methods to store
  // the info. in the corresponding data structures
  // ===================================================================
- void CCUBLOXDecoder::parse(const unsigned byte)
+ void CCUBLOXDecoder::parse(const unsigned char &byte)
  {
   // Keep track of the last state of the general state machine (before
   // doing the change to the next state)
@@ -134,7 +128,7 @@ namespace chapchom
    {
     Current_general_state = General_transition_matrix[NGeneral_transitions*Current_general_state+3];
    }
-  else if (byte == 0x2A) // Any byte
+  else // Any byte
    {
     Current_general_state = General_transition_matrix[NGeneral_transitions*Current_general_state+4];
    }
@@ -142,7 +136,21 @@ namespace chapchom
   // -----------------------------------------------------------------------
   // Is there something we need to do in each state?
   // -----------------------------------------------------------------------
-  if (Current_general_state == 3)
+  if (Current_general_state == 0)
+   {
+    std::cout << "Reading garbage: [" << byte << "]" << std::endl;
+   } 
+  if (Current_general_state == 1)
+   {
+    // Reset the number of read characters
+    Counter_n_read_bytes = 1;
+    std::cout << "Found first UBLOX header\n" << std::endl;
+   }
+  else if (Current_general_state == 2)
+   {
+    std::cout << "Found second UBLOX header\n" << std::endl;
+   }
+  else if (Current_general_state == 3)
    {
     // Save the class id
     Class_id_c = byte;
@@ -156,15 +164,13 @@ namespace chapchom
    {
     // Save the payload byte 1
     Payload_byte1 = byte;
-    // Add the byte to the payload storage
-    Payload_length = 0xFF00 & (byte << 8);
    }
   else if (Current_general_state == 6 && Last_general_state == 5)
    {
     // Save the payload byte 2
     Payload_byte2 = byte;
     // Add the byte to the payload storage
-    Payload_length = 0x00FF & byte;
+    Payload_length = ((Payload_byte1 << 8) & 0xFF00) || 0x00FF & Payload_byte2;
     // Based on the size of the payload allocate storage for the
     // checksum
     Computed_checksum = new unsigned char[Payload_length+4];
@@ -178,64 +184,64 @@ namespace chapchom
   // This is not the first time we are in this state - thus ...
   else if (Current_general_state == 6 && Last_general_state == 6)
    {
-    // Add the element to the checksum list
-    Computed_checksum[Computed_checksum_index++] = byte;
     // Call the sub-parser method and check whether we should override
     // the transition to the next state
-    bool override_transition_to_the_next_state = true;
+    bool override_transition_to_the_next_state = false;
+    if (Class_id_c == 0x10 && ID_c == 0x03) // UBX-ESF-RAW
+     {
+      override_transition_to_the_next_state = decode_UBX_ESF_RAW_and_fill_structure(byte);
+     }
     if (override_transition_to_the_next_state)
      {
+      // Reset all particular state machines
+      reset_UBX_ESF_RAW_state_machine();
+      
       // Treat the read byte as if we were already in state 7 and do
       // the corresponding transition
       Current_general_state = 8;
       Read_checksum[0] = byte; // CK_A
      }
+    else
+     {
+      // If still decoding then add the element to the checksum list
+      Computed_checksum[Computed_checksum_index++] = byte;
+     }
    }
-  else if (Current_general_state == 8)
+  else if (Current_general_state == 9)
    {
-    // Add the element to the checksum list
-    Computed_checksum[Computed_checksum_index++] = byte;
     Read_checksum[1] = byte; // CK_B
    }
   
   // Check whether we have reached a final state
-  if (Current_general_state == General_final_state) // TODO IMPLEMENT THE DECODING OF THE CHECKSUM
+  if (Current_general_state == General_final_state)
    {
     unsigned CK_A = 0;
     unsigned CK_B = 0;
     // Loop over the elements used to create the checksum
     for (int i = 0; i < Payload_length + 4; i++)
      {
-      
-      
+      CK_A = CK_A + Computed_checksum[i];
+      CK_B = CK_B + CK_A;
      }
-    // Validate the checksum
-    char *computed_checksum_hex = new char[Checksum_size];
-    // Transform to hexadecimal
-    sprintf(computed_checksum_hex, "%02X", Computed_checksum);
-    // To upper case
-    std::string str(Input_checksum);
-    std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-    
-    if (strcmp(str.c_str(), computed_checksum_hex)!=0)
+    // Validate the checksum    
+    if (CK_A != Read_checksum[0] || CK_B != Read_checksum[1])
      {
-      reset_state_machine();
+      reset_general_state_machine();
       // Error message
       std::ostringstream error_message;
       error_message << "The checksum is not correct\n"
-                    << "We got [" << computed_checksum_hex << "] as the computed checksum,\n"
-                    << "and [" << str << "] as the checksum in the input string."
+                    << "We got CK_A: [" << CK_A << "] and CK_B: [" << CK_B <<"],\n"
+                    << "but the received checksum is CK_A: [" << Read_checksum[0]
+                    << "] and CK_B:[" << Read_checksum[1] << "]."
                     << std::endl;
       throw ChapchomLibError(error_message.str(),
                              CHAPCHOM_CURRENT_FUNCTION,
                              CHAPCHOM_EXCEPTION_LOCATION);
      }
-
-    // Free memory
-    delete computed_checksum_hex;
-    computed_checksum_hex = 0;
     
-    decode_message_and_fill_structure();
+    // Free memory
+    delete Computed_checksum;
+    Computed_checksum = 0;
     
    }
   
@@ -291,8 +297,7 @@ namespace chapchom
   // The number of read bytes from the input UBLOX data block
   // Reset state information of the UBX-ESF-RAW state machine
   Counter_UBX_ESF_RAW_n_read_bytes = 0;
-  Current_UBX_ESF_RAW_general_state = 0;
-  Last_UBX_ESF_RAW_general_state = 0;
+  Local_block_UBX_ESF_RAW_counter = 0;
  }
  
  // ===================================================================
@@ -327,14 +332,119 @@ namespace chapchom
  // Decode the UBX-ESF-RAW block and fill the corresponding data
  // structure
  // ===================================================================
- bool CCUBLOXDecoder::decode_UBX_ESF_RAW_and_fill_structure()
+ bool CCUBLOXDecoder::decode_UBX_ESF_RAW_and_fill_structure(const unsigned char &byte)
  {
-  // Indicate that UBX-ESF-RAW data is not ready
+  // Indicate that accelerometer data is ready
   UBX_ESF_RAW_data_ready = false;
-  
   // Reset valid status of data
   set_UBX_ESF_RAW_data_as_invalid();
   
+  // Have we read all the data in the payload
+  if (Counter_UBX_ESF_RAW_n_read_bytes >= static_cast<unsigned>(Payload_length + 4))
+   {
+    // Indicate that accelerometer data is ready
+    UBX_ESF_RAW_data_ready = true;
+    // Indicate that the data in the UBX_ESF_RAW structure is valid
+    set_UBX_ESF_RAW_data_as_valid();
+    return true;
+   }
+  
+  // Skip the first 4 bytes since they are reserved
+  if (Counter_UBX_ESF_RAW_n_read_bytes >= 4)
+   {
+    // Add the read byte into the storage
+    UBX_ESF_RAW_data_block[Local_block_UBX_ESF_RAW_counter++] = byte;
+    
+    if (Local_block_UBX_ESF_RAW_counter >= 7)
+     {
+      // -------------------------------------------
+      // Decode the data
+      {
+       unsigned int data = ((UBX_ESF_RAW_data_block[6] << 16) & 0xFF0000) |
+        ((UBX_ESF_RAW_data_block[5] << 8) & 0xFF00) |
+        (UBX_ESF_RAW_data_block[4] & 0xFF);
+       // ---------------------
+       // Decode the data type
+       unsigned char data_type = UBX_ESF_RAW_data_block[7];
+       if (data_type == 5) // z-axis gyroscope angular rate
+        {
+         
+        }
+       else if (data_type == 12) // gyroscope temperature
+        {
+         
+        }
+       else if (data_type == 13) // y-axis gyroscope angular rate
+        {
+         
+        }
+       else if (data_type == 14) // x-axis gyroscope angular rate
+        {
+         
+        }
+       else if (data_type == 16) // x-axis accelerometer specific force
+        {
+         
+        }
+       else if (data_type == 17) // y-axis accelerometer specific force
+        {
+         
+        }
+       else if (data_type == 18) // z-axis accelerometer specific force
+        {
+         
+        }
+       
+       // ---------------------
+       // Decode the data field
+      }
+
+      {
+       // -------------------------------------------
+       // Decode the timing
+       unsigned int data = ((UBX_ESF_RAW_data_block[2] << 16) & 0xFF0000) |
+        ((UBX_ESF_RAW_data_block[1] << 8) & 0xFF00) |
+        (UBX_ESF_RAW_data_block[0] & 0xFF);
+       // ---------------------
+       // Decode the data type
+       unsigned char data_type = UBX_ESF_RAW_data_block[3];
+       if (data_type == 5) // z-axis gyroscope angular rate
+        {
+         UBX_ESF_RAW.time_gyroscope_z = data;
+        }
+       else if (data_type == 12) // gyroscope temperature
+        {
+         UBX_ESF_RAW.time_gyroscope_temperature = data;
+        }
+       else if (data_type == 13) // y-axis gyroscope angular rate
+        {
+         UBX_ESF_RAW.time_gyroscope_y = data;
+        }
+       else if (data_type == 14) // x-axis gyroscope angular rate
+        {
+         UBX_ESF_RAW.time_gyroscope_x = data;
+        }
+       else if (data_type == 16) // x-axis accelerometer specific force
+        {
+         UBX_ESF_RAW.time_accelerometer_x = data;
+        }
+       else if (data_type == 17) // y-axis accelerometer specific force
+        {
+         UBX_ESF_RAW.time_accelerometer_y = data;
+        }
+       else if (data_type == 18) // z-axis accelerometer specific force
+        {
+         UBX_ESF_RAW.time_accelerometer_z = data;
+        }
+      }
+      
+      // Restart local block counter
+      Local_block_UBX_ESF_RAW_counter = 0;
+     }
+    
+   } // if (Counter_UBX_ESF_RAW_n_read_bytes >= 4)
+ 
+#if 0
   // Start decoding data
   if (transform_helper(pstm3dacc.time, Fields[1]))
    {
@@ -370,14 +480,16 @@ namespace chapchom
   else
    {
     return false;
-   }  
+   }
+#endif // #if 0
   
-  // Indicate that accelerometer data is ready
-  UBX_ESF_RAW_data_ready = true;
+  // Increase the number of read bytes
+  Counter_UBX_ESF_RAW_n_read_bytes++;
   
-  // Only return true when no error occurred, otherwise return with
-  // false
-  return true;
+  // Return false when we have not reached the number of bytes
+  // specified in the Payload, or in other words, that we are still
+  // decoding
+  return false;
   
  }
  
@@ -387,67 +499,67 @@ namespace chapchom
  void CCUBLOXDecoder::print_UBX_ESF_RAW_structure()
  {
   std::cout << std::endl;
-  if (ubx_esf_raw.valid_gyroscope_temperature)
+  if (UBX_ESF_RAW.valid_gyroscope_temperature)
    {
-    std::cout << "ubx_esf_raw.time_gyroscope_temperature:[" << ubx_esf_raw.time_gyroscope_temperature << "]" << std::endl;
+    std::cout << "UBX_ESF_RAW.time_gyroscope_temperature:[" << UBX_ESF_RAW.time_gyroscope_temperature << "]" << std::endl;
    }
   else
    {
-    std::cout << "ubx_esf_raw.time_gyroscope_temperature:[NO_VALID_DATA]" << std::endl;
+    std::cout << "UBX_ESF_RAW.time_gyroscope_temperature:[NO_VALID_DATA]" << std::endl;
    }
   
-  if (ubx_esf_raw.valid_gyroscope_x)
+  if (UBX_ESF_RAW.valid_gyroscope_x)
    {
-    std::cout << "ubx_esf_raw.valid_gyroscope_x:[" << ubx_esf_raw.valid_gyroscope_x << "]" << std::endl;
+    std::cout << "UBX_ESF_RAW.valid_gyroscope_x:[" << UBX_ESF_RAW.valid_gyroscope_x << "]" << std::endl;
    }
   else
    {
-    std::cout << "ubx_esf_raw.valid_gyroscope_x:[NO_VALID_DATA]" << std::endl;
+    std::cout << "UBX_ESF_RAW.valid_gyroscope_x:[NO_VALID_DATA]" << std::endl;
    }
 
-  if (ubx_esf_raw.valid_gyroscope_y)
+  if (UBX_ESF_RAW.valid_gyroscope_y)
    {
-    std::cout << "ubx_esf_raw.valid_gyroscope_y:[" << ubx_esf_raw.valid_gyroscope_y << "]" << std::endl;
+    std::cout << "UBX_ESF_RAW.valid_gyroscope_y:[" << UBX_ESF_RAW.valid_gyroscope_y << "]" << std::endl;
    }
   else
    {
-    std::cout << "ubx_esf_raw.valid_gyroscope_y:[NO_VALID_DATA]" << std::endl;
+    std::cout << "UBX_ESF_RAW.valid_gyroscope_y:[NO_VALID_DATA]" << std::endl;
    }
 
-  if (ubx_esf_raw.valid_gyroscope_z)
+  if (UBX_ESF_RAW.valid_gyroscope_z)
    {
-    std::cout << "ubx_esf_raw.valid_gyroscope_z:[" << ubx_esf_raw.valid_gyroscope_z << "]" << std::endl;
+    std::cout << "UBX_ESF_RAW.valid_gyroscope_z:[" << UBX_ESF_RAW.valid_gyroscope_z << "]" << std::endl;
    }
   else
    {
-    std::cout << "ubx_esf_raw.valid_gyroscope_z:[NO_VALID_DATA]" << std::endl;
+    std::cout << "UBX_ESF_RAW.valid_gyroscope_z:[NO_VALID_DATA]" << std::endl;
    }
   
-  if (ubx_esf_raw.valid_accelerometer_x)
+  if (UBX_ESF_RAW.valid_accelerometer_x)
    {
-    std::cout << "ubx_esf_raw.valid_accelerometer_x:[" << ubx_esf_raw.valid_accelerometer_x << "]" << std::endl;
+    std::cout << "UBX_ESF_RAW.valid_accelerometer_x:[" << UBX_ESF_RAW.valid_accelerometer_x << "]" << std::endl;
    }
   else
    {
-    std::cout << "ubx_esf_raw.valid_accelerometer_x:[NO_VALID_DATA]" << std::endl;
+    std::cout << "UBX_ESF_RAW.valid_accelerometer_x:[NO_VALID_DATA]" << std::endl;
    }
 
-  if (ubx_esf_raw.valid_accelerometer_y)
+  if (UBX_ESF_RAW.valid_accelerometer_y)
    {
-    std::cout << "ubx_esf_raw.valid_accelerometer_y:[" << ubx_esf_raw.valid_accelerometer_y << "]" << std::endl;
+    std::cout << "UBX_ESF_RAW.valid_accelerometer_y:[" << UBX_ESF_RAW.valid_accelerometer_y << "]" << std::endl;
    }
   else
    {
-    std::cout << "ubx_esf_raw.valid_accelerometer_y:[NO_VALID_DATA]" << std::endl;
+    std::cout << "UBX_ESF_RAW.valid_accelerometer_y:[NO_VALID_DATA]" << std::endl;
    }
 
-  if (ubx_esf_raw.valid_accelerometer_z)
+  if (UBX_ESF_RAW.valid_accelerometer_z)
    {
-    std::cout << "ubx_esf_raw.valid_accelerometer_z:[" << ubx_esf_raw.valid_accelerometer_z << "]" << std::endl;
+    std::cout << "UBX_ESF_RAW.valid_accelerometer_z:[" << UBX_ESF_RAW.valid_accelerometer_z << "]" << std::endl;
    }
   else
    {
-    std::cout << "ubx_esf_raw.valid_accelerometer_z:[NO_VALID_DATA]" << std::endl;
+    std::cout << "UBX_ESF_RAW.valid_accelerometer_z:[NO_VALID_DATA]" << std::endl;
    }
   
  } 

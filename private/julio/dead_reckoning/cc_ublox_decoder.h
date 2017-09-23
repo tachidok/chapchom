@@ -17,25 +17,25 @@ namespace chapchom
  struct UBX_ESF_RAW
  {
   bool valid_gyroscope_temperature;
-  double time_gyroscope_temperature;
+  unsigned int time_gyroscope_temperature;
   double gyroscope_temperature;
   bool valid_gyroscope_x;
-  double time_gyroscope_x;
+  unsigned int time_gyroscope_x;
   double gyroscope_x;
   bool valid_gyroscope_y;
-  double time_gyroscope_y;
+  unsigned int time_gyroscope_y;
   double gyroscope_y;
   bool valid_gyroscope_z;
-  double time_gyroscope_z;
+  unsigned int time_gyroscope_z;
   double gyroscope_z;
   bool valid_accelerometer_x;
-  double time_accelerometer_x;
+  unsigned int time_accelerometer_x;
   double accelerometer_x;
   bool valid_accelerometer_y;
-  double time_accelerometer_y;
+  unsigned int time_accelerometer_y;
   double accelerometer_y;
   bool valid_accelerometer_z;
-  double time_accelerometer_z;
+  unsigned int time_accelerometer_z;
   double accelerometer_z;
  };
  
@@ -57,7 +57,7 @@ namespace chapchom
   // Eats a byte, validates the bytes as part of the UBX
   // protocol. Also in charge of calling the proper methods to store
   // the info. in the corresponding data structures
-  void parse(const unsigned byte);
+  void parse(const unsigned char &byte);
   
   // Method to check whether new values from ubx-esf-raw block are ready
   // or not
@@ -140,28 +140,14 @@ namespace chapchom
   // Initialise any variables (of the UBX-ESF-RAW state machine). This
   // method is called any time a non-valid UBX protocol data is
   // identified
-  void reset_UBX_ESF_RAW_state_machine(); 
+  void reset_UBX_ESF_RAW_state_machine();
   
   // The number of read bytes from the input UBLOX data block
   unsigned Counter_UBX_ESF_RAW_n_read_bytes;
-  
-  // Current state on the UBX-ESF-RAW state machine
-  unsigned Current_UBX_ESF_RAW_general_state;
-  
-  // The last state on the UBX-ESF-RAW state machine
-  unsigned Last_UBX_ESF_RAW_general_state;
 
-  // Matrix with the transitions of the UBX-ESF-RAW state machine
-  unsigned *UBX_ESF_RAW_transition_matrix;
-  
-  // The number of states in the UBX-ESF-RAW state machine
-  const unsigned NUBX_ESF_RAW_states;
-  
-  // The number of transitions of the UBX-ESF-RAW state machine
-  const unsigned NUBX_ESF_RAW_transitions;
-  
-  // Final state of the UBX-ESF-RAW state machine
-  unsigned UBX_ESF_RAW_final_state;
+  // A counter to indicate the beggining and end of each UBX-ESF-RAW
+  // block
+  unsigned Local_block_UBX_ESF_RAW_counter;
   
   // Set all data in UBX-ESF-RAW block as invalid
   void set_UBX_ESF_RAW_data_as_invalid();
@@ -169,9 +155,12 @@ namespace chapchom
   // Set all data in UBX-ESF-RAW block as valid
   void set_UBX_ESF_RAW_data_as_valid();
   
+  // The data blocks of the UBX-ESF-RAW are of eight bytes
+  unsigned char UBX_ESF_RAW_data_block[8];
+  
   // Decode the UBX-ESF-RAW block and fill the corresponding data
   // structure
-  bool decode_UBX_ESF_RAW_and_fill_structure();
+  bool decode_UBX_ESF_RAW_and_fill_structure(const unsigned char &byte);
   
   // Print the data stored in the UBX_ESF_RAW structure
   void print_UBX_ESF_RAW_structure(); 
