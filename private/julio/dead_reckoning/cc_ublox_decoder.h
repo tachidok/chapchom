@@ -123,6 +123,9 @@ namespace chapchom
   // Store the length of the payload
   int Payload_length;
   
+  // Keep track of the number of bytes read from the payload
+  unsigned N_read_payload_bytes;
+  
   // Store the class_id
   unsigned char Class_id_c;
   
@@ -155,8 +158,18 @@ namespace chapchom
   // Set all data in UBX-ESF-RAW block as valid
   void set_UBX_ESF_RAW_data_as_valid();
   
-  // The data blocks of the UBX-ESF-RAW are of eight bytes
-  unsigned char UBX_ESF_RAW_data_block[8];
+  // The data blocks of the UBX-ESF-RAW are of four bytes
+  unsigned char UBX_ESF_RAW_data_block[4];
+  
+  // Indicate whether we are decoding the data or the sTtag part
+  bool Is_data_part;
+
+  // Keep track of the data type we are currently working on
+  unsigned char Data_type;
+  
+  // Number of data expected in a block of data (7 data = 3 acc data +
+  // 3 gyro data + 1 gyro temperature)
+  unsigned N_UBX_ESF_RAW_data_block;
   
   // Decode the UBX-ESF-RAW block and fill the corresponding data
   // structure

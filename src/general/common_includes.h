@@ -12,6 +12,7 @@
 // Utilities library
 // ====================================================================
 #include <typeinfo> // 	Runtime type information utilities
+#include <iomanip> // Output format
 #include <utility> // Various utility components
 #include <ctime> // C-style time/date utilites
 // #include <chrono> // (since C++11) C++ time utilites

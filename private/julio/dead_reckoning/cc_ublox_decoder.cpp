@@ -30,8 +30,8 @@ namespace chapchom
     1, 5, 5, 5, 5,
     1, 6, 6, 6, 6,
     6, 6, 6, 6, 6,
-    -1, -1, -1, -1, 8,
-    -1, -1, -1, -1, 9,
+    8, 8, 8, 8, 8,
+    9, 9, 9, 9, 9,
     -1, -1, -1, -1, -1
    };
   
@@ -56,7 +56,7 @@ namespace chapchom
   reset_general_state_machine();
   
   // Establish the final state
-  General_final_state = 10;
+  General_final_state = 9;
 
   // ----------------------------------------------------------
   // Reset all particular state machines
@@ -107,6 +107,11 @@ namespace chapchom
   std::set<unsigned char>::iterator it_class = Class_id.find(byte);
   // Check whether the parsed-byte is part of the Class_id set
   std::set<unsigned char>::iterator it_id = IDs.find(byte);
+
+#if 0
+  std::cout << "Input byte (dec) [" << std::dec << static_cast<int>(byte) << "]" << std::endl;
+  std::cout << "Input byte (hex) [0x" << std::hex << static_cast<int>(byte) << "]" << std::endl;
+#endif // #if 0
   
   // ------------------------------------------------------------------
   // Identify the read byte and transition accordingly
@@ -133,22 +138,44 @@ namespace chapchom
     Current_general_state = General_transition_matrix[NGeneral_transitions*Current_general_state+4];
    }
   
+  // Are we in a valid state
+  if (Current_general_state == -1)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "Invalid state" << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
   // -----------------------------------------------------------------------
   // Is there something we need to do in each state?
   // -----------------------------------------------------------------------
   if (Current_general_state == 0)
    {
+#if 0
     std::cout << "Reading garbage: [" << byte << "]" << std::endl;
+#endif // #if 0
    } 
   if (Current_general_state == 1)
    {
+    reset_general_state_machine();
+    reset_UBX_ESF_RAW_state_machine();
+    // Reset valid status of data
+    set_UBX_ESF_RAW_data_as_invalid();
+    Current_general_state = 1;
     // Reset the number of read characters
     Counter_n_read_bytes = 1;
+#if 0
     std::cout << "Found first UBLOX header\n" << std::endl;
+#endif // #if 0
    }
   else if (Current_general_state == 2)
    {
+#if 0
     std::cout << "Found second UBLOX header\n" << std::endl;
+#endif // #if 0
    }
   else if (Current_general_state == 3)
    {
@@ -170,16 +197,29 @@ namespace chapchom
     // Save the payload byte 2
     Payload_byte2 = byte;
     // Add the byte to the payload storage
-    Payload_length = ((Payload_byte1 << 8) & 0xFF00) || 0x00FF & Payload_byte2;
+    Payload_length = (Payload_byte1 & 0xFF) | (0xFF00 & (Payload_byte2  << 8));
     // Based on the size of the payload allocate storage for the
     // checksum
-    Computed_checksum = new unsigned char[Payload_length+4];
+    Computed_checksum = new unsigned char[Payload_length + 4];
     // Add the stored bytes until now that are part of the checksum
     Computed_checksum[0] = Class_id_c;
     Computed_checksum[1] = ID_c;
     Computed_checksum[2] = Payload_byte1;
     Computed_checksum[3] = Payload_byte2;
     Computed_checksum_index = 4;
+#if 0
+    std::cout << "Payload length (dec): " << std::dec << Payload_length << std::endl;
+    std::cout << "Payload length (hex): 0x" << std::hex << Payload_length << std::endl;
+#endif // #if 0
+    
+    // --------------------------------------------------------------
+    // Reset all data structures used to store the decoded info
+    
+    // Indicate that UBX-ESF-RAW data is not ready
+    UBX_ESF_RAW_data_ready = false;
+    // Reset valid status of data
+    set_UBX_ESF_RAW_data_as_invalid();
+    
    }
   // This is not the first time we are in this state - thus ...
   else if (Current_general_state == 6 && Last_general_state == 6)
@@ -189,8 +229,42 @@ namespace chapchom
     bool override_transition_to_the_next_state = false;
     if (Class_id_c == 0x10 && ID_c == 0x03) // UBX-ESF-RAW
      {
+#if 0
+      if (byte == 5) // z-axis gyroscope angular rate
+       {
+        std::cout << "is z-gyro" << std::endl;
+       }
+      else if (byte == 12) // gyroscope temperature
+       {
+        std::cout << "is gyro-temp" << std::endl;
+       }
+      else if (byte == 13) // y-axis gyroscope angular rate
+       {
+        std::cout << "is y-gyro" << std::endl;
+       }
+      else if (byte == 14) // x-axis gyroscope angular rate
+       {
+        std::cout << "is x-gyro" << std::endl;
+       }
+      else if (byte == 16) // x-axis accelerometer specific force
+       {
+        std::cout << "is x-acc" << std::endl;
+       }
+      else if (byte == 17) // y-axis accelerometer specific force
+       {
+        std::cout << "is y-acc" << std::endl;
+       }
+      else if (byte == 18) // z-axis accelerometer specific force
+       {
+        std::cout << "is z-acc" << std::endl;
+       }
+#endif // #if 0
+      
+      //std::cout << std::dec << "Counter_UBX_ESF_RAW_n_read_bytes: " << Counter_UBX_ESF_RAW_n_read_bytes << std::endl;
+      
       override_transition_to_the_next_state = decode_UBX_ESF_RAW_and_fill_structure(byte);
      }
+    
     if (override_transition_to_the_next_state)
      {
       // Reset all particular state machines
@@ -227,6 +301,7 @@ namespace chapchom
     if (CK_A != Read_checksum[0] || CK_B != Read_checksum[1])
      {
       reset_general_state_machine();
+#if 0
       // Error message
       std::ostringstream error_message;
       error_message << "The checksum is not correct\n"
@@ -237,6 +312,7 @@ namespace chapchom
       throw ChapchomLibError(error_message.str(),
                              CHAPCHOM_CURRENT_FUNCTION,
                              CHAPCHOM_EXCEPTION_LOCATION);
+#endif // #if 0
      }
     
     // Free memory
@@ -298,6 +374,11 @@ namespace chapchom
   // Reset state information of the UBX-ESF-RAW state machine
   Counter_UBX_ESF_RAW_n_read_bytes = 0;
   Local_block_UBX_ESF_RAW_counter = 0;
+  // Consume the elements in the storage to indicate that new data is
+  // being decoded
+  consume_UBX_ESF_RAW_data();
+  // Start with the data part
+  Is_data_part = true;
  }
  
  // ===================================================================
@@ -334,162 +415,167 @@ namespace chapchom
  // ===================================================================
  bool CCUBLOXDecoder::decode_UBX_ESF_RAW_and_fill_structure(const unsigned char &byte)
  {
-  // Indicate that accelerometer data is ready
-  UBX_ESF_RAW_data_ready = false;
-  // Reset valid status of data
-  set_UBX_ESF_RAW_data_as_invalid();
   
-  // Have we read all the data in the payload
-  if (Counter_UBX_ESF_RAW_n_read_bytes >= static_cast<unsigned>(Payload_length + 4))
+  if (Counter_UBX_ESF_RAW_n_read_bytes < static_cast<unsigned>(Payload_length))
    {
-    // Indicate that accelerometer data is ready
-    UBX_ESF_RAW_data_ready = true;
-    // Indicate that the data in the UBX_ESF_RAW structure is valid
-    set_UBX_ESF_RAW_data_as_valid();
-    return true;
-   }
-  
-  // Skip the first 4 bytes since they are reserved
-  if (Counter_UBX_ESF_RAW_n_read_bytes >= 4)
-   {
-    // Add the read byte into the storage
-    UBX_ESF_RAW_data_block[Local_block_UBX_ESF_RAW_counter++] = byte;
-    
-    if (Local_block_UBX_ESF_RAW_counter >= 7)
+    // Skip the first 4 bytes since they are reserved
+    if (Counter_UBX_ESF_RAW_n_read_bytes >= 4)
      {
-      // -------------------------------------------
-      // Decode the data
-      {
-       unsigned int data = ((UBX_ESF_RAW_data_block[6] << 16) & 0xFF0000) |
-        ((UBX_ESF_RAW_data_block[5] << 8) & 0xFF00) |
-        (UBX_ESF_RAW_data_block[4] & 0xFF);
-       // ---------------------
-       // Decode the data type
-       unsigned char data_type = UBX_ESF_RAW_data_block[7];
-       if (data_type == 5) // z-axis gyroscope angular rate
-        {
-         
-        }
-       else if (data_type == 12) // gyroscope temperature
-        {
-         
-        }
-       else if (data_type == 13) // y-axis gyroscope angular rate
-        {
-         
-        }
-       else if (data_type == 14) // x-axis gyroscope angular rate
-        {
-         
-        }
-       else if (data_type == 16) // x-axis accelerometer specific force
-        {
-         
-        }
-       else if (data_type == 17) // y-axis accelerometer specific force
-        {
-         
-        }
-       else if (data_type == 18) // z-axis accelerometer specific force
-        {
-         
-        }
-       
-       // ---------------------
-       // Decode the data field
-      }
-
-      {
-       // -------------------------------------------
-       // Decode the timing
-       unsigned int data = ((UBX_ESF_RAW_data_block[2] << 16) & 0xFF0000) |
-        ((UBX_ESF_RAW_data_block[1] << 8) & 0xFF00) |
-        (UBX_ESF_RAW_data_block[0] & 0xFF);
-       // ---------------------
-       // Decode the data type
-       unsigned char data_type = UBX_ESF_RAW_data_block[3];
-       if (data_type == 5) // z-axis gyroscope angular rate
-        {
-         UBX_ESF_RAW.time_gyroscope_z = data;
-        }
-       else if (data_type == 12) // gyroscope temperature
-        {
-         UBX_ESF_RAW.time_gyroscope_temperature = data;
-        }
-       else if (data_type == 13) // y-axis gyroscope angular rate
-        {
-         UBX_ESF_RAW.time_gyroscope_y = data;
-        }
-       else if (data_type == 14) // x-axis gyroscope angular rate
-        {
-         UBX_ESF_RAW.time_gyroscope_x = data;
-        }
-       else if (data_type == 16) // x-axis accelerometer specific force
-        {
-         UBX_ESF_RAW.time_accelerometer_x = data;
-        }
-       else if (data_type == 17) // y-axis accelerometer specific force
-        {
-         UBX_ESF_RAW.time_accelerometer_y = data;
-        }
-       else if (data_type == 18) // z-axis accelerometer specific force
-        {
-         UBX_ESF_RAW.time_accelerometer_z = data;
-        }
-      }
+      // Add the read byte into the storage
+      UBX_ESF_RAW_data_block[Local_block_UBX_ESF_RAW_counter++] = byte;
       
-      // Restart local block counter
-      Local_block_UBX_ESF_RAW_counter = 0;
-     }
-    
-   } // if (Counter_UBX_ESF_RAW_n_read_bytes >= 4)
- 
+      if (Local_block_UBX_ESF_RAW_counter >= 4)
+       {
+        
+        // What part are we decoding?
+        if (Is_data_part) // data
+         {
+          // -------------------------------------------------------
+          // Decode the data type (this is kept for the time stamp)
+          Data_type = UBX_ESF_RAW_data_block[3];
+          
+          // Get the left-most bit and copy it in the 4th byte since
+          // the data come in 2's complement using only 3 bytes (24
+          // bits)
+          unsigned char added_byte = 0x0;
+          if (UBX_ESF_RAW_data_block[2] & 0x80)
+            {
+             added_byte = 0xFF;
+            }
+          
+          int data = ((added_byte << 24) & 0xFF000000) |
+           ((UBX_ESF_RAW_data_block[2] << 16) & 0xFF0000) |
+           ((UBX_ESF_RAW_data_block[1] << 8) & 0xFF00) |
+           (UBX_ESF_RAW_data_block[0] & 0xFF);
+          
+          if (Data_type == 5) // z-axis gyroscope angular rate
+           {
+            UBX_ESF_RAW.gyroscope_z = data * 1.0/4026.0;
+            //std::cout << "UBX_ESF_RAW.gyroscope_z: " << UBX_ESF_RAW.gyroscope_z << std::endl;
+            UBX_ESF_RAW.valid_gyroscope_z = true;
+           }
+          else if (Data_type == 12) // gyroscope temperature
+           {
+            UBX_ESF_RAW.gyroscope_temperature = data * 1.0e-2;
+            //std::cout << "UBX_ESF_RAW.gyroscope_temperature: " << UBX_ESF_RAW.gyroscope_temperature << std::endl;
+            UBX_ESF_RAW.valid_gyroscope_temperature = true;
+           }
+          else if (Data_type == 13) // y-axis gyroscope angular rate
+           {
+            UBX_ESF_RAW.gyroscope_y = data * 1.0/4026.0;
+            //std::cout << "UBX_ESF_RAW.gyroscope_y: " << UBX_ESF_RAW.gyroscope_y << std::endl;
+            UBX_ESF_RAW.valid_gyroscope_y = true;
+           }
+          else if (Data_type == 14) // x-axis gyroscope angular rate
+           {
+            UBX_ESF_RAW.gyroscope_x = data * 1.0/4026.0;
+            //std::cout << "UBX_ESF_RAW.gyroscope_x: " << UBX_ESF_RAW.gyroscope_x << std::endl;
+            UBX_ESF_RAW.valid_gyroscope_x = true;
+           }
+          else if (Data_type == 16) // x-axis accelerometer specific force
+           {
+            UBX_ESF_RAW.accelerometer_x = data * 1.0/1024.0;
+            //std::cout << "UBX_ESF_RAW.accelerometer_x: " << UBX_ESF_RAW.accelerometer_x << std::endl;
+            UBX_ESF_RAW.valid_accelerometer_x = true;
+           }
+          else if (Data_type == 17) // y-axis accelerometer specific force
+           {
+            UBX_ESF_RAW.accelerometer_y = data * 1.0/1024.0;
+            //std::cout << "UBX_ESF_RAW.accelerometer_y: " << UBX_ESF_RAW.accelerometer_y << std::endl;
+            UBX_ESF_RAW.valid_accelerometer_y = true;
+           }
+          else if (Data_type == 18) // z-axis accelerometer specific force
+           {
+            UBX_ESF_RAW.accelerometer_z = data * 1.0/1024.0;
+            //std::cout << "UBX_ESF_RAW.accelerometer_z: " << UBX_ESF_RAW.accelerometer_z << std::endl;
+            UBX_ESF_RAW.valid_accelerometer_z = true;
+           }
+          
+          // Once the data part has been decoded then go for the sTtag
+          // part
+          Is_data_part = false;
 #if 0
-  // Start decoding data
-  if (transform_helper(pstm3dacc.time, Fields[1]))
-   {
-    pstm3dacc.valid_data_time = true;
-   }
-  else
-   {
-    return false;
-   }
-  
-  if (transform_helper(pstm3dacc.acc_x, Fields[2]))
-   {
-    pstm3dacc.valid_data_acc_x = true;
-   }
-  else
-   {
-    return false;
-   }  
-  
-  if (transform_helper(pstm3dacc.acc_y, Fields[3]))
-   {
-    pstm3dacc.valid_data_acc_y = true;
-   }
-  else
-   {
-    return false;
-   }  
-  
-  if (transform_helper(pstm3dacc.acc_z, Fields[4]))
-   {
-    pstm3dacc.valid_data_acc_z = true;
-   }
-  else
-   {
-    return false;
-   }
+          std::cout << "Data ==============================" << std::endl;
+          std::cout << "0x" << std::hex << data << std::endl;
 #endif // #if 0
+          
+         }
+        else // sTtag
+         {
+          unsigned int data = ((UBX_ESF_RAW_data_block[2] << 16) & 0xFF0000) |
+           ((UBX_ESF_RAW_data_block[1] << 8) & 0xFF00) |
+           (UBX_ESF_RAW_data_block[0] & 0xFF);
+          
+          if (Data_type == 5) // z-axis gyroscope angular rate
+           {
+            UBX_ESF_RAW.time_gyroscope_z = data;
+           }
+          else if (Data_type == 12) // gyroscope temperature
+           {
+            UBX_ESF_RAW.time_gyroscope_temperature = data;
+           }
+          else if (Data_type == 13) // y-axis gyroscope angular rate
+           {
+            UBX_ESF_RAW.time_gyroscope_y = data;
+           }
+          else if (Data_type == 14) // x-axis gyroscope angular rate
+           {
+            UBX_ESF_RAW.time_gyroscope_x = data;
+           }
+          else if (Data_type == 16) // x-axis accelerometer specific force
+           {
+            UBX_ESF_RAW.time_accelerometer_x = data;
+           }
+          else if (Data_type == 17) // y-axis accelerometer specific force
+           {
+            UBX_ESF_RAW.time_accelerometer_y = data;
+           }
+          else if (Data_type == 18) // z-axis accelerometer specific force
+           {
+            UBX_ESF_RAW.time_accelerometer_z = data;
+           }
+          
+          // Once the sTtag part has been decoded then go back for the
+          // data part
+          Is_data_part = true;
+          
+#if 0
+          std::cout << "Ttag ==============================" << std::endl;
+          std::cout << "0x" << std::hex << data << std::endl;
+#endif // #if 0
+          
+          // Once we have read a block of data mark as having data and
+          // restart for a new decoding of a data block
+          if (N_UBX_ESF_RAW_data_block >= 6)
+           {
+            // If we have decoded the data and the time of a certaing
+            // data then mark as having data ready
+            UBX_ESF_RAW_data_ready = true;
+            N_UBX_ESF_RAW_data_block = 0;
+            //print_UBX_ESF_RAW_structure();
+           }
+          else
+           {
+            N_UBX_ESF_RAW_data_block++;
+           }
+          
+         } // sTtag
+        
+        // Reset the local counter
+        Local_block_UBX_ESF_RAW_counter = 0;
+        
+       } // if (Local_block_UBX_ESF_RAW_counter >= 3)
+      
+     } // if (Counter_UBX_ESF_RAW_n_read_bytes >= 4)
+    
+    // Increase the number of read bytes
+    Counter_UBX_ESF_RAW_n_read_bytes++;
+    
+    return false;
+    
+   } // if (Counter_UBX_ESF_RAW_n_read_bytes < static_cast<unsigned>(Payload_length))
   
-  // Increase the number of read bytes
-  Counter_UBX_ESF_RAW_n_read_bytes++;
-  
-  // Return false when we have not reached the number of bytes
-  // specified in the Payload, or in other words, that we are still
-  // decoding
-  return false;
+  return true; 
   
  }
  
@@ -501,65 +587,65 @@ namespace chapchom
   std::cout << std::endl;
   if (UBX_ESF_RAW.valid_gyroscope_temperature)
    {
-    std::cout << "UBX_ESF_RAW.time_gyroscope_temperature:[" << UBX_ESF_RAW.time_gyroscope_temperature << "]" << std::endl;
+    std::cout << "UBX_ESF_RAW.gyroscope_temperature:[" << UBX_ESF_RAW.gyroscope_temperature << "]" << std::endl;
    }
   else
    {
-    std::cout << "UBX_ESF_RAW.time_gyroscope_temperature:[NO_VALID_DATA]" << std::endl;
+    std::cout << "UBX_ESF_RAW.gyroscope_temperature:[NO_VALID_DATA]" << std::endl;
    }
   
   if (UBX_ESF_RAW.valid_gyroscope_x)
    {
-    std::cout << "UBX_ESF_RAW.valid_gyroscope_x:[" << UBX_ESF_RAW.valid_gyroscope_x << "]" << std::endl;
+    std::cout << "UBX_ESF_RAW.gyroscope_x:[" << UBX_ESF_RAW.gyroscope_x << "]" << std::endl;
    }
   else
    {
-    std::cout << "UBX_ESF_RAW.valid_gyroscope_x:[NO_VALID_DATA]" << std::endl;
+    std::cout << "UBX_ESF_RAW.gyroscope_x:[NO_VALID_DATA]" << std::endl;
    }
 
   if (UBX_ESF_RAW.valid_gyroscope_y)
    {
-    std::cout << "UBX_ESF_RAW.valid_gyroscope_y:[" << UBX_ESF_RAW.valid_gyroscope_y << "]" << std::endl;
+    std::cout << "UBX_ESF_RAW.gyroscope_y:[" << UBX_ESF_RAW.gyroscope_y << "]" << std::endl;
    }
   else
    {
-    std::cout << "UBX_ESF_RAW.valid_gyroscope_y:[NO_VALID_DATA]" << std::endl;
+    std::cout << "UBX_ESF_RAW.gyroscope_y:[NO_VALID_DATA]" << std::endl;
    }
 
   if (UBX_ESF_RAW.valid_gyroscope_z)
    {
-    std::cout << "UBX_ESF_RAW.valid_gyroscope_z:[" << UBX_ESF_RAW.valid_gyroscope_z << "]" << std::endl;
+    std::cout << "UBX_ESF_RAW.gyroscope_z:[" << UBX_ESF_RAW.gyroscope_z << "]" << std::endl;
    }
   else
    {
-    std::cout << "UBX_ESF_RAW.valid_gyroscope_z:[NO_VALID_DATA]" << std::endl;
+    std::cout << "UBX_ESF_RAW.gyroscope_z:[NO_VALID_DATA]" << std::endl;
    }
   
   if (UBX_ESF_RAW.valid_accelerometer_x)
    {
-    std::cout << "UBX_ESF_RAW.valid_accelerometer_x:[" << UBX_ESF_RAW.valid_accelerometer_x << "]" << std::endl;
+    std::cout << "UBX_ESF_RAW.accelerometer_x:[" << UBX_ESF_RAW.accelerometer_x << "]" << std::endl;
    }
   else
    {
-    std::cout << "UBX_ESF_RAW.valid_accelerometer_x:[NO_VALID_DATA]" << std::endl;
+    std::cout << "UBX_ESF_RAW.accelerometer_x:[NO_VALID_DATA]" << std::endl;
    }
 
   if (UBX_ESF_RAW.valid_accelerometer_y)
    {
-    std::cout << "UBX_ESF_RAW.valid_accelerometer_y:[" << UBX_ESF_RAW.valid_accelerometer_y << "]" << std::endl;
+    std::cout << "UBX_ESF_RAW.accelerometer_y:[" << UBX_ESF_RAW.accelerometer_y << "]" << std::endl;
    }
   else
    {
-    std::cout << "UBX_ESF_RAW.valid_accelerometer_y:[NO_VALID_DATA]" << std::endl;
+    std::cout << "UBX_ESF_RAW.accelerometer_y:[NO_VALID_DATA]" << std::endl;
    }
 
   if (UBX_ESF_RAW.valid_accelerometer_z)
    {
-    std::cout << "UBX_ESF_RAW.valid_accelerometer_z:[" << UBX_ESF_RAW.valid_accelerometer_z << "]" << std::endl;
+    std::cout << "UBX_ESF_RAW.accelerometer_z:[" << UBX_ESF_RAW.accelerometer_z << "]" << std::endl;
    }
   else
    {
-    std::cout << "UBX_ESF_RAW.valid_accelerometer_z:[NO_VALID_DATA]" << std::endl;
+    std::cout << "UBX_ESF_RAW.accelerometer_z:[NO_VALID_DATA]" << std::endl;
    }
   
  } 
