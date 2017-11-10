@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
  std::vector<double> fx(n_data);
  fx[0]=f(x[0]);
  const double step = 2.0*M_PI/(n_data-1);
- // Get the values of the unknown function at corresponding x-values
+ // Get the values of the "unknown function" at corresponding x-values
  for (unsigned i = 1; i < n_data; i++)
   {
    x[i]=x[i-1]+step;

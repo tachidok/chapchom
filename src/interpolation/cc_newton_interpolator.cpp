@@ -249,17 +249,14 @@ namespace chapchom
     // Search for the greater value smaller than "x_interpolate[i]",
     // and the smaller value larger than "x_interpolate[i]" to use
     // them as the "x"s points for interpolation
-
+    
     // Indexes for the position of the values to the left and right of
     // "x_interpolate[i]"
     int i_left = 0;
     int i_right = n_x_interpolate - 1;
     
     // Flag to indicate to continue looping
-    bool loop = true;
-    
-    // Flag to indicate whether the value were found or not
-    bool found_value = false;
+    bool loop = true; 
     
     // Indicates whether interpolation should be performed or not
     bool do_interpolation = false;
@@ -279,7 +276,6 @@ namespace chapchom
        {
         do_interpolation = false; // Indicate to not perform interpolation
         loop = false;
-        found_value = true;
         
         // Get the funtion value for x_interpolate[i]
         fx_interpolated[i] = fx[i_left];
@@ -293,7 +289,6 @@ namespace chapchom
        {
         do_interpolation = false; // Indicate to not perform interpolation
         loop = false;
-        found_value = true;
         
         // Get the funtion value for x_interpolate[i]
         fx_interpolated[i] = fx[i_right];
@@ -306,13 +301,13 @@ namespace chapchom
         // Compute the middle index in the current range
         const int i_middle = std::floor(i_left + (i_right - i_left) / 2);
 #if 0
-        std::cout << "T: (" << t << ")" << std::endl;
+        std::cout << "x_interpolate[i]: (" << x_interpolate[i] << ")" << std::endl;
         std::cout << "i_left: (" << i_left << ") i_middle: ("
                   << i_middle << ") i_right: ("
                   << i_right << ")" << std::endl;
-        std::cout << "[i_left]: (" << Table_time[i_left] << ") [i_middle]: ("
-                  << Table_time[i_middle] << ") [i_right]: ("
-                  << Table_time[i_right] << ")" << std::endl;
+        std::cout << "[i_left]: (" << x_interpolate[i_left] << ") [i_middle]: ("
+                  << x_interpolate[i_middle] << ") [i_right]: ("
+                  << x_interpolate[i_right] << ")" << std::endl;
 #endif // #if 0
         // Check whether the i_left or i_right variables already are
         // the indices for the left and right values to
@@ -323,13 +318,13 @@ namespace chapchom
           //std::cout << "[END]" << std::endl;
           // Found data
           loop = false;
-          found_value = true;
           do_interpolation = true;
-
+          
           // Break and go for the interpolation step
+           break;
          }
         // Move the left index to the middle
-        else if (x_interpolate[i_middle] < x_interpolate[i])
+        else if (x_interpolate[i_middle] <= x_interpolate[i])
          {
           //std::cout << "[MOVE LEFT TO MIDDLE]" << std::endl;
           i_left = i_middle;
@@ -343,7 +338,7 @@ namespace chapchom
          {
           // Error message
           std::ostringstream error_message;
-          error_message << "The requested 'x_interpolated[i]' value is not between the supplied"
+          error_message << "The requested 'x_interpolated[i]' value is not between the supplied\n"
                         << "x's values"
                         << std::endl;
           throw ChapchomLibError(error_message.str(),
