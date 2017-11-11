@@ -55,12 +55,10 @@ int main(int argc, char *argv[])
  // The values at which we want to perform interpolation
  std::vector<double> x_to_interpolate(n_interpolated_data);
  x_to_interpolate[0] = -M_PI;
- DEB(x_to_interpolate[0]);
  // Fill the x-values at which perform interpolation
  for (unsigned i = 1; i < n_interpolated_data; i++)
   {
    x_to_interpolate[i] = x_to_interpolate[i-1]+interpolated_step;
-   DEB(x_to_interpolate[i]);
   }
  
  // The interpolator object
@@ -74,21 +72,19 @@ int main(int argc, char *argv[])
  // Linear interpolation
  {
   // Storage for interpolations
-  std::vector<double> fx_interpolated(n_interpolated_data);
+  std::vector<double> fx_linear(n_interpolated_data);
   // Do interpolation
-  interpolator.interpolate_1D(x, fx, x_to_interpolate, fx_interpolated, 1);
+  interpolator.interpolate_1D(x, fx, x_to_interpolate, fx_linear, 1);
   
   // Get errors
   std::vector<double> error(n_interpolated_data);
   std::cout << std::endl;
   std::cout << "Error linear interpolation: " << std::endl;
-  output_test << std::endl;
   output_test << "Error linear interpolation: " << std::endl;
   for (unsigned i = 0; i < n_interpolated_data; i++)
    {
-    error[i]=std::fabs(fx_interpolated[i]-f(x_to_interpolate[i]));
-    DEB3(x_to_interpolate[i], fx_interpolated[i], f(x_to_interpolate[i]));
-    DEB_TO_FILE3(deb, x_to_interpolate[i], fx_interpolated[i], f(x_to_interpolate[i]));
+    DEB_TO_FILE3(deb, x_to_interpolate[i], fx_linear[i], f(x_to_interpolate[i]));
+    error[i]=std::fabs(fx_linear[i]-f(x_to_interpolate[i]));
     if (error[i]>max_linear_error)
      {
       max_linear_error=error[i];
@@ -110,7 +106,7 @@ int main(int argc, char *argv[])
   output_test << "Error quadratic interpolation: " << std::endl;
   for (unsigned i = 0; i < n_interpolated_data; i++)
    {
-    error[i]=std::fabs(fx_quadratic[i]-f(x_to_interpolate[i]));
+    error[i]=std::fabs(fx_quadratic[i]-f(x_to_interpolate[i])); 
     if (error[i]>max_quadratic_error)
      {
       max_quadratic_error=error[i];

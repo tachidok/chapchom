@@ -27,8 +27,8 @@ namespace chapchom
  // b1(x_interpolate-x0) + b2(x_interpolate-x0)(x_interpolate-x1) +
  // b3(x_interpolate-x0)(x_interpolate-x1)(x_interpolate-x2) ...
  // ===================================================================
- double CCNewtonInterpolator::interpolate_1D(std::vector<double>
-                                             &x, std::vector<double> &fx,
+ double CCNewtonInterpolator::interpolate_1D(std::vector<double> &x,
+                                             std::vector<double> &fx,
                                              const double x_interpolate,
                                              const unsigned order)
  {
@@ -66,12 +66,12 @@ namespace chapchom
   
   // Check that the value to interpolate is within the interval
   // [x[0], x[n-1]]
-  if (x_interpolate < x[0] || x_interpolate > x[n_x])
+  if (x_interpolate < x[0] || x_interpolate > x[n_x-1])
    {
     // Error message
     std::ostringstream error_message;
     error_message << "The requested interpolated value is not within the range\n"
-                  << "[" << x[0] << ", " << x[n_x] << "].\n"
+                  << "[" << x[0] << ", " << x[n_x-1] << "].\n"
                   << "The requested x_interpolate value is: " << x_interpolate << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
@@ -100,17 +100,7 @@ namespace chapchom
     return b[0] + b[1] * (x_interpolate - x[0]);
    }
   else if (order == 2) // quadratic interpolation
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "Corrected, but left to test\n"
-                  << "Test before use it\n"
-                  << "Look for 'TEST HERE' in code"
-                  << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-    
+   {    
     b[0] = fx[0];
     // Using divided differences notation
     const double f10 =
@@ -128,16 +118,7 @@ namespace chapchom
      b[2] * (x_interpolate - x[0]) * (x_interpolate - x[1]);
    }
   else if (order == 3) // cubic interpolation
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "Test before use it\n"
-                  << "Look for 'TEST HERE' in code"
-                  << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-    
+   {    
     b[0] = fx[0];
     // Using divided differences notation
     const double f10 =
@@ -253,7 +234,7 @@ namespace chapchom
     // Indexes for the position of the values to the left and right of
     // "x_interpolate[i]"
     int i_left = 0;
-    int i_right = n_x_interpolate - 1;
+    int i_right = n_x - 1;
     
     // Flag to indicate to continue looping
     bool loop = true; 
@@ -272,7 +253,7 @@ namespace chapchom
 
       // Check whether the left value is the same as the one we are
       // looking for
-      if (x_interpolate[i_left] == x_interpolate[i])
+      if (x[i_left] == x_interpolate[i])
        {
         do_interpolation = false; // Indicate to not perform interpolation
         loop = false;
@@ -285,7 +266,7 @@ namespace chapchom
        }
       // Check whether the right value is the same as the one we are
       // looking for
-      else if (x_interpolate[i_right] == x_interpolate[i])
+      else if (x[i_right] == x_interpolate[i])
        {
         do_interpolation = false; // Indicate to not perform interpolation
         loop = false;
@@ -305,9 +286,9 @@ namespace chapchom
         std::cout << "i_left: (" << i_left << ") i_middle: ("
                   << i_middle << ") i_right: ("
                   << i_right << ")" << std::endl;
-        std::cout << "[i_left]: (" << x_interpolate[i_left] << ") [i_middle]: ("
-                  << x_interpolate[i_middle] << ") [i_right]: ("
-                  << x_interpolate[i_right] << ")" << std::endl;
+        std::cout << "[i_left]: (" << x[i_left] << ") [i_middle]: ("
+                  << x[i_middle] << ") [i_right]: ("
+                  << x[i_right] << ")" << std::endl;
 #endif // #if 0
         // Check whether the i_left or i_right variables already are
         // the indices for the left and right values to
@@ -324,12 +305,12 @@ namespace chapchom
            break;
          }
         // Move the left index to the middle
-        else if (x_interpolate[i_middle] <= x_interpolate[i])
+        else if (x[i_middle] <= x_interpolate[i])
          {
           //std::cout << "[MOVE LEFT TO MIDDLE]" << std::endl;
           i_left = i_middle;
          } // Move the right index to the middle 
-        else if (x_interpolate[i_middle] > x_interpolate[i])
+        else if (x[i_middle] > x_interpolate[i])
          {
           //std::cout << "[MOVE RIGHT TO MIDDLE]" << std::endl;
           i_right = i_middle;
@@ -359,7 +340,7 @@ namespace chapchom
       
       // Check whether the number of data to the right are enough to
       // perform the interpolation
-      if (i_right + order - 1 < n_x_interpolate)
+      if (i_right + order - 1 < n_x)
        {
         // Fill with data from i_left to i_right + order - 1
         unsigned k = 0;
