@@ -364,10 +364,10 @@ namespace chapchom
   
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
-  if (X_output.is_empty())
+  if (!X_output.is_own_memory_allocated())
    {
-    // Create a zero matrix with the given size to allocate memory
-    X_output.create_zero_matrix();
+    // Allocate memory
+    X_output.allocate_memory();
    }
   
   // The solution vector size n x 1 (Numerical Recipes definition)
@@ -408,10 +408,10 @@ namespace chapchom
   
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
-  if (x_output.is_empty())
+  if (!x_output.is_own_memory_allocated())
    {
-    // Create a zero matrix with the given size to allocate memory
-    x_output.create_zero_vector();
+    // Allocate memory
+    x_output.allocate_memory();
    }
   
   // The solution vector size n x 1 (Numerical Recipes definition)

@@ -26,10 +26,8 @@ int main(int argc, char *argv[])
  
  // The matrix A
  CCMatrix<double> A(n_rows, n_cols);
- // Create a zero matrix such that memory is ALLOCATED to store the
- // entries of the matrix. Otherwise we could not use the A(i,j) = x;
- // assignement without previous memory allocation
- A.create_zero_matrix();
+ // Allocate memory
+ A.allocate_memory();
  
  // Fill in some data
  A(0,0) = 7.0;  A(0,1) = 5.0;  A(0,2) = -3.0;
@@ -42,10 +40,8 @@ int main(int argc, char *argv[])
  {
   // The right hand side vector
   CCVector<double> b(n_rows);
-  // Create a zero vector such that memory is ALLOCATED to store the
-  // entries of the vector. Otherwise we could not use the b(i) = x;
-  // assignement without previous memory allocation
-  b.create_zero_vector();
+  // Allocate memory
+  b.allocate_memory();
   
   // Solve the following system of equations Ax = b
   
@@ -93,10 +89,8 @@ int main(int argc, char *argv[])
  {
   // The right hand side vectors
   CCMatrix<double> B(n_rows);
-  // Create a zero matrix such that memory is ALLOCATED to store the
-  // entries of the matrix. Otherwise we could not use the b(i,j) = x;
-  // assignement without previous memory allocation
-  B.create_zero_matrix();
+  // Allocate memory
+  B.allocate_memory();
   
   // Solve the following system of equations AX = B
   

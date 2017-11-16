@@ -32,9 +32,11 @@ namespace chapchom
    // Destructor
    virtual ~ACVector();
    
-   // Creates a zero vector with the given rows (allocates memory to
-   // store entries of the vector)
-   virtual void create_zero_vector() = 0;
+   // Allocates memory to store entries of the vector
+   virtual void allocate_memory() = 0;
+   
+   // Fills the vector with zeroes
+   virtual void fill_with_zeroes() = 0;
    
    // Transforms the input vector to a vector class type (virtual such
    // that each derived class has to implement it)
@@ -103,8 +105,9 @@ namespace chapchom
    inline void set_transposed_status(bool status)
    {Is_transposed = status;}
    
-   // Checks whether the vector has been set, or allocated
-   inline bool is_empty() const {return Is_empty;}
+   // Checks whether the memory of the vector has been allocated by
+   // this class
+   inline bool is_own_memory_allocated() const {return Is_own_memory_allocated;}
    
    // Checks whether the vector is allowed to be deleted
    inline bool delete_vector() const {return Delete_vector;}
@@ -126,8 +129,9 @@ namespace chapchom
    // The size of the vector
    unsigned long NValues;
    
-   // Flag to indicate whether the vector is empty or not
-   bool Is_empty;
+   // Flag to indicate whether the memory of the vector has been
+   // allocated by this class
+   bool Is_own_memory_allocated;
    
    // Flag to indicate whether to delete (free) the allocated memory
    // for the vector. For example when the vector is transformed to an

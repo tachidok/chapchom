@@ -61,9 +61,11 @@ namespace chapchom
   // Multiplication operator
   CCMatrix operator*(const CCMatrix &right_matrix);
   
-  // Creates a zero matrix with the given rows and columns (allocates
-  // memory to store entries of the matrix)
-  void create_zero_matrix();
+  // Allocates memory to store entries of the vector
+  void allocate_memory();
+   
+  // Fills the vector with zeroes
+  void fill_with_zeroes();
   
   // Transforms the input vector to a matrix class type (virtual such
   // that each derived class has to implement it)
