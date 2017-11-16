@@ -18,7 +18,7 @@ void rotate(double *input_vector,
             double *rotated_vector,
             const double roll, const double pitch, const double yaw,
             bool inverse_rotation = false)
-{ 
+{
  // The number of elements in the input vector is three
  const unsigned DIM = 3;
  
@@ -381,6 +381,131 @@ int main(int argc, char *argv[])
   const double norm = diff.norm_2();
   output_test << norm << std::endl;
   std::cout << norm << std::endl;
+  
+ }
+
+ {
+  // ##############################################################################
+  // Vector-matrix operations
+  // ##############################################################################
+  std::cout << std::endl << ""
+            << "##############################################################################\n"
+            << "Vector-matrix operations\n"
+            << "##############################################################################"
+            << std::endl;
+ 
+ }
+ 
+ {
+  // ##############################################################################
+  // Matrix-matrix operations
+  // ##############################################################################
+  std::cout << std::endl << ""
+            << "##############################################################################\n"
+            << "Matrix matrix operations (row permutations)\n"
+            << "##############################################################################"
+            << std::endl;
+ 
+  // ------------------------------------------------------------------
+  // Use permutation matrices to check the correct implementation of
+  // matrix-matrix multiplication
+  // ------------------------------------------------------------------
+  const unsigned DIM = 3;
+
+  // Create two matrices The permutation matrix (row permutations -
+  // multiply P to the left of the matrix to permute)
+  CCMatrix<unsigned> P(DIM, DIM);
+  P.create_zero_matrix();
+  
+  // Each row of this matrix tell us how much of the rows of the
+  // matrix to the right should we take to create the new
+  // matrix. Example, the first row tell us to take all the elements
+  // of the first row of the matrix to the right and copy them to the
+  // first row of the resulting matrix. Elements from the other rows
+  // are not taken. The second row tell us to take all the elements of
+  // the third row of the matrix to the right and copy them in the
+  // second row of the resulting matrix. The third row tell us to take
+  // only the elements of the second row of the matrix to the right to
+  // create the third row of the resulting matrix. We can specify "how
+  // much" of each row to take to create the rows of the matrix to the
+  // right.
+  P(0,0) = 1;   P(0,1) = 0;   P(0,2) = 0;
+  P(1,0) = 0;   P(1,1) = 0;   P(1,2) = 1;
+  P(2,0) = 0;   P(2,1) = 1;   P(2,2) = 0;
+
+  // Matrix to permute
+  CCMatrix<unsigned> A(DIM, DIM);
+  A.create_zero_matrix();
+
+  A(0,0) = 1;   A(0,1) = 2;   A(0,2) = 3;
+  A(1,0) = 4;   A(1,1) = 5;   A(1,2) = 6;
+  A(2,0) = 7;   A(2,1) = 8;   A(2,2) = 9;
+  
+  // Permute matrix
+  CCMatrix<unsigned> S(DIM, DIM);
+  S.create_zero_matrix();
+
+  multiply_matrices(P, A, S);
+
+  S.output();
+  S.output(output_test);
+  
+ }
+ 
+ {
+
+  // ##############################################################################
+  // Matrix-matrix operations
+  // ##############################################################################
+  std::cout << std::endl << ""
+            << "##############################################################################\n"
+            << "Matrix matrix operations (column permutations)\n"
+            << "##############################################################################"
+            << std::endl;
+ 
+  // ------------------------------------------------------------------
+  // Use permutation matrices to check the correct implementation of
+  // matrix-matrix multiplication
+  // ------------------------------------------------------------------
+  const unsigned DIM = 3;
+
+  // Create two matrices The permutation matrix (column permutations -
+  // multiply P to the right of the matrix to permute)
+  CCMatrix<unsigned> P(DIM, DIM);
+  P.create_zero_matrix();
+  
+  // Each column of this matrix tell us how much of the columns of the
+  // matrix to the left should we take to create the new
+  // matrix. Example, the first column tell us to take all the
+  // elements of the first column of the matrix to the left and copy
+  // them to the first column of the resulting matrix. Elements from
+  // the other columns are not taken. The second column tell us to
+  // take all the elements of the third column of the matrix to the
+  // left and copy them in the second column of the resulting
+  // matrix. The third row tell us to take only the elements of the
+  // second row of the matrix to the right to create the third row of
+  // the resulting matrix. We can specify "how much" of each row to
+  // take to create the rows of the matrix to the right.
+  P(0,0) = 1;   P(0,1) = 0;   P(0,2) = 0;
+  P(1,0) = 0;   P(1,1) = 0;   P(1,2) = 1;
+  P(2,0) = 0;   P(2,1) = 1;   P(2,2) = 0;
+
+  // Matrix to permute
+  CCMatrix<unsigned> A(DIM, DIM);
+  A.create_zero_matrix();
+
+  A(0,0) = 1;   A(0,1) = 2;   A(0,2) = 3;
+  A(1,0) = 4;   A(1,1) = 5;   A(1,2) = 6;
+  A(2,0) = 7;   A(2,1) = 8;   A(2,2) = 9;
+  
+  // Permute matrix
+  CCMatrix<unsigned> S(DIM, DIM);
+  S.create_zero_matrix();
+
+  multiply_matrices(P, A, S);
+
+  S.output();
+  S.output(output_test);
   
  }
  

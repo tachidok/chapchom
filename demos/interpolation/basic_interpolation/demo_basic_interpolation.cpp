@@ -73,8 +73,9 @@ int main(int argc, char *argv[])
  {
   // Storage for interpolations
   std::vector<double> fx_linear(n_interpolated_data);
+  const unsigned interpolation_order = 1;
   // Do interpolation
-  interpolator.interpolate_1D(x, fx, x_to_interpolate, fx_linear, 1);
+  interpolator.interpolate_1D(x, fx, x_to_interpolate, fx_linear, interpolation_order);
   
   // Get errors
   std::vector<double> error(n_interpolated_data);
@@ -99,7 +100,8 @@ int main(int argc, char *argv[])
  {
   // Storage for interpolations
   std::vector<double> fx_quadratic(n_interpolated_data);
-  interpolator.interpolate_1D(x, fx, x_to_interpolate, fx_quadratic, 2);
+  const unsigned interpolation_order = 2;
+  interpolator.interpolate_1D(x, fx, x_to_interpolate, fx_quadratic, interpolation_order);
   // Get errors
   std::vector<double> error(n_interpolated_data);
   std::cout << "Error quadratic interpolation: " << std::endl;
@@ -121,7 +123,8 @@ int main(int argc, char *argv[])
  {
   // Storage for interpolations
   std::vector<double> fx_cubic(n_interpolated_data);
-  interpolator.interpolate_1D(x, fx, x_to_interpolate, fx_cubic, 3);
+  const unsigned interpolation_order = 3;
+  interpolator.interpolate_1D(x, fx, x_to_interpolate, fx_cubic, interpolation_order);
   // Get errors
   std::vector<double> error(n_interpolated_data);
   std::cout << "Error cubic interpolation: " << std::endl;
