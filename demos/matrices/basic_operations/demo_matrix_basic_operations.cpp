@@ -101,6 +101,7 @@ int main(int argc, char *argv[])
    }
   
   std::cout << std::endl << "The identity matrix (I)" << std::endl << std::endl;
+  output_test << std::endl << "The identity matrix (I)" << std::endl << std::endl;
   I.output();
   I.output(output_test);
  
@@ -135,10 +136,12 @@ int main(int argc, char *argv[])
   B.transpose(B_t);
  
   std::cout << std::endl << "Matrix created from vector" << std::endl << std::endl;
+  output_test << std::endl << "Matrix created from vector" << std::endl << std::endl;
   B.output();
   B.output(output_test);
 
   std::cout << std::endl << "Matrix transposed" << std::endl << std::endl;
+  output_test << std::endl << "Matrix transposed" << std::endl << std::endl;
   B_t.print();
   B_t.print(output_test);
  
@@ -159,7 +162,13 @@ int main(int argc, char *argv[])
             << std::endl << "Matrix operations\n"
             << "------------------------------------------------------------------------------"
             << std::endl;
- 
+  
+  output_test << std::endl
+              << "------------------------------------------------------------------------------"
+              << std::endl << "Matrix operations\n"
+              << "------------------------------------------------------------------------------"
+              << std::endl;
+  
   // --------------------------------------
   // Sum of matrices C = I + B
   // --------------------------------------
@@ -173,6 +182,8 @@ int main(int argc, char *argv[])
  
   std::cout << std::endl << "The sum of the matrices is:"
             << std::endl << std::endl;
+  output_test << std::endl << "The sum of the matrices is:"
+              << std::endl << std::endl;
   C.output();
   C.output(output_test);
  
@@ -201,6 +212,8 @@ int main(int argc, char *argv[])
  
   std::cout << std::endl << "The multiplication of the matrices is:"
             << std::endl << std::endl;
+  output_test << std::endl << "The multiplication of the matrices is:"
+              << std::endl << std::endl;
   C.output();
   C.output(output_test); 
  
@@ -212,6 +225,11 @@ int main(int argc, char *argv[])
             << "Now do the same operations but using operator overloading\n"
             << "##############################################################################"
             << std::endl;
+  output_test << std::endl << ""
+              << "##############################################################################\n"
+              << "Now do the same operations but using operator overloading\n"
+              << "##############################################################################"
+              << std::endl;
   // --------------------------------------
   // Sum of matrices C = I + B
   // --------------------------------------
@@ -219,6 +237,8 @@ int main(int argc, char *argv[])
  
   std::cout << std::endl << "The sum of the matrices is:"
             << std::endl << std::endl;
+  output_test << std::endl << "The sum of the matrices is:"
+              << std::endl << std::endl;
   C.output();
   C.output(output_test);
  
@@ -229,6 +249,8 @@ int main(int argc, char *argv[])
  
   std::cout << std::endl << "The multiplication of the matrices is:"
             << std::endl << std::endl;
+  output_test << std::endl << "The multiplication of the matrices is:"
+              << std::endl << std::endl;
   C.output();
   C.output(output_test);
  
@@ -259,6 +281,8 @@ int main(int argc, char *argv[])
   CCMatrix<double> A(matrix_A_pt, n_rows_A, n_columns_A);
   std::cout << std::endl << "Non square matrix"
             << std::endl << std::endl;
+  output_test << std::endl << "Non square matrix"
+              << std::endl << std::endl;
   A.output();
   A.output(output_test);
  
@@ -291,6 +315,8 @@ int main(int argc, char *argv[])
   CCMatrix<double> x(matrix_x_pt, n_rows_x, n_columns_x);
   std::cout << std::endl << "Vector"
             << std::endl << std::endl;
+  output_test << std::endl << "Vector"
+              << std::endl << std::endl;
   x.output();
   x.output(output_test);
  
@@ -309,6 +335,8 @@ int main(int argc, char *argv[])
  
   std::cout << std::endl << "The multiplication of the matrices is:"
             << std::endl << std::endl;
+  output_test << std::endl << "The multiplication of the matrices is:"
+              << std::endl << std::endl;
   b.output();
   b.output(output_test);
  
@@ -319,6 +347,8 @@ int main(int argc, char *argv[])
   b.transpose(b_t);
   std::cout << std::endl << "The transposed matrix:"
             << std::endl << std::endl;
+  output_test << std::endl << "The transposed matrix:"
+              << std::endl << std::endl;
   b_t.output();
   // Output for test
   b_t.output(output_test);
@@ -342,6 +372,11 @@ int main(int argc, char *argv[])
             << "Matrix vector operations\n"
             << "##############################################################################"
             << std::endl;
+  output_test << std::endl << ""
+              << "##############################################################################\n"
+              << "Matrix vector operations\n"
+              << "##############################################################################"
+              << std::endl;
  
   // --------------------------------------------
   // Rotations to test matrix vector operations
@@ -381,6 +416,7 @@ int main(int argc, char *argv[])
   const double norm = diff.norm_2();
   output_test << norm << std::endl;
   std::cout << norm << std::endl;
+  output_test << norm << std::endl;
   
  }
 
@@ -393,6 +429,11 @@ int main(int argc, char *argv[])
             << "Vector-matrix operations\n"
             << "##############################################################################"
             << std::endl;
+  output_test << std::endl << ""
+              << "##############################################################################\n"
+              << "Vector-matrix operations\n"
+              << "##############################################################################"
+              << std::endl;
  
  }
  
@@ -405,15 +446,22 @@ int main(int argc, char *argv[])
             << "Matrix matrix operations (row permutations)\n"
             << "##############################################################################"
             << std::endl;
- 
+  output_test << std::endl << ""
+              << "##############################################################################\n"
+              << "Matrix matrix operations (row permutations)\n"
+              << "##############################################################################"
+              << std::endl;
+  
   // ------------------------------------------------------------------
   // Use permutation matrices to check the correct implementation of
   // matrix-matrix multiplication
   // ------------------------------------------------------------------
   const unsigned DIM = 3;
 
-  // Create two matrices The permutation matrix (row permutations -
-  // multiply P to the left of the matrix to permute)
+  // Create two matrices
+
+  // The permutation matrix (row permutations - multiply P to the left
+  // of the matrix to permute)
   CCMatrix<unsigned> P(DIM, DIM);
   P.create_zero_matrix();
   
@@ -462,6 +510,11 @@ int main(int argc, char *argv[])
             << "Matrix matrix operations (column permutations)\n"
             << "##############################################################################"
             << std::endl;
+  output_test << std::endl << ""
+              << "##############################################################################\n"
+              << "Matrix matrix operations (column permutations)\n"
+              << "##############################################################################"
+              << std::endl;
  
   // ------------------------------------------------------------------
   // Use permutation matrices to check the correct implementation of
@@ -469,8 +522,10 @@ int main(int argc, char *argv[])
   // ------------------------------------------------------------------
   const unsigned DIM = 3;
 
-  // Create two matrices The permutation matrix (column permutations -
-  // multiply P to the right of the matrix to permute)
+  // Create two matrices
+
+  // The permutation matrix (column permutations - multiply P to the
+  // right of the matrix to permute)
   CCMatrix<unsigned> P(DIM, DIM);
   P.create_zero_matrix();
   
@@ -482,28 +537,28 @@ int main(int argc, char *argv[])
   // the other columns are not taken. The second column tell us to
   // take all the elements of the third column of the matrix to the
   // left and copy them in the second column of the resulting
-  // matrix. The third row tell us to take only the elements of the
-  // second row of the matrix to the right to create the third row of
-  // the resulting matrix. We can specify "how much" of each row to
-  // take to create the rows of the matrix to the right.
+  // matrix. The third column tell us to take only the elements of the
+  // second column of the matrix to the left to create the third
+  // column of the resulting matrix. We can specify "how much" of each
+  // column to take to create the columns of the matrix to the left.
   P(0,0) = 1;   P(0,1) = 0;   P(0,2) = 0;
   P(1,0) = 0;   P(1,1) = 0;   P(1,2) = 1;
   P(2,0) = 0;   P(2,1) = 1;   P(2,2) = 0;
-
+  
   // Matrix to permute
   CCMatrix<unsigned> A(DIM, DIM);
   A.create_zero_matrix();
-
-  A(0,0) = 1;   A(0,1) = 2;   A(0,2) = 3;
-  A(1,0) = 4;   A(1,1) = 5;   A(1,2) = 6;
-  A(2,0) = 7;   A(2,1) = 8;   A(2,2) = 9;
+  
+  A(0,0) = 1;   A(0,1) = 4;   A(0,2) = 7;
+  A(1,0) = 2;   A(1,1) = 5;   A(1,2) = 8;
+  A(2,0) = 3;   A(2,1) = 6;   A(2,2) = 9;
   
   // Permute matrix
   CCMatrix<unsigned> S(DIM, DIM);
   S.create_zero_matrix();
-
-  multiply_matrices(P, A, S);
-
+  
+  multiply_matrices(A, P, S);
+  
   S.output();
   S.output(output_test);
   
