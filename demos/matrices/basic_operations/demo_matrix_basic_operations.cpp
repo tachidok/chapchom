@@ -358,7 +358,68 @@ int main(int argc, char *argv[])
   matrix_x_pt = 0;
   
  }
+ 
+ {
+  // ##############################################################################
+  // Matrix permutations
+  // ##############################################################################
+  std::cout << std::endl << ""
+            << "##############################################################################\n"
+            << "Matrix permutations (using own matrix methods)\n"
+            << "##############################################################################"
+            << std::endl;
+  output_test << std::endl << ""
+              << "##############################################################################\n"
+              << "Matrix permutations (using own matrix methods)\n"
+              << "##############################################################################"
+              << std::endl;
+  
+  const unsigned DIM = 3;
+  
+  // Matrix to permute
+  CCMatrix<unsigned> A(DIM, DIM);
+  A.allocate_memory();
+  
+  A(0,0) = 1;   A(0,1) = 2;   A(0,2) = 3;
+  A(1,0) = 4;   A(1,1) = 5;   A(1,2) = 6;
+  A(2,0) = 7;   A(2,1) = 8;   A(2,2) = 9;
 
+  std::cout << std::endl << ""
+            << "---------------------------------------------------\n"
+            << "Rows permutation\n"
+            << "---------------------------------------------------\n"
+            << std::endl;
+  output_test << std::endl << ""
+              << "---------------------------------------------------\n"
+              << "Rows permutation\n"
+              << "---------------------------------------------------\n"
+              << std::endl;
+  
+  // Permute rows
+  A.permute_rows(1, 2);
+  
+  A.output();
+  A.output(output_test);
+
+  std::cout << std::endl << ""
+            << "---------------------------------------------------\n"
+            << "Columns permutation\n"
+            << "---------------------------------------------------\n"
+            << std::endl;
+  output_test << std::endl << ""
+              << "---------------------------------------------------\n"
+              << "Columns permutation\n"
+              << "---------------------------------------------------\n"
+              << std::endl;
+  
+  // Permute columns
+  A.permute_columns(1, 2);
+  
+  A.output();
+  A.output(output_test);
+  
+ }
+ 
  {
   // ##############################################################################
   // Matrix vector operations
@@ -485,7 +546,7 @@ int main(int argc, char *argv[])
   A(1,0) = 4;   A(1,1) = 5;   A(1,2) = 6;
   A(2,0) = 7;   A(2,1) = 8;   A(2,2) = 9;
   
-  // Permute matrix
+  // Permuted matrix
   CCMatrix<unsigned> S(DIM, DIM);
   
   multiply_matrices(P, A, S);
@@ -548,7 +609,7 @@ int main(int argc, char *argv[])
   A(1,0) = 2;   A(1,1) = 5;   A(1,2) = 8;
   A(2,0) = 3;   A(2,1) = 6;   A(2,2) = 9;
   
-  // Permute matrix
+  // Permuted matrix
   CCMatrix<unsigned> S(DIM, DIM);
   
   multiply_matrices(A, P, S);

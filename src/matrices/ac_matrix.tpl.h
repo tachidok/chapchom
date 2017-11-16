@@ -75,6 +75,14 @@ namespace chapchom
                                 const unsigned long &j)
    {return value(i,j);}
    
+   /// Permute rows i and j
+   virtual void permute_rows(const unsigned long &i,
+                             const unsigned long &j) = 0;
+   
+   /// Permute columns i and j
+   virtual void permute_columns(const unsigned long &i,
+                                const unsigned long &j) = 0;
+   
    // Output the matrix
    virtual void output(bool output_indexes = false) const = 0;
    

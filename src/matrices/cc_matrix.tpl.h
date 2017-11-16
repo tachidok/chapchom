@@ -99,6 +99,12 @@ namespace chapchom
   
   // Set values in the matrix (write version)
   T &value(const unsigned long i, const unsigned long j);
+
+  /// Permute rows i and j
+  void permute_rows(const unsigned long &i, const unsigned long &j);
+   
+  /// Permute columns i and j
+  void permute_columns(const unsigned long &i, const unsigned long &j);
   
   // Output the matrix
   void output(bool output_indexes = false) const;
