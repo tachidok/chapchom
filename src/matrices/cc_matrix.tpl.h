@@ -99,7 +99,13 @@ namespace chapchom
   
   // Set values in the matrix (write version)
   T &value(const unsigned long i, const unsigned long j);
-
+  
+  /// Permute the rows in the list
+  void permute_rows(std::vector<std::pair<unsigned long, unsigned long> > &permute_list);
+  
+  /// Permute the columns in the list
+  void permute_columns(std::vector<std::pair<unsigned long, unsigned long> > &permute_list);
+  
   /// Permute rows i and j
   void permute_rows(const unsigned long &i, const unsigned long &j);
    

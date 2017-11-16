@@ -75,6 +75,12 @@ namespace chapchom
                                 const unsigned long &j)
    {return value(i,j);}
    
+   /// Permute the rows in the list
+   virtual void permute_rows(std::vector<std::pair<unsigned long, unsigned long> > &permute_list) = 0;
+   
+   /// Permute the columns in the list
+   virtual void permute_columns(std::vector<std::pair<unsigned long, unsigned long> > &permute_list) = 0;
+      
    /// Permute rows i and j
    virtual void permute_rows(const unsigned long &i,
                              const unsigned long &j) = 0;

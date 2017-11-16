@@ -373,47 +373,105 @@ int main(int argc, char *argv[])
               << "Matrix permutations (using own matrix methods)\n"
               << "##############################################################################"
               << std::endl;
+
+  {
+   const unsigned DIM = 3;
+   
+   // Matrix to permute
+   CCMatrix<unsigned> A(DIM, DIM);
+   A.allocate_memory();
+   
+   A(0,0) = 1;   A(0,1) = 2;   A(0,2) = 3;
+   A(1,0) = 4;   A(1,1) = 5;   A(1,2) = 6;
+   A(2,0) = 7;   A(2,1) = 8;   A(2,2) = 9;
+
+   std::cout << std::endl << ""
+             << "---------------------------------------------------\n"
+             << "Rows permutation (two rows only)\n"
+             << "---------------------------------------------------\n"
+             << std::endl;
+   output_test << std::endl << ""
+               << "---------------------------------------------------\n"
+               << "Rows permutation (two rows only)\n"
+               << "---------------------------------------------------\n"
+               << std::endl;
   
-  const unsigned DIM = 3;
+   // Permute rows
+   A.permute_rows(1, 2);
+   
+   A.output();
+   A.output(output_test);
+   
+   std::cout << std::endl << ""
+             << "---------------------------------------------------\n"
+             << "Columns permutation (two columns only)\n"
+             << "---------------------------------------------------\n"
+             << std::endl;
+   output_test << std::endl << ""
+               << "---------------------------------------------------\n"
+               << "Columns permutation (two columns only)\n"
+               << "---------------------------------------------------\n"
+               << std::endl;
+   
+   // Permute columns
+   A.permute_columns(1, 2);
+   
+   A.output();
+   A.output(output_test);
+   
+  }
   
+  const unsigned DIM = 4;
+   
   // Matrix to permute
   CCMatrix<unsigned> A(DIM, DIM);
   A.allocate_memory();
+   
+  A(0,0) = 1;   A(0,1) = 2;   A(0,2) = 3;   A(0,3) = 4;
+  A(1,0) = 5;   A(1,1) = 6;   A(1,2) = 7;   A(1,3) = 8;
+  A(2,0) = 9;   A(2,1) = 10;   A(2,2) = 11;   A(2,3) = 12;
+  A(3,0) = 13;   A(3,1) = 14;   A(3,2) = 15;   A(3,3) = 16;
   
-  A(0,0) = 1;   A(0,1) = 2;   A(0,2) = 3;
-  A(1,0) = 4;   A(1,1) = 5;   A(1,2) = 6;
-  A(2,0) = 7;   A(2,1) = 8;   A(2,2) = 9;
-
   std::cout << std::endl << ""
             << "---------------------------------------------------\n"
-            << "Rows permutation\n"
+            << "Rows permutation (multiple rows)\n"
             << "---------------------------------------------------\n"
             << std::endl;
   output_test << std::endl << ""
               << "---------------------------------------------------\n"
-              << "Rows permutation\n"
+              << "Rows permutation (multiple rows)\n"
               << "---------------------------------------------------\n"
               << std::endl;
   
+  // Create the list of rows to permute
+  std::vector<std::pair<unsigned long, unsigned long> > permute_rows_list(2);
+  permute_rows_list[0] = std::make_pair<unsigned long, unsigned long>(0, 3);
+  permute_rows_list[1] = std::make_pair<unsigned long, unsigned long>(1, 2);
+  
   // Permute rows
-  A.permute_rows(1, 2);
+  A.permute_rows(permute_rows_list);
   
   A.output();
   A.output(output_test);
-
+   
   std::cout << std::endl << ""
             << "---------------------------------------------------\n"
-            << "Columns permutation\n"
+            << "Columns permutation (multiple columns)\n"
             << "---------------------------------------------------\n"
             << std::endl;
   output_test << std::endl << ""
               << "---------------------------------------------------\n"
-              << "Columns permutation\n"
+              << "Columns permutation (multiple columns)\n"
               << "---------------------------------------------------\n"
-              << std::endl;
+               << std::endl;
   
-  // Permute columns
-  A.permute_columns(1, 2);
+  // Create the list of columns to permute
+  std::vector<std::pair<unsigned long, unsigned long> > permute_columns_list(2);
+  permute_columns_list[0] = std::make_pair<unsigned long, unsigned long>(0, 3);
+  permute_columns_list[1] = std::make_pair<unsigned long, unsigned long>(1, 2);
+  
+  // Permute rows
+  A.permute_columns(permute_columns_list); 
   
   A.output();
   A.output(output_test);
