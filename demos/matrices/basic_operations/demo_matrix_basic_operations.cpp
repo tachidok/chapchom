@@ -549,7 +549,40 @@ int main(int argc, char *argv[])
               << "Vector-matrix operations\n"
               << "##############################################################################"
               << std::endl;
- 
+  
+  // ------------------------------------------------------------------
+  // Vector-matrix multiplication. Use a row vector to extract some
+  // data from the matrix to the right.
+  // ------------------------------------------------------------------
+  const unsigned DIM = 3;
+
+  // Create a matrix
+  CCMatrix<double> A(DIM, DIM);
+  A.allocate_memory();
+  
+  A(0,0) = 0.5;   A(0,1) = 0.5;   A(0,2) = 0.5;
+  A(1,0) = 1.0;   A(1,1) = 1.0;   A(1,2) = 1.0;
+  A(2,0) = 2.0;   A(2,1) = 2.0;   A(2,2) = 2.0;
+  
+  // Create a vector indicating the data to extract from the matrix
+  CCVector<double> v(DIM);
+  v.allocate_memory();
+  // Transpose the vector so that we have a row vector
+  v.transpose();
+
+  // The following vector states to take the first row of matrix A and
+  // add it to half the second row and a quarter of the third row
+  v(0) = 1.0;  v(1) = 0.5;  v(2) = 0.25;
+
+  // A vector (as a matrix) where to store the resulting vector-matrix
+  // multiplication
+  CCMatrix<double> S(1, DIM);
+  
+  multiply_vector_times_matrix(v, A, S);
+  
+  S.output();
+  S.output(output_test);
+  
  }
  
  {
