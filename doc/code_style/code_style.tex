@@ -1,242 +1,139 @@
-\documentclass[12pt,a4paper,final]{report} % When using the draft no
-                                           % pictures are included in
-                                           % the document
+% Created 2017-12-29 vie 15:38
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
-\usepackage[UKenglish]{babel}
-
-% ==========================================================================
-% IMPORTANT: To install latex run
-%
-% sudo apt-get install texlive-latex-base
-%
-% When some packages are not found try (recommended to install after
-% latex-base)
-%
-% sudo apt-get install texlive-latex-extra
-%
-% If you are using Biber as the bibliography manager, then you need to
-% ensure you have the file biblatex.sty installed, if you are not sure
-% run the following command to install it
-%
-% sudo apt-get install texlive-bibtex-extra
-%
-% You will also need to install Biber from the "Ubuntu Software
-% Centre", and if you want to use it with "Texmaker" you need to
-% configure it to use biber insteat of bibtex at Options > Configure
-% Texmaker
-%
-% ==========================================================================
-
-\usepackage{amsmath}
-% BEGIN ---- The block of code after this is to write augmented
-% matrices and allows you to align entries in matrices
-\makeatletter
-\renewcommand*\env@matrix[1][*\c@MaxMatrixCols c]{%
-  \hskip -\arraycolsep
-  \let\@ifnextchar\new@ifnextchar
-  \array{#1}}
-\makeatother
-
-% Example
-% -------------------------------------------------------------------------
-% \begin{equation}
-%   \begin{bmatrix}[rrr]
-%     2 & -1\\
-%     -1 & 2
-%   \end{bmatrix}
-%   \begin{bmatrix}
-%   x\\
-%   y
-%   \end{bmatrix}
-%   =
-%   \begin{bmatrix}
-%   0\\
-%   3
-%   \end{bmatrix},
-% \end{equation}
-% ------------------------------------------------------------------------
-
-% END ---- The block of code before this is to write augmented
-% matrices and allows you to align entries in matrices
-
-\usepackage{amsfonts}
-\usepackage{amssymb}
-
-% To work with figures, inserting and adding a relative directory to
-% search for figures
+\usepackage[T1]{fontenc}
 \usepackage{graphicx}
-\graphicspath{ {figures/} } % There must not be space before and after
-                            % "figures/" for the second pair of "{"
-                            % "}". See
-                            % https://www.sharelatex.com/learn/Inserting_Images
-
-\usepackage{caption} % Extend the formats for captions
-\usepackage{subcaption}
-
-\usepackage{url} % To add url-format to the document
-\usepackage{mathtools} % More tools than those offered by "amsmath"
-
-% ========================================================================
-% Algorithm packages ----------------------------- BEGIN -----------------
-% ========================================================================
-%\usepackage[ruled]{algorithm} % Support for algorithms
-%\usepackage{algpseudocode}
-% ========================================================================
-% Algorithm packages ----------------------------- END -------------------
-% ========================================================================
-
-% ========================================================================
-% Bibliography stuff ----------------------------- BEGIN -----------------
-% ========================================================================
-
-% At the end of the document we need to call \printbibliography to
-% include the bibliography. Use this command whenever you find that
-% the biblatex.sty package is not installed
-%
-% sudo apt-get install texlive-bibtex-extra
-%
-% We need to install Biber from the "Ubuntu Software Centre", and if
-% you want to use it with "Texmaker" you need to configure it to use
-% biber insteat of bibtex at Options > Configure Texmaker
-
-\usepackage[backend=biber,style=ieee,sorting=nyt]{biblatex}
-% Imports the package to manage the bibliography (the option backend
-% set biber as the backend-- which I dont know what it is ---, the
-% style is how the bibliography is cited and printed at the
-% bibliography section, and the option sorting=nyt sorts the
-% bibliography by name=n, year=y and title=t).
-\addbibresource{code_style.bib} % Imports the bibliography file
-
-\usepackage{csquotes} % Add this, otherwise a warning is thrown if not
-                      % included
-
-% ========================================================================
-% Bibliography stuff ----------------------------- END -------------------
-% ========================================================================
-
-% The listing package to add formated blocks of code
-\usepackage{listings}
-
-% MY definitions (short-cuts)
-% For vectors
-\newcommand{\vect}[1]{\mathbf{#1}}
-
-\author{tachidok}
-\title{Report}
-
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\author{Julio}
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={Julio},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 24.5.1 (Org mode 9.0.9)}, 
+ pdflang={English}}
 \begin{document}
 
-% Enable the following when using a report docuemtn style
+\tableofcontents
 
-%\tableofcontents
-%\listoffigures
-%\listoftables
+Here we present a kind of coding/programming style policies to happily
+coding together. First of all, as you may already noticed, we use
+\textbf{C++} as our programming language. Why? well, that is because of its
+widely continuous spreading along the scientific community and all its
+nicely offered features.
 
-\chapter{Coding style}
-Here we present a kind of coding/programming style rules to happily
-coding together. First of all, as you may already noticed, we use C++
-as our programming language. Why? well, that is because of its widely
-continuous spreading along the scientific community and all its nicely
-offered features.
-
-The list of rules that you'll find here were taken from our own
+The list of rules that you will find here are taken from our own
 experience. We took what has worked for us when working in cooperative
 projects, and set aside those silly things that only made cooperation
-painful and nol longer fun. Hope you agree with us in the list of
-rules we present here, thus, sit back, relax and happy reading.
+painful and no longer fun. We encourage you to talk with us about new
+and excitement cooperation ideas you know. Hope you agree with us in
+what we present here. Sit back, relax and happy reading.
 
-\section{Comments}
+\section{Coding style}
+\label{sec:org15c0b73}
 
-``\textit{Comments are supposed to make your code easier to understand
-  and maintain-- not harder}'', \cite{when_comments_go_bad:URL}.
+\subsection{Comments}
+\label{sec:org742c172}
+
+\emph{"Comments are supposed to make your code easier to understand and
+maintain-- not harder"}, \href{http://blog.codinghorror.com/when-good-comments-go-bad}{when comments go bad}.
 
 There is nothing more frustrating than having to review someone's else
 code (and sometimes our own code) and find out that the variables or
-functions names are not representative of what they are used for, the
-code is a complete mess having no identation at all, and the worse
+functions names are not representative of what they are used for. The
+code is a complete mess, it has no identation at all, and the worse
 thing is that there is not a single commented line to give us a clue
-of what is going on. In front of this situation we have two options,
+of what is going on. In this case we have two options,
 \begin{itemize}
-\item spend a lot of time and effort to understand the code (and find
-  out that the code is not doing what you are looking for), or
-\item throw it away and do your own implementation (I personally
-  prefer this option).
+\item spend our whole day (or even more) to understand the code (and find
+out that the code is not doing what you are looking for), or
+\item throw it away and do your own implementation (I personally prefer
+this option).
 \end{itemize}
 
-Certaintly, the above prevents code reusing which is one of the main
+Certainly, the above prevents code reusing which is one of the main
 purposes of this library.
 
-First of all, try to make your code as self-explanatory as
+First of all, \sout{try to} make your code as \textbf{self-explanatory} as
 possible. Suppose that you are telling a story to a group of people
 and you want everyone that is hearing you do not get lost while you
 are talking. If the syntaxis of the programming language does not
 allow you to write your story clearly then use comments, do not be
-afraid of them.
+afraid of using them.
 
-Put your comments as close as possible to the source code they are
-referring. A developer may not notice a comment that referrs to a code
-line that he/she is modifying, thus the comments and the code will be
-out of sync, \cite{when_comments_go_bad:URL}.
+Put your \textbf{comments as close as possible to the source code they are
+referring}. A developer may not notice a comment that referrs to a
+code line that he/she is modifying, thus the comments and the code
+will be out of sync, \href{http://blog.codinghorror.com/when-good-comments-go-bad}{when commnets go bad}.
 
-Use comments to clarify the selection of some algorithms or to mention
-things to rememeber during the execution of the code.
+Use \textbf{comments to clarify the selection of some algorithms} or to
+mention things to remember during the execution of the code.
 
-When writing functions that perform a large number of sub-tasks, use
-the initial part of it to write a (brief!) summary of the followed
-strategy by the function and include a list with the main steps of the
-function. This way the reader of your code gets an idea of what to
-expect in the body of the function.
+When writing \textbf{functions} that perform a large number of sub-tasks, use
+the initial part of it to write a (brief!) \textbf{summary of the followed
+strategy by the function} and include a list with the main steps of
+the function. This helps the reader of your code to get an idea of
+what to expect in the body of the function.
 
 One final thing, always keep in mind that what may be transparently
-obvious for you, may be completely obscure and complex for another
-developer (or for yourself after returning from a nonprogramming
-period), use comments to ease the reading of your code, not to make it
-harder.
+obvious for you, may be completely obscure and complex to another
+developer (or for yourself after returning from a non-programming
+period), \textbf{use comments to ease the reading of your code, not to make
+it harder.}
 
 If you are looking for some good reasons for not documenting your code
-then check see these ones
-\cite{why_programmers_do_not_comment_their_code:URL} and see what
-better matches with you.
+then check these ones \href{http://everything2.com/index.pl?node\_id=1709851\&displaytype=printable}{(why programmers do not comment their code)} and
+see what better matches with you.
 
-\section{Indentation}
-This is simple, indent your code for easy reading. I use emacs as my
-preferred editor and have it configured to automatically indent with a
-single whitespace when pressing TAB. You can copy and use my emacs
-configuration file (.emacs) from the the \textbf{tools} folder or
-configure your favorite editor to indent with a single whitespace.
+\subsection{Indentation}
+\label{sec:orgba77122}
+This is simple, \textbf{indent your code for easy reading}. I use emacs as my
+preferred editor and have it configured to automatically \textbf{indent with
+a single white-space} when pressing TAB. You can copy and use my emacs
+configuration file (init.el) from the \textbf{\emph{tools}} folder, or configure
+your favorite editor to \textbf{indent with a single white-space}.
 
-\section{Variables}
+\subsection{Variables}
+\label{sec:orgb85970c}
 We use variables to store values or data that are used frequently in
 the body of a function or as part of a class.
 
-\subsection{Variables names}
-Use variable names that reflect the values or data stored in the
-variable. If you require to store the velocity you should use
-\texttt{v} or \texttt{velocity} as the variable name. 
+\subsubsection{Variables names}
+\label{sec:orgc2b224c}
+Use \textbf{variable names that reflect the values or data stored in the
+variable}. If you require to store the velocity you may use \texttt{v} or
+\texttt{velocity} as the variable name.
 
 Avoid using the well known variables names:
 
-\begin{table}
-  \centering
-  \begin{tabular}{|c|c|c|}
-    \hline
-    \texttt{var1} & \texttt{var2} & \texttt{varn}\\
-    \hline
-    \texttt{value} & \texttt{variable} & \texttt{my\_variable}\\
-    \hline
-    \texttt{this\_variable} & \texttt{other\_variable} &
-    \texttt{another\_variable}\\
-    \hline
-    \texttt{delete\_variable} &  \texttt{here} & \texttt{there}\\
-    \hline
+\begin{table}[htbp]
+\caption{\label{tab:org91207eb}
+Bad variables names}
+\centering
+\begin{tabular}{lll}
+\texttt{var1} & \texttt{var2} & \texttt{var3}\\
+\texttt{value} & \texttt{variable} & \texttt{my\_variable}\\
+\texttt{this\_variable} & \texttt{other\_variable} & \texttt{another\_variable}\\
+\texttt{delete\_variable} & \texttt{here} & \texttt{there}\\
 \end{tabular}
-\label{tbl:bad_variables_names}
-\caption{Bad variables names.}
 \end{table}
+
 I know you (use?) have used those variable names, everyone does it.
 
 Variables that stores the number of elements of something must use the
-prefix {\verb n_ }. For example, if you want to store the number of
+prefix \{\verb n\_ \}. For example, if you want to store the number of
 processors, the variable must be named as follow:
 
 \begin{lstlisting}[language=C++]
@@ -247,7 +144,7 @@ processors, the variable must be named as follow:
 Use \texttt{unsigned} instead of \texttt{int} in loops (\texttt{for}
 or \texttt{while}) that do not require negative indexes.
 
-\subsection{\texttt{Const} or variable?}
+\subsection\{\texttt{Const} or variable?\}
 Well, it happens that in C++, variables that do not pretend to change
 their value along the entire exection of the program are declared with
 a \texttt{const} before the variable type. They why are they still
@@ -292,7 +189,7 @@ before the type of the variable\\
 
 \texttt{const unsigned no\_modified\_variabled} (why is it called a
 variable then?)
-\\
+
 otherwise do not use ``const'' \texttt{unsigned modified\_variable}.
 
 
@@ -307,22 +204,7 @@ ot it?
 
 Examples of passing arguments by reference here soon
 
-Use \& when passing an argument by reference
+Use $\backslash$& when passing an argument by reference
 
 DELETE DELETE
-
-% ========================================================================
-% Customising bibliography ------------------- BEGIN ---------------------
-% ========================================================================
-\printbibliography[heading=bibintoc]
-% Print bibliography from articles
-%\printbibliography[heading=bibintoc, type=article,title={Articles}]
-% Print bibliography from books
-%\printbibliography[heading=bibintoc,type=book,title={Books}]
-% Print bibliography from incollection
-%\printbibliography[heading=bibintoc,type=incollection,title={In collection}]
-% ========================================================================
-% Customising bibliography ------------------- END -----------------------
-% ========================================================================
-
 \end{document}
