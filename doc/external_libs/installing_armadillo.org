@@ -1,0 +1,42 @@
+#+STARTUP: showall
+#+TITLE: Installing Armadillo
+#+AUTHOR: Julio C.
+
+This guide is to allow [[https://github.com/tachidok/chapchom][chapchom]] to work with =Armadillo 8.300.3= in
+=Ubuntu 16.04 LTS 64 bits=. If you find any problem or something in
+this guide makes no sense please contact the author.
+
+Please also refer to the [[http://arma.sourceforge.net/][original documentation]] in case you are having
+troubles with the installation.
+
+* Requirements
+Before installing this version of Armadillo please check that you have
+not any other version of Armadillo already installed in your
+system. If that is the case then proceed to uninstall it.
+
+Once you ensure that Armadillo is not already installed in your system
+then proceed to check that you have the following packages installed
+in your system.
+- cmake (tested with =cmake 3.5.1-1ubuntu3=)
+
+The following set of packages are optional, however we highly
+recommend you to install them to improve performance.
+
++ +libopenblas-dev+
++ libblas-dev (tested with =libblas-common=, =libblas-dev 3.6.0-2ubuntu2=)
++ liblapack-dev (tested with =liblapack-dev 3.6.0-2ubuntu2=)
++ libarpack-dev (tested with =libarpack2=, =libarpack2-dev 3.3.0-1build2=)
++ SuperLU (tested with =SuperLU_5.2.0=). For this one check the
+  installation file in the doc folder.
+
+According to Armadillo's documentation, LAPACK and BLAS are used to
+work with dense matrices, meanwhile ARPACK and SuperLU are used to
+work with sparese matrices. If you want to use SuperLU then you need
+to stick to version 5.2 (check README.txt:146 of Armadillo
+documentation). If you want to use OpenMP then make sure you are using
+version 3.1 or newer (check README.txt:372 of Armadillo
+documentation).
+
+* Installation
+
+

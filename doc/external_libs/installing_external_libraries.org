@@ -1,0 +1,32 @@
+#+STARTUP: showall
+#+TITLE: Installing external libraries
+#+AUTHOR: Julio C.
+
+This guide is to allow [[https://github.com/tachidok/chapchom][chapchom]] to work with external libraries such
+as =Armadillo= and =SuperLU= in =Ubuntu 16.04 LTS 64 bits=. If you
+find any problem or something in this guide makes no sense please
+contact the author.
+
+* Requirements
+Before installing any of the external libraries in your system ensure
+that none of them is already installed in your system, this may
+produce crashes between versions.
+
+Once you ensure that non other versions of the external packages are
+already installed in your system then proceed to check that you have
+the following packages installed in your system.
+
+- cmake (tested with =cmake 3.5.1-1ubuntu3=)
++ libblas-dev (tested with =libblas-common=, =libblas-dev 3.6.0-2ubuntu2=)
++ liblapack-dev (tested with =liblapack-dev 3.6.0-2ubuntu2=)
++ libarpack-dev (tested with =libarpack2=, =libarpack2-dev
+  3.3.0-1build2=)
+
+* Installation
+
+Suggested (and working) installation order
+- SuperLU
+- OpenBLAS
+- Armadillo
+
+
