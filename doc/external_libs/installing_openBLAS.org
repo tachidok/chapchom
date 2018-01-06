@@ -34,17 +34,18 @@ recommend you to install them to improve performance.
   =/external_src/openBLAS/OpenBLAS-0.2.20.tar.gz= in a folder of your
   preference. We recommend you to extract it out of the chapchom
   project folder to avoid adding the files to the git repository. If
-  you do so please extreme precautions when adding your files to the
-  git repository.
-
-- Go to folder where you extracted the files and type
+  you do extract it inside the chapchom project folder please extreme
+  precautions when adding your files to the git repository.
+  
+- Go to the folder where you extracted the files and type
 
 #+BEGIN_SRC bash
 make
 #+END_SRC
 
 - Once compilation is finished you are able to install it using the
-  following command
+  following command (we recommned you to create a folder where to
+  install the library, ex. =/lib/=)
 
 #+BEGIN_SRC bash
 make PREFIX=/path/to/your/installation install

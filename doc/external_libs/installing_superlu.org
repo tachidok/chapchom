@@ -25,16 +25,21 @@ in your system.
   =/external_src/superLU/superlu_5.2.0.tar.gz= in a folder of your
   preference. We recommend you to extract it out of the chapchom
   project folder to avoid adding the files to the git repository. If
-  you do so please extreme precautions when adding your files to the
-  git repository.
+  you do extract it inside the chapchom project folder please extreme
+  precautions when adding your files to the git repository.
 
-- Go to folder where you extracted the files and type
+- Go to the folder where you extracted the files and type
 
 #+BEGIN_SRC bash
 mkdir build
 cd build
-cmake ..
+cmake .. -DCMAKE_INSTALL_PREFIX=../lib
 #+END_SRC
+
+the last line indicates where to perform the installation, I use to
+install it in the =lib= directory of the SuperLU folder, that is why
+that value. However, if you have root privileges then you may not need
+to specify a value for the =CMAKE_INSTALL_PREFIX= variable.
 
 - When the process finish then type
 
@@ -42,7 +47,13 @@ cmake ..
 make
 #+END_SRC
 
-- And finally, to run the test type
+- Install it ...
+
+#+BEGIN_SRC bash
+make install
+#+END_SRC
+
+- And finally, run the test by typing
 
 #+BEGIN_SRC bash
 ctest
@@ -55,5 +66,4 @@ files
 | =build/TESTING/d_test.out= | =double precision, real=   |
 | =build/TESTING/c_test.out= | =single precision, complex=   |
 | =build/TESTING/z_test.out= | =double precision, complex=   |
-
 

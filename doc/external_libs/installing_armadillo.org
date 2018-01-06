@@ -39,4 +39,20 @@ documentation).
 
 * Installation
 
+- Extract the compressed file
+  =/external_src/armadillo/armadillo-8.300.3.tar.xz= in a folder of
+  your preference. We recommend you to extract it out of the chapchom
+  project folder to avoid adding the files to the git repository. If
+  you do extract it inside the chapchom project folder please extreme
+  precautions when adding your files to the git repository.
 
+- Go to the folder where you extracted the files and type
+
+#+BEGIN_SRC bash
+cmake . \
+-DCMAKE_INSTALL_PREFIX=lib \
+-DSuperLU_INCLUDE_DIR=path_to_SuperLU_include_directory \
+-DSuperLU_LIBRARY=path_to_SuperLU_library \
+-Dopenblas_LIBRARY=path_to_openBLAS_library
+
+#+END_SRC
