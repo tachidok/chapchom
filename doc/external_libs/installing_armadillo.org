@@ -55,4 +55,8 @@ cmake . \
 -DSuperLU_LIBRARY=path_to_SuperLU_library \
 -Dopenblas_LIBRARY=path_to_openBLAS_library
 
+make
+
+make install DESTDIR=my_installation_directory
+
 #+END_SRC
