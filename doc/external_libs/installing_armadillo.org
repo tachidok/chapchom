@@ -26,8 +26,8 @@ recommend you to install them to improve performance.
 + libblas-dev (tested with =libblas-common=, =libblas-dev 3.6.0-2ubuntu2=)
 + liblapack-dev (tested with =liblapack-dev 3.6.0-2ubuntu2=)
 + libarpack-dev (tested with =libarpack2=, =libarpack2-dev 3.3.0-1build2=)
-+ SuperLU (tested with =SuperLU_5.2.0=). For this one check the
-  installation file in the doc folder.
++ SuperLU (tested with =SuperLU_5.2.0=). For this one check [[file:installing_superlu.html][the
+  installation instructions]] in the doc folder.
 
 According to Armadillo's documentation, LAPACK and BLAS are used to
 work with dense matrices, meanwhile ARPACK and SuperLU are used to
@@ -107,6 +107,12 @@ make example1
 - If you have problems as no shared library found then make sure you
   added the correct path for the armadillo libraries (/.so/) in the
   environment variable =LD_LIBRARY_PATH=.
+
+* Further configuration
+
+- If you require an specific configuration for Armadillo as OpenMP
+  support, acceleration, disabling of BLAS, LAPACK or something even
+  more weird please do check [[http://arma.sourceforge.net/docs.html#example_prog][the official documentation]].
 
 
 

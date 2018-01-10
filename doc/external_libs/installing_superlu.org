@@ -45,9 +45,8 @@ NOTE: If you are installing =Armadillo= with =SuperLU= support then
 you may need to install =SuperLU= with the flag =-fPIC= (which stands
 for 'Position Independent Code'), to do so open the =CMakeLists.txt=
 file in the main folder of =SuperLU= and edit the line where =CFLAGS=
-are added (in =SuperLU 5.2.0= it is in line =68=).
-
-This is how it look for version 5.2.0
+are added (in =SuperLU 5.2.0= it is in line =68=). This is how it
+looks for version 5.2.0
 
 #+BEGIN_SRC cmake
 set(CMAKE_C_FLAGS "-fPIC -DPRNTlevel=0 -DAdd_ ${CMAKE_C_FLAGS}")
