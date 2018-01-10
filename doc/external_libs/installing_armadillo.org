@@ -60,3 +60,53 @@ make
 make install DESTDIR=my_installation_directory
 
 #+END_SRC
+
+- Add library path to =LD_LIBRARY_PATH= environment variable. In a
+  terminal type
+
+#+BEGIN_SRC bash
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/armadillo/installation/lib/folder
+#+END_SRC
+
+NOTE: You may (or not) need to add this path everytime you restart
+your computer.
+
+- Finally just type
+
+#+BEGIN_SRC bash
+echo $LD_LIBRARY_PATH
+#+END_SRC
+
+and check that the path you added in shown.
+
+* Compile and run the example
+
+- Go to the =examples= folder and open the =Makefile=
+- If you specified an installation folder then you will need to add
+  the =include= and =lib= folder in the =Makefile=.
+- Add the following lines in the =Makefile=
+
+#+BEGIN_SRC bash
+INCLUDE=-I /path/to/armadillo/include/folder
+LIBS=-L /path/to/armadillo/lib/folder
+#+END_SRC
+
+- Compile the example1
+
+#+BEGIN_SRC bash
+make example1
+#+END_SRC
+
+- If everything goes right then you should have an executable file
+  called example1, run it by typing
+
+#+BEGIN_SRC bash
+./example1
+#+END_SRC
+
+- If you have problems as no shared library found then make sure you
+  added the correct path for the armadillo libraries (/.so/) in the
+  environment variable =LD_LIBRARY_PATH=.
+
+
+
