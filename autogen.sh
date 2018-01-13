@@ -42,6 +42,9 @@ lib_type=*
 lib_version=*
 # Indicates whether to build/compile demos
 build_demos=TRUE
+# Indicates the configuration file with variables for paths for
+# external libraries
+configuration_file=./configs/default
 
 #====================================================================
 # The building script
@@ -145,6 +148,7 @@ cmake ../ \
       -DCHAPCHOM_LIB_TYPE=$lib_type \
       -DCHAPCHOM_BUILD_VERSION=$lib_version \
       -DCHAPCHOM_BUILD_DEMOS=$build_demos \
+      -DCHAPCHOM_CONFIGURATION_FILE=$configuration_file \
       -DCMAKE_EXPORT_COMPILE_COMMANDS=1 # Added to create the
 # 'compile_commands.json file
 # for emacs autocompletion in

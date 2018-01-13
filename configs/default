@@ -1,0 +1,3 @@
+CHAPCHOM_USES_ARMADILLO=TRUE
+ARMADILLO_INCLUDE_DIRS=/home/tachidok/local/working/research/
+ARMADILLO_LIBRARIES=/home/tachidok/local/working/research/arma
