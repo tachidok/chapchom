@@ -51,7 +51,7 @@ namespace chapchom
    
    // Destructor
    virtual ~CCMatrixArmadillo();
-  
+#if 0
    // Assignment operator
    CCMatrixArmadillo &operator=(const CCMatrixArmadillo &source_matrix);
   
@@ -131,6 +131,8 @@ namespace chapchom
   
    // Output to file
    void output(std::ofstream &outfile, bool output_indexes = false) const;
+
+#endif // #if 0
    
    // Get access to the Armadillo's matrix
    inline arma::Mat<T> *arma_matrix_pt() const {return Arma_matrix_pt;}

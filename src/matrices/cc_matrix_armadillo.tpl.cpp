@@ -124,6 +124,7 @@ namespace chapchom
   clean_up();
  }
 
+#if 0
  HERE HERE HERE HERE HERE
  
  // ===================================================================
@@ -940,6 +941,8 @@ namespace chapchom
    }
   
  }
+ 
+#endif // #if 0
  
  // ================================================================
  // Extra methods to work with matrices, we do not need them to be

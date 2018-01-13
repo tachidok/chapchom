@@ -50,6 +50,22 @@ ENDIF(${CHAPCHOM_BUILD_VERSION} STREQUAL DEBUG)
 #  SET(CHAPCHOM_CXX_FLAGS "-O0 -g -Wall -Wshadow -Wconversion -Wextra -pedantic")
 #ENDIF(${CHAPCHOM_BUILD_VERSION} STREQUAL DEBUG)
 
+# Do we want to compile using Armadillo
+IF (CHAPCHOM_USES_ARMADILLO)
+  # Try to find Armadillo to enable Armadillo wrappers
+  FIND_PACKAGE(Armadillo)
+  IF (ARMADILLO_FOUND)
+  MESSAGE( STATUS "ARMADILLO_INCLUDE_DIRS:             " ${ARMADILLO_INCLUDE_DIRS} )
+  MESSAGE( STATUS "ARMADILLO_LIBRARIES:             " ${ARMADILLO_LIBRARIES} )
+  INCLUDE_DIRECTORIES($ARMADILLO_INCLUDE_DIRS)
+ELSE (ARMADILLO_FOUND)
+  MESSAGE( STATUS "USING YOUR OWN ARMADILLO'S INCLUDE AND LIB PATHS")
+  SET(ARMADILLO_INCLUDE_DIRS "/home/tachidok/local/working/my_stuff/armadillo-8.300.3/lib/include")
+  SET(ARMADILLO_LIBRARIES "/home/tachidok/local/working/my_stuff/armadillo-8.300.3/lib/lib")
+  INCLUDE_DIRECTORIES(${ARMADILLO_INCLUDE_DIRS})
+ENDIF (ARMADILLO_FOUND)
+ENDIF (CHAPCHOM_USES_ARMADILLO)
+
 # Use this if you require to add more libraries (do not forget to
 # uncomment the respective line below to set linker variables)
 #SET(CHAPCHOM_LINKER_FLAGS "-lmath")
@@ -62,7 +78,7 @@ SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${CHAPCHOM_CXX_FLAGS}" )
 #SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}" )
 
 # Include testing (this function already calls enable_testing())
-include(CTest)
+INCLUDE(CTest)
 
 # Output compilers versions
 MESSAGE( STATUS "CMAKE_C_COMPILER:             " ${CMAKE_C_COMPILER} )
