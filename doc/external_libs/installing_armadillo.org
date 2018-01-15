@@ -49,12 +49,18 @@ documentation).
 - Go to the folder where you extracted the files and type
 
 #+BEGIN_SRC bash
+mkdir lib
 cmake . \
 -DCMAKE_INSTALL_PREFIX=lib \
 -DSuperLU_INCLUDE_DIR=path_to_SuperLU_include_directory \
 -DSuperLU_LIBRARY=path_to_SuperLU_library \
 -Dopenblas_LIBRARY=path_to_openBLAS_library
+#+END_SRC
 
+NOTE: If you now to use cmake-gui then you can configure the above
+variables there as well.
+
+#+BEGIN_SRC bash
 make
 
 make install DESTDIR=my_installation_directory
