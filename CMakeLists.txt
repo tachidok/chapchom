@@ -1,6 +1,10 @@
 # Check for cmake minimum required version
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
+# ----------------------------------------------------------------------
+# Project intialisation
+# ----------------------------------------------------------------------
+
 # Project name (this case library's name)
 PROJECT(chapchom)
 SET(${CMAKE_PROJECT_NAME}_MAJOR_VERSION 0)
@@ -10,7 +14,12 @@ SET(${CMAKE_PROJECT_NAME}_PATCH_LEVEL 0)
 # Prints a lot of stuff
 #SET(CMAKE_VERBOSE_MAKEFILE TRUE)
 
+# ----------------------------------------------------------------------
 # Output requested configuration
+# ----------------------------------------------------------------------
+MESSAGE( STATUS "-----------------------------------------------------------------------" )
+MESSAGE( STATUS "** GENERAL LIBRARY INFORMATION **" )
+MESSAGE( STATUS "-----------------------------------------------------------------------" )
 MESSAGE( STATUS "CHAPCHOM_LIB_TYPE:            " ${CHAPCHOM_LIB_TYPE} )
 MESSAGE( STATUS "CHAPCHOM_BUILD_VERSION:       " ${CHAPCHOM_BUILD_VERSION} )
 MESSAGE( STATUS "CHAPCHOM_BUILD_DEMOS:         " ${CHAPCHOM_BUILD_DEMOS} )
@@ -18,8 +27,56 @@ MESSAGE( STATUS "PROJECT_NAME:                 " ${PROJECT_NAME})
 MESSAGE( STATUS "PROJECT_MAJOR_VERSION:        " ${chapchom_MAJOR_VERSION})
 MESSAGE( STATUS "PROJECT_MINOR_VERSION:        " ${chapchom_MINOR_VERSION})
 MESSAGE( STATUS "PROJECT_PATCH_LEVEL:          " ${chapchom_PATCH_LEVEL})
+MESSAGE( STATUS "-----------------------------------------------------------------------" )
 
+# ----------------------------------------------------------------------
+# Read configuration file and extract values of variables
+# ----------------------------------------------------------------------
+MESSAGE( STATUS "-----------------------------------------------------------------------" )
+MESSAGE( STATUS "** READ VARIABLES FROM CONFIGURATION FILE: " ${CHAPCHOM_CONFIGURATION_FILE} " **")
+MESSAGE( STATUS "-----------------------------------------------------------------------" )
+file(STRINGS ${CHAPCHOM_CONFIGURATION_FILE} ConfigContents)
+foreach(NameAndValue ${ConfigContents})
+  # Strip leading spaces
+  string(REGEX REPLACE "^[ ]+" "" NameAndValue ${NameAndValue})
+  # Find variable name
+  string(REGEX MATCH "^[^=]+" Name ${NameAndValue})
+  # Find the value
+  string(REPLACE "${Name}=" "" Value ${NameAndValue})
+  # Set the variable
+  set(${Name} "${Value}")
+  MESSAGE( STATUS ${Name} " : " ${Value})
+endforeach()
+
+MESSAGE( STATUS "-----------------------------------------------------------------------" )
+
+# ----------------------------------------------------------------------
+# Do we want to compile using Armadillo?
+# ----------------------------------------------------------------------
+MESSAGE( STATUS "-----------------------------------------------------------------------" )
+MESSAGE( STATUS "** ARMADILLO'S LIBRARY INFORMATION **" )
+MESSAGE( STATUS "-----------------------------------------------------------------------" )
+IF (CHAPCHOM_USES_ARMADILLO)
+   IF (CHAPCHOM_AUTO_FIND_ARMADILLO_PATHS)
+      # Try to find Armadillo to enable Armadillo wrappers
+      FIND_PACKAGE(Armadillo REQUIRED)
+      IF (ARMADILLO_FOUND)
+         MESSAGE( STATUS "FOUND ARMADILLO_INCLUDE_DIRS:             " ${ARMADILLO_INCLUDE_DIRS} )
+         MESSAGE( STATUS "FOUND ARMADILLO_LIBRARIES:                " ${ARMADILLO_LIBRARIES} )
+         INCLUDE_DIRECTORIES($ARMADILLO_INCLUDE_DIRS)
+      ENDIF (ARMADILLO_FOUND)
+   ELSE (CHAPCHOM_AUTO_FIND_ARMADILLO_PATHS)
+        MESSAGE( STATUS "USING YOUR OWN ARMADILLO'S INCLUDE AND LIB PATHS")
+        INCLUDE_DIRECTORIES(${ARMADILLO_INCLUDE_DIRS})
+   ENDIF (CHAPCHOM_AUTO_FIND_ARMADILLO_PATHS)
+ENDIF (CHAPCHOM_USES_ARMADILLO)
+MESSAGE( STATUS "-----------------------------------------------------------------------" )
+
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
 # Modify compilation variables
+# ----------------------------------------------------------------------
 IF(${CHAPCHOM_BUILD_VERSION} STREQUAL DEBUG)
   SET(CHAPCHOM_C_FLAGS "-O0 -g -Wall -pedantic")
   SET(CHAPCHOM_CXX_FLAGS "-O0 -g -Wall -pedantic -std=c++11")
@@ -35,53 +92,30 @@ ELSE(${CHAPCHOM_BUILD_VERSION} STREQUAL DEBUG)
   SET(CHAPCHOM_CXX_FLAGS "-O0 -g -Wall -Wextra -pedantic -std=c++11")
 ENDIF(${CHAPCHOM_BUILD_VERSION} STREQUAL DEBUG)
 
-# Read configuration file and extract values of variables
-file(STRINGS ${CHAPCHOM_CONFIGURATION_FILE} ConfigContents)
-foreach(NameAndValue ${ConfigContents})
-  # Strip leading spaces
-  string(REGEX REPLACE "^[ ]+" "" NameAndValue ${NameAndValue})
-  # Find variable name
-  string(REGEX MATCH "^[^=]+" Name ${NameAndValue})
-  # Find the value
-  string(REPLACE "${Name}=" "" Value ${NameAndValue})
-  # Set the variable
-  set(${Name} "${Value}")
-endforeach()
-
-MESSAGE( STATUS "CHAPCHOM USES ARMADILLO:             " ${CHAPCHOM_USES_ARMADILLO} )
-MESSAGE( STATUS "ARMADILLO_INCLUDE_DIRS:              " ${ARMADILLO_INCLUDE_DIRS} )
-MESSAGE( STATUS "ARMADILLO_LIBRARIES:                 " ${ARMADILLO_LIBRARIES} )
-
-# Do we want to compile using Armadillo?
-IF (CHAPCHOM_USES_ARMADILLO)
-  # Try to find Armadillo to enable Armadillo wrappers
-  FIND_PACKAGE(Armadillo)
-  IF (ARMADILLO_FOUND)
-   MESSAGE( STATUS "ARMADILLO_INCLUDE_DIRS:             " ${ARMADILLO_INCLUDE_DIRS} )
-   MESSAGE( STATUS "ARMADILLO_LIBRARIES:             " ${ARMADILLO_LIBRARIES} )
-   INCLUDE_DIRECTORIES($ARMADILLO_INCLUDE_DIRS)
-  ELSE (ARMADILLO_FOUND)
-   MESSAGE( STATUS "USING YOUR OWN ARMADILLO'S INCLUDE AND LIB PATHS")
-   SET(ARMADILLO_INCLUDE_DIRS "/home/tachidok/local/working/my_stuff/armadillo-8.300.3/lib/include")
-   SET(ARMADILLO_LIBRARIES "/home/tachidok/local/working/my_stuff/armadillo-8.300.3/lib/lib")
-   INCLUDE_DIRECTORIES(${ARMADILLO_INCLUDE_DIRS})
-  ENDIF (ARMADILLO_FOUND)
-ENDIF (CHAPCHOM_USES_ARMADILLO)
-
 # Use this if you require to add more libraries (do not forget to
 # uncomment the respective line below to set linker variables)
 #SET(CHAPCHOM_LINKER_FLAGS "-lmath")
 
+# ----------------------------------------------------------------------
 # Set modified compilation variables
+# ----------------------------------------------------------------------
 SET(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CHAPCHOM_C_FLAGS}" )
 SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${CHAPCHOM_CXX_FLAGS}" )
 
 # Uncomment this line if you added extra libraries
 #SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}" )
 
+# ----------------------------------------------------------------------
 # Include testing (this function already calls enable_testing())
+# ----------------------------------------------------------------------
 INCLUDE(CTest)
 
+# ----------------------------------------------------------------------
+# Output configuration
+# ----------------------------------------------------------------------
+MESSAGE( STATUS "-----------------------------------------------------------------------" )
+MESSAGE( STATUS "** GENERAL COMPILATION FLAGS **" )
+MESSAGE( STATUS "-----------------------------------------------------------------------" )
 # Output compilers versions
 MESSAGE( STATUS "CMAKE_C_COMPILER:             " ${CMAKE_C_COMPILER} )
 MESSAGE( STATUS "CMAKE_CXX_COMPILER:           " ${CMAKE_CXX_COMPILER} )
@@ -95,6 +129,8 @@ MESSAGE( STATUS "CMAKE_EXE_LINKER_FLAGS:       " ${CMAKE_EXE_LINKER_FLAGS} )
 
 # Output some extra info.
 MESSAGE( STATUS "CMAKE_VERBOSE_MAKEFILE:       " ${CMAKE_VERBOSE_MAKEFILE} )
+
+MESSAGE( STATUS "-----------------------------------------------------------------------" )
 
 # Add external source files sub-directories
 ADD_SUBDIRECTORY(external_src)

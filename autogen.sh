@@ -117,11 +117,28 @@ echo "============================================================= "
 echo ""
 
 #====================================================================
+# Configuration file for extra configuration
+#====================================================================
+
+echo "Specify the path config file with extra configuration flags:"
+OptionPrompt "[default: ./configs/default]"
+extra_config_file=`OptionRead`
+if test "$extra_config_file" = "" -o "$extra_config_file" = "" ; then 
+    configuration_file=./configs/default
+else
+    configuration_file=${extra_config_file}
+fi
+
+echo ""
+echo "============================================================= "
+echo ""
+
+#====================================================================
 # Build demos
 #====================================================================
 
 echo "Do you want to build and run the demos?"
-OptionPrompt "a)DO BUILD/RUN demos b)DO NOT BUILD/RUN demos [a/b -- default: a]"
+OptionPrompt "a)DO BUILD/RUN demos b)DO NOT BUILD/RUN demos [a/b -- efault: a]"
 build_and_run_demos=`OptionRead`
 if test "$build_and_run_demos" = "b" -o "$build_and_run_demos" = "B" ; then 
     build_demos=FALSE
