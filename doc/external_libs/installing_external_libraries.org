@@ -17,16 +17,15 @@ already installed in your system then proceed to check that you have
 the following packages installed in your system.
 
 - cmake (tested with =cmake 3.5.1-1ubuntu3=)
-+ libblas-dev (tested with =libblas-common=, =libblas-dev 3.6.0-2ubuntu2=)
-+ liblapack-dev (tested with =liblapack-dev 3.6.0-2ubuntu2=)
-+ libarpack-dev (tested with =libarpack2=, =libarpack2-dev
-  3.3.0-1build2=)
+- +libblas-dev (tested with =libblas-common=, =libblas-dev 3.6.0-2ubuntu2=)+
+- liblapack-dev (tested with =liblapack-dev 3.6.0-2ubuntu2=)
+- libarpack-dev (tested with =libarpack2=, =libarpack2-dev 3.3.0-1build2=)
 
 * Installation
 
 Suggested (and working) installation order
-- SuperLU
 - OpenBLAS
+- SuperLU
 - Armadillo
 
 
