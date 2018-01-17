@@ -63,7 +63,7 @@ namespace chapchom
  // Constructor that creates an Armadillo's matrix from a CCMatrix
  // ===================================================================
  template<class T>
- CCMatrixArmadillo<T>::CCMatrixArmadillo(CCVector<T> &matrix)
+ CCMatrixArmadillo<T>::CCMatrixArmadillo(CCMatrix<T> &matrix)
   : ACMatrix<T>()
  {
   // Get the pointer to the matrix data
@@ -110,8 +110,11 @@ namespace chapchom
  CCMatrixArmadillo<T>::CCMatrixArmadillo(const CCMatrixArmadillo<T> &copy)
   : ACMatrix<T>(copy.nrows(), copy.ncolumns())
  {
-  // Copy the data from the copy matrix to the Matrix_pt vector
-  set_matrix(copy.matrix_pt(), this->NRows, this->NColumns);
+  // Clean any possible previously allocated memory
+  clean_up();
+  
+  // Call the copy constructor of Armadillo
+  Arma_matrix_pt = new arma::Mat<T>(copy); 
  }
  
  // ===================================================================
@@ -123,9 +126,6 @@ namespace chapchom
   // Deallocate memory
   clean_up();
  }
-
-#if 0
- HERE HERE HERE HERE HERE
  
  // ===================================================================
  // Assignment operator
@@ -223,14 +223,12 @@ namespace chapchom
   this->NRows = m;
   this->NColumns = n;
   
-  // Allocate memory for the matrix
-  Matrix_pt = new T[m*n];
+  // Create an Armadillo's matrix (makes an own copy of the data,
+  // therefore 'matrix_pt' may be deleted safely)
+  Arma_matrix_pt = new arma::Mat<T>(matrix_pt, m, n);
   
   // Mark the matrix as having its own memory
   this->Is_own_memory_allocated = true;
-  
-  // Copy the matrix (an element by element copy, uff!!)
-  std::memcpy(Matrix_pt, matrix_pt, m*n*sizeof(T));
   
  }
  
@@ -910,12 +908,12 @@ namespace chapchom
   clean_up();
   
   // Allocate memory for the matrix
-  Matrix_pt = new T[this->NRows*this->NColumns];
+  Arma_matrix_pt = new arma::Mat<T>(this->NRows, this->NColumns);
   
   // Mark the matrix as allocated its own memory
   this->Is_own_memory_allocated=true;
  }
-
+ 
  // ===================================================================
  // Fills the matrix with zeroes
  // ===================================================================
@@ -926,7 +924,7 @@ namespace chapchom
   if (this->Is_own_memory_allocated)
    {
     // Fill the matrix with zeroes
-    std::memset(Matrix_pt, 0, this->NRows*this->NColumns*sizeof(T));
+    Arma_matrix_pt->zeros();
    }
   else
    {
@@ -941,8 +939,6 @@ namespace chapchom
    }
   
  }
- 
-#endif // #if 0
  
  // ================================================================
  // Extra methods to work with matrices, we do not need them to be

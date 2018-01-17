@@ -51,7 +51,7 @@ namespace chapchom
    
    // Destructor
    virtual ~CCMatrixArmadillo();
-#if 0
+   
    // Assignment operator
    CCMatrixArmadillo &operator=(const CCMatrixArmadillo &source_matrix);
   
@@ -81,18 +81,12 @@ namespace chapchom
                    const unsigned long m,
                    const unsigned long n);
    
-   // Transforms the input CCMatrix to an Armadillo's matrix class type
-   void set_matrix(CCMatrix<T> &matrix);
-   
-   // Transforms the input CCVector to an Armadillo's matrix class type
-   void set_matrix(CCVector<T> &vector);
-   
    // Clean up for any dynamically stored data
    void clean_up();
   
    // Free allocated memory for matrix
    void free_memory_for_matrix();
-  
+   
    // Performs sum of matrices
    void add_matrix(const CCMatrixArmadillo &matrix, CCMatrixArmadillo &solution_matrix);
   
@@ -131,8 +125,6 @@ namespace chapchom
   
    // Output to file
    void output(std::ofstream &outfile, bool output_indexes = false) const;
-
-#endif // #if 0
    
    // Get access to the Armadillo's matrix
    inline arma::Mat<T> *arma_matrix_pt() const {return Arma_matrix_pt;}
