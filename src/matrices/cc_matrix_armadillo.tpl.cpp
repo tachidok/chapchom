@@ -611,9 +611,8 @@ namespace chapchom
  template<class T>
  const T CCMatrixArmadillo<T>::value(const unsigned long i, const unsigned long j) const
  {
-  // TODO: Julio - Implement range check access
   // Return the value at row i and column j
-  return Matrix_pt[i*this->NColumns+j];
+  return Arma_matrix_pt(i, j);
  }
 
  // ===================================================================
@@ -622,9 +621,8 @@ namespace chapchom
  template<class T>
  T &CCMatrixArmadillo<T>::value(const unsigned long i, const unsigned long j)
  {
-  // TODO: Julio - Implement range check access
   // Return the value at row i and column j
-  return Matrix_pt[i*this->NColumns+j];
+  return Arma_matrix_pt(i, j);
  }
  
  // ===================================================================
@@ -830,21 +828,13 @@ namespace chapchom
         for (unsigned long j = 0; j < this->NColumns; j++)
          {
           std::cout << "(" << i << ", " << j << "): "
-                    << Matrix_pt[i*this->NColumns+j]
-                    << std::endl; 
+                    << Arma_matrix_pt(i, j) << std::endl; 
          } // for (j < this->NColumns)
        } // for (i < this->NRows)
      } // if (output_indexes)
     else
      {
-      for (unsigned long i = 0; i < this->NRows; i++)
-       {
-        for (unsigned long j = 0; j < this->NColumns; j++)
-         {
-          std::cout << Matrix_pt[i*this->NColumns+j] << " ";
-         } // for (j < this->NColumns)
-        std::cout << std::endl;
-       } // for (i < this->NRows)
+      Arma_matrix_pt->print();
      } // else if (output_indexes)
     
    }
@@ -856,7 +846,7 @@ namespace chapchom
  // ===================================================================
  template<class T>
  void CCMatrixArmadillo<T>::output(std::ofstream &outfile,
-                          bool output_indexes) const
+                                   bool output_indexes) const
  {
   if (!this->Is_own_memory_allocated)
    {
@@ -877,21 +867,14 @@ namespace chapchom
         for (unsigned long j = 0; j < this->NColumns; j++)
          {
           outfile << "(" << i << ", " << j << "): "
-                  << Matrix_pt[i*this->NColumns+j]
-                  << std::endl; 
+                  << Arma_matrix_pt(i, j) << std::endl; 
+          << std::endl; 
          } // for (j < this->NColumns)
        } // for (i < this->NRows)
      } // if (output_indexes)
     else
      {
-      for (unsigned long i = 0; i < this->NRows; i++)
-       {
-        for (unsigned long j = 0; j < this->NColumns; j++)
-         {
-          outfile << Matrix_pt[i*this->NColumns+j] << " ";
-         } // for (j < this->NColumns)
-        outfile << std::endl;
-       } // for (i < this->NRows)
+      Arma_matrix_pt->print(outfile);
      } // else if (output_indexes)
     
    }
