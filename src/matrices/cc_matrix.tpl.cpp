@@ -558,7 +558,7 @@ namespace chapchom
  }
  
  // ===================================================================
- // Computes the transpose and returns it
+ // Computes the transpose and stores it in itself
  // ===================================================================
  template<class T>
  void CCMatrix<T>::transpose()

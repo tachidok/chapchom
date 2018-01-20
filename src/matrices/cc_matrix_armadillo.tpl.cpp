@@ -1,3 +1,4 @@
+
 // IN THIS FILE: The implementation of a concrete class to store and
 // work with matrices. This implementation makes use of Armadillo's
 // library, thus this is only a wrap for Armadillo's methods
@@ -290,7 +291,7 @@ namespace chapchom
  // ===================================================================
  template<class T>
  void CCMatrixArmadillo<T>::add_matrix(const CCMatrixArmadillo<T> &matrix,
-                              CCMatrixArmadillo<T> &solution_matrix)
+                                       CCMatrixArmadillo<T> &solution_matrix)
  {
   // Check that THIS and the other matrix have memory allocated
   if (!this->Is_own_memory_allocated || !matrix.is_own_memory_allocated())
@@ -344,7 +345,7 @@ namespace chapchom
    }
   
   // Get the matrix pointer of the solution matrix
-  T *solution_matrix_pt = solution_matrix.matrix_pt();
+  arma::Mat<T> *arma_solution_matrix_pt = solution_matrix.arma_matrix_pt();
   
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
@@ -353,20 +354,14 @@ namespace chapchom
     // Allocate memory for the matrix
     solution_matrix.allocate_memory();
     // Get the new matrix pointer
-    solution_matrix_pt = solution_matrix.matrix_pt();
+    arma_solution_matrix_pt = solution_matrix.arma_matrix_pt();
    }
   
   // Get the matrix pointer of the input matrix
-  T *matrix_pt = matrix.matrix_pt();
-  // Perform the addition
-  for (unsigned long i = 0; i < n_rows; i++)
-   {
-    const unsigned long offset = i*n_columns;
-    for (unsigned long j = 0; j < n_columns; j++)
-     {
-      solution_matrix_pt[offset+j] = Matrix_pt[offset+j] + matrix_pt[offset+j];
-     }
-   }
+  arma::Mat<T> *arma_matrix_pt = matrix.arma_matrix_pt();
+  
+  // Perform the operation
+  *(arma_solution_matrix_pt) = (*Arma_matrix_pt) + *(arma_matrix_pt);
   
  }
  
@@ -427,9 +422,9 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
-  
+
   // Get the matrix pointer of the solution matrix
-  T *solution_matrix_pt = solution_matrix.matrix_pt();
+  arma::Mat<T> *arma_solution_matrix_pt = solution_matrix.arma_matrix_pt();
   
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
@@ -438,21 +433,15 @@ namespace chapchom
     // Allocate memory for the matrix
     solution_matrix.allocate_memory();
     // Get the new matrix pointer
-    solution_matrix_pt = solution_matrix.matrix_pt();
+    arma_solution_matrix_pt = solution_matrix.arma_matrix_pt();
    }
   
   // Get the matrix pointer of the input matrix
-  T *matrix_pt = matrix.matrix_pt();
-  // Perform the addition
-  for (unsigned long i = 0; i < n_rows; i++)
-   {
-    const unsigned long offset = i*n_columns;
-    for (unsigned long j = 0; j < n_columns; j++)
-     {
-      solution_matrix_pt[offset+j] = Matrix_pt[offset+j] - matrix_pt[offset+j];
-     }
-   }
- 
+  arma::Mat<T> *arma_matrix_pt = matrix.arma_matrix_pt();
+  
+  // Perform the operation
+  *(arma_solution_matrix_pt) = (*Arma_matrix_pt) - *(arma_matrix_pt);
+  
  }
 
  // ===================================================================
@@ -518,9 +507,9 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
-  
+
   // Get the matrix pointer of the solution matrix
-  T *solution_matrix_pt = solution_matrix.matrix_pt();
+  arma::Mat<T> *arma_solution_matrix_pt = solution_matrix.arma_matrix_pt();
   
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
@@ -529,27 +518,14 @@ namespace chapchom
     // Allocate memory for the matrix
     solution_matrix.allocate_memory();
     // Get the new matrix pointer
-    solution_matrix_pt = solution_matrix.matrix_pt();
+    arma_solution_matrix_pt = solution_matrix.arma_matrix_pt();
    }
   
   // Get the matrix pointer of the right matrix
-  T *right_matrix_pt = right_matrix.matrix_pt();
-  // Perform the multiplication
-  for (unsigned long i = 0; i < n_rows_left_matrix; i++)
-   {
-    const unsigned offset_right_matrix = i * n_columns_right_matrix;
-    const unsigned offset_left_matrix = i * n_columns_left_matrix;
-    for (unsigned long j = 0; j < n_columns_right_matrix; j++)
-     {
-      // Initialise
-      solution_matrix_pt[offset_right_matrix+j] = 0;
-      for (unsigned long k = 0; k < n_columns_left_matrix; k++)
-       {
-        solution_matrix_pt[offset_right_matrix+j]+=
-         Matrix_pt[offset_left_matrix+k] * right_matrix_pt[k*n_columns_right_matrix+j];
-       }
-     }
-   }
+  arma::Mat<T> *arma_right_matrix_pt = right_matrix.arma_matrix_pt();
+  
+  // Perform the operation
+  *(arma_solution_matrix_pt) = (*Arma_matrix_pt) * *(right_arma_matrix_pt);
   
  }
  
@@ -559,31 +535,31 @@ namespace chapchom
  template<class T>
  void CCMatrixArmadillo<T>::transpose(CCMatrixArmadillo<T> &transposed_matrix)
  {
-  // Get the number of rows and columns of the matrix
-  const unsigned long n_rows = this->NRows;
-  const unsigned long n_columns = this->NColumns;
+  // Get the matrix pointer of the resulting transposed matrix
+  arma::Mat<T> *arma_transposed_matrix_pt = transposed_matrix.arma_matrix_pt();
   
-  // Create a vector to store the transposed matrix
-  T *transposed_matrix_pt = new T[n_rows*n_columns];
-  // Copy the data in the transposed matrix
-  for (unsigned i = 0; i < n_rows; i++)
+  // Check whether the resulting matrix has allocated memory,
+  // otherwise allocate it here!!!
+  if (!transposed_matrix.is_own_memory_allocated())
    {
-    for (unsigned j = 0; j < n_columns; j++)
-     {    
-      transposed_matrix_pt[j*n_rows+i] = Matrix_pt[i*n_columns+j];
-     }
-   }
+    // Allocate memory for the matrix
+    transposed_matrix.allocate_memory();
+    // Get the new matrix pointer
+    arma_transposed_matrix_pt = transposed_matrix.arma_matrix_pt();
+   }f
   
-  // Copy the transposed matrix pointer to the transpose_matrix matrix
-  transposed_matrix.set_matrix(transposed_matrix_pt, n_columns, n_rows);
-  
-  // Delete the temporary transpose matrix pointer
-  delete [] transposed_matrix_pt;
+     // Compute transpose
+  *arma_transposed_matrix_pt = Arma_matrix_pt->t();
+
+  // HERE HERE Update nrows and columns of transposed_matrix
+  unsigned long NRows_tmp = NRows;
+  NRows = NColumns;
+  NColumns = NRows_tmp;
   
  }
  
  // ===================================================================
- // Computes the transpose and returns it
+ // Computes the transpose and stores it in itself
  // ===================================================================
  template<class T>
  void CCMatrixArmadillo<T>::transpose()
@@ -602,7 +578,13 @@ namespace chapchom
    }
   
   // Transpose itself
-  this->transpose(*this);
+  arma::inplace_trans(*(this->Arma_matrix_pt));
+  
+  // HERE HERE Update nrows and columns of transposed_matrix
+  unsigned long NRows_tmp = NRows;
+  NRows = NColumns;
+  NColumns = NRows_tmp;
+  
  }
  
  // ===================================================================
