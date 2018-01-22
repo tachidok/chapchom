@@ -62,10 +62,16 @@ variables there as well.
 
 #+BEGIN_SRC bash
 make
-
-make install DESTDIR=my_installation_directory
-
+make install
 #+END_SRC
+
+In some previous installations we used
+
+#+BEGIN_SRC bash
+make install DESTDIR=my_installation_directory
+#+END_SRC
+
+but it seems with just =make install= is enough.
 
 - Add library path to =LD_LIBRARY_PATH= environment variable. In a
   terminal type
@@ -97,10 +103,29 @@ INCLUDE=-I /path/to/armadillo/include/folder
 LIBS=-L /path/to/armadillo/lib/folder
 #+END_SRC
 
+and modify the line
+
+#+BEGIN_SRC bash
+CXXFLAGS = $(DEBUG) $(FINAL) $(OPT) $(EXTRA_OPT)
+#+END_SRC
+
+by
+
+#+BEGIN_SRC bash
+CXXFLAGS = $(DEBUG) $(FINAL) $(OPT) $(EXTRA_OPT) $(INCLUDE) $(LIBS)
+#+END_SRC
+
 - Compile the example1
 
 #+BEGIN_SRC bash
 make example1
+#+END_SRC
+
+- If you have problems with pthread issues then add the pthread
+  library into the =LIB_FLAGS=
+
+#+BEGIN_SRC bash
+  LIB_FLAGS = -larmadillo -lpthread
 #+END_SRC
 
 - If everything goes right then you should have an executable file

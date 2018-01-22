@@ -81,6 +81,11 @@ namespace chapchom
                    const unsigned long m,
                    const unsigned long n);
    
+   // Receives an armadillo type matrix
+   void set_matrix(arma::Mat<T> *arma_matrix_pt,
+                   const unsigned long m,
+                   const unsigned long n);
+   
    // Clean up for any dynamically stored data
    void clean_up();
   

@@ -1,4 +1,4 @@
 CHAPCHOM_USES_ARMADILLO=TRUE
 CHAPCHOM_AUTO_FIND_ARMADILLO_PATHS=FALSE
-ARMADILLO_INCLUDE_DIRS=/home/tachidok/local/working/my_stuff/armadillo-8.300.3/lib/include
-ARMADILLO_LIBRARIES=/home/tachidok/local/working/my_stuff/armadillo-8.300.3/lib/lib
+ARMADILLO_INCLUDE_DIRS=/home/tachidok/local/working/research/armadillo-8.300.3/lib/include
+ARMADILLO_LIBRARIES=/home/tachidok/local/working/research/armadillo-8.300.3/lib/lib
