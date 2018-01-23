@@ -1,4 +1,3 @@
-
 // IN THIS FILE: The implementation of a concrete class to store and
 // work with matrices. This implementation makes use of Armadillo's
 // library, thus this is only a wrap for Armadillo's methods
@@ -867,7 +866,7 @@ namespace chapchom
    }
   
  }
-
+ 
  // ===================================================================
  // Allocates memory to store entries of the matrix
  // ===================================================================
@@ -979,7 +978,7 @@ namespace chapchom
    }
   
   // Get the matrix pointer of the solution matrix
-  T *solution_matrix_pt = solution_matrix.matrix_pt();
+  arma::Mat<T> *arma_solution_matrix_pt = solution_matrix.arma_matrix_pt();
   
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
@@ -988,22 +987,15 @@ namespace chapchom
     // Allocate memory for the matrix
     solution_matrix.allocate_memory();
     // Get the new matrix pointer
-    solution_matrix_pt = solution_matrix.matrix_pt();
+    arma_solution_matrix_pt = solution_matrix.arma_matrix_pt();
    }
   
   // Get the matrix pointer of the input matrices
-  T *matrix_one_pt = matrix_one.matrix_pt();
-  T *matrix_two_pt = matrix_two.matrix_pt();
+  arma::Mat<T> *arma_matrix_one_pt = matrix_one.arma_matrix_pt();
+  arma::Mat<T> *arma_matrix_two_pt = matrix_two.arma_matrix_pt();
+  
   // Perform the addition
-  for (unsigned long i = 0; i < n_rows_solution_matrix; i++)
-   {
-    const unsigned long offset = i*n_columns_solution_matrix;
-    for (unsigned long j = 0; j < n_columns_solution_matrix; j++)
-     {
-      solution_matrix_pt[offset+j] =
-       matrix_one_pt[offset+j] + matrix_two_pt[offset+j];
-     }
-   }
+  (*arma_solution_matrix_pt) = (*arma_matrix_one_pt) + (*arma_matrix_two_pt);
   
  }
  
@@ -1068,9 +1060,9 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
-  
+
   // Get the matrix pointer of the solution matrix
-  T *solution_matrix_pt = solution_matrix.matrix_pt();
+  arma::Mat<T> *arma_solution_matrix_pt = solution_matrix.arma_matrix_pt();
   
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
@@ -1079,22 +1071,15 @@ namespace chapchom
     // Allocate memory for the matrix
     solution_matrix.allocate_memory();
     // Get the new matrix pointer
-    solution_matrix_pt = solution_matrix.matrix_pt();
+    arma_solution_matrix_pt = solution_matrix.arma_matrix_pt();
    }
   
   // Get the matrix pointer of the input matrices
-  T *matrix_one_pt = matrix_one.matrix_pt();
-  T *matrix_two_pt = matrix_two.matrix_pt();
-  // Perform the substraction
-  for (unsigned long i = 0; i < n_rows_solution_matrix; i++)
-   {
-    const unsigned long offset = i*n_columns_solution_matrix;
-    for (unsigned long j = 0; j < n_columns_solution_matrix; j++)
-     {
-      solution_matrix_pt[offset+j] =
-       matrix_one_pt[offset+j] - matrix_two_pt[offset+j];
-     }
-   }
+  arma::Mat<T> *arma_matrix_one_pt = matrix_one.arma_matrix_pt();
+  arma::Mat<T> *arma_matrix_two_pt = matrix_two.arma_matrix_pt();
+  
+  // Perform the addition
+  (*arma_solution_matrix_pt) = (*arma_matrix_one_pt) - (*arma_matrix_two_pt);
   
  }
  
@@ -1162,9 +1147,9 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
-  
+
   // Get the matrix pointer of the solution matrix
-  T *solution_matrix_pt = solution_matrix.matrix_pt();
+  arma::Mat<T> *arma_solution_matrix_pt = solution_matrix.arma_matrix_pt();
   
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
@@ -1173,29 +1158,16 @@ namespace chapchom
     // Allocate memory for the matrix
     solution_matrix.allocate_memory();
     // Get the new matrix pointer
-    solution_matrix_pt = solution_matrix.matrix_pt();
+    arma_solution_matrix_pt = solution_matrix.arma_matrix_pt();
    }
   
-  // Get the matrix pointer of the left matrix
-  T *left_matrix_pt = left_matrix.matrix_pt();
-  // Get the matrix pointer of the right matrix
-  T *right_matrix_pt = right_matrix.matrix_pt();
-  // Perform the multiplication
-  for (unsigned long i = 0; i < n_rows_left_matrix; i++)
-   {
-    const unsigned offset_left_matrix = i * n_columns_left_matrix;
-    const unsigned offset_right_matrix = i * n_columns_right_matrix;
-    for (unsigned long j = 0; j < n_columns_right_matrix; j++)
-     {
-      // Initialise
-      solution_matrix_pt[offset_right_matrix+j] = 0;
-      for (unsigned long k = 0; k < n_columns_left_matrix; k++)
-       {
-        solution_matrix_pt[offset_right_matrix+j]+=
-         left_matrix_pt[offset_left_matrix+k] * right_matrix_pt[k*n_columns_right_matrix+j];
-       }
-     }
-   }
+  // Get the matrix pointer of the input matrices
+  arma::Mat<T> *arma_matrix_one_pt = left_matrix.arma_matrix_pt();
+  arma::Mat<T> *arma_matrix_two_pt = right_matrix.arma_matrix_pt();
+  
+  // Perform the addition
+  (*arma_solution_matrix_pt) = (*arma_matrix_one_pt) * (*arma_matrix_two_pt);
+  
  }
  
  // ================================================================
@@ -1290,17 +1262,12 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Get the matrix pointer of the solution matrix
-  T *solution_matrix_pt = solution_matrix.matrix_pt();
-  
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
   if (!solution_matrix.is_own_memory_allocated())
    {
     // Allocate memory for the matrix
     solution_matrix.allocate_memory();
-    // Get the new matrix pointer
-    solution_matrix_pt = solution_matrix.matrix_pt();
    }
   
   // Get both vectors and multiply them
@@ -1315,10 +1282,10 @@ namespace chapchom
     for (unsigned long j = 0; j < n_columns_solution_matrix; j++)
      {
       // Initialise
-      solution_matrix_pt[offset_right_vector+j] = 0;
+      solution_matrix(i, j) = 0;
       for (unsigned long k = 0; k < n_columns_left_vector; k++)
        {
-        solution_matrix_pt[offset_right_vector+j]+=
+        solution_matrix(i, j)+=
          left_vector_pt[offset_left_vector+k] * right_vector_pt[k*n_columns_right_vector+j];
        }
      }
@@ -1405,36 +1372,29 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Get the matrix pointer of the solution matrix
-  T *solution_matrix_pt = solution_matrix.matrix_pt();
-  
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
   if (!solution_matrix.is_own_memory_allocated())
    {
     // Allocate memory for the matrix
     solution_matrix.allocate_memory();
-    // Get the new matrix pointer
-    solution_matrix_pt = solution_matrix.matrix_pt();
    }
   
   // Get both the vector and the matrix pointer
   T *vector_pt = vector.vector_pt();
-  T *matrix_pt = matrix.matrix_pt();
   
   // Perform the multiplication
   for (unsigned long i = 0; i < n_rows_solution_matrix; i++)
    {
     const unsigned offset_vector = i * n_columns_vector;
-    const unsigned offset_matrix = i * n_columns_matrix;
     for (unsigned long j = 0; j < n_columns_solution_matrix; j++)
      {
       // Initialise
-      solution_matrix_pt[offset_matrix+j] = 0;
+      solution_matrix(i, j) = 0;
       for (unsigned long k = 0; k < n_columns_vector; k++)
        {
-        solution_matrix_pt[offset_matrix+j]+=
-         vector_pt[offset_vector+k] * matrix_pt[k*n_columns_matrix+j];
+        solution_matrix(i, j)+=
+         vector_pt[offset_vector+k] * matrix(k, j);
        }
      }
    }
@@ -1545,13 +1505,11 @@ namespace chapchom
    }
   
   // Get both the vector and the matrix pointer
-  T *matrix_pt = matrix.matrix_pt();
   T *vector_pt = vector.vector_pt();
   
   // Perform the multiplication
   for (unsigned long i = 0; i < n_rows_solution_vector; i++)
    {
-    const unsigned offset_matrix = i * n_columns_matrix;
     const unsigned offset_vector = i * n_columns_vector;
     // We can skip one loop since there is only one column
     
@@ -1560,7 +1518,7 @@ namespace chapchom
     for (unsigned long k = 0; k < n_columns_matrix; k++)
      {
       solution_vector_pt[offset_vector]+=
-       matrix_pt[offset_matrix+k] * vector_pt[k];
+       matrix(i, k) * vector_pt[k];
      }
    }
   

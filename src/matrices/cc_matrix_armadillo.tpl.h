@@ -63,10 +63,10 @@ namespace chapchom
   
    // Add operator
    CCMatrixArmadillo operator+(const CCMatrixArmadillo &matrix);
-  
+   
    // Substraction operator
    CCMatrixArmadillo operator-(const CCMatrixArmadillo &matrix);
-  
+   
    // Multiplication operator
    CCMatrixArmadillo operator*(const CCMatrixArmadillo &right_matrix);
    

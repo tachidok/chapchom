@@ -7,7 +7,7 @@
 #include "../../../src/general/initialise.h"
 
 // The class to create a matrix
-#include "../../../src/matrices/cc_matrix.h"
+#include "../../../src/matrices/cc_matrix_armadillo.h"
 
 using namespace chapchom;
 
@@ -23,7 +23,7 @@ void rotate(double *input_vector,
  const unsigned DIM = 3;
  
  // Create the rotation matrix
- CCMatrix<double> R(DIM, DIM);
+ CCMatrixArmadillo<double> R(DIM, DIM);
  R.allocate_memory();
  
  const double sin_theta_x = sin(roll);
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
   // Identity matrix
   // ----------------------------------------------------------
   // Instantiate double type matrices.
-  CCMatrix<double> I(n_rows, n_columns);
+  CCMatrixArmadillo<double> I(n_rows, n_columns);
   
   // Allocate memory
   I.allocate_memory();
@@ -129,8 +129,8 @@ int main(int argc, char *argv[])
   // ---------------------------------------
   // Create the matrix from the vector data
   // ---------------------------------------
-  CCMatrix<double> B(matrix_pt, n_rows, n_columns);
-  CCMatrix<double> B_t;
+  CCMatrixArmadillo<double> B(matrix_pt, n_rows, n_columns);
+  CCMatrixArmadillo<double> B_t;
   B.transpose(B_t);
  
   std::cout << std::endl << "Matrix created from vector" << std::endl << std::endl;
@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
   // ----------------------------------------------------------
   // Solution matrix
   // Instantiate double type matrices.
-  CCMatrix<double> C(n_rows, n_columns);
+  CCMatrixArmadillo<double> C(n_rows, n_columns);
 
   // Allocate memory
   C.allocate_memory();
@@ -274,7 +274,7 @@ int main(int argc, char *argv[])
      }
    }
   // Create the non square matrix
-  CCMatrix<double> A(matrix_A_pt, n_rows_A, n_columns_A);
+  CCMatrixArmadillo<double> A(matrix_A_pt, n_rows_A, n_columns_A);
   std::cout << std::endl << "Non square matrix"
             << std::endl << std::endl;
   output_test << std::endl << "Non square matrix"
@@ -308,7 +308,7 @@ int main(int argc, char *argv[])
    }
  
   // Create the vector (matrix)
-  CCMatrix<double> x(matrix_x_pt, n_rows_x, n_columns_x);
+  CCMatrixArmadillo<double> x(matrix_x_pt, n_rows_x, n_columns_x);
   std::cout << std::endl << "Vector"
             << std::endl << std::endl;
   output_test << std::endl << "Vector"
@@ -319,7 +319,7 @@ int main(int argc, char *argv[])
   // --------------------------------------
   // Matrix multiplication A * x = b
   // --------------------------------------
-  CCMatrix<double> b(n_rows_A, n_columns_x); // Note that we do not
+  CCMatrixArmadillo<double> b(n_rows_A, n_columns_x); // Note that we do not
   // need to force the
   // allocation of memory to
   // store the entries of
@@ -339,7 +339,7 @@ int main(int argc, char *argv[])
   // --------------------------------------------------
   // Apply transpose
   // --------------------------------------------------
-  CCMatrix<double> b_t(b.ncolumns(), b.nrows());
+  CCMatrixArmadillo<double> b_t(b.ncolumns(), b.nrows());
   b.transpose(b_t);
   std::cout << std::endl << "The transposed matrix:"
             << std::endl << std::endl;
@@ -378,7 +378,7 @@ int main(int argc, char *argv[])
    const unsigned DIM = 3;
    
    // Matrix to permute
-   CCMatrix<unsigned> A(DIM, DIM);
+   CCMatrixArmadillo<unsigned> A(DIM, DIM);
    A.allocate_memory();
    
    A(0,0) = 1;   A(0,1) = 2;   A(0,2) = 3;
@@ -424,7 +424,7 @@ int main(int argc, char *argv[])
   const unsigned DIM = 4;
    
   // Matrix to permute
-  CCMatrix<unsigned> A(DIM, DIM);
+  CCMatrixArmadillo<unsigned> A(DIM, DIM);
   A.allocate_memory();
    
   A(0,0) = 1;   A(0,1) = 2;   A(0,2) = 3;   A(0,3) = 4;
@@ -557,7 +557,7 @@ int main(int argc, char *argv[])
   const unsigned DIM = 3;
 
   // Create a matrix
-  CCMatrix<double> A(DIM, DIM);
+  CCMatrixArmadillo<double> A(DIM, DIM);
   A.allocate_memory();
   
   A(0,0) = 0.5;   A(0,1) = 0.5;   A(0,2) = 0.5;
@@ -576,7 +576,7 @@ int main(int argc, char *argv[])
 
   // A vector (as a matrix) where to store the resulting vector-matrix
   // multiplication
-  CCMatrix<double> S(1, DIM);
+  CCMatrixArmadillo<double> S(1, DIM);
   
   multiply_vector_times_matrix(v, A, S);
   
@@ -610,7 +610,7 @@ int main(int argc, char *argv[])
 
   // The permutation matrix (row permutations - multiply P to the left
   // of the matrix to permute)
-  CCMatrix<unsigned> P(DIM, DIM);
+  CCMatrixArmadillo<unsigned> P(DIM, DIM);
   P.allocate_memory();
   
   // Each row of this matrix tell us how much of the rows of the
@@ -630,7 +630,7 @@ int main(int argc, char *argv[])
   P(2,0) = 0;   P(2,1) = 1;   P(2,2) = 0;
 
   // Matrix to permute
-  CCMatrix<unsigned> A(DIM, DIM);
+  CCMatrixArmadillo<unsigned> A(DIM, DIM);
   A.allocate_memory();
 
   A(0,0) = 1;   A(0,1) = 2;   A(0,2) = 3;
@@ -638,7 +638,7 @@ int main(int argc, char *argv[])
   A(2,0) = 7;   A(2,1) = 8;   A(2,2) = 9;
   
   // Permuted matrix
-  CCMatrix<unsigned> S(DIM, DIM);
+  CCMatrixArmadillo<unsigned> S(DIM, DIM);
   
   multiply_matrices(P, A, S);
 
@@ -673,7 +673,7 @@ int main(int argc, char *argv[])
 
   // The permutation matrix (column permutations - multiply P to the
   // right of the matrix to permute)
-  CCMatrix<unsigned> P(DIM, DIM);
+  CCMatrixArmadillo<unsigned> P(DIM, DIM);
   P.allocate_memory();
   
   // Each column of this matrix tell us how much of the columns of the
@@ -693,7 +693,7 @@ int main(int argc, char *argv[])
   P(2,0) = 0;   P(2,1) = 1;   P(2,2) = 0;
   
   // Matrix to permute
-  CCMatrix<unsigned> A(DIM, DIM);
+  CCMatrixArmadillo<unsigned> A(DIM, DIM);
   A.allocate_memory();
   
   A(0,0) = 1;   A(0,1) = 4;   A(0,2) = 7;
@@ -701,7 +701,7 @@ int main(int argc, char *argv[])
   A(2,0) = 3;   A(2,1) = 6;   A(2,2) = 9;
   
   // Permuted matrix
-  CCMatrix<unsigned> S(DIM, DIM);
+  CCMatrixArmadillo<unsigned> S(DIM, DIM);
   
   multiply_matrices(A, P, S);
   
