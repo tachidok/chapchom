@@ -138,7 +138,7 @@ echo ""
 #====================================================================
 
 echo "Do you want to build and run the demos?"
-OptionPrompt "a)DO BUILD/RUN demos b)DO NOT BUILD/RUN demos [a/b -- efault: a]"
+OptionPrompt "a)DO BUILD/RUN demos b)DO NOT BUILD/RUN demos [a/b -- default: a]"
 build_and_run_demos=`OptionRead`
 if test "$build_and_run_demos" = "b" -o "$build_and_run_demos" = "B" ; then 
     build_demos=FALSE
