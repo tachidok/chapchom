@@ -114,7 +114,7 @@ namespace chapchom
   clean_up();
   
   // Call the copy constructor of Armadillo
-  Arma_matrix_pt = new arma::Mat<T>(copy);
+  Arma_matrix_pt = new arma::Mat<T>(*(copy.arma_matrix_pt()));
  }
  
  // ===================================================================
@@ -134,7 +134,7 @@ namespace chapchom
  CCMatrixArmadillo<T>& CCMatrixArmadillo<T>::operator=(const CCMatrixArmadillo<T> &source_matrix)
  {
   // Clean-up and set values
-  set_matrix(source_matrix.matrix_pt(),
+  set_matrix(source_matrix.arma_matrix_pt(),
              source_matrix.nrows(),
              source_matrix.ncolumns());
   
@@ -558,9 +558,9 @@ namespace chapchom
  void CCMatrixArmadillo<T>::transpose(CCMatrixArmadillo<T> &transposed_matrix)
  {
   // Compute transpose
-  arma::Mat<T> *arma_transposed_matrix_pt = Arma_matrix_pt->t();
+  arma::Mat<T> arma_transposed_matrix_pt = Arma_matrix_pt->t();
   
-  set_matrix(arma_transposed_matrix_pt, this->NRows, this->NColumns);
+  set_matrix(&arma_transposed_matrix_pt, this->NRows, this->NColumns);
  }
  
  // ===================================================================
@@ -599,7 +599,7 @@ namespace chapchom
  const T CCMatrixArmadillo<T>::value(const unsigned long i, const unsigned long j) const
  {
   // Return the value at row i and column j
-  return Arma_matrix_pt(i, j);
+  return (*Arma_matrix_pt)(i, j);
  }
 
  // ===================================================================
@@ -609,7 +609,7 @@ namespace chapchom
  T &CCMatrixArmadillo<T>::value(const unsigned long i, const unsigned long j)
  {
   // Return the value at row i and column j
-  return Arma_matrix_pt(i, j);
+  return (*Arma_matrix_pt)(i, j);
  }
  
  // ===================================================================
@@ -815,7 +815,7 @@ namespace chapchom
         for (unsigned long j = 0; j < this->NColumns; j++)
          {
           std::cout << "(" << i << ", " << j << "): "
-                    << Arma_matrix_pt(i, j) << std::endl; 
+                    << (*Arma_matrix_pt)(i, j) << std::endl; 
          } // for (j < this->NColumns)
        } // for (i < this->NRows)
      } // if (output_indexes)
@@ -854,7 +854,7 @@ namespace chapchom
         for (unsigned long j = 0; j < this->NColumns; j++)
          {
           outfile << "(" << i << ", " << j << "): "
-                  << Arma_matrix_pt(i, j) << std::endl; 
+                  << (*Arma_matrix_pt)(i, j) << std::endl; 
          } // for (j < this->NColumns)
        } // for (i < this->NRows)
      } // if (output_indexes)
