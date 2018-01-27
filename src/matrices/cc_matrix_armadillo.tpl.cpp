@@ -560,7 +560,7 @@ namespace chapchom
   // Compute transpose
   arma::Mat<T> arma_transposed_matrix_pt = Arma_matrix_pt->t();
   
-  set_matrix(&arma_transposed_matrix_pt, this->NRows, this->NColumns);
+  transposed_matrix.set_matrix(&arma_transposed_matrix_pt, this->NRows, this->NColumns);
  }
  
  // ===================================================================
