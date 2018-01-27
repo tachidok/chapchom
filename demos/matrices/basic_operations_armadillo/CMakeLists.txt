@@ -9,7 +9,7 @@ ELSE(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
 ENDIF(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
 
 # Indicate linking libraries
-SET(LIB_demo_matrix_basic_operations_armadillo general_lib matrices_lib ${ARMADILLO_LIBRARIES})
+SET(LIB_demo_matrix_basic_operations_armadillo general_lib matrices_lib ${ARMADILLO_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 # ... and link againts them  
 TARGET_LINK_LIBRARIES(demo_matrix_basic_operations_armadillo ${LIB_demo_matrix_basic_operations_armadillo})
 
