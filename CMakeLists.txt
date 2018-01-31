@@ -17,6 +17,7 @@ SET(${CMAKE_PROJECT_NAME}_PATCH_LEVEL 0)
 # ----------------------------------------------------------------------
 # Output requested configuration
 # ----------------------------------------------------------------------
+MESSAGE( STATUS "" )
 MESSAGE( STATUS "-----------------------------------------------------------------------" )
 MESSAGE( STATUS "** GENERAL LIBRARY INFORMATION **" )
 MESSAGE( STATUS "-----------------------------------------------------------------------" )
@@ -32,6 +33,7 @@ MESSAGE( STATUS "---------------------------------------------------------------
 # ----------------------------------------------------------------------
 # Read configuration file and extract values of variables
 # ----------------------------------------------------------------------
+MESSAGE( STATUS "" )
 MESSAGE( STATUS "-----------------------------------------------------------------------" )
 MESSAGE( STATUS "** READ VARIABLES FROM CONFIGURATION FILE: " ${CHAPCHOM_CONFIGURATION_FILE} " **")
 MESSAGE( STATUS "-----------------------------------------------------------------------" )
@@ -53,6 +55,7 @@ MESSAGE( STATUS "---------------------------------------------------------------
 # ----------------------------------------------------------------------
 # Do we want to compile using Armadillo?
 # ----------------------------------------------------------------------
+MESSAGE( STATUS "" )
 MESSAGE( STATUS "-----------------------------------------------------------------------" )
 MESSAGE( STATUS "** ARMADILLO'S LIBRARY INFORMATION **" )
 MESSAGE( STATUS "-----------------------------------------------------------------------" )
@@ -71,6 +74,16 @@ IF (CHAPCHOM_USES_ARMADILLO)
     MESSAGE( STATUS "ARMADILLO_LIBRARIES:                " ${ARMADILLO_LIBRARIES} )
     INCLUDE_DIRECTORIES(${ARMADILLO_INCLUDE_DIRS})
   ENDIF (CHAPCHOM_AUTO_FIND_ARMADILLO_PATHS)
+
+  MESSAGE( STATUS "-----------------------------------------------------------------------" )
+  MESSAGE( STATUS "" )
+  MESSAGE( STATUS "-----------------------------------------------------------------------" )
+  MESSAGE( STATUS "** THREADS'S LIBRARY INFORMATION **" )
+  MESSAGE( STATUS "-----------------------------------------------------------------------" )
+  # Find Threads packages (usually pthread)
+  # Required by Armadillo
+  FIND_PACKAGE(Threads REQUIRED)
+  
 ENDIF (CHAPCHOM_USES_ARMADILLO)
 MESSAGE( STATUS "-----------------------------------------------------------------------" )
 
@@ -115,6 +128,7 @@ INCLUDE(CTest)
 # ----------------------------------------------------------------------
 # Output configuration
 # ----------------------------------------------------------------------
+MESSAGE( STATUS "" )
 MESSAGE( STATUS "-----------------------------------------------------------------------" )
 MESSAGE( STATUS "** GENERAL COMPILATION FLAGS **" )
 MESSAGE( STATUS "-----------------------------------------------------------------------" )
@@ -146,3 +160,9 @@ ADD_SUBDIRECTORY(private)
 
 # Once all source code has been compiled add sub-directories for demos
 ADD_SUBDIRECTORY(demos)
+
+MESSAGE( STATUS "" )
+MESSAGE( STATUS "-----------------------------------------------------------------------" )
+MESSAGE( STATUS "-----------------------------------------------------------------------" )
+MESSAGE( STATUS "" )
+
