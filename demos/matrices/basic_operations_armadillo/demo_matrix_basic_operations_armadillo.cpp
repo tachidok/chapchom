@@ -129,6 +129,9 @@ int main(int argc, char *argv[])
   // ---------------------------------------
   // Create the matrix from the vector data
   // ---------------------------------------
+  
+  // Armadillo uses Column Major storage, that means that the data in
+  // the "matrix_pt" vector will be stored as columns instead of rows
   CCMatrixArmadillo<double> B(matrix_pt, n_rows, n_columns);
   CCMatrixArmadillo<double> B_t;
   B.transpose(B_t);
@@ -257,23 +260,27 @@ int main(int argc, char *argv[])
   const unsigned long n_columns_A = 10;
   double *matrix_A_pt = new double[n_rows_A*n_columns_A];
  
-  // Add some data to the array
-  for (unsigned i = 0; i < n_rows_A; i++)
+  // Add some data to the array (Armadillo store its matrix in Column
+  // Major format)
+  for (unsigned i = 0; i < n_columns_A; i++)
    {
-    for (unsigned j = 0; j < n_columns_A; j++)
+    for (unsigned j = 0; j < n_rows_A; j++)
      {
       if (i==j)
        {
-        matrix_A_pt[i*n_columns_A+j] = i;
+        matrix_A_pt[i*n_rows_A+j] = j;
        }
       else 
        {
         // Get the distance to the diagonal
-        matrix_A_pt[i*n_columns_A+j] = i;
+        matrix_A_pt[i*n_rows_A+j] = j;
        }
      }
    }
+  
   // Create the non square matrix
+  
+  // Remember that Armadillo uses Column Major storage
   CCMatrixArmadillo<double> A(matrix_A_pt, n_rows_A, n_columns_A);
   std::cout << std::endl << "Non square matrix"
             << std::endl << std::endl;
@@ -509,9 +516,31 @@ int main(int argc, char *argv[])
  
   // Create vectors to output the data
   CCVector<double> g(gravity, DIM);
+  std::cout << std::endl << ""
+            << "---------------------------------------------------\n"
+            << "Gravity vector (0 0 -9.81) m/s^2\n"
+            << "---------------------------------------------------\n"
+            << std::endl;
+  output_test << std::endl << ""
+              << "---------------------------------------------------\n"
+              << "Gravity vector (0 0 -9.81) m/s^2\n"
+              << "---------------------------------------------------\n"
+              << std::endl;
   g.output();
   g.output(output_test);
+  
+  // Rotated gravity vector
   CCVector<double> rg(rotated_gravity, DIM);
+  std::cout << std::endl << ""
+            << "---------------------------------------------------\n"
+            << "Rotated gravity vector m/s^2\n"
+            << "---------------------------------------------------\n"
+            << std::endl;
+  output_test << std::endl << ""
+              << "---------------------------------------------------\n"
+              << "Rotated gravity vector m/s^2\n"
+              << "---------------------------------------------------\n"
+              << std::endl;
   rg.output();
   rg.output(output_test);
   
@@ -521,6 +550,16 @@ int main(int argc, char *argv[])
   rotate(rotated_gravity, double_rotated_gravity, roll, pitch, yaw, true);
   // Create a vector to output the data
   CCVector<double> drg(double_rotated_gravity, DIM);
+  std::cout << std::endl << ""
+            << "---------------------------------------------------\n"
+            << "Rotated-back gravity vector (original vector) m/s^2\n"
+            << "---------------------------------------------------\n"
+            << std::endl;
+  output_test << std::endl << ""
+              << "---------------------------------------------------\n"
+              << "Rotated-back gravity vector (original vector) m/s^2\n"
+              << "---------------------------------------------------\n"
+              << std::endl;
   drg.output();
   drg.output(output_test);
   
@@ -529,7 +568,6 @@ int main(int argc, char *argv[])
   CCVector<double> diff = g - drg;
   // Get the norm
   const double norm = diff.norm_2();
-  output_test << norm << std::endl;
   std::cout << norm << std::endl;
   output_test << norm << std::endl;
   

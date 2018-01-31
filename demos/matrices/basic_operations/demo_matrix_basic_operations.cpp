@@ -509,9 +509,31 @@ int main(int argc, char *argv[])
  
   // Create vectors to output the data
   CCVector<double> g(gravity, DIM);
+  std::cout << std::endl << ""
+            << "---------------------------------------------------\n"
+            << "Gravity vector (0 0 -9.81) m/s^2\n"
+            << "---------------------------------------------------\n"
+            << std::endl;
+  output_test << std::endl << ""
+              << "---------------------------------------------------\n"
+              << "Gravity vector (0 0 -9.81) m/s^2\n"
+              << "---------------------------------------------------\n"
+              << std::endl;
   g.output();
   g.output(output_test);
-  CCVector<double> rg(rotated_gravity, DIM);
+
+  // Rotated gravity vector
+  CCVector<double> rg(rotated_gravity, DIM); 
+  std::cout << std::endl << ""
+            << "---------------------------------------------------\n"
+            << "Rotated gravity vector m/s^2\n"
+            << "---------------------------------------------------\n"
+            << std::endl;
+  output_test << std::endl << ""
+              << "---------------------------------------------------\n"
+              << "Rotated gravity vector m/s^2\n"
+              << "---------------------------------------------------\n"
+              << std::endl;
   rg.output();
   rg.output(output_test);
   
@@ -521,6 +543,16 @@ int main(int argc, char *argv[])
   rotate(rotated_gravity, double_rotated_gravity, roll, pitch, yaw, true);
   // Create a vector to output the data
   CCVector<double> drg(double_rotated_gravity, DIM);
+  std::cout << std::endl << ""
+            << "---------------------------------------------------\n"
+            << "Rotated-back gravity vector (original vector) m/s^2\n"
+            << "---------------------------------------------------\n"
+            << std::endl;
+  output_test << std::endl << ""
+              << "---------------------------------------------------\n"
+              << "Rotated-back gravity vector (original vector) m/s^2\n"
+              << "---------------------------------------------------\n"
+              << std::endl;
   drg.output();
   drg.output(output_test);
   
@@ -529,7 +561,16 @@ int main(int argc, char *argv[])
   CCVector<double> diff = g - drg;
   // Get the norm
   const double norm = diff.norm_2();
-  output_test << norm << std::endl;
+  std::cout << std::endl << ""
+            << "---------------------------------------------------\n"
+            << "Norm 2 of original vector and rotated-back vector\n"
+            << "---------------------------------------------------\n"
+            << std::endl;
+  output_test << std::endl << ""
+              << "---------------------------------------------------\n"
+              << "Norm 2 of original vector and rotated-back vector\n"
+              << "---------------------------------------------------\n"
+              << std::endl;
   std::cout << norm << std::endl;
   output_test << norm << std::endl;
   
@@ -579,7 +620,19 @@ int main(int argc, char *argv[])
   CCMatrix<double> S(1, DIM);
   
   multiply_vector_times_matrix(v, A, S);
-  
+
+  std::cout << std::endl << ""
+            << "---------------------------------------------------\n"
+            << "Extract data of a matrix by matrix-multiplication\n"
+            << "Get the first row + half the second row + a quarter of the third row\n"
+            << "---------------------------------------------------\n"
+            << std::endl;
+  output_test << std::endl << ""
+              << "---------------------------------------------------\n"
+              << "Extract data of a matrix by matrix-multiplication\n"
+              << "Get the first row + half the second row + a quarter of the third row\n"
+              << "---------------------------------------------------\n"
+              << std::endl;
   S.output();
   S.output(output_test);
   
