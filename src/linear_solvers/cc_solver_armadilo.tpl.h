@@ -9,9 +9,6 @@
 
 #include "ac_linear_solver.h"
 
-// Add Armadillo's includes
-#include <armadillo>
-
 namespace chapchom
 {
 
@@ -19,7 +16,7 @@ namespace chapchom
  // class uses the methods solve() or spsolve() from Armadillo to
  // perform the solution of the system of equations.
  template<class T>
-  class CCSolverArmadillo : public virtual ACLinearSolver<T>
+  class CCSolverArmadillo : public virtual ACLinearSolver<CCMatrixArmadillo<T>, CCMatrixArmadillo<T> >
   {
  
   public:
@@ -28,7 +25,7 @@ namespace chapchom
    CCSolverArmadillo();
    
    // Constructor where we specify the matrix A
-   CCSolverArmadillo(const CCMatrix<T> &A);
+   CCSolverArmadillo(const CCMatrixArmadillo<T> &A);
  
    // Empty destructor
    ~CCSolverArmadillo();
@@ -38,26 +35,26 @@ namespace chapchom
    // results are returned. We assume that the input/output matrices
    // have the correct dimensions: A.ncolumns() x A.nrows() for B, and
    // A.nrows() x A.ncolumns() for X.
-   void solve(const CCMatrix<T> &A, const CCMatrix<T> &B, CCMatrix<T> &X);
+   void solve(const CCMatrixArmadillo<T> &A, const CCMatrixArmadillo<T> &B, CCMatrixArmadillo<T> &X);
 
    // Solve a system of equations with input A. We specify the
    // right-hand side b and the x vector where the result is
    // returned. We assume that the input/output vectors have the
    // correct dimensions: A.ncolumns() for b, and A.nrows() for x.
-   void solve(const CCMatrix<T> &A, const CCVector<T> &b, CCVector<T> &x);
+   void solve(const CCMatrixArmadillo<T> &A, const CCMatrixArmadillo<T> &b, CCMatrixArmadillo<T> &x);
   
    // Solve a system of equations with the already stored matrix A. We
    // specify the right-hand side B and the X matrices where the
    // results are returned. We assume that the input/output matrices
    // have the correct dimensions: A.ncolumns() x A.nrows() for B, and
    // A.nrows() x A.ncolumns() for X.
-   void solve(const CCMatrix<T> &B, CCMatrix<T> &X);
+   void solve(const CCMatrixArmadillo<T> &B, CCMatrixArmadillo<T> &X);
   
    // Solve a system of equations with the already stored matrix A. We
    // specify the right-hand side b and the x vectors where the result
    // is returned. We assume that the input/output vectors have the
    // correct dimensions: A.ncolumns() for b, and A.nrows() for x.
-   void solve(const CCVector<T> &b, CCVector<T> &x);
+   void solve(const CCMatrixArmadillo<T> &b, CCMatrixArmadillo<T> &x);
   
    // Re-solve a system of equations with the already stored matrix
    // A. Reusing the LU decomposition. We specify the right-hand
@@ -65,7 +62,7 @@ namespace chapchom
    // assume that the input/output vectors have the correct dimensions:
    // A.ncolumns() x A.nrows() for B, and A.nrows() x A.ncolumns() for
    // X.
-   void resolve(const CCMatrix<T> &B, CCMatrix<T> &X);
+   void resolve(const CCMatrixArmadillo<T> &B, CCMatrixArmadillo<T> &X);
   
    // Re-solve a system of equations with the already stored matrix A
    // (re-use of the LU decomposition or call the solve method for an
@@ -74,7 +71,7 @@ namespace chapchom
    // where the result is returned. We assume that the input/output
    // vectors have the correct dimensions: A.ncolumns() for b, and
    // A.nrows() for x.
-   void resolve(const CCVector<T> &b, CCVector<T> &x);
+   void resolve(const CCMatrixArmadillo<T> &b, CCMatrixArmadillo<T> &x);
       
   private:
  

@@ -3,7 +3,7 @@
 // the methods solve() or spsolve() from Armadillo to perform the
 // solution of the system of equations.
 
-#include "cc_solver_armadilo.tpl.h"
+#include "cc_solver_armadillo.tpl.h"
 
 namespace chapchom
 {
