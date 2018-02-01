@@ -2,6 +2,6 @@
 // this file to force the instantiation of specific templates
 #ifndef CCSOLVERARMADILLO_H
 #define CCSOLVERARMADILLO_H
-#include "cc_lu_solver_numerical_recipes.tpl.h"
-#include "cc_lu_solver_numerical_recipes.tpl.cpp"
+#include "cc_solver_armadillo.tpl.h"
+#include "cc_solver_armadillo.tpl.cpp"
 #endif // #ifndef CCSOLVERARMADILLO_H
