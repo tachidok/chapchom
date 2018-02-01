@@ -8,6 +8,7 @@
 #ifndef CCLUSOLVERNUMERICALRECIPES_TPL_H
 #define CCLUSOLVERNUMERICALRECIPES_TPL_H
 
+// Include the header from inherited class
 #include "ac_linear_solver.h"
 
 // The LU factorisation and back-substitution from Numerical Recipes
