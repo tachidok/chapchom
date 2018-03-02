@@ -30,7 +30,8 @@ int main(int argc, char *argv[])
  //infile.open("./UBLOX/data2.bin", std::ios::in);
  //infile.open("./UBLOX/Betancourt/trajectory.bin", std::ios::in | std::ios::binary);
  //infile.open("./UBLOX/Betancourt/COM8_170926_220050_julio.ubx", std::ios::in | std::ios::binary);
- infile.open("./UBLOX/Betancourt/COM8_170926_221026_julio_2.ubx", std::ios::in | std::ios::binary);
+ //infile.open("./UBLOX/Betancourt/COM8_170926_221026_julio_2.ubx", std::ios::in | std::ios::binary);
+ infile.open("./UBLOX/data_atlixco/40kmph_ida1.ubx", std::ios::in | std::ios::binary);
  if (infile.fail())
   {
    // Error message
@@ -87,7 +88,12 @@ int main(int argc, char *argv[])
      // Get the data structure
      struct UBX_ESF_RAW ubx_esf_raw = ublox_decoder.get_UBX_ESF_RAW();
      // Print the read data
-     std::cout << ubx_esf_raw.gyroscope_temperature << " " << ubx_esf_raw.gyroscope_x << " " << ubx_esf_raw.gyroscope_y << " " << ubx_esf_raw.gyroscope_z << " " << ubx_esf_raw.accelerometer_x << " " << ubx_esf_raw.accelerometer_y << " " << ubx_esf_raw.accelerometer_z << std::endl;
+     std::cout << ubx_esf_raw.time_gyroscope_temperature << " " << ubx_esf_raw.gyroscope_temperature << " " << ubx_esf_raw.gyroscope_x << " " << ubx_esf_raw.gyroscope_y << " " << ubx_esf_raw.gyroscope_z << " " << ubx_esf_raw.accelerometer_x << " " << ubx_esf_raw.accelerometer_y << " " << ubx_esf_raw.accelerometer_z << std::endl;
+
+     // Send data to file
+     outfile_raw_gyro << ubx_esf_raw.time_gyroscope_temperature << " " << ubx_esf_raw.gyroscope_temperature << " " << ubx_esf_raw.gyroscope_x << " " << ubx_esf_raw.gyroscope_y << " " << ubx_esf_raw.gyroscope_z << " " << ubx_esf_raw.accelerometer_x << " " << ubx_esf_raw.accelerometer_y << " " << ubx_esf_raw.accelerometer_z << std::endl;
+     
+     outfile_raw_acc << ubx_esf_raw.time_gyroscope_temperature << " " << ubx_esf_raw.gyroscope_temperature << " " << ubx_esf_raw.gyroscope_x << " " << ubx_esf_raw.gyroscope_y << " " << ubx_esf_raw.gyroscope_z << " " << ubx_esf_raw.accelerometer_x << " " << ubx_esf_raw.accelerometer_y << " " << ubx_esf_raw.accelerometer_z << std::endl;
      // Consume UBX-ESF-RAW
      ublox_decoder.consume_UBX_ESF_RAW_data();     
     }
