@@ -7,19 +7,9 @@ namespace chapchom
  // ===================================================================
  // Constructor, sets the number of odes. We currently have 10 odes
  // ===================================================================
- CCODEsFromSensorsUBLOX::CCODEsFromSensorsUBLOX(const char *input_filename,
-                                                const unsigned initial_index,
-                                                const unsigned final_index)
+ CCODEsFromSensorsUBLOX::CCODEsFromSensorsUBLOX(const char *input_filename)
   : ACODEs(10)
  {
-  
-  Initial_index=initial_index;
-  Final_index=final_index;
-  
-  // Initialise the number of data in the Table
-  N_data_in_table=Final_index - Initial_index + 1;
-  //N_data_in_table = 11592;
-  //N_data_in_table = 78748;
   
   // Data have not been load from table
   Loaded_data_from_table = false;
@@ -27,7 +17,12 @@ namespace chapchom
   // Read the data from file
   load_table(input_filename);
   
-  // Initialise index data
+  // Initialise the number of data in the Table
+  N_data_in_table = // TODO
+   //N_data_in_table = 11592;
+   //N_data_in_table = 78748;
+  
+   // Initialise index data
   Index_data = 0;
  }
  
@@ -43,9 +38,163 @@ namespace chapchom
  // ===================================================================
  void CCODEsFromSensorsUBLOX::load_table(const char *input_filename)
  {
-  // Open the file with the data
-  FILE *file_pt = fopen(input_filename, "r");
-  if (file_pt == 0)
+  // Create the UBLOX decoder
+  CCUBLOXDecoder ublox_decoder;
+  
+  // Create the nmea decoder
+  CCNMEADecoder nmea_decoder(NFIELDS_NMEA_DECODER);
+  
+  // Create the object to deal with a file
+  std::ifstream infile;
+  infile.open(input_filename, std::ios::in | std::ios::binary);
+  if (infile.fail())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "We could not open the UBLOX bin file" << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Extracted byte
+  char byte;
+  // Loop until eof
+  while(!infile.eof())
+   {
+    infile.get(byte);
+    
+    // NMEA decoding
+    {
+     nmea_decoder.parse(byte);
+    
+     if (nmea_decoder.is_GPRMC_data_ready())
+      {
+       // Get the data structure
+       struct GPRMC gprmc = nmea_decoder.get_gprmc();
+       
+       double utc_time = 0.0;
+       if (gprmc.valid_data_UTC_time)
+        {
+         utc_time = gprmc.UTC_time;
+        }
+       
+       char status = '0';
+       if (gprmc.valid_data_status)
+        {
+         status = gprmc.status;
+        }
+       
+       double latitude = 0.0;
+       if (gprmc.valid_data_latitude)
+          {
+           latitude = gprmc.latitude;
+          }
+       
+        // Change sign in latitude data if required
+       if (gprmc.valid_data_latitude && gprmc.valid_data_NS && gprmc.NS == 'S')
+          {
+           latitude = -latitude;
+          }
+       
+       double longitude = 0.0;
+       if (gprmc.valid_data_longitude)
+        {
+         longitude = gprmc.longitude;
+        }
+       
+       // Change sign in longitude data if required
+       if (gprmc.valid_data_longitude && gprmc.valid_data_EW && gprmc.EW == 'W')
+        {
+         longitude = -longitude;
+        }
+       
+       double course_degrees = 0.0;
+       if (gprmc.valid_data_course_degrees)
+        {
+         course_degrees = gprmc.course_degrees;
+        }
+       
+       // Create a package of data to push into
+       std::vector<double> utc_lat_lon_course_valid(5);
+       utc_lat_lon_course_valid[0] = utc_time;
+       utc_lat_lon_course_valid[1] = latitude;
+       utc_lat_lon_course_valid[2] = longitude;
+       utc_lat_lon_course_valid[3] = course_degrees * TO_RADIANS;
+       if (status == 'A')
+        {
+         utc_lat_lon_course_valid[4] = 1.0;
+        }
+       else
+        {
+         utc_lat_lon_course_valid[4] = 0.0;
+        }
+       
+       // Push data into Table
+       Table_latitude_longitude_course_valid.push_back(utc_lat_lon_course_valid);
+       
+       // Consume GPRMC data
+       nmea_decoder.consume_GPRMC_data();
+       
+       std::cout << "GPRMC:(" << utc_time << " " << status << " " << latitude << ", " << longitude << ", " <<  course_degrees << ")" << std::endl;
+      }
+     
+    } // NMEA decoding
+    
+    // UBLOX decoding
+    {
+     ublox_decoder.parse(byte);
+     // Check whether any of the data structures has new information
+     if (ublox_decoder.is_UBX_ESF_RAW_data_ready())
+      {
+       // Get the data structure
+       struct UBX_ESF_RAW ubx_esf_raw = ublox_decoder.get_UBX_ESF_RAW();
+      
+       // Package the gyroscope data
+       std::vector<double> gyro_data(4);
+       gyro_data[0] = ubx_esf_raw.time_gyroscope_temperature;
+       gyro_data[1] = ubx_esf_raw.gyroscope_x;
+       gyro_data[2] = ubx_esf_raw.gyroscope_y;
+       gyro_data[3] = ubx_esf_raw.gyroscope_z;
+      
+       // Package the acceleration data
+       std::vector<double> acc_data(4);
+       acc_data[0] = ubx_esf_raw.time_gyroscope_temperature;
+       acc_data[1] = ubx_esf_raw.accelerometer_x;
+       acc_data[2] = ubx_esf_raw.accelerometer_y;
+       acc_data[3] = ubx_esf_raw.accelerometer_z;
+
+       // Push data into Table
+       Table_gyro.push_back(gyro_data);
+       Table_acc.push_back(acc_data);
+       
+#if 0
+       // Print the read data
+       std::cout << ubx_esf_raw.time_gyroscope_temperature << " " << ubx_esf_raw.gyroscope_temperature << " " << ubx_esf_raw.gyroscope_x << " " << ubx_esf_raw.gyroscope_y << " " << ubx_esf_raw.gyroscope_z << " " << ubx_esf_raw.accelerometer_x << " " << ubx_esf_raw.accelerometer_y << " " << ubx_esf_raw.accelerometer_z << std::endl;
+#endif // #if 0
+      
+       // Consume UBX-ESF-RAW
+       ublox_decoder.consume_UBX_ESF_RAW_data();     
+      }
+
+    } // UBLOX decoding
+    
+   } // while(!infile.eof())
+  
+  // Close the files
+  infile.close();
+
+ }
+
+
+
+
+  
+
+  
+ // Open the file with the data
+ FILE *file_pt = fopen(input_filename, "r");
+ if (file_pt == 0)
    {
     // Error message
     std::ostringstream error_message;
