@@ -314,7 +314,9 @@ namespace chapchom
     decode_PSTM3DGYRO_and_fill_structure();
     //print_PSTM3DGYRO_structure();
    }
-  else if (strcmp(Fields[0], "GPRMC") == 0)
+  //else if (strcmp(Fields[0], "GPRMC") == 0)
+  else if (strcmp(Fields[0], "GNRMC") == 0) // TODO: Patch to work
+                                            // with UBLOX data
    {
     decode_GPRMC_and_fill_structure();
     //print_GPRMC_structure();

@@ -13,17 +13,34 @@
 // The nmea decoder
 #include "cc_nmea_decoder.h"
 
-#define NFIELDS_NMEA_DECODER 50
+#define NFIELDS_NMEA_DECODER 200
+#define FIXED_STEP_SIZE 0.01 // 1/100, the number of inertial data per
+                             // second in ublox sensors
 
 #define DIM 3
 
-//#define TONANTZINTLA_TO_CHOLULA
-//#define TLAXCALANCINGO_TO_ACATEPEC_ZERO_INITIAL_VELOCITY
-//#define TLAXCALANCINGO_TO_ACATEPEC
-//#define ACATEPEC_TO_TONANTZINTLA
-//#define UDLAP_PERIFERICO
-//#define PERIFERICO_TO_11SUR
-#define _11SUR_TO_TLAXCALANCINGO
+//#define IDA_40KMPH_1
+//#define IDA_40KMPH_2
+//#define REGRESO_40KMPH_1
+//#define REGRESO_40KMPH_2
+//#define IDA_50KMPH_1
+//#define IDA_50KMPH_2
+//#define REGRESO_50KMPH_1
+//#define REGRESO_50KMPH_2
+//#define IDA_60KMPH_1
+//#define IDA_60KMPH_2
+//#define REGRESO_60KMPH_1
+//#define REGRESO_60KMPH_2
+//#define IDA_70KMPH_1
+#define IDA_70KMPH_2
+//#define REGRESO_70KMPH_1
+//#define REGRESO_70KMPH_2
+//#define IDA_80KMPH_1
+//#define IDA_80KMPH_2
+//#define REGRESO_80KMPH_1
+//#define REGRESO_80KMPH_2
+//#define IDA_90KMPH_1
+//#define REGRESO_90KMPH_1
 
 namespace chapchom
 {
@@ -52,10 +69,7 @@ namespace chapchom
   bool get_sensors_lectures();
   
   /// Set initial conditions
-  void set_initial_conditions(std::vector<std::vector<double> > &y);
-  
-  /// Reset initial contidions
-  void reset_initial_conditions_at_current_time(std::vector<std::vector<double> > &y);
+  void set_initial_conditions(std::vector<std::vector<double> > &y); 
   
   // Get the number of acceleration data
   inline const unsigned nacceleration_data()
@@ -125,7 +139,10 @@ namespace chapchom
    {
     BrokenCopy::broken_assign("CCODEsFromSensorsUBLOX");
    }
- 
+  
+  // Convert degrees, minutes and seconds to decimal degrees
+  double degress_to_decimal_helper(double dm);
+  
   // Number of data in the loaded table
   unsigned long N_data_in_table;
   
@@ -143,6 +160,7 @@ namespace chapchom
   double Yaw_change_rate_with_threshold;
   
   unsigned long Index_data;
+  unsigned long Index_data_for_lat_lon;
   
   // Storage for the complete loaded data
   std::vector<std::vector<double> > Table_acc;

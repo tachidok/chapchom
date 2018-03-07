@@ -1,44 +1,37 @@
 %% Read data
 clc
 clear all
-
-% GEOFOG3D.dat
-%n_input_raw_data = 11592;
-%n_input_aligned_data = 11592;
-% TONANTZINTLA_TO_CHOLULA
+% IDA_40KMPH_1
+% IDA_40KMPH_2
+% REGRESO_40KMPH_1
+% REGRESO_40KMPH_2
+% IDA_50KMPH_1
+% IDA_50KMPH_2
+% REGRESO_50KMPH_1
+% REGRESO_50KMPH_2
+% IDA_60KMPH_1
+% IDA_60KMPH_2
+% REGRESO_60KMPH_1
+% REGRESO_60KMPH_2
+% IDA_70KMPH_1
 %Initial_index=0;
-%Final_index=11591;
-% TLAXCALANCINGO_TO_ACATEPEC_ZERO_VELOCITY
-%%%%Initial_index=56242;
-%Initial_index=57242;
-%Final_index=66777;
-% TLAXCALANCINGO_TO_ACATEPEC
-%Initial_index=58442;
-%Final_index=66777;
-% ACATEPEC_TO_TONANTZINTLA
-%Initial_index=68504;
-%Final_index=74087;
-% UDLAP_PERIFERICO
-Initial_index=35638;
-Final_index=39284;
-% PERIFERICO_TO_11SUR
-%Initial_index=40300;
-%Final_index=46076;
-% 11SUR_TO_TLAXCALANCINGO
-%Initial_index=48569;
-%Final_index=54575;
+%Final_index=7699;
+% IDA_70KMPH_2
+Initial_index=0;
+Final_index=8769;
+% REGRESO_70KMPH_1
+% REGRESO_70KMPH_2
+% IDA_80KMPH_1
+% IDA_80KMPH_2
+% REGRESO_80KMPH_1
+% REGRESO_80KMPH_2
+% IDA_90KMPH_1
+% REGRESO_90KMPH_1
 
 n_input_raw_data = Final_index-Initial_index+1;
 n_input_aligned_data = n_input_raw_data;
 %n_output_data=11030;
 n_output_data=n_input_aligned_data;
-n_output_data_hardware = 1187;
-
-linear_acceleration_from_table = importfile_TelitSL869DR_4columns('RESLT/linear_acceleration_from_table.dat', 1, n_input_raw_data);
-g_force_from_table = importfile_TelitSL869DR_2columns('RESLT/g_force_from_table.dat', 1, n_input_raw_data);
-second_gyro_from_table = importfile_TelitSL869DR_4columns('RESLT/second_gyro_from_table.dat', 1, n_input_raw_data);
-euler_angles_from_table = importfile_TelitSL869DR_4columns('RESLT/euler_angles_from_table.dat', 1, n_input_raw_data);
-velocity_from_table = importfile_TelitSL869DR_4columns('RESLT/velocity_from_table.dat', 1, n_input_raw_data);
 
 raw_gyro = importfile_TelitSL869DR_3columns('RESLT/raw_gyro.dat', 1, n_input_raw_data);
 raw_accelerations = importfile_TelitSL869DR_3columns('RESLT/raw_accelerations.dat', 1, n_input_raw_data);
@@ -62,113 +55,14 @@ velocity_north_east_down = importfile_TelitSL869DR_4columns('RESLT/velocity_nort
 
 navigation_data = importfile_GEOFOG3D_8columns('RESLT/navigation_data_for_evaluation.dat', 1, n_output_data);
 latitude_and_longitude = importfile_TelitSL869DR_3columns('RESLT/latitude_and_longitude.dat', 1, n_output_data);
-latitude_and_longitude_hardware = importfile_TelitSL869DR_3columns('RESLT/hw.dat', 1, n_output_data_hardware);
 
 initial_raw_time = raw_gyro(1,1);
 final_raw_time = raw_gyro(size(raw_gyro,1),1);
 initial_time = aligned_gyro(1,1);
 final_time = aligned_gyro(size(aligned_gyro,1),1);
 
-%% Data processed by GEOFOG3D
-% Euler angles - roll, pitch and yaw
-% Processed roll
-figure
-subplot(2,3,1)
-plot(euler_angles_from_table(:,1), euler_angles_from_table(:,2)*180.0/pi, 'b')
-axis([initial_raw_time final_raw_time -180 180])
-title('GEOFOG3D - Euler angle [roll]')
-xlabel('Time (s)')
-ylabel('\phi (degrees)')
-grid on
-
-% Processed pitch
-subplot(2,3,2)
-plot(euler_angles_from_table(:,1), euler_angles_from_table(:,3)*180.0/pi, 'b')
-axis([initial_raw_time final_raw_time -180 180])
-title('GEOFOG3D - Euler angle [pitch]')
-xlabel('Time(s)')
-ylabel('\theta (degrees)')
-grid on
-
-% Processed yaw
-subplot(2,3,3)
-plot(euler_angles_from_table(:,1), euler_angles_from_table(:,4)*180.0/pi, 'b')
-%axis([initial_raw_time final_raw_time -180 180])
-title('GEOFOG3D - Euler angle [yaw]')
-xlabel('Time(s)')
-ylabel('\theta (degrees)')
-grid on
-
-% Linear acceleration AND G-force
-subplot(2,3,4)
-plot(linear_acceleration_from_table(:, 1), linear_acceleration_from_table(:, 2), 'r')
-axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
-title('GEOFOG3D x-acceleration (Linear in body frame)')
-xlabel('Time (s)')
-ylabel('Acceleration (m/s^2)')
-legend('Linear acceleration', 'Location', 'NorthWest')
-grid on
-subplot(2,3,3)
-subplot(2,3,5)
-plot(linear_acceleration_from_table(:, 1), linear_acceleration_from_table(:, 3), 'r')
-axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
-title('GEOFOG3D y-acceleration (Linear in body frame)')
-xlabel('Time (s)')
-ylabel('Acceleration (m/s^2)')
-legend('Linear acceleration', 'Location', 'NorthWest')
-grid on
-
-subplot(2,3,6)
-plot(linear_acceleration_from_table(:, 1), linear_acceleration_from_table(:, 4), 'r')
-axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
-title('GEOFOG3D z-acceleration (Linear in body frame)')
-xlabel('Time (s)')
-ylabel('Acceleration (m/s^2)')
-legend('Linear acceleration', 'Location', 'NorthWest')
-grid on
-
-figure();
-plot(g_force_from_table(:,1), g_force_from_table(:,2), 'r');
-title('G-force in body frame)')
-xlabel('Time (s)')
-ylabel('Acceleration (m/s^2)')
-grid on
-
-% -------------------------------------------------------------------------------
-% Second gyro
-figure();
-plot(second_gyro_from_table(:, 1), second_gyro_from_table(:, 2)*180.0/pi, 'b')
-title('GEOFOG3D [X] Gyro (Second)')
-xlabel('Time (s)')
-ylabel('d/s')
-grid on
-
-figure();
-plot(second_gyro_from_table(:, 1), second_gyro_from_table(:, 3)*180.0/pi, 'b')
-title('GEOFOG3D [Y] Gyro (Second)')
-xlabel('Time (s)')
-ylabel('d/s')
-grid on
- 
-figure();
-plot(second_gyro_from_table(:, 1), second_gyro_from_table(:, 4)*180.0/pi, 'b')
-title('GEOFOG3D [Z] Gyro (Second)')
-xlabel('Time (s)')
-ylabel('d/s')
-grid on
-
-% -------------------------------------------------------------------------------
-% Velocity
-m_per_sec_to_km_per_h = 3.6;
-figure
-plot(velocity_from_table(:, 1), velocity_from_table(:, 2)*m_per_sec_to_km_per_h, 'b', velocity_from_table(:, 1), velocity_from_table(:, 3)*m_per_sec_to_km_per_h, 'r', velocity_from_table(:, 1), velocity_from_table(:, 4)*m_per_sec_to_km_per_h, 'g')
-title('Velocity')
-xlabel('Time (s)')
-ylabel('Velocity km/h')
-legend('North-velocity', 'East-velocity', 'Down-velocity', 'Location', 'NorthWest')
-grid on
-
-%% Raw and aligned
+%% RAW DATA
+% Raw and aligned
 % Gyro
 figure
 subplot(2,3,1)
@@ -241,26 +135,26 @@ max_diff_filtered_raw_acc = max(diff_filtered_raw_acc)
 diff_aligned_raw_acc = aligned_acc - raw_accelerations;
 max_diff_aligned_raw_acc = max(diff_aligned_raw_acc)
 
-% %% Compare Euler angles rates from GEOFOG3D and computed by algorithm
-% % GEOFOG3D
+% %% Compare Euler angles rates from MORE_DATA and computed by algorithm
+% % MORE_DATA
 % figure
 % subplot(2,3,1)
 % plot(second_gyro_from_table(:, 1), second_gyro_from_table(:, 2)*180.0/pi, 'b')
-% title('GEOFOG3D [X] Gyro (Second)')
+% title('MORE_DATA [X] Gyro (Second)')
 % xlabel('Time (s)')
 % ylabel('d/s')
 % grid on
 % 
 % subplot(2,3,2)
 % plot(second_gyro_from_table(:, 1), second_gyro_from_table(:, 3)*180.0/pi, 'b')
-% title('GEOFOG3D [Y] Gyro (Second)')
+% title('MORE_DATA [Y] Gyro (Second)')
 % xlabel('Time (s)')
 % ylabel('d/s')
 % grid on
 %  
 % subplot(2,3,3)
 % plot(second_gyro_from_table(:, 1), second_gyro_from_table(:, 4)*180.0/pi, 'b')
-% title('GEOFOG3D [Z] Gyro (Second)')%% Read data
+% title('MORE_DATA [Z] Gyro (Second)')%% Read data
 % xlabel('Time (s)')
 % ylabel('d/s')
 % grid on
@@ -526,51 +420,6 @@ ylabel('km/h')
 legend('Acceleration from accelerometers', 'Velocity from computations', 'Location', 'NorthWest')
 grid on
 
-%% Frontal accleration from GPS vs frontal acceleration from accelerometers
-% % Acceleration in m/s^2 from speed from GPS vs frontal acceleration in m/s^2 from accelerometers
-% figure
-% %subplot(1,2,2)
-% plot(acc_in_m_per_sec_from_speed_from_gps(:,1), acc_in_m_per_sec_from_speed_from_gps(:,2), 'b',  body_acceleration(:, 1), body_acceleration(:, 2), 'r')
-% axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
-% title('[Front of car] Acceleration from GPS vs acceleration from accelerometers')
-% xlabel('Time(s)')
-% ylabel('m/s^2')
-% legend('Acceleration from GPS', 'Body-frame acceleration from accelerometers', 'Location', 'NorthWest')
-% grid on
-
-% Acceleration in m/s^2 from speed from GPS vs frontal acceleration in m/s^2 from accelerometers
-figure
-%subplot(1,2,2)
-plot(acc_in_m_per_sec_from_speed_from_gps(:,1), acc_in_m_per_sec_from_speed_from_gps(:,2), 'b',  linear_acceleration(:, 1), linear_acceleration(:, 2), 'r')
-axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
-title('[Front of car] Acceleration from GPS vs linear acceleration')
-xlabel('Time(s)')
-ylabel('m/s^2')
-legend('Acceleration from GPS', 'Linear acceleration', 'Location', 'NorthWest')
-grid on
-
-% Error
-figure
-subplot(1,2,1)
-plot(error_acc_in_m_per_sec_between_gps_and_sensor(:,1), error_acc_in_m_per_sec_between_gps_and_sensor(:,2), 'b')
-%axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
-title('[Front of car] Absolute error - Acceleration from velocity from GPS vs Linear-acceleration in x')
-xlabel('Time(s)')
-ylabel('m/s^2')
-grid on
-
-% Error
-subplot(1,2,2)
-plot(error_acc_in_m_per_sec_between_gps_and_sensor(:,1), error_acc_in_m_per_sec_between_gps_and_sensor(:,3), 'b')
-%axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
-title('[Front of car] Relative error - Acceleration from velocity from GPS vs Linear-acceleration in x')
-xlabel('Time(s)')
-ylabel('m/s^2')
-grid on
-
-average_abs_error = mean(error_acc_in_m_per_sec_between_gps_and_sensor(:,2),1)
-average_relative_error = mean(error_acc_in_m_per_sec_between_gps_and_sensor(:,3),1)
-
 %% Google-maps stuff
 t   =  navigation_data(:,1);          % estampa de tiempo (seg)
 
@@ -588,7 +437,7 @@ rumbo_inicial=0;  %Rumbo inicial(�) desde el cual comienza la nevegaci�n
 [new_lat,new_lon,Error]=calc_nav(lat,lon,distancia,rumbo_inicial,var_rumbo);
 
 figure
-plot(lon, lat, 'r', new_lon, new_lat, 'g')
+plot(lon, lat, 'r', new_lon, new_lat, 'g', latitude_and_longitude(:,3), latitude_and_longitude(:,2), 'b')
 hold on
 title('Position')
 xlabel('Longitude')
@@ -598,12 +447,12 @@ plot_google_map2('Refresh','1','maptype','terrain','AutoAxis','1','FigureResizeU
 hold off
 
 figure
-plot(lon, lat, 'r', latitude_and_longitude(:,3), latitude_and_longitude(:,2), 'b', latitude_and_longitude_hardware(:,3), latitude_and_longitude_hardware(:,2), 'g')
+plot(lon, lat, 'r', new_lon, new_lat, 'g', 'LineWidth', 3)
 hold on
 title('Position')
 xlabel('Longitude')
 ylabel('Latitude')
-legend('Reference trajectory', 'offline algorithm', 'hardware algorithm', 'Location', 'NorthWest')
+legend('Reference trajectory', 'Our algorithm trajectory', 'Location', 'NorthWest')
 plot_google_map2('Refresh','1','maptype','terrain','AutoAxis','1','FigureResizeUpdate','1')
 hold off
 
@@ -616,39 +465,6 @@ grid on
 
 max(Error)
 
-%% Plots for report
-Error(1) = 0
-figure
-plot(lon, lat, 'r', latitude_and_longitude(:,3), latitude_and_longitude(:,2), 'b', 'LineWidth', 2)
-hold on
-title('Posición')
-xlabel('Longitud')
-ylabel('Latitud')
-legend('Trayectoria de referencia', 'Trayectoria obtenida', 'Location', 'NorthWest')
-plot_google_map2('Refresh','1','maptype','terrain','AutoAxis','1','FigureResizeUpdate','1')
-hold off
-
-figure
-plot(t,Error, 'LineWidth', 2)
-title('Error en posición')
-xlabel('Tiempo (s)')
-ylabel('Error (m)')
-grid on 
-
-max(Error)
-max(t)
-
-cumulative_error = cumsum(Error);
-
-figure
-plot(t,cumulative_error)
-title('Error acumulado en posición')
-xlabel('Tiempo (s)')
-ylabel('Error (m)')
-grid on
-
-max(cumulative_error)
-
 %% Plot lat-lon imported to show full trajectory
 figure
 plot(latlon(:,2), latlon(:,1), 'r')
@@ -658,150 +474,6 @@ xlabel('Longitude')
 ylabel('Latitude')
 plot_google_map2('Refresh','1','maptype','terrain','AutoAxis','1','FigureResizeUpdate','1')
 hold off
-
-%% HERE
-% figure
-% plot(euler_angles_from_table(:,1), euler_angles_from_table(:,2)*180.0/pi, 'b', euler_angles_from_gyro(:,1), euler_angles_from_gyro(:,2)*180.0/pi, 'g', euler_angles_from_accelerometer(:,1), euler_angles_from_accelerometer(:,2)*180.0/pi, 'r')
-% axis([initial_raw_time final_raw_time -180 180])
-% title('Euler angle from accelerometer [roll]')
-% xlabel('Time(s)')
-% ylabel('\theta (degrees)')
-% legend('GEOFOG3D', 'Gyro', 'Accelerometer', 'Location', 'NorthWest')
-% grid on
-% 
-% figure
-% plot(euler_angles_from_table(:,1), euler_angles_from_table(:,3)*180.0/pi, 'b', euler_angles_from_gyro(:,1), euler_angles_from_gyro(:,3)*180.0/pi, 'g', euler_angles_from_accelerometer(:,1), euler_angles_from_accelerometer(:,3)*180.0/pi, 'r')
-% axis([initial_raw_time final_raw_time -180 180])
-% title('Euler angle from accelerometer [pitch]')
-% xlabel('Time(s)')
-% ylabel('\theta (degrees)')
-% legend('GEOFOG3D', 'Gyro', 'Accelerometer', 'Location', 'NorthWest')
-% grid on
-
-%% Compare Euler angles from GEOFOG3D and ours. Also compare linear accelerations
-% Roll
-figure
-subplot(2,3,1)
-plot(euler_angles_from_table(:,1), euler_angles_from_table(:,2)*180.0/pi, 'b', roll_pitch_yaw(:,1), roll_pitch_yaw(:,2)*180.0/pi, 'r')
-axis([initial_raw_time final_raw_time -180 180])
-title('Euler angle [roll]')
-xlabel('Time (s)')
-ylabel('\phi (degrees)')
-legend('GEOFOG3D', 'Ours', 'Location', 'NorthWest')
-grid on
-
-% Pitch
-subplot(2,3,2)
-plot(euler_angles_from_table(:,1), euler_angles_from_table(:,3)*180.0/pi, 'b', roll_pitch_yaw(:,1), roll_pitch_yaw(:,3)*180.0/pi, 'r')
-axis([initial_raw_time final_raw_time -180 180])
-title('Euler angle [pitch]')
-xlabel('Time(s)')
-ylabel('\theta (degrees)')
-legend('GEOFOG3D', 'Ours', 'Location', 'NorthWest')
-grid on
-
-% Yaw
-subplot(2,3,3)
-plot(euler_angles_from_table(:,1), euler_angles_from_table(:,4)*180.0/pi, 'b', roll_pitch_yaw(:,1), roll_pitch_yaw(:,4)*180.0/pi, 'r')
-axis([initial_raw_time final_raw_time -180 180])
-title('Euler angle [yaw]')
-xlabel('Time(s)')
-ylabel('\theta (degrees)')
-legend('GEOFOG3D', 'Ours', 'Location', 'NorthWest')
-grid on
-
-% Linear accelerations
-% X-acc
-subplot(2,3,4)
-plot(linear_acceleration_from_table(:, 1), linear_acceleration_from_table(:, 2), 'b', linear_acceleration(:,1), linear_acceleration(:,2), 'r')
-axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
-title('x-acceleration')
-xlabel('Time (s)')
-ylabel('Acceleration (m/s^2)')
-legend('GEOFOG3D', 'Ours', 'Location', 'NorthWest')
-grid on
-
-% Y-acc
-subplot(2,3,5)
-plot(linear_acceleration_from_table(:, 1), linear_acceleration_from_table(:, 3), 'b', linear_acceleration(:,1), linear_acceleration(:,3), 'r')
-axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
-title('y-acceleration')
-xlabel('Time (s)')
-ylabel('Acceleration (m/s^2)')
-legend('GEOFOG3D', 'Ours', 'Location', 'NorthWest')
-grid on
- 
-% Z-acc
-subplot(2,3,6)
-plot(linear_acceleration_from_table(:, 1), linear_acceleration_from_table(:, 4), 'b', linear_acceleration(:,1), linear_acceleration(:,4), 'r')
-axis([initial_raw_time final_raw_time -9.8*1.5 9.8*1.5])
-title('z-acceleration')
-xlabel('Time (s)')
-ylabel('Acceleration (m/s^2)')
-legend('GEOFOG3D', 'Ours', 'Location', 'NorthWest')
-grid on
-
-diff_euler_angles = (euler_angles_from_table - roll_pitch_yaw);
-diff_linear_accelerations = (linear_acceleration_from_table - linear_acceleration);
-
-max_diff_euler_angles_roll = max(diff_euler_angles(:,2))
-max_diff_euler_angles_pitch = max(diff_euler_angles(:,3))
-max_diff_euler_angles_yaw = max(diff_euler_angles(:,4))
-mean_diff_euler_angles_roll = mean(diff_euler_angles(:,2))
-mean_diff_euler_angles_pitch = mean(diff_euler_angles(:,3))
-mean_diff_euler_angles_yaw = mean(diff_euler_angles(:,4))
-
-max_diff_linear_acc_x = max(diff_linear_accelerations(:,2))
-max_diff_linear_acc_y = max(diff_linear_accelerations(:,3))
-max_diff_linear_acc_z = max(diff_linear_accelerations(:,4))
-mean_diff_linear_acc_x = mean(diff_linear_accelerations(:,2))
-mean_diff_linear_acc_y = mean(diff_linear_accelerations(:,3))
-mean_diff_linear_acc_z = mean(diff_linear_accelerations(:,4))
-
-figure
-plot(euler_angles_from_table(:,1), diff_euler_angles(:,2)*180.0/pi, 'r', ...
-     euler_angles_from_table(:,1), diff_euler_angles(:,3)*180.0/pi, 'g')
-title('[ERROR] Euler angles (degrees)')
-xlabel('Time (s)')
-ylabel('d')
-legend('Roll', 'Pitch', 'NorthWest')
-grid on
-
-figure
-plot(linear_acceleration_from_table(:,1), diff_linear_accelerations(:,2), 'r', ...
-     linear_acceleration_from_table(:,1), diff_linear_accelerations(:,3), 'g')
-title('[ERROR] Linear accelerations (m/s^2)')
-xlabel('Time (s)')
-ylabel('m/s^2')
-legend('x-acc', 'y-acc', 'NorthWest')
-grid on
-
-%% North-east-down velocity
-% North-velocity
-m_per_sec_to_km_per_h = 3.6;
-figure
-plot(velocity_from_table(:, 1), velocity_from_table(:, 2)*m_per_sec_to_km_per_h, 'b', velocity_north_east_down(:, 1), velocity_north_east_down(:, 2)*m_per_sec_to_km_per_h, 'r')
-title('North velocity comparison')
-xlabel('Time (s)')
-ylabel('Velocity km/h')
-legend('GEOFOG3D', 'Ours', 'Location', 'NorthWest')
-grid on
-% East-velocity
-figure
-plot(velocity_from_table(:, 1), velocity_from_table(:, 3)*m_per_sec_to_km_per_h, 'b', velocity_north_east_down(:, 1), velocity_north_east_down(:, 3)*m_per_sec_to_km_per_h, 'r')
-title('East velocity comparison')
-xlabel('Time (s)')
-ylabel('Velocity km/h')
-legend('GEOFOG3D', 'Ours', 'Location', 'NorthWest')
-grid on
-% Down-velocity
-figure
-plot(velocity_from_table(:, 1), velocity_from_table(:, 4)*m_per_sec_to_km_per_h, 'b', velocity_north_east_down(:, 1), velocity_north_east_down(:, 4)*m_per_sec_to_km_per_h, 'r')
-title('Down velocity comparison')
-xlabel('Time (s)')
-ylabel('Velocity km/h')
-legend('GEOFOG3D', 'Ours', 'Location', 'NorthWest')
-grid on
 
 %% POSITION
 % This method uses XPOS and YPOS from the file which are computes from the
@@ -841,7 +513,7 @@ grid on
 
 back_navigation_data = navigation_data;
 
-%% Here for verlocity from acc
+%% Here for velocity from acc
 n_data = size(velocity, 1)
 n_seconds_of_test = n_data;
 n_minutes_of_test = n_seconds_of_test / 60.0;

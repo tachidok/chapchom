@@ -99,7 +99,7 @@ void rotate_sensors_to_ASIKIs_reference_frame(std::vector<std::vector<double> > 
   
   // Rotation matrix for gyro data
   CCMatrix<double> R_g(DIM, DIM);
-  R_g.create_zero_matrix();
+  R_g.allocate_memory();
   
   const double sin_theta_x = sin(Euler_angles_for_gyro[0]);
   const double sin_theta_y = sin(Euler_angles_for_gyro[1]);
@@ -149,7 +149,7 @@ void rotate_sensors_to_ASIKIs_reference_frame(std::vector<std::vector<double> > 
   // Get the number of data for acc
   const unsigned n_acc = raw_acc_t.size();
   CCMatrix<double> R_a(DIM, DIM);
-  R_a.create_zero_matrix();
+  R_a.allocate_memory();
   
   const double sin_theta_x = sin(Euler_angles_for_acc[0]);
   const double sin_theta_y = sin(Euler_angles_for_acc[1]);
@@ -369,7 +369,7 @@ void transform_angular_velocities_into_euler_angles_rates(double *angular_veloci
  // Create a matrix that transforms from angular velocities to
  // Euler angles rates
  CCMatrix<double> A(DIM, DIM);
- A.create_zero_matrix();
+ A.allocate_memory();
  A(0,0)=1.0;  A(0,1)=sin_phi*tan_theta; A(0,2)=cos_phi*tan_theta;
  A(1,0)=0.0;  A(1,1)=cos_phi;           A(1,2)=-sin_phi;
  A(2,0)=0.0;  A(2,1)=sin_phi*sec_theta; A(2,2)=cos_phi*sec_theta;
@@ -413,7 +413,7 @@ void transform_inertial_to_body(double *Euler_angles,
 {
  // Create the rotation matrix
  CCMatrix<double> R(DIM, DIM);
- R.create_zero_matrix();
+ R.allocate_memory();
  
  const double sin_theta_x = sin(Euler_angles[0]);
  const double sin_theta_y = sin(Euler_angles[1]);
@@ -449,7 +449,7 @@ void transform_body_to_inertial(double *Euler_angles,
 {
  // Create the rotation matrix
  CCMatrix<double> R(DIM, DIM);
- R.create_zero_matrix();
+ R.allocate_memory();
  
  const double sin_theta_x = sin(Euler_angles[0]);
  const double sin_theta_y = sin(Euler_angles[1]);

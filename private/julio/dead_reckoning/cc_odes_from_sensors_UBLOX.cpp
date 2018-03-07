@@ -18,12 +18,13 @@ namespace chapchom
   load_table(input_filename);
   
   // Initialise the number of data in the Table
-  N_data_in_table = // TODO
-   //N_data_in_table = 11592;
-   //N_data_in_table = 78748;
+  N_data_in_table = Table_acc.size();
+  //N_data_in_table = 11592;
+  //N_data_in_table = 78748;
   
-   // Initialise index data
+  // Initialise index data
   Index_data = 0;
+  Index_data_for_lat_lon = 0;
  }
  
  // ===================================================================
@@ -42,7 +43,7 @@ namespace chapchom
   CCUBLOXDecoder ublox_decoder;
   
   // Create the nmea decoder
-  CCNMEADecoder nmea_decoder(NFIELDS_NMEA_DECODER);
+  CCNMEADecoder nmea_decoder(NFIELDS_NMEA_DECODER, 50);
   
   // Create the object to deal with a file
   std::ifstream infile;
@@ -56,13 +57,18 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
-  
+
+  //  unsigned my_counter_RMC = 0;
+  //  unsigned my_counter_inertial = 0;
+  double time_counter = 0.0;
   // Extracted byte
   char byte;
   // Loop until eof
   while(!infile.eof())
    {
     infile.get(byte);
+    
+    //std::cerr << byte;
     
     // NMEA decoding
     {
@@ -87,33 +93,37 @@ namespace chapchom
        
        double latitude = 0.0;
        if (gprmc.valid_data_latitude)
-          {
-           latitude = gprmc.latitude;
-          }
+        {
+         latitude = gprmc.latitude;
+        }
        
-        // Change sign in latitude data if required
+       // Change sign in latitude data if required
        if (gprmc.valid_data_latitude && gprmc.valid_data_NS && gprmc.NS == 'S')
-          {
-           latitude = -latitude;
-          }
+        {
+         latitude = -latitude;
+        }
        
        double longitude = 0.0;
        if (gprmc.valid_data_longitude)
         {
          longitude = gprmc.longitude;
-        }
+         }
        
-       // Change sign in longitude data if required
-       if (gprmc.valid_data_longitude && gprmc.valid_data_EW && gprmc.EW == 'W')
-        {
-         longitude = -longitude;
-        }
+        // Change sign in longitude data if required
+        if (gprmc.valid_data_longitude && gprmc.valid_data_EW && gprmc.EW == 'W')
+         {
+          longitude = -longitude;
+         }
        
-       double course_degrees = 0.0;
-       if (gprmc.valid_data_course_degrees)
-        {
-         course_degrees = gprmc.course_degrees;
-        }
+        double course_degrees = 0.0;
+        if (gprmc.valid_data_course_degrees)
+         {
+          course_degrees = gprmc.course_degrees;
+         }
+       
+        // Transform from degress to decimal
+       latitude = degress_to_decimal_helper(latitude);
+       longitude = degress_to_decimal_helper(longitude);
        
        // Create a package of data to push into
        std::vector<double> utc_lat_lon_course_valid(5);
@@ -136,7 +146,7 @@ namespace chapchom
        // Consume GPRMC data
        nmea_decoder.consume_GPRMC_data();
        
-       std::cout << "GPRMC:(" << utc_time << " " << status << " " << latitude << ", " << longitude << ", " <<  course_degrees << ")" << std::endl;
+       //       std::cout << "GNRMC:(" << my_counter_RMC++ << " " << utc_time << " " << status << " " << latitude << ", " << longitude << ", " <<  course_degrees << ")" << std::endl;
       }
      
     } // NMEA decoding
@@ -152,31 +162,33 @@ namespace chapchom
       
        // Package the gyroscope data
        std::vector<double> gyro_data(4);
-       gyro_data[0] = ubx_esf_raw.time_gyroscope_temperature;
+       //gyro_data[0] = ubx_esf_raw.time_gyroscope_temperature;
+       gyro_data[0] = time_counter;
        gyro_data[1] = ubx_esf_raw.gyroscope_x;
        gyro_data[2] = ubx_esf_raw.gyroscope_y;
        gyro_data[3] = ubx_esf_raw.gyroscope_z;
       
        // Package the acceleration data
        std::vector<double> acc_data(4);
-       acc_data[0] = ubx_esf_raw.time_gyroscope_temperature;
+       //acc_data[0] = ubx_esf_raw.time_gyroscope_temperature;
+       acc_data[0] = time_counter;
        acc_data[1] = ubx_esf_raw.accelerometer_x;
        acc_data[2] = ubx_esf_raw.accelerometer_y;
-       acc_data[3] = ubx_esf_raw.accelerometer_z;
+       acc_data[3] = -ubx_esf_raw.accelerometer_z; // Negative 
 
        // Push data into Table
        Table_gyro.push_back(gyro_data);
        Table_acc.push_back(acc_data);
        
-#if 0
+       time_counter+=FIXED_STEP_SIZE;
+       
        // Print the read data
-       std::cout << ubx_esf_raw.time_gyroscope_temperature << " " << ubx_esf_raw.gyroscope_temperature << " " << ubx_esf_raw.gyroscope_x << " " << ubx_esf_raw.gyroscope_y << " " << ubx_esf_raw.gyroscope_z << " " << ubx_esf_raw.accelerometer_x << " " << ubx_esf_raw.accelerometer_y << " " << ubx_esf_raw.accelerometer_z << std::endl;
-#endif // #if 0
-      
+       //       std::cout << my_counter_inertial++ << " " << gyro_data[0] << " " << gyro_data[1] << " " << gyro_data[2] << " " << gyro_data[3] << " " << acc_data[1] << " " << acc_data[2] << " " << acc_data[3] << " " << std::endl;
+       
        // Consume UBX-ESF-RAW
        ublox_decoder.consume_UBX_ESF_RAW_data();     
       }
-
+     
     } // UBLOX decoding
     
    } // while(!infile.eof())
@@ -184,158 +196,6 @@ namespace chapchom
   // Close the files
   infile.close();
 
- }
-
-
-
-
-  
-
-  
- // Open the file with the data
- FILE *file_pt = fopen(input_filename, "r");
- if (file_pt == 0)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "The data file [" << input_filename << "] was not opened"
-                  << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
-  
-  // Resize the containers based on the Table size
-  Table_acc.resize(N_data_in_table);
-  Table_gyro.resize(N_data_in_table);
-  Table_linear_acc.resize(N_data_in_table);
-  Table_g_force.resize(N_data_in_table);
-  Table_second_gyro.resize(N_data_in_table);
-  Table_Euler_angles.resize(N_data_in_table);
-  Table_velocity.resize(N_data_in_table);
-  Table_velocity.resize(N_data_in_table);
-  Table_latitude_longitude.resize(N_data_in_table);
-  
-  // Get rid of the first line where headers are stored
-  char *headers=NULL;
-  size_t length = 0;
-  getline(&headers, &length, file_pt);
-  
-  // Skip data until reaching the Initial_index
-  for (unsigned i = 0; i < Initial_index; i++)
-   {
-    getline(&headers, &length, file_pt);
-   }
-  
-  double fixed_time = 0.0;
-  double previous_read_time = 0.0;
-  
-  // Read the data
-  for (unsigned i = 0; i < N_data_in_table; i++)
-   {
-    double time;
-    double acc_x;
-    double acc_y;
-    double acc_z;
-    double gyro_x;
-    double gyro_y;
-    double gyro_z;
-    double lacc_x;
-    double lacc_y;
-    double lacc_z;
-    double g_force;
-    double sgyro_x;
-    double sgyro_y;
-    double sgyro_z;
-    double roll;
-    double pitch;
-    double yaw;
-    double north_vel;
-    double east_vel;
-    double down_vel;
-    double latitude;
-    double longitude;
-    
-    const int n_read =
-     fscanf(file_pt, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",
-            &time, &acc_x, &acc_y, &acc_z,
-            &gyro_x, &gyro_y, &gyro_z,
-            &lacc_x, &lacc_y, &lacc_z,
-            &g_force,
-            &sgyro_x, &sgyro_y, &sgyro_z,
-            &roll, &pitch, &yaw,
-            &north_vel, &east_vel, &down_vel,
-            &latitude, &longitude);
-    if (n_read != 22)
-     {
-      // Error message
-      std::ostringstream error_message;
-      error_message << "Number of read values (" << n_read << ")" << std::endl
-                    << "After reading (" << i << ") data rows" << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
-     }
-   
-    if (time < previous_read_time)
-     {
-      fixed_time+=1.0;
-     }
-    
-    const double this_time = fixed_time + time * 1.0e-6;
-    
-    Table_acc[i].resize(4);
-    Table_acc[i][0] = this_time;
-    Table_acc[i][1] = acc_x;
-    Table_acc[i][2] = acc_y;
-    Table_acc[i][3] = acc_z;
-    
-    Table_gyro[i].resize(4);
-    Table_gyro[i][0] = this_time;
-    Table_gyro[i][1] = gyro_x*TO_RADIANS;
-    Table_gyro[i][2] = gyro_y*TO_RADIANS;
-    Table_gyro[i][3] = gyro_z*TO_RADIANS;
-    
-    Table_linear_acc[i].resize(4);
-    Table_linear_acc[i][0] = this_time;
-    Table_linear_acc[i][1] = lacc_x;
-    Table_linear_acc[i][2] = lacc_y;
-    Table_linear_acc[i][3] = lacc_z;
-
-    Table_g_force[i].resize(2);
-    Table_g_force[i][0] = this_time;
-    Table_g_force[i][1] = g_force;
-    
-    Table_second_gyro[i].resize(4);
-    Table_second_gyro[i][0] = this_time;
-    Table_second_gyro[i][1] = sgyro_x*TO_RADIANS;
-    Table_second_gyro[i][2] = sgyro_y*TO_RADIANS;
-    Table_second_gyro[i][3] = sgyro_z*TO_RADIANS;
-    
-    Table_Euler_angles[i].resize(4);
-    Table_Euler_angles[i][0] = this_time;
-    Table_Euler_angles[i][1] = roll*TO_RADIANS;
-    Table_Euler_angles[i][2] = pitch*TO_RADIANS;
-    Table_Euler_angles[i][3] = yaw*TO_RADIANS;
-    
-    Table_velocity[i].resize(4);
-    Table_velocity[i][0] = this_time;
-    Table_velocity[i][1] = north_vel;
-    Table_velocity[i][2] = east_vel;
-    Table_velocity[i][3] = down_vel;
-
-    Table_latitude_longitude[i].resize(3);
-    Table_latitude_longitude[i][0] = this_time;
-    Table_latitude_longitude[i][1] = latitude;
-    Table_latitude_longitude[i][2] = longitude;
-    
-    previous_read_time = time;
-    
-   }
-  
-  // Close the file
-  fclose(file_pt);
-  
   // Indicates that data have been loaded from table
   Loaded_data_from_table = true;
   
@@ -370,26 +230,13 @@ namespace chapchom
   // Clean return data
   Current_acc_from_table.resize(counter);
   Current_gyro_from_table.resize(counter);
-  Current_linear_acc_from_table.resize(counter);
-  Current_g_force_from_table.resize(counter);
-  Current_second_gyro_from_table.resize(counter);
-  Current_Euler_angles_from_table.resize(counter);
-  Current_velocity_from_table.resize(counter);
-  Current_latitude_longitude_from_table.resize(counter);
   
   for (unsigned i = 0; i < counter; i++)
    {
     // Resize to store the data block
     Current_acc_from_table[i].resize(DIM+1);
     Current_gyro_from_table[i].resize(DIM+1);
-    
-    Current_linear_acc_from_table[i].resize(DIM+1);
-    Current_g_force_from_table[i].resize(2);
-    Current_second_gyro_from_table[i].resize(DIM+1);
-    Current_Euler_angles_from_table[i].resize(DIM+1);
-    Current_velocity_from_table[i].resize(DIM+1);
-    Current_latitude_longitude_from_table[i].resize(3);
-    
+        
     // Copy data block
     Current_acc_from_table[i][0] = Table_acc[Index_data+i][0];
     Current_acc_from_table[i][1] = Table_acc[Index_data+i][1];
@@ -399,42 +246,53 @@ namespace chapchom
     Current_gyro_from_table[i][0] = Table_gyro[Index_data+i][0];
     Current_gyro_from_table[i][1] = Table_gyro[Index_data+i][1];
     Current_gyro_from_table[i][2] = Table_gyro[Index_data+i][2];
-    Current_gyro_from_table[i][3] = Table_gyro[Index_data+i][3];
-
-    Current_linear_acc_from_table[i][0] = Table_linear_acc[Index_data+i][0];
-    Current_linear_acc_from_table[i][1] = Table_linear_acc[Index_data+i][1];
-    Current_linear_acc_from_table[i][2] = Table_linear_acc[Index_data+i][2];
-    Current_linear_acc_from_table[i][3] = Table_linear_acc[Index_data+i][3];
-    
-    Current_g_force_from_table[i][0] = Table_g_force[Index_data+i][0];
-    Current_g_force_from_table[i][1] = Table_g_force[Index_data+i][1];
-    
-    Current_second_gyro_from_table[i][0] = Table_second_gyro[Index_data+i][0];
-    Current_second_gyro_from_table[i][1] = Table_second_gyro[Index_data+i][1];
-    Current_second_gyro_from_table[i][2] = Table_second_gyro[Index_data+i][2];
-    Current_second_gyro_from_table[i][3] = Table_second_gyro[Index_data+i][3];
-    
-    Current_Euler_angles_from_table[i][0] = Table_Euler_angles[Index_data+i][0];
-    Current_Euler_angles_from_table[i][1] = Table_Euler_angles[Index_data+i][1];
-    Current_Euler_angles_from_table[i][2] = Table_Euler_angles[Index_data+i][2];
-    Current_Euler_angles_from_table[i][3] = Table_Euler_angles[Index_data+i][3];
-    
-    Current_velocity_from_table[i][0] = Table_velocity[Index_data+i][0];
-    Current_velocity_from_table[i][1] = Table_velocity[Index_data+i][1];
-    Current_velocity_from_table[i][2] = Table_velocity[Index_data+i][2];
-    Current_velocity_from_table[i][3] = Table_velocity[Index_data+i][3];
-    
-    Current_latitude_longitude_from_table[i][0] = Table_latitude_longitude[Index_data+i][0];
-    Current_latitude_longitude_from_table[i][1] = Table_latitude_longitude[Index_data+i][1];
-    Current_latitude_longitude_from_table[i][2] = Table_latitude_longitude[Index_data+i][2];
-    
+    Current_gyro_from_table[i][3] = Table_gyro[Index_data+i][3]; 
    }
   
   // Increase the Index_data to point to the first data of the new
   // data block
   Index_data+=counter;
   
+  // Add the data for latitude and longitude
+  Current_latitude_longitude_from_table.resize(1);
+  
+  Current_latitude_longitude_from_table[0].resize(5);
+  
+  Current_latitude_longitude_from_table[0][0] = Table_latitude_longitude_course_valid[Index_data_for_lat_lon][0];
+  Current_latitude_longitude_from_table[0][1] = Table_latitude_longitude_course_valid[Index_data_for_lat_lon][1];
+  Current_latitude_longitude_from_table[0][2] = Table_latitude_longitude_course_valid[Index_data_for_lat_lon][2];
+  Current_latitude_longitude_from_table[0][3] = Table_latitude_longitude_course_valid[Index_data_for_lat_lon][3];
+  Current_latitude_longitude_from_table[0][4] = Table_latitude_longitude_course_valid[Index_data_for_lat_lon][4];
+  
+  
+  Index_data_for_lat_lon++;
+  
   return true;
+ }
+ 
+ // ===================================================================
+ // Convert degrees, minutes and seconds to decimal degrees
+ // ===================================================================
+ double CCODEsFromSensorsUBLOX::degress_to_decimal_helper(double dm)
+ {
+  double decimal_degrees = 0;
+  double mind = 0;
+  int deg = 0;
+ 
+  // Get the degress, they are in the 3rd and 4th digit to the left
+  // after the decimal point
+  deg = (int)(dm / 100);
+ 
+  // Get the minutes, they include all the digits to the right after
+  // the decimal point, and the 1st and 2nd digit to the left after the
+  // decimal point
+  mind = (dm - deg*100);
+  // The final data is the number of degrees plus the number degrees
+  // made from minutes
+  decimal_degrees = deg + (mind / 60.0);
+  
+  // Return the decimal format
+  return decimal_degrees;
  }
  
  // ======================================================================
@@ -446,61 +304,181 @@ namespace chapchom
   if (Loaded_data_from_table)
    {
     // Set initial conditions
-#ifdef TONANTZINTLA_TO_CHOLULA
-    y[1][0] = 7.729281075; // Initial x-velocity
-    y[6][0] = 0.03174143; // Initial roll (radians)
-    y[7][0] = 0.044491584; // Initial pitch (radians)
-    y[8][0] = 0.646752591;//0.924043736;//0.646752591; // Initial yaw (radians)
-    y[9][0] = 0.646752591;//0.0 // Initial yaw with threshold (radians)
-#endif // #ifdef TONANTZINTLA_TO_CHOLULA
-    
-#ifdef TLAXCALANCINGO_TO_ACATEPEC_ZERO_INITIAL_VELOCITY
-    y[1][0] = 0.017278609; // Initial x-velocity
-    y[6][0] = 0.018566813; // Initial roll (radians)
-    y[7][0] = 0.079363612; // Initial pitch (radians)
-    y[8][0] = -2.017426082; //4.404219685;//0.924043736;//0.646752591; // Initial yaw (radians)
-    y[9][0] = -2.017426082; // Initial yaw with threshold (radians)
-#endif // #ifdef TLAXCALANCINGO_TO_ACATEPEC_ZERO_INITIAL_VELOCITY
- 
-#ifdef TLAXCALANCINGO_TO_ACATEPEC
-    y[1][0] = 9.47332405; // Initial x-velocity
-    y[6][0] = 0.063093652; // Initial roll (radians)
-    y[7][0] = 0.048420669; // Initial pitch (radians)
-    y[8][0] = -1.82427573; //4.404219685;//0.924043736;//0.646752591; // Initial yaw (radians)
-    y[9][0] = -1.82427573; // Initial yaw with threshold (radians)
-#endif // #ifdef TLAXCALANCINGO_TO_ACATEPEC
- 
-#ifdef ACATEPEC_TO_TONANTZINTLA
-    y[1][0] = 9.928759692; // Initial x-velocity
-    y[6][0] = 0.020158553; // Initial roll (radians)
-    y[7][0] = 0.016275195; // Initial pitch (radians)
-    y[8][0] = -1.031505296; // Initial yaw (radians)
-    y[9][0] = -1.031505296; // Initial yaw with threshold (radians)
-#endif // #ifdef ACATEPEC_TO_TONANTZINTLA
+#ifdef IDA_40KMPH_1
+    y[1][0] = 40.0*0.277777777777; // Initial x-velocity
+    y[6][0] = 0.0; // Initial roll (radians)
+    y[7][0] = 0.0; // Initial pitch (radians)
+    y[8][0] = 0.0; // Initial yaw (radians)
+    y[9][0] = 0.0; // Initial yaw with threshold (radians)
+#endif // #ifdef IDA_40KMPH_1
 
-#ifdef UDLAP_PERIFERICO
-    y[1][0] = 11.422295071; // Initial x-velocity
-    y[6][0] = 0.04549096; // Initial roll (radians)
-    y[7][0] = 0.008888264; // Initial pitch (radians)
-    y[8][0] = 2.923349999; // Initial yaw (radians)
-    y[9][0] = 2.923349999; // Initial yaw with threshold (radians)
-#endif // #ifdef UDLAP_PERIFERICO
- 
-#ifdef PERIFERICO_TO_11SUR
-    y[1][0] = 16.06923009; // Initial x-velocity
-    y[6][0] = -0.050907938; // Initial roll (radians)
-    y[7][0] = 0.062309127; // Initial pitch (radians)
-    y[8][0] = 2.777109996; // Initial yaw (radians)
-    y[9][0] = 2.777109996; // Initial yaw with threshold (radians)
-#endif// #ifdef PERIFERICO_TO_11SUR
- 
-#ifdef _11SUR_TO_TLAXCALANCINGO
-    y[1][0] = 14.630887714; // Initial x-velocity
-    y[6][0] = -0.033215536; // Initial roll (radians)
-    y[7][0] = 0.026363547; // Initial pitch (radians)
-    y[8][0] = -1.465565365; // Initial yaw (radians)
-    y[9][0] = -1.465565365; // Initial yaw with threshold (radians)
-#endif// #ifdef _11SUR_TO_TLAXCALANCINGO 
+#ifdef IDA_40KMPH_2
+    y[1][0] = 40.0*0.277777777777; // Initial x-velocity
+    y[6][0] = 0.0; // Initial roll (radians)
+    y[7][0] = 0.0; // Initial pitch (radians)
+    y[8][0] = 0.0; // Initial yaw (radians)
+    y[9][0] = 0.0; // Initial yaw with threshold (radians)
+#endif // #ifdef IDA_40KMPH_2
+
+#ifdef REGRESO_40KMPH_1
+    y[1][0] = 40.0*0.277777777777; // Initial x-velocity
+    y[6][0] = 0.0; // Initial roll (radians)
+    y[7][0] = 0.0; // Initial pitch (radians)
+    y[8][0] = 0.0; // Initial yaw (radians)
+    y[9][0] = 0.0; // Initial yaw with threshold (radians)
+#endif // #ifdef REGRESO_40KMPH_1
+
+#ifdef REGRESO_40KMPH_2
+    y[1][0] = 40.0*0.277777777777; // Initial x-velocity
+    y[6][0] = 0.0; // Initial roll (radians)
+    y[7][0] = 0.0; // Initial pitch (radians)
+    y[8][0] = 0.0; // Initial yaw (radians)
+    y[9][0] = 0.0; // Initial yaw with threshold (radians)
+#endif // #ifdef REGRESO_40KMPH_2
+
+#ifdef IDA_50KMPH_1
+    y[1][0] = 50.0*0.277777777777; // Initial x-velocity
+    y[6][0] = 0.0; // Initial roll (radians)
+    y[7][0] = 0.0; // Initial pitch (radians)
+    y[8][0] = 0.0; // Initial yaw (radians)
+    y[9][0] = 0.0; // Initial yaw with threshold (radians)
+#endif // #ifdef IDA_50KMPH_1
+
+#ifdef IDA_50KMPH_2
+    y[1][0] = 50.0*0.277777777777; // Initial x-velocity
+    y[6][0] = 0.0; // Initial roll (radians)
+    y[7][0] = 0.0; // Initial pitch (radians)
+    y[8][0] = 0.0; // Initial yaw (radians)
+    y[9][0] = 0.0; // Initial yaw with threshold (radians)
+#endif // #ifdef IDA_50KMPH_2
+
+#ifdef REGRESO_50KMPH_1
+    y[1][0] = 50.0*0.277777777777; // Initial x-velocity
+    y[6][0] = 0.0; // Initial roll (radians)
+    y[7][0] = 0.0; // Initial pitch (radians)
+    y[8][0] = 0.0; // Initial yaw (radians)
+    y[9][0] = 0.0; // Initial yaw with threshold (radians)
+#endif // #ifdef REGRESO_50KMPH_1
+
+#ifdef REGRESO_50KMPH_2
+    y[1][0] = 50.0*0.277777777777; // Initial x-velocity
+    y[6][0] = 0.0; // Initial roll (radians)
+    y[7][0] = 0.0; // Initial pitch (radians)
+    y[8][0] = 0.0; // Initial yaw (radians)
+    y[9][0] = 0.0; // Initial yaw with threshold (radians)
+#endif // #ifdef REGRESO_50KMPH_2
+
+#ifdef IDA_60KMPH_1
+    y[1][0] = 60.0*0.277777777777; // Initial x-velocity
+    y[6][0] = 0.0; // Initial roll (radians)
+    y[7][0] = 0.0; // Initial pitch (radians)
+    y[8][0] = 0.0; // Initial yaw (radians)
+    y[9][0] = 0.0; // Initial yaw with threshold (radians)
+#endif // #ifdef IDA_60KMPH_1
+
+#ifdef IDA_60KMPH_2
+    y[1][0] = 60.0*0.277777777777; // Initial x-velocity
+    y[6][0] = 0.0; // Initial roll (radians)
+    y[7][0] = 0.0; // Initial pitch (radians)
+    y[8][0] = 0.0; // Initial yaw (radians)
+    y[9][0] = 0.0; // Initial yaw with threshold (radians)
+#endif // #ifdef IDA_60KMPH_2
+
+#ifdef REGRESO_60KMPH_1
+    y[1][0] = 60.0*0.277777777777; // Initial x-velocity
+    y[6][0] = 0.0; // Initial roll (radians)
+    y[7][0] = 0.0; // Initial pitch (radians)
+    y[8][0] = 0.0; // Initial yaw (radians)
+    y[9][0] = 0.0; // Initial yaw with threshold (radians)
+#endif // #ifdef REGRESO_60KMPH_1
+
+#ifdef REGRESO_60KMPH_2
+    y[1][0] = 60.0*0.277777777777; // Initial x-velocity
+    y[6][0] = 0.0; // Initial roll (radians)
+    y[7][0] = 0.0; // Initial pitch (radians)
+    y[8][0] = 0.0; // Initial yaw (radians)
+    y[9][0] = 0.0; // Initial yaw with threshold (radians)
+#endif // #ifdef REGRESO_60KMPH_2
+
+#ifdef IDA_70KMPH_1
+    y[1][0] = 70.0*0.277777777777; // Initial x-velocity
+    y[6][0] = 0.0; // Initial roll (radians)
+    y[7][0] = 0.0; // Initial pitch (radians)
+    y[8][0] = 0.0; // Initial yaw (radians)
+    y[9][0] = 0.0; // Initial yaw with threshold (radians)
+#endif // #ifdef IDA_70KMPH_1
+
+#ifdef IDA_70KMPH_2
+    y[1][0] = 70.0*0.277777777777; // Initial x-velocity
+    y[6][0] = 0.0; // Initial roll (radians)
+    y[7][0] = 0.0; // Initial pitch (radians)
+    y[8][0] = 0.0; // Initial yaw (radians)
+    y[9][0] = 0.0; // Initial yaw with threshold (radians)
+#endif // #ifdef IDA_70MPH_2
+
+#ifdef REGRESO_70KMPH_1
+    y[1][0] = 70.0*0.277777777777; // Initial x-velocity
+    y[6][0] = 0.0; // Initial roll (radians)
+    y[7][0] = 0.0; // Initial pitch (radians)
+    y[8][0] = 0.0; // Initial yaw (radians)
+    y[9][0] = 0.0; // Initial yaw with threshold (radians)
+#endif // #ifdef REGRESO_70KMPH_1
+
+#ifdef REGRESO_70KMPH_2
+    y[1][0] = 70.0*0.277777777777; // Initial x-velocity
+    y[6][0] = 0.0; // Initial roll (radians)
+    y[7][0] = 0.0; // Initial pitch (radians)
+    y[8][0] = 0.0; // Initial yaw (radians)
+    y[9][0] = 0.0; // Initial yaw with threshold (radians)
+#endif // #ifdef REGRESO_70KMPH_2
+
+#ifdef IDA_80KMPH_1
+    y[1][0] = 80.0*0.277777777777; // Initial x-velocity
+    y[6][0] = 0.0; // Initial roll (radians)
+    y[7][0] = 0.0; // Initial pitch (radians)
+    y[8][0] = 0.0; // Initial yaw (radians)
+    y[9][0] = 0.0; // Initial yaw with threshold (radians)
+#endif // #ifdef IDA_80KMPH_1
+
+#ifdef IDA_80KMPH_2
+    y[1][0] = 80.0*0.277777777777; // Initial x-velocity
+    y[6][0] = 0.0; // Initial roll (radians)
+    y[7][0] = 0.0; // Initial pitch (radians)
+    y[8][0] = 0.0; // Initial yaw (radians)
+    y[9][0] = 0.0; // Initial yaw with threshold (radians)
+#endif // #ifdef IDA_80KMPH_2
+
+#ifdef REGRESO_80KMPH_1
+    y[1][0] = 80.0*0.277777777777; // Initial x-velocity
+    y[6][0] = 0.0; // Initial roll (radians)
+    y[7][0] = 0.0; // Initial pitch (radians)
+    y[8][0] = 0.0; // Initial yaw (radians)
+    y[9][0] = 0.0; // Initial yaw with threshold (radians)
+#endif // #ifdef REGRESO_80KMPH_1
+
+#ifdef REGRESO_80KMPH_2
+    y[1][0] = 80.0*0.277777777777; // Initial x-velocity
+    y[6][0] = 0.0; // Initial roll (radians)
+    y[7][0] = 0.0; // Initial pitch (radians)
+    y[8][0] = 0.0; // Initial yaw (radians)
+    y[9][0] = 0.0; // Initial yaw with threshold (radians)
+#endif // #ifdef REGRESO_80KMPH_2
+
+#ifdef IDA_90KMPH_1
+    y[1][0] = 90.0*0.277777777777; // Initial x-velocity
+    y[6][0] = 0.0; // Initial roll (radians)
+    y[7][0] = 0.0; // Initial pitch (radians)
+    y[8][0] = 0.0; // Initial yaw (radians)
+    y[9][0] = 0.0; // Initial yaw with threshold (radians)
+#endif // #ifdef IDA_90KMPH_1
+
+#ifdef REGRESO_90KMPH_1
+    y[1][0] = 90.0*0.277777777777; // Initial x-velocity
+    y[6][0] = 0.0; // Initial roll (radians)
+    y[7][0] = 0.0; // Initial pitch (radians)
+    y[8][0] = 0.0; // Initial yaw (radians)
+    y[9][0] = 0.0; // Initial yaw with threshold (radians)
+#endif // #ifdef REGRESO_90KMPH_1
    }
   else
    {
@@ -514,33 +492,6 @@ namespace chapchom
    }
   
  }
-
- // ======================================================================
- /// Reset initial contidions
- // ======================================================================
- void CCODEsFromSensorsUBLOX::reset_initial_conditions_at_current_time(std::vector<std::vector<double> > &y)
- {
-  // Only assing initial conditions if data have been loadad from table
-  if (Loaded_data_from_table)
-   {
-    // Reset initial conditions
-    y[6][0] = Table_Euler_angles[Index_data][1]; // Roll (radians)
-    y[7][0] = Table_Euler_angles[Index_data][2]; // Pitch (radians)
-    y[8][0] = Table_Euler_angles[Index_data][3]; // Yaw (radians)
-    y[9][0] = y[8][0]; // Yaw with threshold (radians)
-   }
-  else
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "Data have not been loaded from table thus we can not reset\n"
-                  << "initial conditions" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);  
-   }
-   
- }
  
  // ===================================================================
  /// Evaluates the system of odes at time "t". The values of the i-th
@@ -549,7 +500,7 @@ namespace chapchom
  // ===================================================================
  void CCODEsFromSensorsUBLOX::evaluate(const double t,
                                        const std::vector<std::vector<double> > &y,
-                                          std::vector<double> &dy)
+                                       std::vector<double> &dy)
  {
   // -----------------
   // y[0][0] Current x-position

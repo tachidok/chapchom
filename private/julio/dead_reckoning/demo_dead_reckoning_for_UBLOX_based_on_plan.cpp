@@ -14,7 +14,7 @@
 #include "../../../src/integration/cc_euler_method.h"
 #include "../../../src/integration/cc_RK4_method.h"
 // Odes from GEOFOG3D
-#include "cc_odes_from_sensors_GEOFOG3D.h"
+#include "cc_odes_from_sensors_UBLOX.h"
 // The nmea decoder
 #include "cc_nmea_decoder.h"
 // Matrices
@@ -40,14 +40,15 @@
 #define OUTPUT_EULER_ANGLES_RATES
 
 // Data to evaluation
-#define READ_AND_OUTPUT_PROCESSED_INFO_FROM_GEOFOG3D
 #define NAVIGATION_DATA_TO_EVALUATION
 //#define FORCE_USING_EULER_ANGLES_RATES_FROM_GEOFOG3D
-#define FORCE_USING_EULER_ANGLES_FROM_GEOFOG3D
+//#define FORCE_USING_EULER_ANGLES_FROM_GEOFOG3D
 //#define FORCE_USING_LINEAR_ACCELERATIONS_FROM_GEOFOG3D
 
 //#define APPLY_LINEAR_ACCELERATIONS_OFFSET
 //#define APPLY_EULER_ANGLES_OFFSET
+
+#define USE_COURSE_FROM_GPS
 
 // -------------------------------------------------
 // Constants
@@ -99,7 +100,7 @@ void rotate_sensors_to_ASIKIs_reference_frame(std::vector<std::vector<double> > 
   
   // Rotation matrix for gyro data
   CCMatrix<double> R_g(DIM, DIM);
-  R_g.create_zero_matrix();
+  R_g.allocate_memory();
   
   const double sin_theta_x = sin(Euler_angles_for_gyro[0]);
   const double sin_theta_y = sin(Euler_angles_for_gyro[1]);
@@ -149,7 +150,7 @@ void rotate_sensors_to_ASIKIs_reference_frame(std::vector<std::vector<double> > 
   // Get the number of data for acc
   const unsigned n_acc = raw_acc_t.size();
   CCMatrix<double> R_a(DIM, DIM);
-  R_a.create_zero_matrix();
+  R_a.allocate_memory();
   
   const double sin_theta_x = sin(Euler_angles_for_acc[0]);
   const double sin_theta_y = sin(Euler_angles_for_acc[1]);
@@ -369,7 +370,7 @@ void transform_angular_velocities_into_euler_angles_rates(double *angular_veloci
  // Create a matrix that transforms from angular velocities to
  // Euler angles rates
  CCMatrix<double> A(DIM, DIM);
- A.create_zero_matrix();
+ A.allocate_memory();
  A(0,0)=1.0;  A(0,1)=sin_phi*tan_theta; A(0,2)=cos_phi*tan_theta;
  A(1,0)=0.0;  A(1,1)=cos_phi;           A(1,2)=-sin_phi;
  A(2,0)=0.0;  A(2,1)=sin_phi*sec_theta; A(2,2)=cos_phi*sec_theta;
@@ -413,7 +414,7 @@ void transform_inertial_to_body(double *Euler_angles,
 {
  // Create the rotation matrix
  CCMatrix<double> R(DIM, DIM);
- R.create_zero_matrix();
+ R.allocate_memory();
  
  const double sin_theta_x = sin(Euler_angles[0]);
  const double sin_theta_y = sin(Euler_angles[1]);
@@ -449,7 +450,7 @@ void transform_body_to_inertial(double *Euler_angles,
 {
  // Create the rotation matrix
  CCMatrix<double> R(DIM, DIM);
- R.create_zero_matrix();
+ R.allocate_memory();
  
  const double sin_theta_x = sin(Euler_angles[0]);
  const double sin_theta_y = sin(Euler_angles[1]);
@@ -808,88 +809,6 @@ int main(int argc, char *argv[])
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
  
-#ifdef READ_AND_OUTPUT_PROCESSED_INFO_FROM_GEOFOG3D
- // Linear acceleration from table
- char file_linear_acceleration_from_table_name[100];
- sprintf(file_linear_acceleration_from_table_name, "./RESLT/linear_acceleration_from_table.dat");
- std::ofstream outfile_linear_acceleration_from_table;
- outfile_linear_acceleration_from_table.open(file_linear_acceleration_from_table_name, std::ios::out);
- if (outfile_linear_acceleration_from_table.fail())
-  {
-   // Error message
-   std::ostringstream error_message;
-   error_message << "Could not create the file [" << file_linear_acceleration_from_table_name << "]"
-                 << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
-  }
-  
- // G-force from table
- char file_g_force_from_table_name[100];
- sprintf(file_g_force_from_table_name, "./RESLT/g_force_from_table.dat");
- std::ofstream outfile_g_force_from_table;
- outfile_g_force_from_table.open(file_g_force_from_table_name, std::ios::out);
- if (outfile_g_force_from_table.fail())
-  {
-   // Error message
-   std::ostringstream error_message;
-   error_message << "Could not create the file [" << file_g_force_from_table_name << "]"
-                 << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
-  }
- 
- // Second gyro from table
- char file_second_gyro_from_table_name[100];
- sprintf(file_second_gyro_from_table_name, "./RESLT/second_gyro_from_table.dat");
- std::ofstream outfile_second_gyro_from_table;
- outfile_second_gyro_from_table.open(file_second_gyro_from_table_name, std::ios::out);
- if (outfile_second_gyro_from_table.fail())
-  {
-   // Error message
-   std::ostringstream error_message;
-   error_message << "Could not create the file [" << file_second_gyro_from_table_name << "]"
-                 << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
-  }
- 
- // Euler angles from table
- char file_euler_angles_from_table_name[100];
- sprintf(file_euler_angles_from_table_name, "./RESLT/euler_angles_from_table.dat");
- std::ofstream outfile_euler_angles_from_table;
- outfile_euler_angles_from_table.open(file_euler_angles_from_table_name, std::ios::out);
- if (outfile_euler_angles_from_table.fail())
-  {
-   // Error message
-   std::ostringstream error_message;
-   error_message << "Could not create the file [" << file_euler_angles_from_table_name << "]"
-                 << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
-  }
- 
- // Velocity from table
- char file_velocity_from_table_name[100];
- sprintf(file_velocity_from_table_name, "./RESLT/velocity_from_table.dat");
- std::ofstream outfile_velocity_from_table;
- outfile_velocity_from_table.open(file_velocity_from_table_name, std::ios::out);
- if (outfile_velocity_from_table.fail())
-  {
-   // Error message
-   std::ostringstream error_message;
-   error_message << "Could not create the file [" << file_velocity_from_table_name << "]"
-                 << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
-  }
-#endif // #ifdef READ_AND_OUTPUT_PROCESSED_INFO_FROM_GEOFOG3D
- 
 #ifdef NAVIGATION_DATA_TO_EVALUATION
  // Navigation data (for evaluation)
  char file_navigation_data_for_evaluation_name[100];
@@ -931,48 +850,94 @@ int main(int argc, char *argv[])
  // -----------------------------------------------------------------
  // Instantiation of the problem
  // -----------------------------------------------------------------
- // Odes from GEOFOG3D
- //CCODEsFromSensorsGEOFOG3D odes("./GEOFOG3D/GEOFOG3D_with_lat_lon.dat", 0, 11591);
-   
-#ifdef TONANTZINTLA_TO_CHOLULA
- const unsigned Initial_index = 0;
- const unsigned Final_index = 11591;
-#endif // #ifdef TONANTZINTLA_TO_CHOLULA
- 
-#ifdef TLAXCALANCINGO_TO_ACATEPEC_ZERO_INITIAL_VELOCITY
- //const unsigned Initial_index = 56242;
- const unsigned Initial_index = 57242;
- const unsigned Final_index = 66777;
-#endif // #ifdef TLAXCALANCINGO_TO_ACATEPEC_ZERO_INITIAL_VELOCITY
- 
-#ifdef TLAXCALANCINGO_TO_ACATEPEC
- //const unsigned Initial_index = 56242;
- const unsigned Initial_index = 58442;
- const unsigned Final_index = 66777;
-#endif // #ifdef TLAXCALANCINGO_TO_ACATEPEC
- 
-#ifdef ACATEPEC_TO_TONANTZINTLA
- const unsigned Initial_index = 68504;
- const unsigned Final_index = 74087;
-#endif // #ifdef ACATEPEC_TO_TONANTZINTLA
+ // Odes from UBLOX
+#ifdef IDA_40KMPH_1
+ CCODEsFromSensorsUBLOX odes("./UBLOX/data_atlixco/40kmph_ida1.ubx");
+#endif // #ifdef IDA_40KMPH_1
 
-#ifdef UDLAP_PERIFERICO
- const unsigned Initial_index = 35638;
- //const unsigned Final_index = 38482;
- const unsigned Final_index = 39284;
-#endif// #ifdef UDLAP_PERIFERICO
+#ifdef IDA_40KMPH_2
+ CCODEsFromSensorsUBLOX odes("./UBLOX/data_atlixco/40kmph_ida2.ubx");
+#endif // #ifdef IDA_40KMPH_2
+
+#ifdef REGRESO_40KMPH_1
+ CCODEsFromSensorsUBLOX odes("./UBLOX/data_atlixco/40kmph_regreso1.ubx");
+#endif // #ifdef REGRESO_40KMPH_1
  
-#ifdef PERIFERICO_TO_11SUR
- const unsigned Initial_index = 40300;
- const unsigned Final_index = 46076;
-#endif// #ifdef PERIFERICO_TO_11SUR
+#ifdef REGRESO_40KMPH_2
+ CCODEsFromSensorsUBLOX odes("./UBLOX/data_atlixco/40kmph_regreso2.ubx");
+#endif // #ifdef REGRESO_40KMPH_2
+
+#ifdef IDA_50KMPH_1
+ CCODEsFromSensorsUBLOX odes("./UBLOX/data_atlixco/50kmph_ida1.ubx");
+#endif // #ifdef IDA_50KMPH_1
+
+#ifdef IDA_50KMPH_2
+ CCODEsFromSensorsUBLOX odes("./UBLOX/data_atlixco/50kmph_ida2.ubx");
+#endif // #ifdef IDA_50KMPH_2
+
+#ifdef REGRESO_50KMPH_1
+ CCODEsFromSensorsUBLOX odes("./UBLOX/data_atlixco/50kmph_regreso1.ubx");
+#endif // #ifdef REGRESO_50KMPH_1
  
-#ifdef _11SUR_TO_TLAXCALANCINGO
- const unsigned Initial_index = 48569;
- const unsigned Final_index = 54575;
-#endif// #ifdef _11SUR_TO_TLAXCALANCINGO
+#ifdef REGRESO_50KMPH_2
+ CCODEsFromSensorsUBLOX odes("./UBLOX/data_atlixco/50kmph_regreso2.ubx");
+#endif // #ifdef REGRESO_50KMPH_2
+
+#ifdef IDA_60KMPH_1
+ CCODEsFromSensorsUBLOX odes("./UBLOX/data_atlixco/60kmph_ida1.ubx");
+#endif // #ifdef IDA_60KMPH_1
+
+#ifdef IDA_60KMPH_2
+ CCODEsFromSensorsUBLOX odes("./UBLOX/data_atlixco/60kmph_ida2.ubx");
+#endif // #ifdef IDA_60KMPH_2
+
+#ifdef REGRESO_60KMPH_1
+ CCODEsFromSensorsUBLOX odes("./UBLOX/data_atlixco/60kmph_regreso1.ubx");
+#endif // #ifdef REGRESO_60KMPH_1
  
- CCODEsFromSensorsGEOFOG3D odes("./GEOFOG3D/GEOFOG3DALL_with_lat_lon.dat", Initial_index, Final_index);
+#ifdef REGRESO_60KMPH_2
+ CCODEsFromSensorsUBLOX odes("./UBLOX/data_atlixco/60kmph_regreso2.ubx");
+#endif // #ifdef REGRESO_60KMPH_2
+
+#ifdef IDA_70KMPH_1
+ CCODEsFromSensorsUBLOX odes("./UBLOX/data_atlixco/70kmph_ida1.ubx");
+#endif // #ifdef IDA_70KMPH_1
+
+#ifdef IDA_70KMPH_2
+ CCODEsFromSensorsUBLOX odes("./UBLOX/data_atlixco/70kmph_ida2.ubx");
+#endif // #ifdef IDA_70KMPH_2
+
+#ifdef REGRESO_70KMPH_1
+ CCODEsFromSensorsUBLOX odes("./UBLOX/data_atlixco/70kmph_regreso1.ubx");
+#endif // #ifdef REGRESO_70KMPH_1
+ 
+#ifdef REGRESO_70KMPH_2
+ CCODEsFromSensorsUBLOX odes("./UBLOX/data_atlixco/70kmph_regreso2.ubx");
+#endif // #ifdef REGRESO_70KMPH_2
+
+#ifdef IDA_80KMPH_1
+ CCODEsFromSensorsUBLOX odes("./UBLOX/data_atlixco/80kmph_ida1.ubx");
+#endif // #ifdef IDA_80KMPH_1
+
+#ifdef IDA_80KMPH_2
+ CCODEsFromSensorsUBLOX odes("./UBLOX/data_atlixco/80kmph_ida2.ubx");
+#endif // #ifdef IDA_80KMPH_2
+
+#ifdef REGRESO_80KMPH_1
+ CCODEsFromSensorsUBLOX odes("./UBLOX/data_atlixco/80kmph_regreso1.ubx");
+#endif // #ifdef REGRESO_80KMPH_1
+ 
+#ifdef REGRESO_80KMPH_2
+ CCODEsFromSensorsUBLOX odes("./UBLOX/data_atlixco/80kmph_regreso2.ubx");
+#endif // #ifdef REGRESO_80KMPH_2
+
+#ifdef IDA_90KMPH_1
+ CCODEsFromSensorsUBLOX odes("./UBLOX/data_atlixco/90kmph_ida1.ubx");
+#endif // #ifdef IDA_90KMPH_1
+
+#ifdef REGRESO_90KMPH_1
+ CCODEsFromSensorsUBLOX odes("./UBLOX/data_atlixco/90kmph_regreso1.ubx");
+#endif // #ifdef REGRESO_90KMPH_1 
  
  // ----------------------------------------------------------------
  // Filter data [BEGIN]
@@ -1032,7 +997,7 @@ int main(int argc, char *argv[])
   {
    y[i].resize(n_history_values+1);
   }
-
+ 
  // Iniatilise
  y[0][0] = 0.0; // Initial x-position
  y[1][0] = 0.0; // Initial x-velocity
@@ -1090,23 +1055,10 @@ int main(int argc, char *argv[])
  // Flag to indicate whether to continue processing
  bool LOOP = true;
  
- // Reset initial conditions every n_seconds_to_reset_initial_conditions
- const unsigned n_seconds_to_reset_initial_conditions = 100000;
- // Count the number of seconds since last reset of initial conditions
- unsigned n_seconds = 0;
- 
  // Main LOOP (continue looping until all data in the input file is
  // processed)
  while(LOOP)
   {
-   // Check whether we should reset initial conditions
-   if (n_seconds >= n_seconds_to_reset_initial_conditions)
-    {
-     std::cout << "Reseting initial conditions for current time" << std::endl;
-     odes.reset_initial_conditions_at_current_time(y);
-     n_seconds = 0;
-    }
-   
    // Retrieve data from sensors
    LOOP = odes.get_sensors_lectures();
    // Check if there are data to process, otherwise end the LOOP
@@ -1129,71 +1081,6 @@ int main(int argc, char *argv[])
    // Get latitude and longitude
    std::vector<std::vector<double> > latitude_longitude_from_table = odes.get_latitude_longitude_from_table();
 #endif // #ifdef NAVIGATION_DATA_TO_EVALUATION
-   
-   // Get the data processed by GEOFOG3D
-#ifdef READ_AND_OUTPUT_PROCESSED_INFO_FROM_GEOFOG3D
-   // Get linear accelerations from table
-   std::vector<std::vector<double> > linear_acceleration_from_table = odes.get_linear_acceleration_from_table();
-   // Get g-force from table
-   std::vector<std::vector<double> > g_force_from_table = odes.get_g_force_from_table();
-   // Get second gyro from table
-   std::vector<std::vector<double> > second_gyro_from_table = odes.get_second_gyro_from_table();
-   // Get Euler angles from table
-   std::vector<std::vector<double> > Euler_angles_from_table = odes.get_Euler_angles_from_table();
-   // Get velocity from table
-   std::vector<std::vector<double> > velocity_from_table = odes.get_velocity_from_table();
-   
-   // --------------------------------------------------------------------------
-   // OUTPUT DATA BLOCK [BEGIN]
-   // --------------------------------------------------------------------------
-   {
-    // --------------------------------------------------
-    // Output data processed by GEOFOG3D
-    for (unsigned i = 0; i < n_gyro_data; i++)
-     {
-      // Linear accelerations from table
-      outfile_linear_acceleration_from_table << linear_acceleration_from_table[i][0]
-                                             << " " << linear_acceleration_from_table[i][1]
-                                             << " " << linear_acceleration_from_table[i][2]
-                                             << " " << linear_acceleration_from_table[i][3] << std::endl;
-      
-      // G-force from table
-      outfile_g_force_from_table << g_force_from_table[i][0]
-                                 << " " << g_force_from_table[i][1] << std::endl;
-      
-      // Second gyro from table
-      outfile_second_gyro_from_table << second_gyro_from_table[i][0]
-                                     << " " << second_gyro_from_table[i][1]
-                                     << " " << second_gyro_from_table[i][2]
-                                     << " " << second_gyro_from_table[i][3] << std::endl;
-      
-      // Euler angles from table
-      outfile_euler_angles_from_table << Euler_angles_from_table[i][0]
-                                      << " " << Euler_angles_from_table[i][1]
-                                      << " " << Euler_angles_from_table[i][2]
-                                      << " " << Euler_angles_from_table[i][3] << std::endl;
-      
-      // Velocity from table
-      outfile_velocity_from_table << velocity_from_table[i][0]
-                                  << " " << velocity_from_table[i][1]
-                                  << " " << velocity_from_table[i][2]
-                                  << " " << velocity_from_table[i][3] << std::endl;
-      
-     } // for (i < n_gyro_data)
-    
-   }
-   // --------------------------------------------------------------------------
-   // OUTPUT DATA BLOCK [END]
-   // --------------------------------------------------------------------------
-#endif // #ifdef READ_AND_OUTPUT_PROCESSED_INFO_FROM_GEOFOG3D
-   
-#if 0
-   // Skip this data if time is not larger than 100
-   if (raw_gyro_t[0][0] < 100.0)
-    {
-     continue;
-    }
-#endif // #if 0
    
    // ==========================================================================
    // ==========================================================================
@@ -1940,7 +1827,7 @@ int main(int argc, char *argv[])
       //const double down_velocity = 0.0;
       const double north_velocity = y[1][0]*sin(M_PI/2.0 - course_angle);// + y[3][0]*sin(course_angle);
       const double east_velocity = y[1][0]*cos(M_PI/2.0 - course_angle);// - y[3][0]*cos(course_angle);
-      const double down_velocity = 0.0;      
+      const double down_velocity = 0.0;
       outfile_velocity_north_east << current_time
                                   << " " << north_velocity
                                   << " " << east_velocity
@@ -1985,7 +1872,8 @@ int main(int argc, char *argv[])
      // Complementary filter [BEGIN]
      // ==========================================================================
      // Complementary filter parameter
-     const double alpha = 0.9995;
+     //const double alpha = 0.9995;
+     const double alpha = 0.1;
      
 #ifndef OUTPUT_EULER_ANGLES_FROM_GYRO_AND_ACCELEROMETER // Complementary
                                                         // filter is
@@ -2039,7 +1927,11 @@ int main(int argc, char *argv[])
      //     const double total_speed_in_m_per_sec = sqrt(x_speed_in_m_per_sec*x_speed_in_m_per_sec)+
      //      (y_speed_in_m_per_sec*y_speed_in_m_per_sec);
      const double total_speed_in_m_per_sec = x_speed_in_m_per_sec+y_speed_in_m_per_sec;
+#ifdef USE_COURSE_FROM_GPS
+     const double course_angle = latitude_longitude_from_table[0][3];
+#else
      const double course_angle = y[8][0];
+#endif // #ifdef USE_COURSE_FROM_GPS
      
      // Set the current course_angle
      current_local_course_in_radians = course_angle;
@@ -2050,8 +1942,8 @@ int main(int argc, char *argv[])
      X_POS+= x_speed_in_m_per_sec*dt*cos(course_angle);
      Y_POS+= y_speed_in_m_per_sec*dt*sin(course_angle);
      outfile_navigation_data_for_evaluation << current_time << " "
-                                            << latitude_longitude_from_table[i][2] << " "
-                                            << latitude_longitude_from_table[i][1] << " "
+                                            << latitude_longitude_from_table[0][2] << " "
+                                            << latitude_longitude_from_table[0][1] << " "
                                             << x_speed_in_m_per_sec*3.6 << " "
                                             << X_POS << " " << Y_POS << " "
       //<< y[0][0] << " " << y[2][0] << " "
@@ -2062,9 +1954,13 @@ int main(int argc, char *argv[])
      // Set initial latitude and longitude
      if (!initialised_navigation_reference_data)
       {
-       initial_latitude = latitude_longitude_from_table[i][1];
-       initial_longitude = latitude_longitude_from_table[i][2];
-       initial_course_in_radians = 0.0;
+       initial_latitude = latitude_longitude_from_table[0][1];
+       initial_longitude = latitude_longitude_from_table[0][2];
+#ifdef USE_COURSE_FROM_GPS
+       // do nothing
+#else 
+       initial_course_in_radians = latitude_longitude_from_table[0][3]; // Get the initial course
+#endif
        
        // Initialise current latitude and longitude data
        current_latitude = initial_latitude * TO_RADIANS;
@@ -2091,9 +1987,6 @@ int main(int argc, char *argv[])
 #endif //  #ifdef NAVIGATION_DATA_TO_EVALUATION
      
     } // for (i < n_data-1)
-   
-   // Increase the number of seconds since last reset of initial conditions
-   n_seconds++; 
    
    std::cout.precision(8);
    std::cout << "t: " << current_time
@@ -2134,14 +2027,6 @@ int main(int argc, char *argv[])
  outfile_linear_acc.close();
  outfile_velocity.close();
  outfile_velocity_north_east.close();
- 
-#ifdef READ_AND_OUTPUT_PROCESSED_INFO_FROM_GEOFOG3D
- outfile_linear_acceleration_from_table.close();
- outfile_g_force_from_table.close();
- outfile_second_gyro_from_table.close();
- outfile_euler_angles_from_table.close();
- outfile_velocity_from_table.close();
-#endif // #ifdef READ_AND_OUTPUT_PROCESSED_INFO_FROM_GEOFOG3D
  
 #ifdef NAVIGATION_DATA_TO_EVALUATION
  outfile_navigation_data_for_evaluation.close();

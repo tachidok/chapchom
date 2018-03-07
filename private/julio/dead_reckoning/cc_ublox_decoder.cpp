@@ -450,7 +450,7 @@ namespace chapchom
           
           if (Data_type == 5) // z-axis gyroscope angular rate
            {
-            UBX_ESF_RAW.gyroscope_z = data * 1.0/4026.0;
+            UBX_ESF_RAW.gyroscope_z = data * 1.0/4096.0;
             //std::cout << "UBX_ESF_RAW.gyroscope_z: " << UBX_ESF_RAW.gyroscope_z << std::endl;
             UBX_ESF_RAW.valid_gyroscope_z = true;
            }
@@ -462,13 +462,13 @@ namespace chapchom
            }
           else if (Data_type == 13) // y-axis gyroscope angular rate
            {
-            UBX_ESF_RAW.gyroscope_y = data * 1.0/4026.0;
+            UBX_ESF_RAW.gyroscope_y = data * 1.0/4096.0;
             //std::cout << "UBX_ESF_RAW.gyroscope_y: " << UBX_ESF_RAW.gyroscope_y << std::endl;
             UBX_ESF_RAW.valid_gyroscope_y = true;
            }
           else if (Data_type == 14) // x-axis gyroscope angular rate
            {
-            UBX_ESF_RAW.gyroscope_x = data * 1.0/4026.0;
+            UBX_ESF_RAW.gyroscope_x = data * 1.0/4096.0;
             //std::cout << "UBX_ESF_RAW.gyroscope_x: " << UBX_ESF_RAW.gyroscope_x << std::endl;
             UBX_ESF_RAW.valid_gyroscope_x = true;
            }
@@ -564,7 +564,7 @@ namespace chapchom
         // Reset the local counter
         Local_block_UBX_ESF_RAW_counter = 0;
         
-       } // if (Local_block_UBX_ESF_RAW_counter >= 3)
+       } // if (Local_block_UBX_ESF_RAW_counter >= 4)
       
      } // if (Counter_UBX_ESF_RAW_n_read_bytes >= 4)
     
