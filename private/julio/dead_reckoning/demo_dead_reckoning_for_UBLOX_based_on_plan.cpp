@@ -48,7 +48,7 @@
 //#define APPLY_LINEAR_ACCELERATIONS_OFFSET
 //#define APPLY_EULER_ANGLES_OFFSET
 
-#define USE_COURSE_FROM_GPS
+//#define USE_COURSE_FROM_GPS
 
 // -------------------------------------------------
 // Constants
@@ -1873,7 +1873,8 @@ int main(int argc, char *argv[])
      // ==========================================================================
      // Complementary filter parameter
      //const double alpha = 0.9995;
-     const double alpha = 0.1;
+     //const double alpha = 0.1;
+     const double alpha = 0.5; // 70kmph_ida1
      
 #ifndef OUTPUT_EULER_ANGLES_FROM_GYRO_AND_ACCELEROMETER // Complementary
                                                         // filter is
@@ -1941,15 +1942,6 @@ int main(int argc, char *argv[])
      // Compute x and y position from angle and radial position
      X_POS+= x_speed_in_m_per_sec*dt*cos(course_angle);
      Y_POS+= y_speed_in_m_per_sec*dt*sin(course_angle);
-     outfile_navigation_data_for_evaluation << current_time << " "
-                                            << latitude_longitude_from_table[0][2] << " "
-                                            << latitude_longitude_from_table[0][1] << " "
-                                            << x_speed_in_m_per_sec*3.6 << " "
-                                            << X_POS << " " << Y_POS << " "
-      //<< y[0][0] << " " << y[2][0] << " "
-      //<< total_speed_in_m_per_sec * dt << " " // TODO
-                                            << instantaneous_travelled_distance << " "
-                                            << current_local_course_in_radians*TO_DEGREES << std::endl;
      
      // Set initial latitude and longitude
      if (!initialised_navigation_reference_data)
@@ -1977,11 +1969,24 @@ int main(int argc, char *argv[])
      compute_current_latitude_and_longitude(instantaneous_travelled_distance,
                                             earth_referenced_course_in_radians,
                                             current_latitude, current_longitude);
-     
+
+     // -----------------------------------------------------------------------------------
      outfile_latitude_and_longitude << current_time << " "
                                     << current_latitude * TO_DEGREES << " "
                                     << current_longitude * TO_DEGREES << std::endl;
      
+     // -----------------------------------------------------------------------------------
+     outfile_navigation_data_for_evaluation << current_time << " "
+                                            << latitude_longitude_from_table[0][2] << " "
+                                            << latitude_longitude_from_table[0][1] << " "
+                                            << x_speed_in_m_per_sec*3.6 << " "
+                                            << X_POS << " " << Y_POS << " "
+      //<< y[0][0] << " " << y[2][0] << " "
+      //<< total_speed_in_m_per_sec * dt << " " // TODO
+                                            << instantaneous_travelled_distance << " "
+      //                                            << current_local_course_in_radians*TO_DEGREES << std::endl;
+                                            << earth_referenced_course_in_radians*TO_DEGREES << std::endl;
+          
      // Update previous time
      previous_time=current_time;
 #endif //  #ifdef NAVIGATION_DATA_TO_EVALUATION

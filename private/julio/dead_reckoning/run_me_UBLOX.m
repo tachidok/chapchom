@@ -2,31 +2,69 @@
 clc
 clear all
 % IDA_40KMPH_1
+%Initial_index=0;
+%Final_index=13699;
 % IDA_40KMPH_2
+%Initial_index=0;
+%Final_index=16509;
 % REGRESO_40KMPH_1
+%Initial_index=0;
+%Final_index=14209;
 % REGRESO_40KMPH_2
+%Initial_index=0;
+%Final_index=14769;
 % IDA_50KMPH_1
+%Initial_index=0;
+%Final_index=15769;
 % IDA_50KMPH_2
+%Initial_index=0;
+%Final_index=11889;
 % REGRESO_50KMPH_1
 % REGRESO_50KMPH_2
+%Initial_index=0;
+%Final_index=13749;
 % IDA_60KMPH_1
+%Initial_index=0;
+%Final_index=9829;
 % IDA_60KMPH_2
+%Initial_index=0;
+%Final_index=12089;
 % REGRESO_60KMPH_1
+%Initial_index=0;
+%Final_index=11909;
 % REGRESO_60KMPH_2
+%Initial_index=0;
+%Final_index=10509;
 % IDA_70KMPH_1
 %Initial_index=0;
 %Final_index=7699;
 % IDA_70KMPH_2
-Initial_index=0;
-Final_index=8769;
+%Initial_index=0;
+%Final_index=8769;
 % REGRESO_70KMPH_1
+%Initial_index=0;
+%Final_index=8999;
 % REGRESO_70KMPH_2
+%Initial_index=0;
+%Final_index=9399;
 % IDA_80KMPH_1
+%Initial_index=0;
+%Final_index=6109;
 % IDA_80KMPH_2
+Initial_index=0;
+Final_index=8639;
 % REGRESO_80KMPH_1
+%Initial_index=0;
+%Final_index=6649;
 % REGRESO_80KMPH_2
+%Initial_index=0;
+%Final_index=7839;
 % IDA_90KMPH_1
+%Initial_index=0;
+%Final_index=11559;
 % REGRESO_90KMPH_1
+%Initial_index=0;
+%Final_index=15249;
 
 n_input_raw_data = Final_index-Initial_index+1;
 n_input_aligned_data = n_input_raw_data;

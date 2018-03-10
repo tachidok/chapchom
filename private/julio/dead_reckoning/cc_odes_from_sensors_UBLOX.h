@@ -32,11 +32,11 @@
 //#define REGRESO_60KMPH_1
 //#define REGRESO_60KMPH_2
 //#define IDA_70KMPH_1
-#define IDA_70KMPH_2
+//#define IDA_70KMPH_2
 //#define REGRESO_70KMPH_1
 //#define REGRESO_70KMPH_2
 //#define IDA_80KMPH_1
-//#define IDA_80KMPH_2
+#define IDA_80KMPH_2
 //#define REGRESO_80KMPH_1
 //#define REGRESO_80KMPH_2
 //#define IDA_90KMPH_1
@@ -128,9 +128,9 @@ namespace chapchom
   /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
  CCODEsFromSensorsUBLOX(const CCODEsFromSensorsUBLOX &copy)
   : ACODEs(copy)
-   {
-    BrokenCopy::broken_copy("CCODEsFromSensorsUBLOX");
-   }
+  {
+   BrokenCopy::broken_copy("CCODEsFromSensorsUBLOX");
+  }
  
   /// Assignment operator (we do not want this class to be
   /// copiable. Check
@@ -177,9 +177,9 @@ namespace chapchom
   std::vector<std::vector<double> > Current_gyro_from_table; 
   std::vector<std::vector<double> > Current_latitude_longitude_from_table;
   
- };
+  };
  
 
-}
+ }
 
 #endif // #ifndef CCODESFROMSENSORSUBLOX_H

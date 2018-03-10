@@ -164,10 +164,10 @@ namespace chapchom
        std::vector<double> gyro_data(4);
        //gyro_data[0] = ubx_esf_raw.time_gyroscope_temperature;
        gyro_data[0] = time_counter;
-       gyro_data[1] = ubx_esf_raw.gyroscope_x;
-       gyro_data[2] = ubx_esf_raw.gyroscope_y;
-       gyro_data[3] = ubx_esf_raw.gyroscope_z;
-      
+       gyro_data[1] = ubx_esf_raw.gyroscope_x * TO_RADIANS;
+       gyro_data[2] = ubx_esf_raw.gyroscope_y * TO_RADIANS;
+       gyro_data[3] = ubx_esf_raw.gyroscope_z * TO_RADIANS;
+       
        // Package the acceleration data
        std::vector<double> acc_data(4);
        //acc_data[0] = ubx_esf_raw.time_gyroscope_temperature;
