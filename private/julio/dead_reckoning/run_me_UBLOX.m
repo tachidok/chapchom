@@ -4,6 +4,7 @@ clear all
 % IDA_40KMPH_1
 %Initial_index=0;
 %Final_index=13699;
+%n_output_data_hardware = 120;
 % IDA_40KMPH_2
 %Initial_index=0;
 %Final_index=16509;
@@ -36,8 +37,9 @@ clear all
 %Initial_index=0;
 %Final_index=10509;
 % IDA_70KMPH_1
-%Initial_index=0;
-%Final_index=7699;
+Initial_index=0;
+Final_index=7699;
+n_output_data_hardware = 120;
 % IDA_70KMPH_2
 %Initial_index=0;
 %Final_index=8769;
@@ -51,8 +53,8 @@ clear all
 %Initial_index=0;
 %Final_index=6109;
 % IDA_80KMPH_2
-Initial_index=0;
-Final_index=8639;
+%Initial_index=0;
+%Final_index=8639;
 % REGRESO_80KMPH_1
 %Initial_index=0;
 %Final_index=6649;
@@ -93,6 +95,9 @@ velocity_north_east_down = importfile_TelitSL869DR_4columns('RESLT/velocity_nort
 
 navigation_data = importfile_GEOFOG3D_8columns('RESLT/navigation_data_for_evaluation.dat', 1, n_output_data);
 latitude_and_longitude = importfile_TelitSL869DR_3columns('RESLT/latitude_and_longitude.dat', 1, n_output_data);
+
+
+latitude_and_longitude_hardware = importfile_TelitSL869DR_3columns('RESLT/40KMPH_IDA1_HW.dat', 1, n_output_data_hardware);
 
 initial_raw_time = raw_gyro(1,1);
 final_raw_time = raw_gyro(size(raw_gyro,1),1);
@@ -491,6 +496,16 @@ title('Position')
 xlabel('Longitude')
 ylabel('Latitude')
 legend('Reference trajectory', 'Our algorithm trajectory', 'Location', 'NorthWest')
+plot_google_map2('Refresh','1','maptype','terrain','AutoAxis','1','FigureResizeUpdate','1')
+hold off
+
+figure
+plot(lon, lat, 'r', new_lon, new_lat, 'g', latitude_and_longitude_hardware(:,3), latitude_and_longitude_hardware(:,2), 'b', 'LineWidth', 3)
+hold on
+title('Position')
+xlabel('Longitude')
+ylabel('Latitude')
+legend('Reference trajectory', 'Offline algorithm', 'Hardware algorithm', 'Location', 'NorthWest')
 plot_google_map2('Refresh','1','maptype','terrain','AutoAxis','1','FigureResizeUpdate','1')
 hold off
 

@@ -1141,7 +1141,7 @@ int main(int argc, char *argv[])
    {
     // --------------------------------------------------
     // Output the raw and rotated data for gyro
-    for (unsigned i = 0; i < n_gyro_data; i++)
+    for (unsigned i = 0; i < n_gyro_data; i+=10) 
      {
       // Raw gyro
       outfile_raw_gyro << raw_gyro_t[i][0]
@@ -1158,7 +1158,7 @@ int main(int argc, char *argv[])
     
     // --------------------------------------------------
     // Output the raw and rotated data for accelerometers
-    for (unsigned i = 0; i < n_acc_data; i++)
+    for (unsigned i = 0; i < n_acc_data; i+=10)
      {
       // Raw accelerometers
       outfile_raw_acc << raw_acc_t[i][0]
