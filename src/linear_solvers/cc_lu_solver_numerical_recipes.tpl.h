@@ -5,9 +5,10 @@
 // back-substitution, respectively.
 
 // Check whether the class has been already defined
-#ifndef CCLUSOLVER_TPL_H
-#define CCLUSOLVER_TPL_H
+#ifndef CCLUSOLVERNUMERICALRECIPES_TPL_H
+#define CCLUSOLVERNUMERICALRECIPES_TPL_H
 
+// Include the header from inherited class
 #include "ac_linear_solver.h"
 
 // The LU factorisation and back-substitution from Numerical Recipes
@@ -21,8 +22,8 @@ namespace chapchom
  // to perform the LU decomposition and back-substitution,
  // respectively.
  template<class T>
- class CCLUSolverNumericalRecipes : public virtual ACLinearSolver<T>
- {
+  class CCLUSolverNumericalRecipes : public virtual ACLinearSolver<CCMatrix<T>, CCVector<T> >
+  {
  
  public:
  
@@ -128,4 +129,4 @@ namespace chapchom
  
 }
 
-#endif // #ifndef CCLUSOLVER_TPL_H
+#endif // #ifndef CCLUSOLVERNUMERICALRECIPES_TPL_H

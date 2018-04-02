@@ -61,9 +61,11 @@ namespace chapchom
   // Multiplication operator
   CCMatrix operator*(const CCMatrix &right_matrix);
   
-  // Creates a zero matrix with the given rows and columns (allocates
-  // memory to store entries of the matrix)
-  void create_zero_matrix();
+  // Allocates memory to store entries of the vector
+  void allocate_memory();
+   
+  // Fills the vector with zeroes
+  void fill_with_zeroes();
   
   // Transforms the input vector to a matrix class type (virtual such
   // that each derived class has to implement it)
@@ -97,6 +99,18 @@ namespace chapchom
   
   // Set values in the matrix (write version)
   T &value(const unsigned long i, const unsigned long j);
+  
+  /// Permute the rows in the list
+  void permute_rows(std::vector<std::pair<unsigned long, unsigned long> > &permute_list);
+  
+  /// Permute the columns in the list
+  void permute_columns(std::vector<std::pair<unsigned long, unsigned long> > &permute_list);
+  
+  /// Permute rows i and j
+  void permute_rows(const unsigned long &i, const unsigned long &j);
+   
+  /// Permute columns i and j
+  void permute_columns(const unsigned long &i, const unsigned long &j);
   
   // Output the matrix
   void output(bool output_indexes = false) const;

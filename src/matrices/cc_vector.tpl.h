@@ -67,10 +67,12 @@ namespace chapchom
    // corresponding size, if you require a dot product operation use
    // the dot() method instead
    CCMatrix<T> operator*(const CCVector &vector);
+
+   // Allocates memory to store entries of the vector
+   void allocate_memory();
    
-   // Creates a zero vector with the given number of entries
-   // (allocates memory to store entries of the matrix)
-   void create_zero_vector();
+   // Fills the vector with zeroes
+   void fill_with_zeroes();
    
    // Performs dot product with the current vector
    T dot(const CCVector &right_vector);

@@ -14,14 +14,20 @@
 // We do not require to include the cc_vector.h file since it is
 // already included in the cc_matrix.h file.
 
+#ifdef CHAPCHOM_USES_ARMADILLO
+// Include Armadillo type matrices since the templates may include
+// Armadillo type matrices
+#include "../matrices/cc_matrix_armadillo.h"
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+
 namespace chapchom
 {
 
  // Abstract class to solve linear systems of equations, this class is
  // inhereted by any concrete implementations of linear solvers.
- template<class T>
- class ACLinearSolver
- {
+ template<class MAT_TYPE, class VEC_TYPE>
+  class ACLinearSolver
+  {
 
  public:
  
@@ -29,13 +35,13 @@ namespace chapchom
   ACLinearSolver();
  
   // Constructor where we specify the matrix A
-  ACLinearSolver(const CCMatrix<T> &matrix);
+  ACLinearSolver(const MAT_TYPE &matrix);
  
   // Empty destructor
   virtual ~ACLinearSolver();
   
   // Set the matrix A
-  void set_matrix_A(const CCMatrix<T> &matrix);
+  void set_matrix_A(const MAT_TYPE &matrix);
   
   // Clean up for any dynamically stored data
   void clean_up();
@@ -45,27 +51,27 @@ namespace chapchom
   // results are returned. We assume that the input/output matrices
   // have the correct dimensions: A.ncolumns() x A.nrows() for B, and
   // A.nrows() x A.ncolumns() for X.
-  virtual void solve(const CCMatrix<T> &A, const CCMatrix<T> &B, CCMatrix<T> &X) = 0;
+  virtual void solve(const MAT_TYPE &A, const MAT_TYPE &B, MAT_TYPE &X) = 0;
   
   // Virtual function to solve a system of equations with input A. We
   // specify the right-hand side b and the x vector where the result
   // is returned. We assume that the input/output vectors have the
   // correct dimensions: A.ncolumns() for b, and A.nrows() for x.
-  virtual void solve(const CCMatrix<T> &A, const CCVector<T> &b, CCVector<T> &x) = 0;
+  virtual void solve(const MAT_TYPE &A, const VEC_TYPE &b, VEC_TYPE &x) = 0;
   
   // Virtual function to solve a system of equations with the already
   // stored matrix A. We specify the right-hand side B and the X
   // matrices where the results are returned. We assume that the
   // input/output matrices have the correct dimensions: A.ncolumns() x
   // A.nrows() for B, and A.nrows() x A.ncolumns() for X.
-  virtual void solve(const CCMatrix<T> &B, CCMatrix<T> &X) = 0;
+  virtual void solve(const MAT_TYPE &B, MAT_TYPE &X) = 0;
   
   // Virtual function to solve a system of equations with the already
   // stored matrix A. We specify the right-hand side b and the x
   // vectors where the result is returned. We assume that the
   // input/output vectors have the correct dimensions: A.ncolumns()
   // for b, and A.nrows() for x.
-  virtual void solve(const CCVector<T> &b, CCVector<T> &x) = 0;
+  virtual void solve(const VEC_TYPE &b, VEC_TYPE &x) = 0;
   
   // Virtual function to re-solve a system of equations with the
   // already stored matrix A (re-use of the LU decomposition or call
@@ -75,7 +81,7 @@ namespace chapchom
   // assume that the input/output vectors have the correct dimensions:
   // A.ncolumns() x A.nrows() for B, and A.nrows() x A.ncolumns() for
   // X.
-  virtual void resolve(const CCMatrix<T> &B, CCMatrix<T> &X)
+  virtual void resolve(const MAT_TYPE &B, MAT_TYPE &X)
   {
    // Error message
    std::ostringstream error_message;
@@ -93,7 +99,7 @@ namespace chapchom
   // side b and the x vector where the result is returned. We assume
   // that the input/output vectors have the correct dimensions:
   // A.ncolumns() for b, and A.nrows() for x.
-  virtual void resolve(const CCVector<T> &b, CCVector<T> &x)
+  virtual void resolve(const VEC_TYPE &b, VEC_TYPE &x)
   {
    // Error message
    std::ostringstream error_message;
@@ -107,7 +113,7 @@ namespace chapchom
  protected:
   
   // The matrix A
-  CCMatrix<T> A;
+  MAT_TYPE A;
   
   // Flag to indicate whether the matrix A has been set
   bool Matrix_A_has_been_set;
@@ -116,7 +122,7 @@ namespace chapchom
  
   // Copy constructor (we do not want this class to be copiable). Check
   // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
-  ACLinearSolver(const ACLinearSolver<T> &copy)
+  ACLinearSolver(const ACLinearSolver<MAT_TYPE, VEC_TYPE> &copy)
    {
     BrokenCopy::broken_copy("ACLinearSolver");
    }
@@ -124,7 +130,7 @@ namespace chapchom
   // Assignment operator (we do not want this class to be
   // copiable. Check
   // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
-  void operator=(const ACLinearSolver<T> &copy)
+  void operator=(const ACLinearSolver<MAT_TYPE, VEC_TYPE> &copy)
    {
     BrokenCopy::broken_assign("ACLinearSolver");
    }

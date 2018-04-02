@@ -74,10 +74,9 @@ int main(int argc, char *argv[])
  // -------------------------------------------------------------  
  // The vector
  CCVector<double> b(n_rows);
- // Create a zero vector such that memory is ALLOCATED to store the
- // entries of the vector. Otherwise we could not use the b(i) = x;
- // assignement without previous memory allocation
- b.create_zero_vector();
+
+ // Allocate memory for the vector
+ b.allocate_memory();
  
  // Fill the vector with data
  b(0) = -16.0;
@@ -98,8 +97,8 @@ int main(int argc, char *argv[])
  // Create a row vector
  bool transposed = true;
  CCVector<double> r(n_columns, transposed);
- // Create a zero vector to allocate memory
- r.create_zero_vector();
+ // Allocate memory for the vector
+ r.allocate_memory();
  
  // Fill the vector with data
  r(0) = 1.0;

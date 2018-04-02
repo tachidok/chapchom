@@ -11,7 +11,7 @@ namespace chapchom
  // ===================================================================
  template<class T>
  ACVector<T>::ACVector() 
-  : NValues(0), Is_empty(true), Delete_vector(true), Is_transposed(false)
+  : NValues(0), Is_own_memory_allocated(false), Delete_vector(true), Is_transposed(false)
  { }
  
  // ===================================================================
@@ -19,7 +19,7 @@ namespace chapchom
  // ===================================================================
  template<class T>
  ACVector<T>::ACVector(const unsigned long n, bool is_transposed)
-  : NValues(n), Is_empty(true), Delete_vector(true),
+  : NValues(n), Is_own_memory_allocated(false), Delete_vector(true),
     Is_transposed(is_transposed)
  { }
  

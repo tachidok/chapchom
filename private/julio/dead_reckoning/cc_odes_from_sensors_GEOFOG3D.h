@@ -10,6 +10,14 @@
 
 #define DIM 3
 
+//#define TONANTZINTLA_TO_CHOLULA
+//#define TLAXCALANCINGO_TO_ACATEPEC_ZERO_INITIAL_VELOCITY
+//#define TLAXCALANCINGO_TO_ACATEPEC
+//#define ACATEPEC_TO_TONANTZINTLA
+//#define UDLAP_PERIFERICO
+//#define PERIFERICO_TO_11SUR
+#define _11SUR_TO_TLAXCALANCINGO
+
 namespace chapchom
 {
 
@@ -37,7 +45,13 @@ namespace chapchom
   
   /// Get the values of the sensors
   bool get_sensors_lectures();
- 
+  
+  /// Set initial conditions
+  void set_initial_conditions(std::vector<std::vector<double> > &y);
+  
+  /// Reset initial contidions
+  void reset_initial_conditions_at_current_time(std::vector<std::vector<double> > &y);
+  
   // Get the number of acceleration data
   inline const unsigned nacceleration_data()
   {return Current_acc_from_table.size();}
@@ -129,6 +143,9 @@ namespace chapchom
  
   // Number of data in the loaded table
   unsigned long N_data_in_table;
+  
+  // Indicates whether data have been load from table or not
+  bool Loaded_data_from_table;
   
   // The initial index to read from data
   unsigned Initial_index;

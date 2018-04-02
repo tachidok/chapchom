@@ -31,5 +31,6 @@ set_target_properties(demo_basic_interpolation
 # Run the application to check it works
 ADD_TEST(NAME TEST_demo_basic_interpolation_run
           COMMAND demo_basic_interpolation)
+# Validate output
 ADD_TEST(NAME TEST_demo_basic_interpolation_check_output
          COMMAND sdiff -s ${CMAKE_CURRENT_SOURCE_DIR}/validate/validate_demo_basic_interpolation.dat ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)

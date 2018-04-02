@@ -16,7 +16,7 @@ namespace chapchom
   // Delete any data in memory
   clean_up();
  }
-
+ 
  // ===================================================================
  // Constructor to create an n X n matrix.
  // ===================================================================
@@ -199,11 +199,11 @@ namespace chapchom
   // Allocate memory for the matrix
   Matrix_pt = new T[m*n];
   
+  // Mark the matrix as having its own memory
+  this->Is_own_memory_allocated = true;
+  
   // Copy the matrix (an element by element copy, uff!!)
   std::memcpy(Matrix_pt, matrix_pt, m*n*sizeof(T));
-  
-  // Mark the matrix as having elements
-  this->Is_empty = false;
   
  }
  
@@ -213,8 +213,8 @@ namespace chapchom
  template<class T>
  void CCMatrix<T>::clean_up()
  {
-  // Check whether the Matrix has elements
-  if (!this->Is_empty)
+  // Check whether the Matrix allocated its own memory
+  if (this->Is_own_memory_allocated)
    {
     // Mark the matrix as deleteable
     this->Delete_matrix = true;
@@ -242,10 +242,10 @@ namespace chapchom
    {
     delete [] Matrix_pt;
     Matrix_pt = 0; 
-   
-    // Mark the matrix as empty
-    this->Is_empty=true;
-   
+    
+    // Mark the matrix as not having allocated memory
+    this->Is_own_memory_allocated=false;
+    
    } // if (Delete_matrix)
   else
    {
@@ -267,16 +267,16 @@ namespace chapchom
  void CCMatrix<T>::add_matrix(const CCMatrix<T> &matrix,
                               CCMatrix<T> &solution_matrix)
  {
-  // Check that THIS and the other matrix have entries to operate with
-  if (this->Is_empty || matrix.is_empty())
+  // Check that THIS and the other matrix have memory allocated
+  if (!this->Is_own_memory_allocated || !matrix.is_own_memory_allocated())
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "One of the matrices to operate with has no entries\n"
-                  << "this->Is_empty = "
-                  << this->Is_empty << "\n"
-                  << "matrix.is_empty() = "
-                  << matrix.is_empty() << std::endl;
+    error_message << "One of the matrices to operate with has no memory allocated\n"
+                  << "this->Is_own_memory_allocated = "
+                  << this->Is_own_memory_allocated << "\n"
+                  << "matrix.is_own_memory_allocated() = "
+                  << matrix.is_own_memory_allocated() << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -323,10 +323,10 @@ namespace chapchom
   
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
-  if (solution_matrix.is_empty())
+  if (!solution_matrix.is_own_memory_allocated())
    {
-    // Create a zero matrix with the given size to allocate memory
-    solution_matrix.create_zero_matrix();
+    // Allocate memory for the matrix
+    solution_matrix.allocate_memory();
     // Get the new matrix pointer
     solution_matrix_pt = solution_matrix.matrix_pt();
    }
@@ -352,16 +352,16 @@ namespace chapchom
  void CCMatrix<T>::substract_matrix(const CCMatrix<T> &matrix,
                                     CCMatrix<T> &solution_matrix)
  {
-  // Check that THIS and the other matrix have entries to operate with
-  if (this->Is_empty || matrix.is_empty())
+  // Check that THIS and the other matrix have memory allocated
+  if (!this->Is_own_memory_allocated || !matrix.is_own_memory_allocated())
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "One of the matrices to operate with has no entries\n"
-                  << "this->Is_empty = "
-                  << this->Is_empty << "\n"
-                  << "matrix.is_empty() = "
-                  << matrix.is_empty() << std::endl;
+    error_message << "One of the matrices to operate with has no memory allocated\n"
+                  << "this->Is_own_memory_allocated = "
+                  << this->Is_own_memory_allocated << "\n"
+                  << "matrix.is_own_memory_allocated() = "
+                  << matrix.is_own_memory_allocated() << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -408,10 +408,10 @@ namespace chapchom
   
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
-  if (solution_matrix.is_empty())
+  if (!solution_matrix.is_own_memory_allocated())
    {
-    // Create a zero matrix with the given size to allocate memory
-    solution_matrix.create_zero_matrix();
+    // Allocate memory for the matrix
+    solution_matrix.allocate_memory();
     // Get the new matrix pointer
     solution_matrix_pt = solution_matrix.matrix_pt();
    }
@@ -437,16 +437,16 @@ namespace chapchom
  void CCMatrix<T>::multiply_by_matrix(const CCMatrix<T> &right_matrix,
                                       CCMatrix<T> &solution_matrix)
  {
-  // Check that THIS and the right matrix have entries to operate with
-  if (this->Is_empty || right_matrix.is_empty())
+  // Check that THIS and the right matrix have memory allocated
+  if (!this->Is_own_memory_allocated || !right_matrix.is_own_memory_allocated())
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "One of the matrices to operate with has no entries\n"
-                  << "this->Is_empty = "
-                  << this->Is_empty << "\n"
-                  << "right_matrix.is_empty() = "
-                  << right_matrix.is_empty() << std::endl;
+    error_message << "One of the matrices to operate with has no memory allocated\n"
+                  << "this->Is_own_memory_allocated = "
+                  << this->Is_own_memory_allocated << "\n"
+                  << "right_matrix.is_own_memory_allocated() = "
+                  << right_matrix.is_own_memory_allocated() << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -499,10 +499,10 @@ namespace chapchom
   
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
-  if (solution_matrix.is_empty())
+  if (!solution_matrix.is_own_memory_allocated())
    {
-    // Create a zero matrix with the given size to allocate memory
-    solution_matrix.create_zero_matrix();
+    // Allocate memory for the matrix
+    solution_matrix.allocate_memory();
     // Get the new matrix pointer
     solution_matrix_pt = solution_matrix.matrix_pt();
    }
@@ -553,24 +553,24 @@ namespace chapchom
   transposed_matrix.set_matrix(transposed_matrix_pt, n_columns, n_rows);
   
   // Delete the temporary transpose matrix pointer
-  delete transposed_matrix_pt;
+  delete [] transposed_matrix_pt;
   
  }
  
  // ===================================================================
- // Computes the transpose and returns it
+ // Computes the transpose and stores it in itself
  // ===================================================================
  template<class T>
  void CCMatrix<T>::transpose()
  {
-  // Check that THIS matrix has entries to operate with
-  if (this->Is_empty)
+  // Check that THIS matrix has memory allocated
+  if (!this->Is_own_memory_allocated)
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "THIS matrix has no entries to operate with\n"
-                  << "this->Is_empty = "
-                  << this->Is_empty << std::endl;
+    error_message << "THIS matrix has no memory allocated\n"
+                  << "this->Is_own_memory_allocated = "
+                  << this->Is_own_memory_allocated << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -601,18 +601,196 @@ namespace chapchom
   // Return the value at row i and column j
   return Matrix_pt[i*this->NColumns+j];
  }
+ 
+ // ===================================================================
+ /// Permute the rows in the list
+ // ===================================================================
+ template<class T>
+ void CCMatrix<T>::permute_rows(std::vector<std::pair<unsigned long, unsigned long> > &permute_list)
+ {
+  // Get the number of elements in the permute list
+  const unsigned n_permute_list = permute_list.size();
+  // Check that the rows numbers are within the range of the number of
+  // rows of the matrix
+  for (unsigned i = 0; i < n_permute_list; i++)
+   {
+    if (permute_list[i].first >= this->NRows || permute_list[i].second >= this->NRows)
+     {
+      // Error message
+      std::ostringstream error_message;
+      error_message << "The rows of the permute list in the " << i << "-th position\n"
+                    << "are out of the range of the number of rows of the matrix"
+                    << "permute_list[i].first: " << permute_list[i].first
+                    << "permute_list[i].second: " << permute_list[i].second << std::endl;
+      throw ChapchomLibError(error_message.str(),
+                             CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
+     }
+    
+   }
 
+  // ------------------------------
+  // Do the permutations
+  
+  // Cache the number of columns
+  const unsigned long n_columns = this->NColumns;
+  for (unsigned long k = 0; k < n_columns; k++)
+   {
+    // Loop over the permute list
+    for (unsigned ii = 0; ii < n_permute_list; ii++)
+     {
+      // Get the i-th row and the j-th row to permute
+      const unsigned long i = permute_list[ii].first;
+      const unsigned long j = permute_list[ii].second;
+      
+      // Swap values in rows i and j
+      
+      // Temporarly storage to swap values
+      T tmp = value(j, k);
+      // Swap
+      value(j, k) = value(i, k);
+      value(i, k) = tmp;
+     } // for (ii < n_permute_list)
+    
+   } // for (k < n_columns)
+  
+ }
+ 
+ // ===================================================================
+ /// Permute the columns in the list
+ // ===================================================================
+ template<class T>
+ void CCMatrix<T>::permute_columns(std::vector<std::pair<unsigned long, unsigned long> > &permute_list)
+ {
+  // Get the number of elements in the permute list
+  const unsigned n_permute_list = permute_list.size();
+  // Check that the columns numbers are within the range of the number
+  // of columns of the matrix
+  for (unsigned i = 0; i < n_permute_list; i++)
+   {
+    if (permute_list[i].first >= this->NColumns || permute_list[i].second >= this->NColumns)
+     {
+      // Error message
+      std::ostringstream error_message;
+      error_message << "The columns of the permute list in the " << i << "-th position\n"
+                    << "are out of the range of the number of columns of the matrix"
+                    << "permute_list[i].first: " << permute_list[i].first
+                    << "permute_list[i].second: " << permute_list[i].second << std::endl;
+      throw ChapchomLibError(error_message.str(),
+                             CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
+     }
+    
+   }
+  
+  // ------------------------------
+  // Do the permutations
+  
+  // Cache the number of rows
+  const unsigned long n_rows = this->NRows;
+  for (unsigned long k = 0; k < n_rows; k++)
+   {
+    // Loop over the permute list
+    for (unsigned ii = 0; ii < n_permute_list; ii++)
+     {
+      // Get the i-th column and the j-th column to permute
+      const unsigned long i = permute_list[ii].first;
+      const unsigned long j = permute_list[ii].second;
+      
+      // Swap values in columns i and j
+      
+      // Temporarly storage to swap values
+      T tmp = value(k, j);
+      // Swap
+      value(k, j) = value(k, i);
+      value(k, i) = tmp;
+     } // for (ii < n_permute_list)
+    
+   } // for (k < n_rows)
+  
+ }
+ 
+ // ===================================================================
+ /// Permute rows i and j
+ // ===================================================================
+ template<class T>
+ void CCMatrix<T>::permute_rows(const unsigned long &i, const unsigned long &j)
+ {
+  // Check that both input columns are within the range
+  if (i < this->NRows && j < this->NRows)
+   {
+    // Cache the number of columns
+    const unsigned long n_columns = this->NColumns;
+    // Swap values in columns i and j
+    for (unsigned long k = 0; k < n_columns; k++)
+     {
+      // Temporarly storage to swap values
+      T tmp = value(j, k);
+      // Swap
+      value(j, k) = value(i, k);
+      value(i, k) = tmp;
+     }
+   }
+  else
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "One of the selected rows to permute is larger than\n"
+                  << "the number of rows of the matrix"
+                  << "i: " << i << " j: " << j << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+ }
+
+ // ================================================================== 
+ // Permute columns i and j
+ // ===================================================================
+ template<class T>
+ void CCMatrix<T>::permute_columns(const unsigned long &i, const unsigned long &j)
+ {
+  // Check that both input columns are within the range
+  if (i < this->NColumns && j < this->NColumns)
+   {
+    // Cache the number of rows
+    const unsigned long n_rows = this->NRows;
+    // Swap values in columns i and j
+    for (unsigned long k = 0; k < n_rows; k++)
+     {
+      // Temporarly storage to swap values
+      T tmp = value(k, j);
+      // Swap
+      value(k, j) = value(k, i);
+      value(k, i) = tmp;
+     }
+   }
+  else
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "One of the selected columns to permute is larger than\n"
+                  << "the number of columns of the matrix"
+                  << "i: " << i << " j: " << j << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+   
+ }
+ 
  // ===================================================================
  // Output the matrix
  // ===================================================================
  template<class T>
  void CCMatrix<T>::output(bool output_indexes) const
  {
-  if (this->Is_empty)
+  if (!this->Is_own_memory_allocated)
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "The matrix is empty" << std::endl;
+    error_message << "The matrix has no memory allocated. It is empty" << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -655,11 +833,11 @@ namespace chapchom
  void CCMatrix<T>::output(std::ofstream &outfile,
                           bool output_indexes) const
  {
-  if (this->Is_empty)
+  if (!this->Is_own_memory_allocated)
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "The matrix is empty" << std::endl;
+    error_message << "The matrix has no memory allocated. It is empty" << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -694,13 +872,12 @@ namespace chapchom
    }
   
  }
- 
+
  // ===================================================================
- // Creates a zero matrix with the given rows and columns (allocates
- // memory to store entries of the matrix)
+ // Allocates memory to store entries of the matrix
  // ===================================================================
  template<class T>
- void CCMatrix<T>::create_zero_matrix()
+ void CCMatrix<T>::allocate_memory()
  {
   // Delete any data in memory
   clean_up();
@@ -708,8 +885,34 @@ namespace chapchom
   // Allocate memory for the matrix
   Matrix_pt = new T[this->NRows*this->NColumns];
   
-  // Mark the matrix as having something
-  this->Is_empty=false;
+  // Mark the matrix as allocated its own memory
+  this->Is_own_memory_allocated=true;
+ }
+
+ // ===================================================================
+ // Fills the matrix with zeroes
+ // ===================================================================
+ template<class T>
+ void CCMatrix<T>::fill_with_zeroes()
+ {
+  // Check that the matrix has memory allocated
+  if (this->Is_own_memory_allocated)
+   {
+    // Fill the matrix with zeroes
+    std::memset(Matrix_pt, 0, this->NRows*this->NColumns*sizeof(T));
+   }
+  else
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The matrix has no memory allocated\n"
+                  << "this->Is_own_memory_allocated = "
+                  << this->Is_own_memory_allocated << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);    
+   }
+  
  }
  
  // ================================================================
@@ -726,16 +929,16 @@ namespace chapchom
                    const CCMatrix<T> &matrix_two,
                    CCMatrix<T> &solution_matrix)
  {
-  // Check that both matrices have entries to operate with
-  if (matrix_one.is_empty() || matrix_two.is_empty())
+  // Check that both matrices have memory allocated
+  if (!matrix_one.is_own_memory_allocated() || !matrix_two.is_own_memory_allocated())
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "One of the matrices to operate with has no entries\n"
-                  << "matrix_one.is_empty() = "
-                  << matrix_one.is_empty() << "\n"
-                  << "matrix_two.is_empty() = "
-                  << matrix_two.is_empty() << std::endl;
+    error_message << "One of the matrices to operate with has no memory allocated\n"
+                  << "matrix_one.is_own_memory_allocated() = "
+                  << matrix_one.is_own_memory_allocated() << "\n"
+                  << "matrix_two.is_own_memory_allocated() = "
+                  << matrix_two.is_own_memory_allocated() << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -785,10 +988,10 @@ namespace chapchom
   
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
-  if (solution_matrix.is_empty())
+  if (!solution_matrix.is_own_memory_allocated())
    {
-    // Create a zero matrix with the given size to allocate memory
-    solution_matrix.create_zero_matrix();
+    // Allocate memory for the matrix
+    solution_matrix.allocate_memory();
     // Get the new matrix pointer
     solution_matrix_pt = solution_matrix.matrix_pt();
    }
@@ -817,16 +1020,16 @@ namespace chapchom
                          const CCMatrix<T> &matrix_two,
                          CCMatrix<T> &solution_matrix)
  {
-  // Check that both matrices have entries to operate with
-  if (matrix_one.is_empty() || matrix_two.is_empty())
+  // Check that both matrices have memory allocated
+  if (!matrix_one.is_own_memory_allocated() || !matrix_two.is_own_memory_allocated())
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "One of the matrices to operate with has no entries\n"
-                  << "matrix_one.is_empty() = "
-                  << matrix_one.is_empty() << "\n"
-                  << "matrix_two.is_empty() = "
-                  << matrix_two.is_empty() << std::endl;
+    error_message << "One of the matrices to operate with has no memory allocated\n"
+                  << "matrix_one.is_own_memory_allocated() = "
+                  << matrix_one.is_own_memory_allocated() << "\n"
+                  << "matrix_two.is_own_memory_allocated() = "
+                  << matrix_two.is_own_memory_allocated() << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -876,10 +1079,10 @@ namespace chapchom
   
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
-  if (solution_matrix.is_empty())
+  if (!solution_matrix.is_own_memory_allocated())
    {
-    // Create a zero matrix with the given size to allocate memory
-    solution_matrix.create_zero_matrix();
+    // Allocate memory for the matrix
+    solution_matrix.allocate_memory();
     // Get the new matrix pointer
     solution_matrix_pt = solution_matrix.matrix_pt();
    }
@@ -908,16 +1111,16 @@ namespace chapchom
                         const CCMatrix<T> &right_matrix,
                         CCMatrix<T> &solution_matrix)
  {
-  // Check that both matrices have entries to operate with
-  if (left_matrix.is_empty() || right_matrix.is_empty())
+  // Check that both matrices have memory allocated
+  if (!left_matrix.is_own_memory_allocated() || !right_matrix.is_own_memory_allocated())
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "One of the matrices to operate with has no entries\n"
-                  << "left_matrix.is_empty() = "
-                  << left_matrix.is_empty() << "\n"
-                  << "right_matrix.is_empty() = "
-                  << right_matrix.is_empty() << std::endl;
+    error_message << "One of the matrices to operate with has no memory allocated\n"
+                  << "left_matrix.is_own_memory_allocated() = "
+                  << left_matrix.is_own_memory_allocated() << "\n"
+                  << "right_matrix.is_own_memory_allocated() = "
+                  << right_matrix.is_own_memory_allocated() << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -970,10 +1173,10 @@ namespace chapchom
   
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
-  if (solution_matrix.is_empty())
+  if (!solution_matrix.is_own_memory_allocated())
    {
-    // Create a zero matrix with the given size to allocate memory
-    solution_matrix.create_zero_matrix();
+    // Allocate memory for the matrix
+    solution_matrix.allocate_memory();
     // Get the new matrix pointer
     solution_matrix_pt = solution_matrix.matrix_pt();
    }
@@ -1013,17 +1216,16 @@ namespace chapchom
                                    const CCVector<T> &right_vector,
                                    CCMatrix<T> &solution_matrix)
  {
-  // Check that the left and the right vectors have entries to operate
-  // with
-  if (left_vector.is_empty() || right_vector.is_empty())
+  // Check that the left and the right vectors have memory allocated
+  if (!left_vector.is_own_memory_allocated() || !right_vector.is_own_memory_allocated())
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "One of the vectors to operate with has no entries\n"
-                  << "left_vector.is_empty() = "
-                  << left_vector.is_empty() << "\n"
-                  << "right_vector.is_empty() = "
-                  << right_vector.is_empty() << std::endl;
+    error_message << "One of the vectors to operate with has no memory allocated\n"
+                  << "left_vector.is_own_memory_allocated() = "
+                  << left_vector.is_own_memory_allocated() << "\n"
+                  << "right_vector.is_own_memory_allocated() = "
+                  << right_vector.is_own_memory_allocated() << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -1098,10 +1300,10 @@ namespace chapchom
   
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
-  if (solution_matrix.is_empty())
+  if (!solution_matrix.is_own_memory_allocated())
    {
-    // Create a zero matrix with the given size to allocate memory
-    solution_matrix.create_zero_matrix();
+    // Allocate memory for the matrix
+    solution_matrix.allocate_memory();
     // Get the new matrix pointer
     solution_matrix_pt = solution_matrix.matrix_pt();
    }
@@ -1137,17 +1339,16 @@ namespace chapchom
                                    const CCMatrix<T> &matrix,
                                    CCMatrix<T> &solution_matrix)
  {
-  // Check that the vector and the matrix have entries to operate with
-  if (vector.is_empty() || matrix.is_empty())
+  // Check that the vector and the matrix have memory allocated
+  if (!vector.is_own_memory_allocated() || !matrix.is_own_memory_allocated())
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "Either the vector or the matrix have no entries to\n"
-                  << "operate with\n"
-                  << "vector.is_empty() = "
-                  << vector.is_empty() << "\n"
-                  << "matrix.is_empty() = "
-                  << matrix.is_empty() << std::endl;
+    error_message << "Either the vector or the matrix have no memory allocated\n"
+                  << "vector.is_own_memory_allocated() = "
+                  << vector.is_own_memory_allocated() << "\n"
+                  << "matrix.is_own_memory_allocated() = "
+                  << matrix.is_own_memory_allocated() << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -1214,10 +1415,10 @@ namespace chapchom
   
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
-  if (solution_matrix.is_empty())
+  if (!solution_matrix.is_own_memory_allocated())
    {
-    // Create a zero matrix with the given size to allocate memory
-    solution_matrix.create_zero_matrix();
+    // Allocate memory for the matrix
+    solution_matrix.allocate_memory();
     // Get the new matrix pointer
     solution_matrix_pt = solution_matrix.matrix_pt();
    }
@@ -1253,17 +1454,16 @@ namespace chapchom
                                    const CCVector<T> &vector,
                                    CCVector<T> &solution_vector)
  {
- // Check that the matrix and the vector have entries to operate with
-  if (matrix.is_empty() || vector.is_empty())
+  // Check that the matrix and the vector have memory allocated
+  if (!matrix.is_own_memory_allocated() || !vector.is_own_memory_allocated())
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "Either the matrix or the vector have no entries to\n"
-                  << "operate with\n"
-                  << "matrix.is_empty() = "
-                  << matrix.is_empty() << "\n"
-                  << "vector.is_empty() = "
-                  << vector.is_empty() << std::endl;
+    error_message << "Either the matrix or the vector have no memory allocated\n"
+                  << "matrix.is_own_memory_allocated() = "
+                  << matrix.is_own_memory_allocated() << "\n"
+                  << "vector.is_own_memory_allocated() = "
+                  << vector.is_own_memory_allocated() << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -1341,10 +1541,10 @@ namespace chapchom
   
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
-  if (solution_vector.is_empty())
+  if (!solution_vector.is_own_memory_allocated())
    {
-    // Create a zero matrix with the given size to allocate memory
-    solution_vector.create_zero_vector();
+    // Allocate memory for the matrix
+    solution_vector.allocate_memory();
     // Get the new matrix pointer
     solution_vector_pt = solution_vector.vector_pt();
    }
@@ -1368,6 +1568,7 @@ namespace chapchom
        matrix_pt[offset_matrix+k] * vector_pt[k];
      }
    }
+  
   
  }
  

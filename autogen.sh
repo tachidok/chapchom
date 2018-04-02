@@ -4,14 +4,14 @@
 # A few helper functions
 #====================================================================
 
-# A little function 'borrowed' from the oomph-lib installation
+# An small function 'borrowed' from the oomph-lib installation
 # script...
 OptionPrompt() 
 { 
  printf "%s " "$1" 
 }
 
-# Another little function 'borrowed' from the oomph-lib installation
+# Another small function 'borrowed' from the oomph-lib installation
 # script...
 OptionRead()
 {
@@ -42,6 +42,9 @@ lib_type=*
 lib_version=*
 # Indicates whether to build/compile demos
 build_demos=TRUE
+# Indicates the configuration file with variables for paths for
+# external libraries
+configuration_file=./configs/default
 
 #====================================================================
 # The building script
@@ -114,6 +117,23 @@ echo "============================================================= "
 echo ""
 
 #====================================================================
+# Configuration file for extra configuration
+#====================================================================
+
+echo "Specify the path config file with extra configuration flags:"
+OptionPrompt "[default: ./configs/default]"
+extra_config_file=`OptionRead`
+if test "$extra_config_file" = "" -o "$extra_config_file" = "" ; then 
+    configuration_file=./configs/default
+else
+    configuration_file=${extra_config_file}
+fi
+
+echo ""
+echo "============================================================= "
+echo ""
+
+#====================================================================
 # Build demos
 #====================================================================
 
@@ -144,7 +164,12 @@ echo ""
 cmake ../ \
       -DCHAPCHOM_LIB_TYPE=$lib_type \
       -DCHAPCHOM_BUILD_VERSION=$lib_version \
-      -DCHAPCHOM_BUILD_DEMOS=$build_demos
+      -DCHAPCHOM_BUILD_DEMOS=$build_demos \
+      -DCHAPCHOM_CONFIGURATION_FILE=$configuration_file \
+      -DCMAKE_EXPORT_COMPILE_COMMANDS=1 # Added to create the
+# 'compile_commands.json file
+# for emacs autocompletion in
+# irony mode'
 make clean
 make
 
@@ -157,6 +182,7 @@ echo "============================================================= "
 # Finishing up !!!
 #====================================================================
 
+# Go to the root directory
 cd ..
 
 echo ""

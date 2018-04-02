@@ -24,7 +24,7 @@ void rotate(double *input_vector,
  
  // Create the rotation matrix
  CCMatrix<double> R(DIM, DIM);
- R.create_zero_matrix();
+ R.allocate_memory();
  
  const double sin_theta_x = sin(roll);
  const double sin_theta_y = sin(pitch);
@@ -88,19 +88,18 @@ int main(int argc, char *argv[])
   // ----------------------------------------------------------
   // Instantiate double type matrices.
   CCMatrix<double> I(n_rows, n_columns);
- 
-  // Create a zero matrix such that memory is allocated to store the
-  // entries of the matrix. Otherwise we could not use the I(i,i)
-  // assignement without previous memory allocation
-  I.create_zero_matrix();
- 
+  
+  // Allocate memory
+  I.allocate_memory();
+  
   // Feed some data to the matrix (the identity)
   for (unsigned i = 0; i < n_rows; i++)
    {
     I(i,i) = 1;
    }
- 
+  
   std::cout << std::endl << "The identity matrix (I)" << std::endl << std::endl;
+  output_test << std::endl << "The identity matrix (I)" << std::endl << std::endl;
   I.output();
   I.output(output_test);
  
@@ -135,10 +134,12 @@ int main(int argc, char *argv[])
   B.transpose(B_t);
  
   std::cout << std::endl << "Matrix created from vector" << std::endl << std::endl;
+  output_test << std::endl << "Matrix created from vector" << std::endl << std::endl;
   B.output();
   B.output(output_test);
 
   std::cout << std::endl << "Matrix transposed" << std::endl << std::endl;
+  output_test << std::endl << "Matrix transposed" << std::endl << std::endl;
   B_t.print();
   B_t.print(output_test);
  
@@ -148,18 +149,22 @@ int main(int argc, char *argv[])
   // Solution matrix
   // Instantiate double type matrices.
   CCMatrix<double> C(n_rows, n_columns);
- 
-  // Create a zero matrix such that memory is allocated to store the
-  // entries of the matrix. Otherwise we could not use the C(i,j)
-  // assignement without previous memory allocation
-  C.create_zero_matrix(); 
+
+  // Allocate memory
+  C.allocate_memory();
  
   std::cout << std::endl
             << "------------------------------------------------------------------------------"
             << std::endl << "Matrix operations\n"
             << "------------------------------------------------------------------------------"
             << std::endl;
- 
+  
+  output_test << std::endl
+              << "------------------------------------------------------------------------------"
+              << std::endl << "Matrix operations\n"
+              << "------------------------------------------------------------------------------"
+              << std::endl;
+  
   // --------------------------------------
   // Sum of matrices C = I + B
   // --------------------------------------
@@ -173,6 +178,8 @@ int main(int argc, char *argv[])
  
   std::cout << std::endl << "The sum of the matrices is:"
             << std::endl << std::endl;
+  output_test << std::endl << "The sum of the matrices is:"
+              << std::endl << std::endl;
   C.output();
   C.output(output_test);
  
@@ -201,6 +208,8 @@ int main(int argc, char *argv[])
  
   std::cout << std::endl << "The multiplication of the matrices is:"
             << std::endl << std::endl;
+  output_test << std::endl << "The multiplication of the matrices is:"
+              << std::endl << std::endl;
   C.output();
   C.output(output_test); 
  
@@ -212,6 +221,11 @@ int main(int argc, char *argv[])
             << "Now do the same operations but using operator overloading\n"
             << "##############################################################################"
             << std::endl;
+  output_test << std::endl << ""
+              << "##############################################################################\n"
+              << "Now do the same operations but using operator overloading\n"
+              << "##############################################################################"
+              << std::endl;
   // --------------------------------------
   // Sum of matrices C = I + B
   // --------------------------------------
@@ -219,6 +233,8 @@ int main(int argc, char *argv[])
  
   std::cout << std::endl << "The sum of the matrices is:"
             << std::endl << std::endl;
+  output_test << std::endl << "The sum of the matrices is:"
+              << std::endl << std::endl;
   C.output();
   C.output(output_test);
  
@@ -229,6 +245,8 @@ int main(int argc, char *argv[])
  
   std::cout << std::endl << "The multiplication of the matrices is:"
             << std::endl << std::endl;
+  output_test << std::endl << "The multiplication of the matrices is:"
+              << std::endl << std::endl;
   C.output();
   C.output(output_test);
  
@@ -259,6 +277,8 @@ int main(int argc, char *argv[])
   CCMatrix<double> A(matrix_A_pt, n_rows_A, n_columns_A);
   std::cout << std::endl << "Non square matrix"
             << std::endl << std::endl;
+  output_test << std::endl << "Non square matrix"
+              << std::endl << std::endl;
   A.output();
   A.output(output_test);
  
@@ -291,6 +311,8 @@ int main(int argc, char *argv[])
   CCMatrix<double> x(matrix_x_pt, n_rows_x, n_columns_x);
   std::cout << std::endl << "Vector"
             << std::endl << std::endl;
+  output_test << std::endl << "Vector"
+              << std::endl << std::endl;
   x.output();
   x.output(output_test);
  
@@ -309,6 +331,8 @@ int main(int argc, char *argv[])
  
   std::cout << std::endl << "The multiplication of the matrices is:"
             << std::endl << std::endl;
+  output_test << std::endl << "The multiplication of the matrices is:"
+              << std::endl << std::endl;
   b.output();
   b.output(output_test);
  
@@ -319,6 +343,8 @@ int main(int argc, char *argv[])
   b.transpose(b_t);
   std::cout << std::endl << "The transposed matrix:"
             << std::endl << std::endl;
+  output_test << std::endl << "The transposed matrix:"
+              << std::endl << std::endl;
   b_t.output();
   // Output for test
   b_t.output(output_test);
@@ -332,7 +358,126 @@ int main(int argc, char *argv[])
   matrix_x_pt = 0;
   
  }
+ 
+ {
+  // ##############################################################################
+  // Matrix permutations
+  // ##############################################################################
+  std::cout << std::endl << ""
+            << "##############################################################################\n"
+            << "Matrix permutations (using own matrix methods)\n"
+            << "##############################################################################"
+            << std::endl;
+  output_test << std::endl << ""
+              << "##############################################################################\n"
+              << "Matrix permutations (using own matrix methods)\n"
+              << "##############################################################################"
+              << std::endl;
 
+  {
+   const unsigned DIM = 3;
+   
+   // Matrix to permute
+   CCMatrix<unsigned> A(DIM, DIM);
+   A.allocate_memory();
+   
+   A(0,0) = 1;   A(0,1) = 2;   A(0,2) = 3;
+   A(1,0) = 4;   A(1,1) = 5;   A(1,2) = 6;
+   A(2,0) = 7;   A(2,1) = 8;   A(2,2) = 9;
+
+   std::cout << std::endl << ""
+             << "---------------------------------------------------\n"
+             << "Rows permutation (two rows only)\n"
+             << "---------------------------------------------------\n"
+             << std::endl;
+   output_test << std::endl << ""
+               << "---------------------------------------------------\n"
+               << "Rows permutation (two rows only)\n"
+               << "---------------------------------------------------\n"
+               << std::endl;
+  
+   // Permute rows
+   A.permute_rows(1, 2);
+   
+   A.output();
+   A.output(output_test);
+   
+   std::cout << std::endl << ""
+             << "---------------------------------------------------\n"
+             << "Columns permutation (two columns only)\n"
+             << "---------------------------------------------------\n"
+             << std::endl;
+   output_test << std::endl << ""
+               << "---------------------------------------------------\n"
+               << "Columns permutation (two columns only)\n"
+               << "---------------------------------------------------\n"
+               << std::endl;
+   
+   // Permute columns
+   A.permute_columns(1, 2);
+   
+   A.output();
+   A.output(output_test);
+   
+  }
+  
+  const unsigned DIM = 4;
+   
+  // Matrix to permute
+  CCMatrix<unsigned> A(DIM, DIM);
+  A.allocate_memory();
+   
+  A(0,0) = 1;   A(0,1) = 2;   A(0,2) = 3;   A(0,3) = 4;
+  A(1,0) = 5;   A(1,1) = 6;   A(1,2) = 7;   A(1,3) = 8;
+  A(2,0) = 9;   A(2,1) = 10;   A(2,2) = 11;   A(2,3) = 12;
+  A(3,0) = 13;   A(3,1) = 14;   A(3,2) = 15;   A(3,3) = 16;
+  
+  std::cout << std::endl << ""
+            << "---------------------------------------------------\n"
+            << "Rows permutation (multiple rows)\n"
+            << "---------------------------------------------------\n"
+            << std::endl;
+  output_test << std::endl << ""
+              << "---------------------------------------------------\n"
+              << "Rows permutation (multiple rows)\n"
+              << "---------------------------------------------------\n"
+              << std::endl;
+  
+  // Create the list of rows to permute
+  std::vector<std::pair<unsigned long, unsigned long> > permute_rows_list(2);
+  permute_rows_list[0] = std::make_pair<unsigned long, unsigned long>(0, 3);
+  permute_rows_list[1] = std::make_pair<unsigned long, unsigned long>(1, 2);
+  
+  // Permute rows
+  A.permute_rows(permute_rows_list);
+  
+  A.output();
+  A.output(output_test);
+   
+  std::cout << std::endl << ""
+            << "---------------------------------------------------\n"
+            << "Columns permutation (multiple columns)\n"
+            << "---------------------------------------------------\n"
+            << std::endl;
+  output_test << std::endl << ""
+              << "---------------------------------------------------\n"
+              << "Columns permutation (multiple columns)\n"
+              << "---------------------------------------------------\n"
+               << std::endl;
+  
+  // Create the list of columns to permute
+  std::vector<std::pair<unsigned long, unsigned long> > permute_columns_list(2);
+  permute_columns_list[0] = std::make_pair<unsigned long, unsigned long>(0, 3);
+  permute_columns_list[1] = std::make_pair<unsigned long, unsigned long>(1, 2);
+  
+  // Permute rows
+  A.permute_columns(permute_columns_list); 
+  
+  A.output();
+  A.output(output_test);
+  
+ }
+ 
  {
   // ##############################################################################
   // Matrix vector operations
@@ -342,6 +487,11 @@ int main(int argc, char *argv[])
             << "Matrix vector operations\n"
             << "##############################################################################"
             << std::endl;
+  output_test << std::endl << ""
+              << "##############################################################################\n"
+              << "Matrix vector operations\n"
+              << "##############################################################################"
+              << std::endl;
  
   // --------------------------------------------
   // Rotations to test matrix vector operations
@@ -359,9 +509,31 @@ int main(int argc, char *argv[])
  
   // Create vectors to output the data
   CCVector<double> g(gravity, DIM);
+  std::cout << std::endl << ""
+            << "---------------------------------------------------\n"
+            << "Gravity vector (0 0 -9.81) m/s^2\n"
+            << "---------------------------------------------------\n"
+            << std::endl;
+  output_test << std::endl << ""
+              << "---------------------------------------------------\n"
+              << "Gravity vector (0 0 -9.81) m/s^2\n"
+              << "---------------------------------------------------\n"
+              << std::endl;
   g.output();
   g.output(output_test);
-  CCVector<double> rg(rotated_gravity, DIM);
+
+  // Rotated gravity vector
+  CCVector<double> rg(rotated_gravity, DIM); 
+  std::cout << std::endl << ""
+            << "---------------------------------------------------\n"
+            << "Rotated gravity vector m/s^2\n"
+            << "---------------------------------------------------\n"
+            << std::endl;
+  output_test << std::endl << ""
+              << "---------------------------------------------------\n"
+              << "Rotated gravity vector m/s^2\n"
+              << "---------------------------------------------------\n"
+              << std::endl;
   rg.output();
   rg.output(output_test);
   
@@ -371,6 +543,16 @@ int main(int argc, char *argv[])
   rotate(rotated_gravity, double_rotated_gravity, roll, pitch, yaw, true);
   // Create a vector to output the data
   CCVector<double> drg(double_rotated_gravity, DIM);
+  std::cout << std::endl << ""
+            << "---------------------------------------------------\n"
+            << "Rotated-back gravity vector (original vector) m/s^2\n"
+            << "---------------------------------------------------\n"
+            << std::endl;
+  output_test << std::endl << ""
+              << "---------------------------------------------------\n"
+              << "Rotated-back gravity vector (original vector) m/s^2\n"
+              << "---------------------------------------------------\n"
+              << std::endl;
   drg.output();
   drg.output(output_test);
   
@@ -379,8 +561,205 @@ int main(int argc, char *argv[])
   CCVector<double> diff = g - drg;
   // Get the norm
   const double norm = diff.norm_2();
-  output_test << norm << std::endl;
+  std::cout << std::endl << ""
+            << "---------------------------------------------------\n"
+            << "Norm 2 of original vector and rotated-back vector\n"
+            << "---------------------------------------------------\n"
+            << std::endl;
+  output_test << std::endl << ""
+              << "---------------------------------------------------\n"
+              << "Norm 2 of original vector and rotated-back vector\n"
+              << "---------------------------------------------------\n"
+              << std::endl;
   std::cout << norm << std::endl;
+  output_test << norm << std::endl;
+  
+ }
+
+ {
+  // ##############################################################################
+  // Vector-matrix operations
+  // ##############################################################################
+  std::cout << std::endl << ""
+            << "##############################################################################\n"
+            << "Vector-matrix operations\n"
+            << "##############################################################################"
+            << std::endl;
+  output_test << std::endl << ""
+              << "##############################################################################\n"
+              << "Vector-matrix operations\n"
+              << "##############################################################################"
+              << std::endl;
+  
+  // ------------------------------------------------------------------
+  // Vector-matrix multiplication. Use a row vector to extract some
+  // data from the matrix to the right.
+  // ------------------------------------------------------------------
+  const unsigned DIM = 3;
+
+  // Create a matrix
+  CCMatrix<double> A(DIM, DIM);
+  A.allocate_memory();
+  
+  A(0,0) = 0.5;   A(0,1) = 0.5;   A(0,2) = 0.5;
+  A(1,0) = 1.0;   A(1,1) = 1.0;   A(1,2) = 1.0;
+  A(2,0) = 2.0;   A(2,1) = 2.0;   A(2,2) = 2.0;
+  
+  // Create a vector indicating the data to extract from the matrix
+  CCVector<double> v(DIM);
+  v.allocate_memory();
+  // Transpose the vector so that we have a row vector
+  v.transpose();
+
+  // The following vector states to take the first row of matrix A and
+  // add it to half the second row and a quarter of the third row
+  v(0) = 1.0;  v(1) = 0.5;  v(2) = 0.25;
+
+  // A vector (as a matrix) where to store the resulting vector-matrix
+  // multiplication
+  CCMatrix<double> S(1, DIM);
+  
+  multiply_vector_times_matrix(v, A, S);
+
+  std::cout << std::endl << ""
+            << "---------------------------------------------------\n"
+            << "Extract data of a matrix by matrix-multiplication\n"
+            << "Get the first row + half the second row + a quarter of the third row\n"
+            << "---------------------------------------------------\n"
+            << std::endl;
+  output_test << std::endl << ""
+              << "---------------------------------------------------\n"
+              << "Extract data of a matrix by matrix-multiplication\n"
+              << "Get the first row + half the second row + a quarter of the third row\n"
+              << "---------------------------------------------------\n"
+              << std::endl;
+  S.output();
+  S.output(output_test);
+  
+ }
+ 
+ {
+  // ##############################################################################
+  // Matrix-matrix operations
+  // ##############################################################################
+  std::cout << std::endl << ""
+            << "##############################################################################\n"
+            << "Matrix matrix operations (row permutations)\n"
+            << "##############################################################################"
+            << std::endl;
+  output_test << std::endl << ""
+              << "##############################################################################\n"
+              << "Matrix matrix operations (row permutations)\n"
+              << "##############################################################################"
+              << std::endl;
+  
+  // ------------------------------------------------------------------
+  // Use permutation matrices to check the correct implementation of
+  // matrix-matrix multiplication
+  // ------------------------------------------------------------------
+  const unsigned DIM = 3;
+
+  // Create two matrices
+
+  // The permutation matrix (row permutations - multiply P to the left
+  // of the matrix to permute)
+  CCMatrix<unsigned> P(DIM, DIM);
+  P.allocate_memory();
+  
+  // Each row of this matrix tell us how much of the rows of the
+  // matrix to the right should we take to create the new
+  // matrix. Example, the first row tell us to take all the elements
+  // of the first row of the matrix to the right and copy them to the
+  // first row of the resulting matrix. Elements from the other rows
+  // are not taken. The second row tell us to take all the elements of
+  // the third row of the matrix to the right and copy them in the
+  // second row of the resulting matrix. The third row tell us to take
+  // only the elements of the second row of the matrix to the right to
+  // create the third row of the resulting matrix. We can specify "how
+  // much" of each row to take to create the rows of the matrix to the
+  // right.
+  P(0,0) = 1;   P(0,1) = 0;   P(0,2) = 0;
+  P(1,0) = 0;   P(1,1) = 0;   P(1,2) = 1;
+  P(2,0) = 0;   P(2,1) = 1;   P(2,2) = 0;
+
+  // Matrix to permute
+  CCMatrix<unsigned> A(DIM, DIM);
+  A.allocate_memory();
+
+  A(0,0) = 1;   A(0,1) = 2;   A(0,2) = 3;
+  A(1,0) = 4;   A(1,1) = 5;   A(1,2) = 6;
+  A(2,0) = 7;   A(2,1) = 8;   A(2,2) = 9;
+  
+  // Permuted matrix
+  CCMatrix<unsigned> S(DIM, DIM);
+  
+  multiply_matrices(P, A, S);
+
+  S.output();
+  S.output(output_test);
+  
+ }
+ 
+ {
+
+  // ##############################################################################
+  // Matrix-matrix operations
+  // ##############################################################################
+  std::cout << std::endl << ""
+            << "##############################################################################\n"
+            << "Matrix matrix operations (column permutations)\n"
+            << "##############################################################################"
+            << std::endl;
+  output_test << std::endl << ""
+              << "##############################################################################\n"
+              << "Matrix matrix operations (column permutations)\n"
+              << "##############################################################################"
+              << std::endl;
+ 
+  // ------------------------------------------------------------------
+  // Use permutation matrices to check the correct implementation of
+  // matrix-matrix multiplication
+  // ------------------------------------------------------------------
+  const unsigned DIM = 3;
+
+  // Create two matrices
+
+  // The permutation matrix (column permutations - multiply P to the
+  // right of the matrix to permute)
+  CCMatrix<unsigned> P(DIM, DIM);
+  P.allocate_memory();
+  
+  // Each column of this matrix tell us how much of the columns of the
+  // matrix to the left should we take to create the new
+  // matrix. Example, the first column tell us to take all the
+  // elements of the first column of the matrix to the left and copy
+  // them to the first column of the resulting matrix. Elements from
+  // the other columns are not taken. The second column tell us to
+  // take all the elements of the third column of the matrix to the
+  // left and copy them in the second column of the resulting
+  // matrix. The third column tell us to take only the elements of the
+  // second column of the matrix to the left to create the third
+  // column of the resulting matrix. We can specify "how much" of each
+  // column to take to create the columns of the matrix to the left.
+  P(0,0) = 1;   P(0,1) = 0;   P(0,2) = 0;
+  P(1,0) = 0;   P(1,1) = 0;   P(1,2) = 1;
+  P(2,0) = 0;   P(2,1) = 1;   P(2,2) = 0;
+  
+  // Matrix to permute
+  CCMatrix<unsigned> A(DIM, DIM);
+  A.allocate_memory();
+  
+  A(0,0) = 1;   A(0,1) = 4;   A(0,2) = 7;
+  A(1,0) = 2;   A(1,1) = 5;   A(1,2) = 8;
+  A(2,0) = 3;   A(2,1) = 6;   A(2,2) = 9;
+  
+  // Permuted matrix
+  CCMatrix<unsigned> S(DIM, DIM);
+  
+  multiply_matrices(A, P, S);
+  
+  S.output();
+  S.output(output_test);
   
  }
  

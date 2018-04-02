@@ -9,7 +9,15 @@ namespace chapchom
  // =======================================================================
  // Macros for debugging
  // =======================================================================
-#define DEB(x) std::cerr<<"["<<#x<<"]:"<<x<<std::endl;
+#define DEB(x) std::cerr<<"DEB ["<<#x<<"] = "<<x<<std::endl<<std::flush;
+#define DEB2(x,y) std::cerr<<"DEB ["<<x<<" "<<y<<"]"<<std::endl<<std::flush;
+#define DEB3(x,y,z) std::cerr<<"DEB ["<<x<<" "<<y<<" "<<z<<"]"<<std::endl<<std::flush;
+#define DEB4(t,x,y,z) std::cerr<<"DEB ["<<t<<" "<<x<<" "<<y<<" "<<z<<"]"<<std::endl<<std::flush;
+#define DEB_TO_FILE(F,x) F<<"["<<#x<<"] = "<<x<<std::endl<<std::flush;
+#define DEB_TO_FILE1(F,x) F<<x<<std::endl<<std::flush;
+#define DEB_TO_FILE2(F,x,y) F<<x<<" "<<y<<std::endl<<std::flush;
+#define DEB_TO_FILE3(F,x,y,z) F<<x<<" "<<y<<" "<<z<<std::endl<<std::flush;
+#define DEB_TO_FILE4(F,t,x,y,z) F<<t<<" "<<x<<" "<<y<<" "<<z<<std::endl<<std::flush;
 #endif // #ifdef CHAPCHOM_WITH_DEBUG
  
  // =======================================================================

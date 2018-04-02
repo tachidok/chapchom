@@ -33,9 +33,11 @@ namespace chapchom
    // Destructor
    virtual ~ACMatrix();
    
-   // Creates a zero matrix with the given rows and columns (allocates
-   // memory to store entries of the matrix)
-   virtual void create_zero_matrix() = 0;
+   // Allocates memory to store entries of the matrix
+   virtual void allocate_memory() = 0;
+   
+   // Fills the matrix with zeroes
+   virtual void fill_with_zeroes() = 0;
    
    // Transforms the input vector to a matrix class type (virtual such
    // that each derived class has to implement it)
@@ -73,6 +75,20 @@ namespace chapchom
                                 const unsigned long &j)
    {return value(i,j);}
    
+   /// Permute the rows in the list
+   virtual void permute_rows(std::vector<std::pair<unsigned long, unsigned long> > &permute_list) = 0;
+   
+   /// Permute the columns in the list
+   virtual void permute_columns(std::vector<std::pair<unsigned long, unsigned long> > &permute_list) = 0;
+      
+   /// Permute rows i and j
+   virtual void permute_rows(const unsigned long &i,
+                             const unsigned long &j) = 0;
+   
+   /// Permute columns i and j
+   virtual void permute_columns(const unsigned long &i,
+                                const unsigned long &j) = 0;
+   
    // Output the matrix
    virtual void output(bool output_indexes = false) const = 0;
    
@@ -95,8 +111,9 @@ namespace chapchom
    // Return the number of columns of the matrix
    inline const unsigned long ncolumns() const {return NColumns;}
    
-   // Checks whether the matrix has been set, or allocated
-   inline bool is_empty() const {return Is_empty;}
+   // Checks whether the memory of the matrix has been allocated by
+   // this class
+   inline bool is_own_memory_allocated() const {return Is_own_memory_allocated;}
    
    // Checks whether the matrix is allowed to be deleted
    inline bool delete_matrix() const {return Delete_matrix;}
@@ -113,8 +130,9 @@ namespace chapchom
    unsigned long NRows;
    unsigned long NColumns;
    
-   // Flag to indicate whether the matrix is empty or not
-   bool Is_empty;
+   // Flag to indicate whether the memory of the matrix has been
+   // allocated by this class
+   bool Is_own_memory_allocated;
    
    // Flag to indicate whether to delete (free) the allocated memory
    // for the matrix. For example when the matrix is transformed to an

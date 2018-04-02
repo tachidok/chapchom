@@ -159,17 +159,16 @@ namespace chapchom
  template<class T>
  T CCVector<T>::dot(const CCVector &right_vector)
  {
-  // Check that THIS and the right vector have entries to operate
-  // with
-  if (this->Is_empty || right_vector.is_empty())
+  // Check that THIS and the right vector have memory allocated
+  if (!this->Is_own_memory_allocated || !right_vector.is_own_memory_allocated())
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "One of the vectors to operate with has no entries\n"
-                  << "this->Is_empty = "
-                  << this->Is_empty << "\n"
-                  << "right_vector.is_empty() = "
-                  << right_vector.is_empty() << std::endl;
+    error_message << "One of the vectors to operate with has no memory allocated\n"
+                  << "this->Is_own_memory_allocated = "
+                  << this->Is_own_memory_allocated << "\n"
+                  << "right_vector.is_own_memory_allocated() = "
+                  << right_vector.is_own_memory_allocated() << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -248,11 +247,11 @@ namespace chapchom
   // Allocate memory for the vector
   Vector_pt = new T[n];
   
+  // Mark the vector as allocated its own memory
+  this->Is_own_memory_allocated = true;
+  
   // Copy the vector (an element by element copy, uff!!)
   std::memcpy(Vector_pt, vector_pt, n*sizeof(T));
-  
-  // Mark the vector as having elements
-  this->Is_empty = false;
   
  }
  
@@ -262,8 +261,8 @@ namespace chapchom
  template<class T>
  void CCVector<T>::clean_up()
  {
-  // Check whether the Vector has elements
-  if (!this->Is_empty)
+  // Check whether the Vector allocated its own memory
+  if (this->Is_own_memory_allocated)
    {
     // Mark the vector as deleteable
     this->Delete_vector = true;
@@ -292,8 +291,8 @@ namespace chapchom
     delete [] Vector_pt;
     Vector_pt = 0; 
     
-    // Mark the vector as empty
-    this->Is_empty=true;
+    // Mark the vector as not having memory allocated
+    this->Is_own_memory_allocated=false;
     
    } // if (Delete_vector)
   else
@@ -316,16 +315,16 @@ namespace chapchom
  void CCVector<T>::add_vector(const CCVector<T> &vector,
                               CCVector<T> &solution_vector)
  {
-  // Check that THIS and the other vector have entries to operate with
-  if (this->Is_empty || vector.is_empty())
+  // Check that THIS and the other vector have memory allocated
+  if (!this->Is_own_memory_allocated || !vector.is_own_memory_allocated())
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "One of the vectors to operate with has no entries\n"
-                  << "this->Is_empty = "
-                  << this->Is_empty << "\n"
-                  << "vector.is_empty() = "
-                  << vector.is_empty() << std::endl;
+    error_message << "One of the vectors to operate with has no memory allocated\n"
+                  << "this->Is_own_memory_allocated = "
+                  << this->Is_own_memory_allocated << "\n"
+                  << "vector.is_own_memory_allocated() = "
+                  << vector.is_own_memory_allocated() << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -365,10 +364,10 @@ namespace chapchom
   
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
-  if (solution_vector.is_empty())
+  if (!solution_vector.is_own_memory_allocated())
    {
-    // Create a zero vector with the given size to allocate memory
-    solution_vector.create_zero_vector();
+    // Allocate memory for the vector
+    solution_vector.allocate_memory();
     // Get the new vector pointer
     solution_vector_pt = solution_vector.vector_pt();
    }
@@ -390,16 +389,16 @@ namespace chapchom
  void CCVector<T>::substract_vector(const CCVector<T> &vector,
                                     CCVector<T> &solution_vector)
  {
-  // Check that THIS and the other vector have entries to operate with
-  if (this->Is_empty || vector.is_empty())
+  // Check that THIS and the other vector have no memory allocated
+  if (!this->Is_own_memory_allocated || !vector.is_own_memory_allocated())
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "One of the vectors to operate with has no entries\n"
-                  << "this->Is_empty = "
-                  << this->Is_empty << "\n"
-                  << "vector.is_empty() = "
-                  << vector.is_empty() << std::endl;
+    error_message << "One of the vectors to operate with has no memory allocated\n"
+                  << "this->Is_own_memory_allocated = "
+                  << this->Is_own_memory_allocated << "\n"
+                  << "vector.is_own_memory_allocated() = "
+                  << vector.is_own_memory_allocated() << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -439,10 +438,10 @@ namespace chapchom
   
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
-  if (solution_vector.is_empty())
+  if (!solution_vector.is_own_memory_allocated())
    {
-    // Create a zero vector with the given size to allocate memory
-    solution_vector.create_zero_vector();
+    // Allocate memory for the vector
+    solution_vector.allocate_memory();
     // Get the new vector pointer
     solution_vector_pt = solution_vector.vector_pt();
    }
@@ -465,16 +464,16 @@ namespace chapchom
  multiply_element_by_element_vector(const CCVector<T> &vector,
                                     CCVector<T> &solution_vector)
  {
-  // Check that THIS and the other vector have entries to operate with
-  if (this->Is_empty || vector.is_empty())
+  // Check that THIS and the other vector have memory allocated
+  if (!this->Is_own_memory_allocated || !vector.is_own_memory_allocated())
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "One of the vectors to operate with has no entries\n"
-                  << "this->Is_empty = "
-                  << this->Is_empty << "\n"
-                  << "vector.is_empty() = "
-                  << vector.is_empty() << std::endl;
+    error_message << "One of the vectors to operate with has no memory allocated\n"
+                  << "this->Is_own_memory_allocated = "
+                  << this->Is_own_memory_allocated << "\n"
+                  << "vector.is_own_memory_allocated() = "
+                  << vector.is_own_memory_allocated() << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -514,10 +513,10 @@ namespace chapchom
   
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
-  if (solution_vector.is_empty())
+  if (!solution_vector.is_own_memory_allocated())
    {
-    // Create a zero vector with the given size to allocate memory
-    solution_vector.create_zero_vector();
+    // Allocate memory for the vector
+    solution_vector.allocate_memory();
     // Get the new vector pointer
     solution_vector_pt = solution_vector.vector_pt();
    }
@@ -538,14 +537,14 @@ namespace chapchom
  template<class T>
  void CCVector<T>::transpose(CCVector<T> &transposed_vector)
  {
-  // Check that THIS vector has entries to operate with
-  if (this->Is_empty)
+  // Check that THIS vector has memory allocated
+  if (!this->Is_own_memory_allocated)
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "THIS vector has no entries to operate with\n"
-                  << "this->Is_empty = "
-                  << this->Is_empty << std::endl;
+    error_message << "THIS vector has no memory allocated\n"
+                  << "this->Is_own_memory_allocated = "
+                  << this->Is_own_memory_allocated << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -586,11 +585,11 @@ namespace chapchom
  template<class T>
  void CCVector<T>::output(bool output_indexes) const
  {
-  if (this->Is_empty)
+  if (!this->Is_own_memory_allocated)
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "The vector is empty" << std::endl;
+    error_message << "The vector has no memory allocated. It is empty" << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -625,11 +624,11 @@ namespace chapchom
  template<class T>
  void CCVector<T>::output(std::ofstream &outfile, bool output_indexes) const
  {
-  if (this->Is_empty)
+  if (!this->Is_own_memory_allocated)
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "The vector is empty" << std::endl;
+    error_message << "The vector has no memory allocated. It is empty" << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -666,8 +665,8 @@ namespace chapchom
  {
   // Sum
   double sum = 0.0;
-  // Check whether the vector is empty or not
-  if (!this->Is_empty)
+  // Check whether the vector has memory allocated
+  if (this->Is_own_memory_allocated)
    {
     // Compute the dot product
     for (unsigned long i = 0; i < this->NValues; i++)
@@ -679,9 +678,9 @@ namespace chapchom
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "We can not compute the norm of an empty vector\n"
-                  << "this->Is_empty = "
-                  << this->Is_empty << std::endl;
+    error_message << "We can not compute the norm of a vector with no memory allocated\n"
+                  << "this->Is_own_memory_allocated = "
+                  << this->Is_own_memory_allocated << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -699,8 +698,8 @@ namespace chapchom
  {
   // Sum
   double sum = 0.0;
-  // Check whether the vector is empty or not
-  if (!this->Is_empty)
+  // Check whether the vector has memory allocated
+  if (this->Is_own_memory_allocated)
    {
     // Compute the dot product
     for (unsigned long i = 0; i < this->NValues; i++)
@@ -712,9 +711,9 @@ namespace chapchom
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "We can not compute the norm of an empty vector\n"
-                  << "this->Is_empty = "
-                  << this->Is_empty << std::endl;
+    error_message << "We can not compute the norm of a vector with no memory allocated\n"
+                  << "this->Is_own_memory_allocated = "
+                  << this->Is_own_memory_allocated << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -723,13 +722,12 @@ namespace chapchom
   return sqrt(sum);
   
  }
- 
+
  // ===================================================================
- // Creates a zero vector with the already defined number of entries
- // (allocates memory to store entries of the matrix)
+ // Allocates memory to store entries of the vector
  // ===================================================================
  template<class T>
- void CCVector<T>::create_zero_vector()
+ void CCVector<T>::allocate_memory()
  {
   // Delete any data in memory
   clean_up();
@@ -737,8 +735,34 @@ namespace chapchom
   // Allocate memory for the vector
   Vector_pt = new T[this->NValues];
   
-  // Mark the vector as having something
-  this->Is_empty=false;
+  // Mark the vector as allocated its own memory
+  this->Is_own_memory_allocated=true;
+ }
+
+ // ===================================================================
+ // Fills the vector with zeroes
+ // ===================================================================
+ template<class T>
+ void CCVector<T>::fill_with_zeroes()
+ {
+  // Check that the vector has memory allocated
+  if (this->Is_own_memory_allocated)
+   {
+    // Fill the vector with zeroes
+    std::memset(Vector_pt, 0, this->NValues*sizeof(T));
+   }
+  else
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The vector has no memory allocated\n"
+                  << "this->Is_own_memory_allocated = "
+                  << this->Is_own_memory_allocated << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);    
+   }
+  
  }
  
  // ================================================================
@@ -753,17 +777,16 @@ namespace chapchom
  template<class T>
  T dot_vectors(const CCVector<T> &left_vector, const CCVector<T> &right_vector)
  {
-  // Check that the left and the right vectors have entries to operate
-  // with
-  if (left_vector.is_empty() || right_vector.is_empty())
+  // Check that the left and the right vectors have memory allocated
+  if (!left_vector.is_own_memory_allocated() || !right_vector.is_own_memory_allocated())
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "One of the vectors to operate with has no entries\n"
-                  << "left_vector.is_empty() = "
-                  << left_vector.is_empty() << "\n"
-                  << "right_vector.is_empty() = "
-                  << right_vector.is_empty() << std::endl;
+    error_message << "One of the vectors to operate with has no memory allocated\n"
+                  << "left_vector.is_own_memory_allocated() = "
+                  << left_vector.is_own_memory_allocated() << "\n"
+                  << "right_vector.is_own_memory_allocated() = "
+                  << right_vector.is_own_memory_allocated() << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -835,16 +858,16 @@ namespace chapchom
                   const CCVector<T> &vector_two,
                   CCVector<T> &solution_vector)
  {
-  // Check that the vectors have entries to operate with
-  if (vector_one.is_empty() || vector_two.is_empty())
+  // Check that the vectors have memory allocated
+  if (!vector_one.is_own_memory_allocated() || !vector_two.is_own_memory_allocated())
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "One of the vectors to operate with has no entries\n"
-                  << "vector_one.is_empty() = "
-                  << vector_one.is_empty() << "\n"
-                  << "vector_two.is_empty() = "
-                  << vector_two.is_empty() << std::endl;
+    error_message << "One of the vectors to operate with has no memory allocated\n"
+                  << "vector_one.is_own_memory_allocated() = "
+                  << vector_one.is_own_memory_allocated() << "\n"
+                  << "vector_two.is_own_memory_allocated() = "
+                  << vector_two.is_own_memory_allocated() << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -884,10 +907,10 @@ namespace chapchom
   
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
-  if (solution_vector.is_empty())
+  if (!solution_vector.is_own_memory_allocated())
    {
-    // Create a zero vector with the given size to allocate memory
-    solution_vector.create_zero_vector();
+    // Allocate memory for the vector
+    solution_vector.allocate_memory();
     // Get the new vector pointer
     solution_vector_pt = solution_vector.vector_pt();
    }
@@ -913,16 +936,16 @@ namespace chapchom
                         const CCVector<T> &vector_two,
                         CCVector<T> &solution_vector)
  {
-  // Check that the vectors have entries to operate with
-  if (vector_one.is_empty() || vector_two.is_empty())
+  // Check that the vectors have no memory allocated
+  if (!vector_one.is_own_memory_allocated() || !vector_two.is_own_memory_allocated())
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "One of the vectors to operate with has no entries\n"
-                  << "vector_one.is_empty() = "
-                  << vector_one.is_empty() << "\n"
-                  << "vector_two.is_empty() = "
-                  << vector_two.is_empty() << std::endl;
+    error_message << "One of the vectors to operate with has no memory allocated\n"
+                  << "vector_one.is_own_memory_allocated() = "
+                  << vector_one.is_own_memory_allocated() << "\n"
+                  << "vector_two.is_own_memory_allocated() = "
+                  << vector_two.is_own_memory_allocated() << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -962,10 +985,10 @@ namespace chapchom
   
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
-  if (solution_vector.is_empty())
+  if (!solution_vector.is_own_memory_allocated())
    {
-    // Create a zero vector with the given size to allocate memory
-    solution_vector.create_zero_vector();
+    // Allocate memory for the vector
+    solution_vector.allocate_memory();
     // Get the new vector pointer
     solution_vector_pt = solution_vector.vector_pt();
    }
@@ -991,16 +1014,16 @@ namespace chapchom
                                           const CCVector<T> &vector_two,
                                           CCVector<T> &solution_vector)
  {
-  // Check that the vectors have entries to operate with
-  if (vector_one.is_empty() || vector_two.is_empty())
+  // Check that the vectors have memory allocated
+  if (!vector_one.is_own_memory_allocated() || !vector_two.is_own_memory_allocated())
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "One of the vectors to operate with has no entries\n"
-                  << "vector_one.is_empty() = "
-                  << vector_one.is_empty() << "\n"
-                  << "vector_two.is_empty() = "
-                  << vector_two.is_empty() << std::endl;
+    error_message << "One of the vectors to operate with has no memory allocated\n"
+                  << "vector_one.is_own_memory_allocated() = "
+                  << vector_one.is_own_memory_allocated() << "\n"
+                  << "vector_two.is_own_memory_allocated() = "
+                  << vector_two.is_own_memory_allocated() << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -1040,10 +1063,10 @@ namespace chapchom
   
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
-  if (solution_vector.is_empty())
+  if (!solution_vector.is_own_memory_allocated())
    {
-    // Create a zero vector with the given size to allocate memory
-    solution_vector.create_zero_vector();
+    // Allocate memory for the vector
+    solution_vector.allocate_memory();
     // Get the new vector pointer
     solution_vector_pt = solution_vector.vector_pt();
    }

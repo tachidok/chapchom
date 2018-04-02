@@ -10,16 +10,16 @@ namespace chapchom
  // ===================================================================
  // Constructor
  // ===================================================================
- template<class T>
- ACLinearSolver<T>::ACLinearSolver() 
+ template<class MAT_TYPE, class VEC_TYPE>
+ ACLinearSolver<MAT_TYPE, VEC_TYPE>::ACLinearSolver() 
   : Matrix_A_has_been_set(false)
  { }
 
  // ===================================================================
  // Constructor where we specify the matrix A of size m X n
  // ===================================================================
- template<class T>
- ACLinearSolver<T>::ACLinearSolver(const CCMatrix<T> &matrix)
+ template<class MAT_TYPE, class VEC_TYPE>
+ ACLinearSolver<MAT_TYPE, VEC_TYPE>::ACLinearSolver(const MAT_TYPE &matrix)
  {
   // Set matrix A
   A = matrix;
@@ -31,8 +31,8 @@ namespace chapchom
  // ===================================================================
  // Empty destructor
  // ===================================================================
- template<class T>
- ACLinearSolver<T>::~ACLinearSolver()
+ template<class MAT_TYPE, class VEC_TYPE>
+ ACLinearSolver<MAT_TYPE, VEC_TYPE>::~ACLinearSolver()
  {
   // Deallocate memory
   clean_up();
@@ -41,8 +41,8 @@ namespace chapchom
  // ===================================================================
  // Set the matrix A
  // ===================================================================
- template<class T>
- void ACLinearSolver<T>::set_matrix_A(const CCMatrix<T> &matrix)
+ template<class MAT_TYPE, class VEC_TYPE>
+ void ACLinearSolver<MAT_TYPE, VEC_TYPE>::set_matrix_A(const MAT_TYPE &matrix)
  {
   // First clean any other previously stored matrix
   clean_up();
@@ -57,8 +57,8 @@ namespace chapchom
  // ===================================================================
  // Clean up for any dynamically stored data
  // ===================================================================
- template<class T>
- void ACLinearSolver<T>::clean_up()
+ template<class MAT_TYPE, class VEC_TYPE>
+ void ACLinearSolver<MAT_TYPE, VEC_TYPE>::clean_up()
  {
   // Check whether the matrix has been set
   if (Matrix_A_has_been_set)

@@ -22,16 +22,17 @@ clear all
 %Initial_index=35638;
 %Final_index=39284;
 % PERIFERICO_TO_11SUR
-Initial_index=40300;
-Final_index=46076;
+%Initial_index=40300;
+%Final_index=46076;
 % 11SUR_TO_TLAXCALANCINGO
-%Initial_index=48569;
-%Final_index=54575;
+Initial_index=48569;
+Final_index=54575;
 
 n_input_raw_data = Final_index-Initial_index+1;
 n_input_aligned_data = n_input_raw_data;
 %n_output_data=11030;
 n_output_data=n_input_aligned_data;
+n_output_data_hardware = 1187;
 
 linear_acceleration_from_table = importfile_TelitSL869DR_4columns('RESLT/linear_acceleration_from_table.dat', 1, n_input_raw_data);
 g_force_from_table = importfile_TelitSL869DR_2columns('RESLT/g_force_from_table.dat', 1, n_input_raw_data);
@@ -60,6 +61,8 @@ velocity = importfile_TelitSL869DR_4columns('RESLT/velocity.dat', 1, n_output_da
 velocity_north_east_down = importfile_TelitSL869DR_4columns('RESLT/velocity_north_east.dat', 1, n_output_data);
 
 navigation_data = importfile_GEOFOG3D_8columns('RESLT/navigation_data_for_evaluation.dat', 1, n_output_data);
+latitude_and_longitude = importfile_TelitSL869DR_3columns('RESLT/latitude_and_longitude.dat', 1, n_output_data);
+latitude_and_longitude_hardware = importfile_TelitSL869DR_3columns('RESLT/hw.dat', 1, n_output_data_hardware);
 
 initial_raw_time = raw_gyro(1,1);
 final_raw_time = raw_gyro(size(raw_gyro,1),1);
@@ -585,12 +588,22 @@ rumbo_inicial=0;  %Rumbo inicial(�) desde el cual comienza la nevegaci�n
 [new_lat,new_lon,Error]=calc_nav(lat,lon,distancia,rumbo_inicial,var_rumbo);
 
 figure
-plot(lon, lat, 'r', new_lon, new_lat, 'g','MarkerSize',5)
+plot(lon, lat, 'r', new_lon, new_lat, 'g')
 hold on
 title('Position')
 xlabel('Longitude')
 ylabel('Latitude')
 legend('Reference trajectory', 'Our algorithm trajectory', 'Location', 'NorthWest')
+plot_google_map2('Refresh','1','maptype','terrain','AutoAxis','1','FigureResizeUpdate','1')
+hold off
+
+figure
+plot(lon, lat, 'r', latitude_and_longitude(:,3), latitude_and_longitude(:,2), 'b', latitude_and_longitude_hardware(:,3), latitude_and_longitude_hardware(:,2), 'g')
+hold on
+title('Position')
+xlabel('Longitude')
+ylabel('Latitude')
+legend('Reference trajectory', 'offline algorithm', 'hardware algorithm', 'Location', 'NorthWest')
 plot_google_map2('Refresh','1','maptype','terrain','AutoAxis','1','FigureResizeUpdate','1')
 hold off
 
@@ -602,6 +615,39 @@ ylabel('Error (m)')
 grid on
 
 max(Error)
+
+%% Plots for report
+Error(1) = 0
+figure
+plot(lon, lat, 'r', latitude_and_longitude(:,3), latitude_and_longitude(:,2), 'b', 'LineWidth', 2)
+hold on
+title('Posición')
+xlabel('Longitud')
+ylabel('Latitud')
+legend('Trayectoria de referencia', 'Trayectoria obtenida', 'Location', 'NorthWest')
+plot_google_map2('Refresh','1','maptype','terrain','AutoAxis','1','FigureResizeUpdate','1')
+hold off
+
+figure
+plot(t,Error, 'LineWidth', 2)
+title('Error en posición')
+xlabel('Tiempo (s)')
+ylabel('Error (m)')
+grid on 
+
+max(Error)
+max(t)
+
+cumulative_error = cumsum(Error);
+
+figure
+plot(t,cumulative_error)
+title('Error acumulado en posición')
+xlabel('Tiempo (s)')
+ylabel('Error (m)')
+grid on
+
+max(cumulative_error)
 
 %% Plot lat-lon imported to show full trajectory
 figure

@@ -49,7 +49,8 @@ submitting your contributions ....
 ### Facts
 
 #### How many developers are currently working on the library
-At Monday, 07 August 2017 there is one and only one developer :no_mouth:
+
+At Thursdat, 09 November 2017 there is one and only one developer :no_mouth:
 
 :construction: :construction: :construction: :construction: :construction:
 

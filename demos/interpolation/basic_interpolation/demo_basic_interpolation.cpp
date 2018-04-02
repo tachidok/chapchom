@@ -23,6 +23,12 @@ int main(int argc, char *argv[])
  // Output for testing/validation
  std::ofstream output_test("output_test.dat", std::ios_base::out);
  
+ // Output for testing/validation
+ std::ofstream deb("deb.dat", std::ios_base::out);
+ 
+ // -------------------------------------------------------------------
+ // Original function
+ 
  // The vector with some values of the function
  const unsigned n_data = 10;
  std::vector<double> x(n_data);
@@ -32,16 +38,19 @@ int main(int argc, char *argv[])
  std::vector<double> fx(n_data);
  fx[0]=f(x[0]);
  const double step = 2.0*M_PI/(n_data-1);
- // Get the values of the unknown function at corresponding x-values
+ // Get the values of the "unknown function" at corresponding x-values
  for (unsigned i = 1; i < n_data; i++)
   {
    x[i]=x[i-1]+step;
    fx[i]=f(x[i]);
   }
-
+ 
+ // -------------------------------------------------------------------
+ // Interpolated values
+ 
  // The number of points at which we want to perform interpolation
- const unsigned factor = 2;
- const unsigned n_interpolated_data = n_data*factor;
+ // (double the number of original points)
+ const unsigned n_interpolated_data = n_data*2;
  const double interpolated_step = 2.0*M_PI/(n_interpolated_data-1);
  // The values at which we want to perform interpolation
  std::vector<double> x_to_interpolate(n_interpolated_data);
@@ -49,11 +58,12 @@ int main(int argc, char *argv[])
  // Fill the x-values at which perform interpolation
  for (unsigned i = 1; i < n_interpolated_data; i++)
   {
-   x_to_interpolate[i] = x_to_interpolate[i]+interpolated_step;
+   x_to_interpolate[i] = x_to_interpolate[i-1]+interpolated_step;
   }
  
  // The interpolator object
  CCNewtonInterpolator interpolator;
+ 
  double max_linear_error = 0.0;
  double max_quadratic_error = 0.0;
  double max_cubic_error = 0.0;
@@ -63,14 +73,18 @@ int main(int argc, char *argv[])
  {
   // Storage for interpolations
   std::vector<double> fx_linear(n_interpolated_data);
+  const unsigned interpolation_order = 1;
   // Do interpolation
-  interpolator.interpolate_1D(x, fx, x_to_interpolate, fx_linear, 1);
+  interpolator.interpolate_1D(x, fx, x_to_interpolate, fx_linear, interpolation_order);
+  
   // Get errors
   std::vector<double> error(n_interpolated_data);
+  std::cout << std::endl;
   std::cout << "Error linear interpolation: " << std::endl;
   output_test << "Error linear interpolation: " << std::endl;
   for (unsigned i = 0; i < n_interpolated_data; i++)
    {
+    DEB_TO_FILE3(deb, x_to_interpolate[i], fx_linear[i], f(x_to_interpolate[i]));
     error[i]=std::fabs(fx_linear[i]-f(x_to_interpolate[i]));
     if (error[i]>max_linear_error)
      {
@@ -86,14 +100,15 @@ int main(int argc, char *argv[])
  {
   // Storage for interpolations
   std::vector<double> fx_quadratic(n_interpolated_data);
-  interpolator.interpolate_1D(x, fx, x_to_interpolate, fx_quadratic, 2);
+  const unsigned interpolation_order = 2;
+  interpolator.interpolate_1D(x, fx, x_to_interpolate, fx_quadratic, interpolation_order);
   // Get errors
   std::vector<double> error(n_interpolated_data);
   std::cout << "Error quadratic interpolation: " << std::endl;
   output_test << "Error quadratic interpolation: " << std::endl;
   for (unsigned i = 0; i < n_interpolated_data; i++)
    {
-    error[i]=std::fabs(fx_quadratic[i]-f(x_to_interpolate[i]));
+    error[i]=std::fabs(fx_quadratic[i]-f(x_to_interpolate[i])); 
     if (error[i]>max_quadratic_error)
      {
       max_quadratic_error=error[i];
@@ -108,7 +123,8 @@ int main(int argc, char *argv[])
  {
   // Storage for interpolations
   std::vector<double> fx_cubic(n_interpolated_data);
-  interpolator.interpolate_1D(x, fx, x_to_interpolate, fx_cubic, 3);
+  const unsigned interpolation_order = 3;
+  interpolator.interpolate_1D(x, fx, x_to_interpolate, fx_cubic, interpolation_order);
   // Get errors
   std::vector<double> error(n_interpolated_data);
   std::cout << "Error cubic interpolation: " << std::endl;
@@ -128,9 +144,15 @@ int main(int argc, char *argv[])
  std::cout << "Max. linear interpolation error: " << max_linear_error << std::endl;
  std::cout << "Max. quadratic interpolation error: " << max_quadratic_error << std::endl;
  std::cout << "Max. cubic interpolation error: " << max_cubic_error << std::endl;
+
+ output_test << "Max. linear interpolation error: " << max_linear_error << std::endl;
+ output_test << "Max. quadratic interpolation error: " << max_quadratic_error << std::endl;
+ output_test << "Max. cubic interpolation error: " << max_cubic_error << std::endl;
  
  // Close the output for test
  output_test.close();
+ 
+ deb.close();
  
  // Finalise chapcom
  finalise_chapchom(); 

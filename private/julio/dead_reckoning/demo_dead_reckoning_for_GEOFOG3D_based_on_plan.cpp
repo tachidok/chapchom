@@ -43,7 +43,7 @@
 #define READ_AND_OUTPUT_PROCESSED_INFO_FROM_GEOFOG3D
 #define NAVIGATION_DATA_TO_EVALUATION
 //#define FORCE_USING_EULER_ANGLES_RATES_FROM_GEOFOG3D
-//#define FORCE_USING_EULER_ANGLES_FROM_GEOFOG3D
+#define FORCE_USING_EULER_ANGLES_FROM_GEOFOG3D
 //#define FORCE_USING_LINEAR_ACCELERATIONS_FROM_GEOFOG3D
 
 //#define APPLY_LINEAR_ACCELERATIONS_OFFSET
@@ -479,6 +479,32 @@ void transform_body_to_inertial(double *Euler_angles,
   
 }
 
+void compute_current_latitude_and_longitude(const double instantaneous_travelled_distance,
+                                            const double earth_referenced_course_in_radians,
+                                            double &current_latitude, double &current_longitude)
+{
+ // The radius of the earth
+ const double r = 6378137.0;
+ //const double r = 6371000.0; // Mean earth radius
+
+ // The angle to the north
+ const double alpha = earth_referenced_course_in_radians;
+
+ // The distance between the previous and the current (latitute, longitude) point
+ const double dA = instantaneous_travelled_distance;
+
+ const double new_latitude =
+  asin(sin(current_latitude) * cos(dA/r) + cos(current_latitude) * sin(dA/r) * cos(alpha));
+ 
+ const double new_longitude =
+  current_longitude + atan2(sin(alpha)*sin(dA/r) * cos(current_latitude), cos(dA/r)- sin(current_latitude) * sin(new_latitude));
+
+ // Return values
+ current_latitude = new_latitude;
+ current_longitude = new_longitude;
+ 
+}
+
 // ==================================================================
 // ==================================================================
 // ==================================================================
@@ -880,6 +906,22 @@ int main(int argc, char *argv[])
                           CHAPCHOM_CURRENT_FUNCTION,
                           CHAPCHOM_EXCEPTION_LOCATION);
   }
+ 
+ // Navigation data (latitude and longitude)
+ char file_latitude_and_longitude_name[100];
+ sprintf(file_latitude_and_longitude_name, "./RESLT/latitude_and_longitude.dat");
+ std::ofstream outfile_latitude_and_longitude;
+ outfile_latitude_and_longitude.open(file_latitude_and_longitude_name, std::ios::out);
+ if (outfile_latitude_and_longitude.fail())
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Could not create the file [" << file_latitude_and_longitude_name << "]"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
 #endif // #ifdef NAVIGATION_DATA_TO_EVALUATION
  
  // ----------------------------------------------------------------
@@ -891,15 +933,7 @@ int main(int argc, char *argv[])
  // -----------------------------------------------------------------
  // Odes from GEOFOG3D
  //CCODEsFromSensorsGEOFOG3D odes("./GEOFOG3D/GEOFOG3D_with_lat_lon.dat", 0, 11591);
- 
- //#define TONANTZINTLA_TO_CHOLULA
- //#define TLAXCALANCINGO_TO_ACATEPEC_ZERO_INITIAL_VELOCITY
- //#define TLAXCALANCINGO_TO_ACATEPEC
- //#define ACATEPEC_TO_TONANTZINTLA
- //#define UDLAP_PERIFERICO
- #define PERIFERICO_TO_11SUR
- //#define _11SUR_TO_TLAXCALANCINGO
-  
+   
 #ifdef TONANTZINTLA_TO_CHOLULA
  const unsigned Initial_index = 0;
  const unsigned Final_index = 11591;
@@ -998,78 +1032,20 @@ int main(int argc, char *argv[])
   {
    y[i].resize(n_history_values+1);
   }
- 
- // Set initial conditions
+
+ // Iniatilise
  y[0][0] = 0.0; // Initial x-position
- y[1][0] = 6.1;//0.0; // Initial x-velocity
+ y[1][0] = 0.0; // Initial x-velocity
  y[2][0] = 0.0; // Initial y-position
  y[3][0] = 0.0; // Initial y-velocity
  y[4][0] = 0.0; // Initial z-position
  y[5][0] = 0.0; // Initial z-velocity
-#ifdef TONANTZINTLA_TO_CHOLULA
- y[1][0] = 7.729281075; // Initial x-velocity
- //y[6][0] = 0.0; // Initial roll (radians)
- y[6][0] = 0.03174143; // Initial roll (radians)
- //y[7][0] = 0.0; // Initial pitch (radians)
- y[7][0] = 0.044491584; // Initial pitch (radians)
- y[8][0] = 0.646752591;//0.924043736;//0.646752591; // Initial yaw (radians)
- y[9][0] = 0.646752591;//0.0 // Initial yaw with threshold (radians)
- //y[8][0] = 0.0; // Initial yaw (radians)
- //y[9][0] = 0.0; // Initial yaw with threshold (radians)
-#endif // #ifdef TONANTZINTLA_TO_CHOLULA
+ y[6][0] = 0.0; // Initial roll
+ y[7][0] = 0.0; // Initial pitch
+ y[8][0] = 0.0; // Initial yaw
+ y[9][0] = 0.0; // Initial yaw-threshold
  
-#ifdef TLAXCALANCINGO_TO_ACATEPEC_ZERO_INITIAL_VELOCITY
- y[1][0] = 0.017278609; // Initial x-velocity
- y[6][0] = 0.018566813; // Initial roll (radians)
- y[7][0] = 0.079363612; // Initial pitch (radians)
- y[8][0] = -2.017426082; //4.404219685;//0.924043736;//0.646752591; // Initial yaw (radians)
- y[9][0] = -2.017426082; // Initial yaw with threshold (radians)
- // y[1][0] = 9.230875187; // Initial x-velocity
- //y[6][0] = 0.03864159; // Initial roll (radians)
- //y[7][0] = 0.056403805; // Initial pitch (radians)
- //y[8][0] = -1.878965622; //4.404219685;//0.924043736;//0.646752591; // Initial yaw (radians)
- //y[9][0] = -1.878965622; // Initial yaw with threshold (radians)
-#endif // #ifdef TLAXCALANCINGO_TO_ACATEPEC_ZERO_INITIAL_VELOCITY
- 
-#ifdef TLAXCALANCINGO_TO_ACATEPEC
- y[1][0] = 9.47332405; // Initial x-velocity
- y[6][0] = 0.063093652; // Initial roll (radians)
- y[7][0] = 0.048420669; // Initial pitch (radians)
- y[8][0] = -1.82427573; //4.404219685;//0.924043736;//0.646752591; // Initial yaw (radians)
- y[9][0] = -1.82427573; // Initial yaw with threshold (radians)
-#endif // #ifdef TLAXCALANCINGO_TO_ACATEPEC
- 
-#ifdef ACATEPEC_TO_TONANTZINTLA
- y[1][0] = 9.928759692; // Initial x-velocity
- y[6][0] = 0.020158553; // Initial roll (radians)
- y[7][0] = 0.016275195; // Initial pitch (radians)
- y[8][0] = -1.031505296; // Initial yaw (radians)
- y[9][0] = -1.031505296; // Initial yaw with threshold (radians)
-#endif // #ifdef ACATEPEC_TO_TONANTZINTLA
-
-#ifdef UDLAP_PERIFERICO
- y[1][0] = 11.422295071; // Initial x-velocity
- y[6][0] = 0.04549096; // Initial roll (radians)
- y[7][0] = 0.008888264; // Initial pitch (radians)
- y[8][0] = 2.923349999; // Initial yaw (radians)
- y[9][0] = 2.923349999; // Initial yaw with threshold (radians)
-#endif // #ifdef UDLAP_PERIFERICO
- 
-#ifdef PERIFERICO_TO_11SUR
- y[1][0] = 16.06923009; // Initial x-velocity
- y[6][0] = -0.050907938; // Initial roll (radians)
- y[7][0] = 0.062309127; // Initial pitch (radians)
- y[8][0] = 2.777109996; // Initial yaw (radians)
- y[9][0] = 2.777109996; // Initial yaw with threshold (radians)
-#endif// #ifdef PERIFERICO_TO_11SUR
- 
-#ifdef _11SUR_TO_TLAXCALANCINGO
- y[1][0] = 14.630887714; // Initial x-velocity
- y[6][0] = -0.033215536; // Initial roll (radians)
- y[7][0] = 0.026363547; // Initial pitch (radians)
- y[8][0] = -1.465565365; // Initial yaw (radians)
- y[9][0] = -1.465565365; // Initial yaw with threshold (radians)
-#endif// #ifdef _11SUR_TO_TLAXCALANCINGO
+ odes.set_initial_conditions(y);
  
  // Discretised time
  double current_time = 0;
@@ -1088,6 +1064,22 @@ int main(int argc, char *argv[])
  // ----------------------------------------------------------------
 
 #ifdef NAVIGATION_DATA_TO_EVALUATION
+ // ----------------------------------------------------------------
+ // Latitude and longitude initialisation [BEGIN]
+ // ----------------------------------------------------------------
+ bool initialised_navigation_reference_data = false;
+ double initial_latitude = 0.0;
+ double initial_longitude = 0.0;
+ double initial_course_in_radians = 0.0;
+ 
+ double current_latitude = 0.0;
+ double current_longitude = 0.0;
+ double instantaneous_travelled_distance = 0.0;
+ double current_local_course_in_radians = 0.0;
+ // ----------------------------------------------------------------
+ // Latitude and longitude initialisation [END]
+ // ----------------------------------------------------------------
+ 
  // Previous time
  double previous_time = 0.0;
  // Position x and y from GPS computed from radial position
@@ -1098,10 +1090,23 @@ int main(int argc, char *argv[])
  // Flag to indicate whether to continue processing
  bool LOOP = true;
  
+ // Reset initial conditions every n_seconds_to_reset_initial_conditions
+ const unsigned n_seconds_to_reset_initial_conditions = 100000;
+ // Count the number of seconds since last reset of initial conditions
+ unsigned n_seconds = 0;
+ 
  // Main LOOP (continue looping until all data in the input file is
  // processed)
  while(LOOP)
   {
+   // Check whether we should reset initial conditions
+   if (n_seconds >= n_seconds_to_reset_initial_conditions)
+    {
+     std::cout << "Reseting initial conditions for current time" << std::endl;
+     odes.reset_initial_conditions_at_current_time(y);
+     n_seconds = 0;
+    }
+   
    // Retrieve data from sensors
    LOOP = odes.get_sensors_lectures();
    // Check if there are data to process, otherwise end the LOOP
@@ -2035,6 +2040,12 @@ int main(int argc, char *argv[])
      //      (y_speed_in_m_per_sec*y_speed_in_m_per_sec);
      const double total_speed_in_m_per_sec = x_speed_in_m_per_sec+y_speed_in_m_per_sec;
      const double course_angle = y[8][0];
+     
+     // Set the current course_angle
+     current_local_course_in_radians = course_angle;
+     // Set the current travelled distance
+     instantaneous_travelled_distance = x_speed_in_m_per_sec * dt;
+     
      // Compute x and y position from angle and radial position
      X_POS+= x_speed_in_m_per_sec*dt*cos(course_angle);
      Y_POS+= y_speed_in_m_per_sec*dt*sin(course_angle);
@@ -2045,13 +2056,44 @@ int main(int argc, char *argv[])
                                             << X_POS << " " << Y_POS << " "
       //<< y[0][0] << " " << y[2][0] << " "
       //<< total_speed_in_m_per_sec * dt << " " // TODO
-                                            << x_speed_in_m_per_sec * dt << " "
-                                            << course_angle*TO_DEGREES << std::endl;
+                                            << instantaneous_travelled_distance << " "
+                                            << current_local_course_in_radians*TO_DEGREES << std::endl;
+     
+     // Set initial latitude and longitude
+     if (!initialised_navigation_reference_data)
+      {
+       initial_latitude = latitude_longitude_from_table[i][1];
+       initial_longitude = latitude_longitude_from_table[i][2];
+       initial_course_in_radians = 0.0;
+       
+       // Initialise current latitude and longitude data
+       current_latitude = initial_latitude * TO_RADIANS;
+       current_longitude = initial_longitude * TO_RADIANS;
+       
+       initialised_navigation_reference_data = true;
+      }
+     
+     // Compute the current earth referenced course
+     const double earth_referenced_course_in_radians =
+      initial_course_in_radians + current_local_course_in_radians;
+     
+     // Get the latitude and longitude
+     compute_current_latitude_and_longitude(instantaneous_travelled_distance,
+                                            earth_referenced_course_in_radians,
+                                            current_latitude, current_longitude);
+     
+     outfile_latitude_and_longitude << current_time << " "
+                                    << current_latitude * TO_DEGREES << " "
+                                    << current_longitude * TO_DEGREES << std::endl;
+     
      // Update previous time
      previous_time=current_time;
 #endif //  #ifdef NAVIGATION_DATA_TO_EVALUATION
      
     } // for (i < n_data-1)
+   
+   // Increase the number of seconds since last reset of initial conditions
+   n_seconds++; 
    
    std::cout.precision(8);
    std::cout << "t: " << current_time
@@ -2103,6 +2145,7 @@ int main(int argc, char *argv[])
  
 #ifdef NAVIGATION_DATA_TO_EVALUATION
  outfile_navigation_data_for_evaluation.close();
+ outfile_latitude_and_longitude.close();
 #endif // #ifdef NAVIGATION_DATA_TO_EVALUATION
  
  // Free memory

@@ -13,16 +13,16 @@ namespace chapchom
  // ===================================================================
  template<class T>
  CCLUSolverNumericalRecipes<T>::CCLUSolverNumericalRecipes()
-  : ACLinearSolver<T>(),
-    Resolve_enabled(false) { }
+  : ACLinearSolver<CCMatrix<T>, CCVector<T> >(),
+  Resolve_enabled(false) { }
 
  // ===================================================================
  // Constructor where we specify the matrix A of size m X n
  // ===================================================================
  template<class T>
  CCLUSolverNumericalRecipes<T>::CCLUSolverNumericalRecipes(const CCMatrix<T> &A)
-  : ACLinearSolver<T>(A),
-    Resolve_enabled(false) { }
+  : ACLinearSolver<CCMatrix<T>, CCVector<T> >(A),
+  Resolve_enabled(false) { }
 
  // ===================================================================
  // Empty destructor
@@ -109,7 +109,7 @@ namespace chapchom
                              CHAPCHOM_EXCEPTION_LOCATION);
      }
     // The case for the same number of columns on the rhs vector and
-    // the solution vector is tested in the back_substition() method
+    // the solution vector is tested in the back_substitution() method
     
     // Factorise
     factorise();
@@ -174,7 +174,7 @@ namespace chapchom
                              CHAPCHOM_EXCEPTION_LOCATION);
      }
     // The case for the same number of columns on the rhs vector and
-    // the solution vector is tested in the back_substition() method
+    // the solution vector is tested in the back_substitution() method
     
     // Factorise
     factorise();
@@ -364,10 +364,10 @@ namespace chapchom
   
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
-  if (X_output.is_empty())
+  if (!X_output.is_own_memory_allocated())
    {
-    // Create a zero matrix with the given size to allocate memory
-    X_output.create_zero_matrix();
+    // Allocate memory
+    X_output.allocate_memory();
    }
   
   // The solution vector size n x 1 (Numerical Recipes definition)
@@ -408,10 +408,10 @@ namespace chapchom
   
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
-  if (x_output.is_empty())
+  if (!x_output.is_own_memory_allocated())
    {
-    // Create a zero matrix with the given size to allocate memory
-    x_output.create_zero_vector();
+    // Allocate memory
+    x_output.allocate_memory();
    }
   
   // The solution vector size n x 1 (Numerical Recipes definition)
