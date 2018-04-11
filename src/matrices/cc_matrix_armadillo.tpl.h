@@ -136,7 +136,7 @@ namespace chapchom
    
   protected:
    
-   // The Armadillo's type matrix
+   // The Aramadillo's type matrix
    arma::Mat<T> *Arma_matrix_pt;
    
   };

@@ -208,8 +208,8 @@ namespace chapchom
  }
  
  // ===================================================================
- // Transforms the input vector to a matrix class type (virtual such
- // that each derived class has to implement it)
+ // Transforms the input vector to an armadillo matrix class type
+ // (virtual such that each derived class has to implement it)
  // ===================================================================
  template<class T>
  void CCMatrixArmadillo<T>::set_matrix(const T *matrix_pt,

@@ -31,7 +31,7 @@
 //#define IDA_60KMPH_2
 //#define REGRESO_60KMPH_1
 //#define REGRESO_60KMPH_2
-#define IDA_70KMPH_1
+//#define IDA_70KMPH_1
 //#define IDA_70KMPH_2
 //#define REGRESO_70KMPH_1
 //#define REGRESO_70KMPH_2
@@ -40,7 +40,7 @@
 //#define REGRESO_80KMPH_1
 //#define REGRESO_80KMPH_2
 //#define IDA_90KMPH_1
-//#define REGRESO_90KMPH_1
+#define REGRESO_90KMPH_1
 
 namespace chapchom
 {

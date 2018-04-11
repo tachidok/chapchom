@@ -37,9 +37,9 @@ clear all
 %Initial_index=0;
 %Final_index=10509;
 % IDA_70KMPH_1
-Initial_index=0;
-Final_index=7699;
-n_output_data_hardware = 120;
+%Initial_index=0;
+%Final_index=7699;
+%n_output_data_hardware = 120;
 % IDA_70KMPH_2
 %Initial_index=0;
 %Final_index=8769;
@@ -56,7 +56,7 @@ n_output_data_hardware = 120;
 %Initial_index=0;
 %Final_index=8639;
 % REGRESO_80KMPH_1
-%Initial_index=0;
+%Initial_index=0
 %Final_index=6649;
 % REGRESO_80KMPH_2
 %Initial_index=0;
@@ -65,8 +65,8 @@ n_output_data_hardware = 120;
 %Initial_index=0;
 %Final_index=11559;
 % REGRESO_90KMPH_1
-%Initial_index=0;
-%Final_index=15249;
+Initial_index=0;
+Final_index=15249;
 
 n_input_raw_data = Final_index-Initial_index+1;
 n_input_aligned_data = n_input_raw_data;
@@ -97,7 +97,7 @@ navigation_data = importfile_GEOFOG3D_8columns('RESLT/navigation_data_for_evalua
 latitude_and_longitude = importfile_TelitSL869DR_3columns('RESLT/latitude_and_longitude.dat', 1, n_output_data);
 
 
-latitude_and_longitude_hardware = importfile_TelitSL869DR_3columns('RESLT/40KMPH_IDA1_HW.dat', 1, n_output_data_hardware);
+%latitude_and_longitude_hardware = importfile_TelitSL869DR_3columns('RESLT/40KMPH_IDA1_HW.dat', 1, n_output_data_hardware);
 
 initial_raw_time = raw_gyro(1,1);
 final_raw_time = raw_gyro(size(raw_gyro,1),1);

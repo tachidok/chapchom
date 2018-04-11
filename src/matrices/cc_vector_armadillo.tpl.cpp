@@ -1,7 +1,8 @@
-// IN THIS FILE: Implementation of a concrete class to represent
-// vectors. This is the simplest implementation
+// IN THIS FILE: The implementation of a concrete class to store and
+// work with vector. This implementation makes use of Armadillo's
+// library, thus this is only a wrap for Armadillo's methods
 
-#include "cc_vector.tpl.h"
+#include "cc_vector_armadillo.tpl.h"
 
 namespace chapchom
 {
@@ -10,7 +11,7 @@ namespace chapchom
  // Empty constructor
  // ===================================================================
  template<class T>
- CCVector<T>::CCVector() 
+ CCVectorArmadillo<T>::CCVectorArmadillo() 
   : ACVector<T>()
  {
   // Delete any data in memory
@@ -23,18 +24,20 @@ namespace chapchom
  // pass "true" as the second parameter).
  // ===================================================================
  template<class T>
- CCVector<T>::CCVector(const unsigned long n, bool is_transposed)
+ CCVectorArmadillo<T>::CCVectorArmadillo(const unsigned long n, bool is_transposed)
   : ACVector<T>(n, is_transposed)
  {
   // Delete any data in memory
   clean_up();
+
+  Arma_vector_pt = new arma::Col<T>(n);
  }
  
  // ===================================================================
  // Constructor where we pass the data for the vector of size n
  // ===================================================================
  template<class T>
- CCVector<T>::CCVector(T *vector_pt, const unsigned long n,
+ CCVectorArmadillo<T>::CCVectorArmadillo(T *vector_pt, const unsigned long n,
                        bool is_transposed)
   : ACVector<T>(n, is_transposed)
  {
@@ -43,21 +46,39 @@ namespace chapchom
  }
  
  // ===================================================================
+ // Constructor that creates an Armadillo's vector from a CCVector
+ // ===================================================================
+ template<class T>
+ CCVectorArmadillo<T>::CCVectorArmadillo(CCVector<T> &vector)
+ {
+  // Get the pointer to the vector data
+  T *vector_pt = vector.vector_pt();
+  // Get the dimension of the new vector
+  unsigned long n = vector.nvalues();
+  
+  // Copy the data from the vector to the Matrix_pt vector
+  set_vector(vector_pt, n);
+ }
+ 
+ // ===================================================================
  // Copy constructor
  // ===================================================================
  template<class T>
- CCVector<T>::CCVector(const CCVector<T> &copy)
+ CCVectorArmadillo<T>::CCVectorArmadillo(const CCVectorArmadillo<T> &copy)
   : ACVector<T>(copy.nvalues(), copy.is_transposed())
  {
-  // Copy the data from the input vector to the Vector_pt vector
-  set_vector(copy.vector_pt(), this->NValues);
+  // Clean any possible previously allocated memory
+  clean_up();
+  
+  // Call the copy constructor of Armadillo
+  Arma_vector_pt = new arma::Col<T>(*(copy.arma_vector_pt())); 
  }
  
  // ===================================================================
  // Empty destructor
  // ===================================================================
  template<class T>
- CCVector<T>::~CCVector()
+ CCVectorArmadillo<T>::~CCVectorArmadillo()
  {
   // Deallocate memory
   clean_up();
@@ -67,7 +88,7 @@ namespace chapchom
  // Assignment operator
  // ===================================================================
  template<class T>
- CCVector<T>& CCVector<T>::operator=(const CCVector<T> &source_vector)
+ CCVectorArmadillo<T>& CCVectorArmadillo<T>::operator=(const CCVectorArmadillo<T> &source_vector)
  {
   // Clean-up and set values
   set_vector(source_vector.vector_pt(), source_vector.nvalues());
@@ -82,7 +103,7 @@ namespace chapchom
  // += operator
  // ===================================================================
  template<class T>
- CCVector<T>& CCVector<T>::operator+=(const CCVector<T> &vector)
+ CCVectorArmadillo<T>& CCVectorArmadillo<T>::operator+=(const CCVectorArmadillo<T> &vector)
  {  
   // Call the method to perform the addition
   add_vector(vector, *this);
@@ -94,7 +115,7 @@ namespace chapchom
  // -= operator
  // ===================================================================
  template<class T>
- CCVector<T>& CCVector<T>::operator-=(const CCVector<T> &vector)
+ CCVectorArmadillo<T>& CCVectorArmadillo<T>::operator-=(const CCVectorArmadillo<T> &vector)
  {
   // Call the method to perform the operation
   substract_vector(vector, *this);
@@ -106,10 +127,10 @@ namespace chapchom
  // Add operator
  // ===================================================================
  template<class T>
- CCVector<T> CCVector<T>::operator+(const CCVector<T> &vector)
+ CCVectorArmadillo<T> CCVectorArmadillo<T>::operator+(const CCVectorArmadillo<T> &vector)
  {
   // Create a zero vector where to store the result
-  CCVector<T> solution(this->NValues);
+  CCVectorArmadillo<T> solution(this->NValues);
   // Call the method to perform the addition
   add_vector(vector, solution);
   // Return the solution vector
@@ -120,10 +141,10 @@ namespace chapchom
  // Substraction operator
  // ===================================================================
  template<class T>
- CCVector<T> CCVector<T>::operator-(const CCVector<T> &vector)
+ CCVectorArmadillo<T> CCVectorArmadillo<T>::operator-(const CCVectorArmadillo<T> &vector)
  {
   // Create a zero vector where to store the result
-  CCVector<T> solution(this->NValues);
+  CCVectorArmadillo<T> solution(this->NValues);
   // Call the method to perform the operation
   substract_vector(vector, solution);
   return solution;
@@ -135,13 +156,13 @@ namespace chapchom
  // dot() method instead
  // ===================================================================
  template<class T>
- CCMatrix<T> CCVector<T>::operator*(const CCVector<T> &vector)
+ CCMatrix<T> CCVectorArmadillo<T>::operator*(const CCVectorArmadillo<T> &vector)
  {  
   // Create two matrices, one from each vector
   CCMatrix<T> left_matrix(*this);
   CCMatrix<T> right_matrix(vector);
   // Create a zero vector where to store the result
-  CCVector<T> solution(this->NValues);
+  CCVectorArmadillo<T> solution(this->NValues);
   // Perform the multiplication
   multiply_matrices(left_matrix,right_matrix, solution);
   // Return the solution vector
@@ -152,7 +173,7 @@ namespace chapchom
  // Performs dot product with the current vector
  // ===================================================================
  template<class T>
- T CCVector<T>::dot(const CCVector &right_vector)
+ T CCVectorArmadillo<T>::dot(const CCVectorArmadillo &right_vector)
  {
   // Check that THIS and the right vector have memory allocated
   if (!this->Is_own_memory_allocated || !right_vector.is_own_memory_allocated())
@@ -226,12 +247,12 @@ namespace chapchom
  }
  
  // ===================================================================
- // Transforms the input vector to a vector class type (virtual such
- // that each derived class has to implement it)
+ // Transforms the input vector to an armadillo vector class type
+ // (virtual such that each derived class has to implement it)
  // ===================================================================
  template<class T>
- void CCVector<T>::set_vector(const T *vector_pt,
-                              const unsigned long n)
+ void CCVectorArmadillo<T>::set_vector(const T *vector_pt,
+                                       const unsigned long n)
  {
   // Clean any possible previously allocated memory
   clean_up();
@@ -239,14 +260,66 @@ namespace chapchom
   // Set the number of values
   this->NValues = n;
   
-  // Allocate memory for the vector
-  Vector_pt = new T[n];
+  // Create an Armadillo's matrix (makes an own copy of the data,
+  // therefore 'matrix_pt' may be deleted safely)
+  Arma_vector_pt = new arma::Col<T>(vector_pt, n);
   
   // Mark the vector as allocated its own memory
   this->Is_own_memory_allocated = true;
   
-  // Copy the vector (an element by element copy, uff!!)
-  std::memcpy(Vector_pt, vector_pt, n*sizeof(T));
+ }
+ 
+ // ===================================================================
+ // Receives an armadillo type column vector
+ // ===================================================================
+ template<class T>
+ void CCMatrixArmadillo<T>::set_vector(arma::Col<T> *arma_vector_pt,
+                                       const unsigned long n)
+ {
+  // Clean any possible previously allocated memory
+  clean_up();
+  
+  // Set the number of values
+  this->NValues = n;
+  
+  // Call the copy constructor of Armadillo
+  Arma_vector_pt = new arma::Col<T>(*arma_vector_pt);
+  
+  // Mark the matrix as having its own memory
+  this->Is_own_memory_allocated = true;
+  
+ }
+ 
+ // ===================================================================
+ // Receives an armadillo type row vector
+ // ===================================================================
+ template<class T>
+ void CCMatrixArmadillo<T>::set_vector(arma::Row<T> *arma_vector_pt,
+                                       const unsigned long n)
+ {
+  // Clean any possible previously allocated memory
+  clean_up();
+  
+  // Set the number of values
+  this->NValues = n;
+  
+  // Call the copy constructor of Armadillo
+  Arma_vector_pt = new arma::Col<T>(*arma_vector_pt); // HERE HERE
+                                                      // HERE HERE
+                                                      // HERE Check
+                                                      // whether we
+                                                      // need to
+                                                      // change the
+                                                      // value of the
+                                                      // variable that
+                                                      // keeps track
+                                                      // of the
+                                                      // transposed
+                                                      // state of the
+                                                      // vector
+  
+  // Mark the matrix as having its own memory
+  this->Is_own_memory_allocated = true;
   
  }
  
@@ -254,7 +327,7 @@ namespace chapchom
  // Clean up for any dynamically stored data
  // ===================================================================
  template<class T>
- void CCVector<T>::clean_up()
+ void CCVectorArmadillo<T>::clean_up()
  {
   // Check whether the Vector allocated its own memory
   if (this->Is_own_memory_allocated)
@@ -267,7 +340,7 @@ namespace chapchom
   else // if empty
    {
     // Set the pointer of the vector to NULL
-    Vector_pt = 0;
+    Arma_vector_pt = 0;
    }
   
  }
@@ -276,15 +349,15 @@ namespace chapchom
  // Free allocated memory for vector
  // ===================================================================
  template<class T>
- void CCVector<T>::free_memory_for_vector()
+ void CCVectorArmadillo<T>::free_memory_for_vector()
  {
   // Is the vector allowed for deletion. If this method is called from
   // an external source we need to check whether the vector has been
   // marked for deletion
   if (this->Delete_vector)
    {
-    delete [] Vector_pt;
-    Vector_pt = 0; 
+    delete Arma_vector_pt;
+    Arma_vector_pt = 0; 
     
     // Mark the vector as not having memory allocated
     this->Is_own_memory_allocated=false;
@@ -307,8 +380,8 @@ namespace chapchom
  // Performs sum of vectors
  // ===================================================================
  template<class T>
- void CCVector<T>::add_vector(const CCVector<T> &vector,
-                              CCVector<T> &solution_vector)
+ void CCVectorArmadillo<T>::add_vector(const CCVectorArmadillo<T> &vector,
+                              CCVectorArmadillo<T> &solution_vector)
  {
   // Check that THIS and the other vector have memory allocated
   if (!this->Is_own_memory_allocated || !vector.is_own_memory_allocated())
@@ -381,8 +454,8 @@ namespace chapchom
  // Performs substraction of vectors
  // ===================================================================
  template<class T>
- void CCVector<T>::substract_vector(const CCVector<T> &vector,
-                                    CCVector<T> &solution_vector)
+ void CCVectorArmadillo<T>::substract_vector(const CCVectorArmadillo<T> &vector,
+                                    CCVectorArmadillo<T> &solution_vector)
  {
   // Check that THIS and the other vector have no memory allocated
   if (!this->Is_own_memory_allocated || !vector.is_own_memory_allocated())
@@ -455,9 +528,9 @@ namespace chapchom
  // Performs multiplication of vectors (element by element)
  // ===================================================================
  template<class T>
- void CCVector<T>::
- multiply_element_by_element_vector(const CCVector<T> &vector,
-                                    CCVector<T> &solution_vector)
+ void CCVectorArmadillo<T>::
+ multiply_element_by_element_vector(const CCVectorArmadillo<T> &vector,
+                                    CCVectorArmadillo<T> &solution_vector)
  {
   // Check that THIS and the other vector have memory allocated
   if (!this->Is_own_memory_allocated || !vector.is_own_memory_allocated())
@@ -530,7 +603,7 @@ namespace chapchom
  // Computes the transpose and store in the solution vector
  // ===================================================================
  template<class T>
- void CCVector<T>::transpose(CCVector<T> &transposed_vector)
+ void CCVectorArmadillo<T>::transpose(CCVectorArmadillo<T> &transposed_vector)
  {
   // Check that THIS vector has memory allocated
   if (!this->Is_own_memory_allocated)
@@ -556,7 +629,7 @@ namespace chapchom
  // Get the specified value from the vector (read-only)
  // ===================================================================
  template<class T>
- const T CCVector<T>::value(const unsigned long i) const
+ const T CCVectorArmadillo<T>::value(const unsigned long i) const
  {
   // TODO: Julio - Implement range check access
   // Return the value at position i
@@ -567,7 +640,7 @@ namespace chapchom
  // Set values in the vector (write version)
  // ===================================================================
  template<class T>
- T &CCVector<T>::value(const unsigned long i)
+ T &CCVectorArmadillo<T>::value(const unsigned long i)
  {
   // TODO: Julio - Implement range check access
   // Return the value at row i and column j
@@ -578,7 +651,7 @@ namespace chapchom
  // Output the vector
  // ===================================================================
  template<class T>
- void CCVector<T>::output(bool output_indexes) const
+ void CCVectorArmadillo<T>::output(bool output_indexes) const
  {
   if (!this->Is_own_memory_allocated)
    {
@@ -617,7 +690,7 @@ namespace chapchom
  // Output the vector
  // ===================================================================
  template<class T>
- void CCVector<T>::output(std::ofstream &outfile, bool output_indexes) const
+ void CCVectorArmadillo<T>::output(std::ofstream &outfile, bool output_indexes) const
  {
   if (!this->Is_own_memory_allocated)
    {
@@ -656,7 +729,7 @@ namespace chapchom
  // Computes the norm-1 of the vector
  // ===================================================================
  template<class T>
- const double CCVector<T>::norm_1()
+ const double CCVectorArmadillo<T>::norm_1()
  {
   // Sum
   double sum = 0.0;
@@ -689,7 +762,7 @@ namespace chapchom
  // Computes the norm-2 of the vector
  // ===================================================================
  template<class T>
- const double CCVector<T>::norm_2()
+ const double CCVectorArmadillo<T>::norm_2()
  {
   // Sum
   double sum = 0.0;
@@ -722,7 +795,7 @@ namespace chapchom
  // Allocates memory to store entries of the vector
  // ===================================================================
  template<class T>
- void CCVector<T>::allocate_memory()
+ void CCVectorArmadillo<T>::allocate_memory()
  {
   // Delete any data in memory
   clean_up();
@@ -738,7 +811,7 @@ namespace chapchom
  // Fills the vector with zeroes
  // ===================================================================
  template<class T>
- void CCVector<T>::fill_with_zeroes()
+ void CCVectorArmadillo<T>::fill_with_zeroes()
  {
   // Check that the vector has memory allocated
   if (this->Is_own_memory_allocated)
@@ -770,7 +843,7 @@ namespace chapchom
  // Dot product of vectors
  // ================================================================
  template<class T>
- T dot_vectors(const CCVector<T> &left_vector, const CCVector<T> &right_vector)
+ T dot_vectors(const CCVectorArmadillo<T> &left_vector, const CCVectorArmadillo<T> &right_vector)
  {
   // Check that the left and the right vectors have memory allocated
   if (!left_vector.is_own_memory_allocated() || !right_vector.is_own_memory_allocated())
@@ -849,9 +922,9 @@ namespace chapchom
  // Addition of vectors
  // ================================================================
  template<class T>
- void add_vectors(const CCVector<T> &vector_one,
-                  const CCVector<T> &vector_two,
-                  CCVector<T> &solution_vector)
+ void add_vectors(const CCVectorArmadillo<T> &vector_one,
+                  const CCVectorArmadillo<T> &vector_two,
+                  CCVectorArmadillo<T> &solution_vector)
  {
   // Check that the vectors have memory allocated
   if (!vector_one.is_own_memory_allocated() || !vector_two.is_own_memory_allocated())
@@ -927,9 +1000,9 @@ namespace chapchom
  // Substraction of vectors
  // ================================================================
  template<class T>
- void substract_vectors(const CCVector<T> &vector_one,
-                        const CCVector<T> &vector_two,
-                        CCVector<T> &solution_vector)
+ void substract_vectors(const CCVectorArmadillo<T> &vector_one,
+                        const CCVectorArmadillo<T> &vector_two,
+                        CCVectorArmadillo<T> &solution_vector)
  {
   // Check that the vectors have no memory allocated
   if (!vector_one.is_own_memory_allocated() || !vector_two.is_own_memory_allocated())
@@ -1005,9 +1078,9 @@ namespace chapchom
  // Performs multiplication of vectors (one by one entries)
  // ================================================================
  template<class T>
- void multiply_element_by_element_vectors(const CCVector<T> &vector_one,
-                                          const CCVector<T> &vector_two,
-                                          CCVector<T> &solution_vector)
+ void multiply_element_by_element_vectors(const CCVectorArmadillo<T> &vector_one,
+                                          const CCVectorArmadillo<T> &vector_two,
+                                          CCVectorArmadillo<T> &solution_vector)
  {
   // Check that the vectors have memory allocated
   if (!vector_one.is_own_memory_allocated() || !vector_two.is_own_memory_allocated())
