@@ -14,6 +14,10 @@
 #include "cc_vector.h"
 #include "cc_matrix.h"
 
+// We iclude the cc_vector_armadillo files to deal with
+// transformations from the CCVectorArmadillo to CCMatrixArmadillo
+#include "cc_vector_armadillo.h"
+
 // Add Armadillo's includes
 #include <armadillo>
 
@@ -44,6 +48,9 @@ namespace chapchom
    
    // Constructor that creates an Armadillo's matrix from a CCVector
    CCMatrixArmadillo(CCVector<T> &vector);
+   
+   // Constructor that creates an Armadillo's matrix from a CCVectorArmadillo
+   CCMatrixArmadillo(CCVectorArmadillo<T> &vector);
    
    // Copy constructor (we require to define this if we want to use
    // operators overloading as sum and assignment)

@@ -86,12 +86,12 @@ namespace chapchom
  
  // ===================================================================
  // Assignment operator
- // ===================================================================
+ // =================================================================== 
  template<class T>
  CCVectorArmadillo<T>& CCVectorArmadillo<T>::operator=(const CCVectorArmadillo<T> &source_vector)
  {
   // Clean-up and set values
-  set_vector(source_vector.vector_pt(), source_vector.nvalues());
+  set_vector(source_vector.arma_vector_pt(), source_vector.nvalues());
   // Set the transposed status
   this->set_transposed_status(source_vector.is_transposed());
   // Return this (de-referenced pointer)
@@ -149,18 +149,20 @@ namespace chapchom
   substract_vector(vector, solution);
   return solution;
  }
-  
+ 
+ // HERE HERE HERE Working on this
+ 
  // ===================================================================
  // Multiplication operator (it returns a matrix with the
  // corresponding size, if you require a dot product operation use the
  // dot() method instead
  // ===================================================================
  template<class T>
- CCMatrix<T> CCVectorArmadillo<T>::operator*(const CCVectorArmadillo<T> &vector)
+ CCMatrixArmadillo<T> CCVectorArmadillo<T>::operator*(const CCVectorArmadillo<T> &vector)
  {  
   // Create two matrices, one from each vector
-  CCMatrix<T> left_matrix(*this);
-  CCMatrix<T> right_matrix(vector);
+  CCMatrixArmadillo<T> left_matrix(*this);
+  CCMatrixArmadillo<T> right_matrix(vector);
   // Create a zero vector where to store the result
   CCVectorArmadillo<T> solution(this->NValues);
   // Perform the multiplication
@@ -302,6 +304,16 @@ namespace chapchom
   
   // Set the number of values
   this->NValues = n;
+  
+  // Error message
+  std::ostringstream error_message;
+  error_message << "This functions has not been tested, we need to check whether the"
+                << "variable that keeps track of the 'transposed' stated of the vector"
+                << "should be set as well when using Row<T> armadillos' vectos type"
+                << std::endl
+   throw ChapchomLibError(error_message.str(),
+                         CHAPCHOM_CURRENT_FUNCTION,
+                         CHAPCHOM_EXCEPTION_LOCATION);
   
   // Call the copy constructor of Armadillo
   Arma_vector_pt = new arma::Col<T>(*arma_vector_pt); // HERE HERE
