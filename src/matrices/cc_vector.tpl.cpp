@@ -20,11 +20,11 @@ namespace chapchom
  // ===================================================================
  // Constructor to create an n size zero vector (we assume vectors
  // are created as column vectors, if you need a row vector then
- // pass "true" as the second parameter).
+ // pass "false" as the second parameter)
  // ===================================================================
  template<class T>
- CCVector<T>::CCVector(const unsigned long n, bool is_transposed)
-  : ACVector<T>(n, is_transposed)
+ CCVector<T>::CCVector(const unsigned long n, bool is_column_vector)
+  : ACVector<T>(n, is_column_vector)
  {
   // Delete any data in memory
   clean_up();
@@ -35,8 +35,8 @@ namespace chapchom
  // ===================================================================
  template<class T>
  CCVector<T>::CCVector(T *vector_pt, const unsigned long n,
-                       bool is_transposed)
-  : ACVector<T>(n, is_transposed)
+                       bool is_column_vector)
+  : ACVector<T>(n, is_column_vector)
  {
   // Copy the data from the input vector to the Vector_pt vector
   set_vector(vector_pt, n);
@@ -47,7 +47,7 @@ namespace chapchom
  // ===================================================================
  template<class T>
  CCVector<T>::CCVector(const CCVector<T> &copy)
-  : ACVector<T>(copy.nvalues(), copy.is_transposed())
+  : ACVector<T>(copy.nvalues(), copy.is_column_vector())
  {
   // Copy the data from the input vector to the Vector_pt vector
   set_vector(copy.vector_pt(), this->NValues);
@@ -72,7 +72,7 @@ namespace chapchom
   // Clean-up and set values
   set_vector(source_vector.vector_pt(), source_vector.nvalues());
   // Set the transposed status
-  this->set_transposed_status(source_vector.is_transposed());
+  this->set_as_column_vector(source_vector.is_column_vector());
   // Return this (de-referenced pointer)
   return *this;
   
@@ -140,11 +140,27 @@ namespace chapchom
   // Create two matrices, one from each vector
   CCMatrix<T> left_matrix(*this);
   CCMatrix<T> right_matrix(vector);
-  // Create a zero vector where to store the result
-  CCVector<T> solution(this->NValues);
-  // Perform the multiplication
-  multiply_matrices(left_matrix,right_matrix, solution);
-  // Return the solution vector
+  // Store the size of both vectors to create a solution matrix with
+  // the corresponding sizes
+  // (First dimension for the left vector)
+  long unsigned n_values_left_vector = this->NValues;
+  if (!vector.is_column_vector())
+   {
+    n_values_left_vector = 1;
+   }
+  // (Second dimension for the right vector)
+  long unsigned n_values_right_vector = vector.nvalues();
+  if (vector.is_column_vector())
+   {
+    n_values_right_vector = 1;
+   }
+  // Create a zero matrix where to store the result
+  CCMatrix<T> solution(n_values_left_vector, n_values_right_vector);
+  // Perform the multiplication (this method is in charge of verifying
+  // whether the matrices fulfill the requirements for matrix
+  // multiplication)
+  multiply_matrices(left_matrix, right_matrix, solution);
+  // Return the solution matrix
   return solution;
  }
  
@@ -187,7 +203,7 @@ namespace chapchom
   
   // Check that THIS vector is a row vector and that the right vector
   // is a column vector
-  if (this->is_transposed())
+  if (this->is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
@@ -198,7 +214,7 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  if (!right_vector.is_transposed())
+  if (!right_vector.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
@@ -341,9 +357,9 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Check that both vectors have the same transposed status (both are
-  // columns vectors or both are row vectors)
-  if (this->is_transposed() != vector.is_transposed())
+  // Check that both vectors have the same column vector status (both
+  // are columns vectors or both are row vectors)
+  if (this->is_column_vector() != vector.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
@@ -417,7 +433,7 @@ namespace chapchom
   
   // Check that both vectors have the same transposed status (both are
   // columns vectors or both are row vectors)
-  if (this->is_transposed() != vector.is_transposed())
+  if (this->is_column_vector() != vector.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
@@ -492,7 +508,7 @@ namespace chapchom
   
   // Check that both vectors have the same transposed status (both are
   // columns vectors or both are row vectors)
-  if (this->is_transposed() != vector.is_transposed())
+  if (this->is_column_vector() != vector.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
@@ -527,7 +543,7 @@ namespace chapchom
  }
  
  // ===================================================================
- // Computes the transpose and store in the solution vector
+ // Computes the transpose and store in the transposed vector
  // ===================================================================
  template<class T>
  void CCVector<T>::transpose(CCVector<T> &transposed_vector)
@@ -547,9 +563,9 @@ namespace chapchom
   
   // Copy the vector into the tranposed vector
   transposed_vector = (*this);
-  // Get the current "transpose" status of the vector and set the
+  // Get the current "column vector" status of the vector and set the
   // transposed status of the new vector
-  transposed_vector.set_transposed_status(~(this->Is_transposed));
+  transposed_vector.set_as_column_vector(~(this->Is_column_vector));
  }
  
  // ===================================================================
@@ -663,7 +679,7 @@ namespace chapchom
   // Check whether the vector has memory allocated
   if (this->Is_own_memory_allocated)
    {
-    // Compute the dot product
+    // Compute the norm
     for (unsigned long i = 0; i < this->NValues; i++)
      {
       sum+= Vector_pt[i];
@@ -696,7 +712,7 @@ namespace chapchom
   // Check whether the vector has memory allocated
   if (this->Is_own_memory_allocated)
    {
-    // Compute the dot product
+    // Compute the norm 2
     for (unsigned long i = 0; i < this->NValues; i++)
      {
       sum+= (Vector_pt[i]*Vector_pt[i]);
@@ -805,7 +821,7 @@ namespace chapchom
   
   // Check that the left vector is a row vector and that the right
   // vector is a column vector
-  if (left_vector.transposed())
+  if (left_vector.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
@@ -816,7 +832,7 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  if (!right_vector.is_transposed())
+  if (!right_vector.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
@@ -884,9 +900,9 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Check that both vectors have the same transposed status (both are
-  // columns vectors or both are row vectors)
-  if (vector_one.is_transposed() != vector_two.is_transposed())
+  // Check that both vectors have the same column vector status (both
+  // are columns vectors or both are row vectors)
+  if (vector_one.is_column_vector() != vector_two.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
@@ -962,9 +978,9 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Check that both vectors have the same transposed status (both are
-  // columns vectors or both are row vectors)
-  if (vector_one.is_transposed() != vector_two.is_transposed())
+  // Check that both vectors have the same column vector status (both
+  // are columns vectors or both are row vectors)
+  if (vector_one.is_column_vector() != vector_two.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
@@ -1040,9 +1056,9 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Check that both vectors have the same transposed status (both are
-  // columns vectors or both are row vectors)
-  if (vector_one.is_transposed() != vector_two.is_transposed())
+  // Check that both vectors have the same column vector status (both
+  // are columns vectors or both are row vectors)
+  if (vector_one.is_column_vector() != vector_two.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;

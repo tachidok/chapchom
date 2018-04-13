@@ -159,14 +159,31 @@ namespace chapchom
  // ===================================================================
  template<class T>
  CCMatrixArmadillo<T> CCVectorArmadillo<T>::operator*(const CCVectorArmadillo<T> &vector)
- {  
+ {
   // Create two matrices, one from each vector
   CCMatrixArmadillo<T> left_matrix(*this);
   CCMatrixArmadillo<T> right_matrix(vector);
+  
+  // Store the size of both vectors to create a solution matrix with
+  // the corresponding sizes
+  // (First dimension for the left vector)
+  long unsigned n_values_left_vector = this->NValues;
+  if (!vector.is_column_vector())
+   {
+    n_values_left_vector = 1;
+   }
+  // (Second dimension for the right vector)
+  long unsigned n_values_right_vector = vector.nvalues();
+  if (vector.is_column_vector())
+   {
+    n_values_right_vector = 1;
+   }
   // Create a zero vector where to store the result
-  CCVectorArmadillo<T> solution(this->NValues);
-  // Perform the multiplication
-  multiply_matrices(left_matrix,right_matrix, solution);
+  CCMatrixArmadillo<T> solution(n_values_left_vector, n_values_right_vector);
+  // Perform the multiplication (this method is in charge of verifying
+  // whether the matrices fulfill the requirements for matrix
+  // multiplication)
+  multiply_matrices(left_matrix, right_matrix, solution);
   // Return the solution vector
   return solution;
  }
@@ -210,7 +227,7 @@ namespace chapchom
   
   // Check that THIS vector is a row vector and that the right vector
   // is a column vector
-  if (this->is_transposed())
+  if (this->is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
@@ -221,7 +238,7 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  if (!right_vector.is_transposed())
+  if (!right_vector.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
@@ -232,18 +249,9 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Get the vector pointer of the right vector
-  T *right_vector_pt = right_vector.vector_pt();
-  
   // Store the dot product of the vectors
-  T dot_product = 0.0;
-  
-  // Compute the dot product
-  for (unsigned long i = 0; i < n_values_this_vector; i++)
-   {
-    dot_product+= Vector_pt[i] * right_vector_pt[i];
-   }
-  
+  const T dot_product = arma::dot(*Arma_vector_pt, *(right_vector_pt->arma_vector_pt()));
+  // Return the dot product
   return dot_product;
   
  }
@@ -286,49 +294,6 @@ namespace chapchom
   
   // Call the copy constructor of Armadillo
   Arma_vector_pt = new arma::Col<T>(*arma_vector_pt);
-  
-  // Mark the matrix as having its own memory
-  this->Is_own_memory_allocated = true;
-  
- }
- 
- // ===================================================================
- // Receives an armadillo type row vector
- // ===================================================================
- template<class T>
- void CCMatrixArmadillo<T>::set_vector(arma::Row<T> *arma_vector_pt,
-                                       const unsigned long n)
- {
-  // Clean any possible previously allocated memory
-  clean_up();
-  
-  // Set the number of values
-  this->NValues = n;
-  
-  // Error message
-  std::ostringstream error_message;
-  error_message << "This functions has not been tested, we need to check whether the"
-                << "variable that keeps track of the 'transposed' stated of the vector"
-                << "should be set as well when using Row<T> armadillos' vectos type"
-                << std::endl
-   throw ChapchomLibError(error_message.str(),
-                         CHAPCHOM_CURRENT_FUNCTION,
-                         CHAPCHOM_EXCEPTION_LOCATION);
-  
-  // Call the copy constructor of Armadillo
-  Arma_vector_pt = new arma::Col<T>(*arma_vector_pt); // HERE HERE
-                                                      // HERE HERE
-                                                      // HERE Check
-                                                      // whether we
-                                                      // need to
-                                                      // change the
-                                                      // value of the
-                                                      // variable that
-                                                      // keeps track
-                                                      // of the
-                                                      // transposed
-                                                      // state of the
-                                                      // vector
   
   // Mark the matrix as having its own memory
   this->Is_own_memory_allocated = true;
@@ -393,7 +358,7 @@ namespace chapchom
  // ===================================================================
  template<class T>
  void CCVectorArmadillo<T>::add_vector(const CCVectorArmadillo<T> &vector,
-                              CCVectorArmadillo<T> &solution_vector)
+                                       CCVectorArmadillo<T> &solution_vector)
  {
   // Check that THIS and the other vector have memory allocated
   if (!this->Is_own_memory_allocated || !vector.is_own_memory_allocated())
@@ -426,9 +391,9 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Check that both vectors have the same transposed status (both are
-  // columns vectors or both are row vectors)
-  if (this->is_transposed() != vector.is_transposed())
+  // Check that both vectors have the same column vector status (both
+  // are columns vectors or both are row vectors)
+  if (this->is_column_vector() != vector.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
@@ -440,7 +405,7 @@ namespace chapchom
    }
   
   // Get the vector pointer of the solution vector
-  T *solution_vector_pt = solution_vector.vector_pt();
+  arma::Col<T> *arma_solution_vector_pt = solution_vector.arma_vector_pt();
   
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
@@ -449,16 +414,14 @@ namespace chapchom
     // Allocate memory for the vector
     solution_vector.allocate_memory();
     // Get the new vector pointer
-    solution_vector_pt = solution_vector.vector_pt();
+    arma_solution_vector_pt = solution_vector.arma_vector_pt();
    }
   
   // Get the vector pointer of the input vector
-  T *vector_pt = vector.vector_pt();
+  arma::Col<T> *arma_vector_pt = vector.arma_vector_pt();
+  
   // Perform the addition
-  for (unsigned long i = 0; i < n_values_this_vector; i++)
-   {
-    solution_vector_pt[i] = Vector_pt[i] + vector_pt[i];
-   }
+  (*arma_solution_vector_pt) = (*Arma_vector_pt) + (*arma_vector_pt);
   
  }
  
@@ -500,9 +463,9 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Check that both vectors have the same transposed status (both are
-  // columns vectors or both are row vectors)
-  if (this->is_transposed() != vector.is_transposed())
+  // Check that both vectors have the same column vector status (both
+  // are columns vectors or both are row vectors)
+  if (this->is_column_vector() != vector.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
@@ -512,9 +475,9 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
-  
+
   // Get the vector pointer of the solution vector
-  T *solution_vector_pt = solution_vector.vector_pt();
+  arma::Col<T> *arma_solution_vector_pt = solution_vector.arma_vector_pt();
   
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
@@ -523,17 +486,15 @@ namespace chapchom
     // Allocate memory for the vector
     solution_vector.allocate_memory();
     // Get the new vector pointer
-    solution_vector_pt = solution_vector.vector_pt();
+    arma_solution_vector_pt = solution_vector.arma_vector_pt();
    }
   
   // Get the vector pointer of the input vector
-  T *vector_pt = vector.vector_pt();
-  // Perform the addition
-  for (unsigned long i = 0; i < n_values_this_vector; i++)
-   {
-    solution_vector_pt[i] = Vector_pt[i] - vector_pt[i];
-   }
+  arma::Col<T> *arma_vector_pt = vector.arma_vector_pt();
   
+  // Perform the substraction
+  (*arma_solution_vector_pt) = (*Arma_vector_pt) - (*arma_vector_pt);
+    
  }
  
  // ===================================================================
@@ -575,9 +536,9 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Check that both vectors have the same transposed status (both are
-  // columns vectors or both are row vectors)
-  if (this->is_transposed() != vector.is_transposed())
+  // Check that both vectors have the same column vector status (both
+  // are columns vectors or both are row vectors)
+  if (this->is_column_vector() != vector.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
@@ -587,9 +548,9 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
-  
+
   // Get the vector pointer of the solution vector
-  T *solution_vector_pt = solution_vector.vector_pt();
+  arma::Col<T> *arma_solution_vector_pt = solution_vector.arma_vector_pt();
   
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
@@ -598,15 +559,16 @@ namespace chapchom
     // Allocate memory for the vector
     solution_vector.allocate_memory();
     // Get the new vector pointer
-    solution_vector_pt = solution_vector.vector_pt();
+    arma_solution_vector_pt = solution_vector.arma_vector_pt();
    }
   
   // Get the vector pointer of the input vector
-  T *vector_pt = vector.vector_pt();
-  // Perform the addition
-  for (unsigned long i = 0; i < n_values_this_vector; i++)
+  arma::Col<T> *arma_vector_pt = vector.arma_vector_pt();
+  
+  // Perform the operation
+  for (unsigned long i = 0; i < this->NValues; i++)
    {
-    solution_vector_pt[i] = Vector_pt[i] * vector_pt[i];
+    (*arma_solution_vector_pt)(i) = (*Arma_vector_pt)(i) * (*arma_vector_pt)(i);
    }
   
  }
@@ -631,10 +593,22 @@ namespace chapchom
    }
   
   // Copy the vector into the tranposed vector
-  transposed_vector = (*this);
+  transposed_vector.arma_vector_pt() = &(arma::trans(*(this->Arma_vector_pt)));
   // Get the current "transpose" status of the vector and set the
   // transposed status of the new vector
   transposed_vector.set_transposed_status(~(this->Is_transposed));
+ }
+ 
+ // ===================================================================
+ // Transpose the vector
+ // ===================================================================
+ template<class T>
+ void CCVectorArmadillo<T>::transpose()
+ {
+  // Change the status
+  this->Is_column_vector=!(this->Is_column_vector);
+  // Performs the operation
+  arma::inplace_trans(*Arma_matrix_pt);
  }
  
  // ===================================================================
@@ -643,9 +617,8 @@ namespace chapchom
  template<class T>
  const T CCVectorArmadillo<T>::value(const unsigned long i) const
  {
-  // TODO: Julio - Implement range check access
   // Return the value at position i
-  return Vector_pt[i];
+  return (*Arma_vector_pt)(i);
  }
  
  // ===================================================================
@@ -654,9 +627,8 @@ namespace chapchom
  template<class T>
  T &CCVectorArmadillo<T>::value(const unsigned long i)
  {
-  // TODO: Julio - Implement range check access
   // Return the value at row i and column j
-  return Vector_pt[i];
+  return (*Arma_vector_pt)(i);
  }
 
  // ===================================================================
@@ -681,17 +653,13 @@ namespace chapchom
      {
       for (unsigned long i = 0; i < this->NValues; i++)
        {
-        std::cout << "(" << i << "): " << Vector_pt[i]
+        std::cout << "(" << i << "): " << (*Arma_vector_pt)(i)
                   << std::endl; 
        } // for (i < this->NValues)
      } // if (output_indexes)
     else
      {
-      for (unsigned long i = 0; i < this->NValues; i++)
-       {
-        std::cout << Vector_pt[i] << " ";
-       } // for (i < this->NValues)
-      std::cout << std::endl;
+      Arma_vector_pt->print();
      } // else if (output_indexes)
     
    }
@@ -720,17 +688,13 @@ namespace chapchom
      {
       for (unsigned long i = 0; i < this->NValues; i++)
        {
-        outfile << "(" << i << "): " << Vector_pt[i]
+        outfile << "(" << i << "): " << (*Arma_vector_pt)(i)
                 << std::endl; 
        } // for (i < this->NValues)
      } // if (output_indexes)
     else
      {
-      for (unsigned long i = 0; i < this->NValues; i++)
-       {
-        outfile << Vector_pt[i] << " ";
-       } // for (i < this->NValues)
-      outfile << std::endl;
+      Arma_vector_pt->print(outfile);
      } // else if (output_indexes)
     
    }
@@ -748,11 +712,8 @@ namespace chapchom
   // Check whether the vector has memory allocated
   if (this->Is_own_memory_allocated)
    {
-    // Compute the dot product
-    for (unsigned long i = 0; i < this->NValues; i++)
-     {
-      sum+= Vector_pt[i];
-     }
+    // Compute the norm
+    sum = arma::norm((*Arma_vector_pt), 1);
    }
   else
    {
@@ -781,11 +742,8 @@ namespace chapchom
   // Check whether the vector has memory allocated
   if (this->Is_own_memory_allocated)
    {
-    // Compute the dot product
-    for (unsigned long i = 0; i < this->NValues; i++)
-     {
-      sum+= (Vector_pt[i]*Vector_pt[i]);
-     }
+    // Compute the norm
+    sum = arma::norm((*Arma_vector_pt), 2);
    }
   else
    {
@@ -799,7 +757,7 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  return sqrt(sum);
+  return sum;
   
  }
 
@@ -813,7 +771,7 @@ namespace chapchom
   clean_up();
   
   // Allocate memory for the vector
-  Vector_pt = new T[this->NValues];
+  Arma_vector_pt = new arma::Col<T>(this->NValues);
   
   // Mark the vector as allocated its own memory
   this->Is_own_memory_allocated=true;
@@ -829,7 +787,7 @@ namespace chapchom
   if (this->Is_own_memory_allocated)
    {
     // Fill the vector with zeroes
-    std::memset(Vector_pt, 0, this->NValues*sizeof(T));
+    Arma_vector_pt->zeros();
    }
   else
    {

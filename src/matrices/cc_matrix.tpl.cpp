@@ -65,7 +65,7 @@ namespace chapchom
   // vector is transposed or not
   unsigned long m = 0;
   unsigned long n = 0;
-  if (vector.is_transposed()) // a row vector
+  if (!vector.is_column_vector()) // a row vector
    {
     m = 1;
     n = vector.nvalues();
@@ -1234,7 +1234,7 @@ namespace chapchom
   // Check whether the dimensions of the vectors allow the operation
   unsigned n_rows_left_vector = 0;
   unsigned n_columns_left_vector = 0;
-  if (left_vector.is_transposed()) // a row vector
+  if (!left_vector.is_column_vector()) // a row vector
    {
     n_rows_left_vector = 1;
     n_columns_left_vector = left_vector.nvalues();
@@ -1247,7 +1247,7 @@ namespace chapchom
   
   unsigned n_rows_right_vector = 0;
   unsigned n_columns_right_vector = 0;
-  if (right_vector.is_transposed()) // a row vector
+  if (!right_vector.is_column_vector()) // a row vector
    {
     n_rows_right_vector = 1;
     n_columns_right_vector = right_vector.nvalues();
@@ -1358,7 +1358,7 @@ namespace chapchom
   // the operation
   unsigned n_rows_vector = 0;
   unsigned n_columns_vector = 0;
-  if (vector.is_transposed()) // a row vector
+  if (!vector.is_column_vector()) // a row vector
    {
     n_rows_vector = 1;
     n_columns_vector = vector.nvalues();
@@ -1476,7 +1476,7 @@ namespace chapchom
   
   unsigned n_rows_vector = 0;
   unsigned n_columns_vector = 0;
-  if (vector.is_transposed()) // a row vector
+  if (!vector.is_column_vector()) // a row vector
    {
     n_rows_vector = 1;
     n_columns_vector = vector.nvalues();
@@ -1507,7 +1507,7 @@ namespace chapchom
   // Check whether the dimension of the solution vector is correct
   unsigned n_rows_solution_vector = 0;
   unsigned n_columns_solution_vector = 0;
-  if (solution_vector.is_transposed()) // a row vector
+  if (!solution_vector.is_column_vector()) // a row vector
    {
     n_rows_solution_vector = 1;
     n_columns_solution_vector = solution_vector.nvalues();

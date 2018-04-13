@@ -43,11 +43,11 @@ namespace chapchom
    
    // Constructor to create an n size zero vector (we assume vectors
    // are created as column vectors, if you need a row vector then
-   // pass "true" as the second parameter).
-   CCVectorArmadillo(const unsigned long n, bool is_transposed = false);
+   // pass "false" as the second parameter)
+   CCVectorArmadillo(const unsigned long n, bool is_column_vector = true);
    
    // Constructor where we pass the data for the vector of size n.
-   CCVectorArmadillo(T *vector_pt, const unsigned long n, bool is_transposed = false);
+   CCVectorArmadillo(T *vector_pt, const unsigned long n, bool is_column_vector = true);
    
    // Constructor that creates an Armadillo's vector from a CCVector
    CCVectorArmadillo(CCVector<T> &vector);
@@ -97,10 +97,6 @@ namespace chapchom
    void set_vector(arma::Col<T> *arma_column_vector_pt,
                    const unsigned long n);
    
-   // Receives an armadillo type column vector
-   void set_vector(arma::Row<T> *arma_row_vector_pt,
-                   const unsigned long n);
-   
    // Clean up for any dynamically stored data
    void clean_up();
    
@@ -123,9 +119,6 @@ namespace chapchom
    
    // Transpose the vector
    void transpose();
-   //   {
-   //    this->Is_transposed=!(this->Is_transposed);
-   //  }
    
    // Get the specified value from the vector (read-only)
    const T value(const unsigned long i) const;
