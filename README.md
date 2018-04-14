@@ -46,7 +46,7 @@ Please check the documentation :construction: for anything you need to
 set-up your account, get a copy of the latest development and start
 submitting your contributions ....
 
-### Facts
+### Facts and curiosities
 
 #### How many developers are currently working on the library
 At Thursdat, 09 November 2017 there is one and only one developer :no_mouth:
@@ -57,4 +57,10 @@ At Thursdat, 09 November 2017 there is one and only one developer :no_mouth:
 This project was initially uploaded to GitHub on Friday, 11 March 2016
 :smile:
 
+#### Here is a list (in wikipedia) of other software packages that
+     implement the FEM
+
+https://en.wikipedia.org/wiki/List_of_finite_element_software_packages
+
 # Have fun and enjoy .... !!!
+

@@ -2,31 +2,71 @@
 clc
 clear all
 % IDA_40KMPH_1
+%Initial_index=0;
+%Final_index=13699;
+%n_output_data_hardware = 120;
 % IDA_40KMPH_2
+%Initial_index=0;
+%Final_index=16509;
 % REGRESO_40KMPH_1
+%Initial_index=0;
+%Final_index=14209;
 % REGRESO_40KMPH_2
+%Initial_index=0;
+%Final_index=14769;
 % IDA_50KMPH_1
+%Initial_index=0;
+%Final_index=15769;
 % IDA_50KMPH_2
+%Initial_index=0;
+%Final_index=11889;
 % REGRESO_50KMPH_1
 % REGRESO_50KMPH_2
+%Initial_index=0;
+%Final_index=13749;
 % IDA_60KMPH_1
+%Initial_index=0;
+%Final_index=9829;
 % IDA_60KMPH_2
+%Initial_index=0;
+%Final_index=12089;
 % REGRESO_60KMPH_1
+%Initial_index=0;
+%Final_index=11909;
 % REGRESO_60KMPH_2
+%Initial_index=0;
+%Final_index=10509;
 % IDA_70KMPH_1
 %Initial_index=0;
 %Final_index=7699;
+%n_output_data_hardware = 120;
 % IDA_70KMPH_2
-Initial_index=0;
-Final_index=8769;
+%Initial_index=0;
+%Final_index=8769;
 % REGRESO_70KMPH_1
+%Initial_index=0;
+%Final_index=8999;
 % REGRESO_70KMPH_2
+%Initial_index=0;
+%Final_index=9399;
 % IDA_80KMPH_1
+%Initial_index=0;
+%Final_index=6109;
 % IDA_80KMPH_2
+%Initial_index=0;
+%Final_index=8639;
 % REGRESO_80KMPH_1
+%Initial_index=0
+%Final_index=6649;
 % REGRESO_80KMPH_2
+%Initial_index=0;
+%Final_index=7839;
 % IDA_90KMPH_1
+%Initial_index=0;
+%Final_index=11559;
 % REGRESO_90KMPH_1
+Initial_index=0;
+Final_index=15249;
 
 n_input_raw_data = Final_index-Initial_index+1;
 n_input_aligned_data = n_input_raw_data;
@@ -55,6 +95,9 @@ velocity_north_east_down = importfile_TelitSL869DR_4columns('RESLT/velocity_nort
 
 navigation_data = importfile_GEOFOG3D_8columns('RESLT/navigation_data_for_evaluation.dat', 1, n_output_data);
 latitude_and_longitude = importfile_TelitSL869DR_3columns('RESLT/latitude_and_longitude.dat', 1, n_output_data);
+
+
+%latitude_and_longitude_hardware = importfile_TelitSL869DR_3columns('RESLT/40KMPH_IDA1_HW.dat', 1, n_output_data_hardware);
 
 initial_raw_time = raw_gyro(1,1);
 final_raw_time = raw_gyro(size(raw_gyro,1),1);
@@ -453,6 +496,16 @@ title('Position')
 xlabel('Longitude')
 ylabel('Latitude')
 legend('Reference trajectory', 'Our algorithm trajectory', 'Location', 'NorthWest')
+plot_google_map2('Refresh','1','maptype','terrain','AutoAxis','1','FigureResizeUpdate','1')
+hold off
+
+figure
+plot(lon, lat, 'r', new_lon, new_lat, 'g', latitude_and_longitude_hardware(:,3), latitude_and_longitude_hardware(:,2), 'b', 'LineWidth', 3)
+hold on
+title('Position')
+xlabel('Longitude')
+ylabel('Latitude')
+legend('Reference trajectory', 'Offline algorithm', 'Hardware algorithm', 'Location', 'NorthWest')
 plot_google_map2('Refresh','1','maptype','terrain','AutoAxis','1','FigureResizeUpdate','1')
 hold off
 

@@ -48,7 +48,12 @@
 //#define APPLY_LINEAR_ACCELERATIONS_OFFSET
 //#define APPLY_EULER_ANGLES_OFFSET
 
-#define USE_COURSE_FROM_GPS
+//#define USE_COURSE_FROM_GPS
+
+//#define TRUNCATED_VALUES
+#ifdef TRUNCATED_VALUES
+#define FIXED_STEP_SIZE_TRUNCATED 1.0/14.0
+#endif // #ifdef TRUNCATED_VALUES
 
 // -------------------------------------------------
 // Constants
@@ -1141,7 +1146,7 @@ int main(int argc, char *argv[])
    {
     // --------------------------------------------------
     // Output the raw and rotated data for gyro
-    for (unsigned i = 0; i < n_gyro_data; i++)
+    for (unsigned i = 0; i < n_gyro_data; i+=10) 
      {
       // Raw gyro
       outfile_raw_gyro << raw_gyro_t[i][0]
@@ -1158,7 +1163,7 @@ int main(int argc, char *argv[])
     
     // --------------------------------------------------
     // Output the raw and rotated data for accelerometers
-    for (unsigned i = 0; i < n_acc_data; i++)
+    for (unsigned i = 0; i < n_acc_data; i+=10)
      {
       // Raw accelerometers
       outfile_raw_acc << raw_acc_t[i][0]
@@ -1532,315 +1537,330 @@ int main(int argc, char *argv[])
    
    // Loop over the data and process each pair of gyro-accelerometers
    // data (main processing)
+#ifndef TRUNCATED_VALUES
    for (unsigned i = 0; i < n_data; i++)
-    {
-     // Get the discretised time for this set of data
-     current_time = aligned_time[i];
+#else
+    for (unsigned i = 0; i < n_data; i+=7)
+#endif // #ifndef TRUNCATED_VALUES 
+     {
+      // Get the discretised time for this set of data
+      current_time = aligned_time[i];
      
-     // Get Euler angles at current time
-     double Euler_angles[DIM];
-     Euler_angles[0] = y[6][0];
-     Euler_angles[1] = y[7][0];
-     Euler_angles[2] = y[8][0];
+      // Get Euler angles at current time
+      double Euler_angles[DIM];
+      Euler_angles[0] = y[6][0];
+      Euler_angles[1] = y[7][0];
+      Euler_angles[2] = y[8][0];
      
 #ifdef OUTPUT_EULER_ANGLES
-     // --------------------------------------------------------------------------
-     // OUTPUT DATA BLOCK [BEGIN]
-     // --------------------------------------------------------------------------
-     {
-      // Euler angles
-      outfile_roll_pitch_yaw << current_time
-                             << " " << Euler_angles[0]
-                             << " " << Euler_angles[1]
-                             << " " << Euler_angles[2] << std::endl;
-     }
-     // --------------------------------------------------------------------------
-     // OUTPUT DATA BLOCK [END]
-     // --------------------------------------------------------------------------
+      // --------------------------------------------------------------------------
+      // OUTPUT DATA BLOCK [BEGIN]
+      // --------------------------------------------------------------------------
+      {
+       // Euler angles
+       outfile_roll_pitch_yaw << current_time
+                              << " " << Euler_angles[0]
+                              << " " << Euler_angles[1]
+                              << " " << Euler_angles[2] << std::endl;
+      }
+      // --------------------------------------------------------------------------
+      // OUTPUT DATA BLOCK [END]
+      // --------------------------------------------------------------------------
 #endif //#ifdef OUTPUT_EULER_ANGLES
      
-     // ==========================================================================
-     // Process gyro's data [BEGIN]
-     // ==========================================================================
+      // ==========================================================================
+      // Process gyro's data [BEGIN]
+      // ==========================================================================
      
 #ifdef AZGADS_CONSTANT
-     aligned_gyro_signal_x[i]*= AZGADS_CONSTANT;
-     aligned_gyro_signal_y[i]*= AZGADS_CONSTANT;
-     aligned_gyro_signal_z[i]*= AZGADS_CONSTANT;
+      aligned_gyro_signal_x[i]*= AZGADS_CONSTANT;
+      aligned_gyro_signal_y[i]*= AZGADS_CONSTANT;
+      aligned_gyro_signal_z[i]*= AZGADS_CONSTANT;
 #endif
      
-     // ----------------------------------------------------------
-     // Transform from angular velocities to Euler angles rates
-     // ----------------------------------------------------------
+      // ----------------------------------------------------------
+      // Transform from angular velocities to Euler angles rates
+      // ----------------------------------------------------------
      
-     // Current time angular velocities
-     double angular_velocities[DIM];
-     angular_velocities[0] = aligned_gyro_signal_x[i];
-     angular_velocities[1] = aligned_gyro_signal_y[i];
-     angular_velocities[2] = aligned_gyro_signal_z[i];
+      // Current time angular velocities
+      double angular_velocities[DIM];
+      angular_velocities[0] = aligned_gyro_signal_x[i];
+      angular_velocities[1] = aligned_gyro_signal_y[i];
+      angular_velocities[2] = aligned_gyro_signal_z[i];
      
-     // The resulting Euler angles rates
-     double Euler_angles_rates[DIM];
-     // The thresholded Euler angles rates
-     double Euler_angles_rates_thresholded[DIM];
+      // The resulting Euler angles rates
+      double Euler_angles_rates[DIM];
+      // The thresholded Euler angles rates
+      double Euler_angles_rates_thresholded[DIM];
      
-     transform_angular_velocities_into_euler_angles_rates(angular_velocities,
-                                                          Euler_angles,
-                                                          Euler_angles_rates,
-                                                          Euler_angles_rates_thresholded);
+      transform_angular_velocities_into_euler_angles_rates(angular_velocities,
+                                                           Euler_angles,
+                                                           Euler_angles_rates,
+                                                           Euler_angles_rates_thresholded);
      
 #ifdef FORCE_USING_EULER_ANGLES_RATES_FROM_GEOFOG3D
-     Euler_angles_rates[0]=second_gyro_from_table[i][1];
-     Euler_angles_rates[1]=second_gyro_from_table[i][2];
-     Euler_angles_rates[2]=second_gyro_from_table[i][3];
+      Euler_angles_rates[0]=second_gyro_from_table[i][1];
+      Euler_angles_rates[1]=second_gyro_from_table[i][2];
+      Euler_angles_rates[2]=second_gyro_from_table[i][3];
 #endif // #ifdef FORCE_USING_EULER_ANGLES_RATES_FROM_GEOFOG3D
      
-     // Set Euler into the odes such that they are integrated later
-     odes.euler_angles_rates() = Euler_angles_rates;
+      // Set Euler into the odes such that they are integrated later
+      odes.euler_angles_rates() = Euler_angles_rates;
      
 #ifdef OUTPUT_EULER_ANGLES_RATES
-     // --------------------------------------------------------------------------
-     // OUTPUT DATA BLOCK [BEGIN]
-     // --------------------------------------------------------------------------
-     {
-      // Euler angles rates
-      outfile_euler_angles_rates << current_time
-                                 << " " << Euler_angles_rates[0]
-                                 << " " << Euler_angles_rates[1]
-                                 << " " << Euler_angles_rates[2] << std::endl;
-     }
-     // --------------------------------------------------------------------------
-     // OUTPUT DATA BLOCK [END]
-     // --------------------------------------------------------------------------
+      // --------------------------------------------------------------------------
+      // OUTPUT DATA BLOCK [BEGIN]
+      // --------------------------------------------------------------------------
+      {
+       // Euler angles rates
+       outfile_euler_angles_rates << current_time
+                                  << " " << Euler_angles_rates[0]
+                                  << " " << Euler_angles_rates[1]
+                                  << " " << Euler_angles_rates[2] << std::endl;
+      }
+      // --------------------------------------------------------------------------
+      // OUTPUT DATA BLOCK [END]
+      // --------------------------------------------------------------------------
 #endif //#ifdef OUTPUT_EULER_ANGLES_RATES
      
 #ifdef GYRO_THRESHOLD_Z
-     // Set Yaw obtained from thresholded gyro angular rates (this
-     // sets the value dy[9] to later compute y[0][9])
-     odes.yaw_change_rate_with_threshold() = Euler_angles_rates_thresholded[2];
+      // Set Yaw obtained from thresholded gyro angular rates (this
+      // sets the value dy[9] to later compute y[0][9])
+      odes.yaw_change_rate_with_threshold() = Euler_angles_rates_thresholded[2];
 #endif // #ifdef GYRO_THRESHOLD_Z
-     // ==========================================================================
-     // Process gyro's data [END]
-     // ==========================================================================
-     
-     
-     // ==========================================================================
-     // Process acceleration data [BEGIN]
-     // ==========================================================================
-     
-     // Pre-process aligned acceleration data
-     //aligned_acc_signal_x[i]-=0.26;
-     //aligned_acc_signal_y[i]-=0.01;
-     //aligned_acc_signal_z[i]+=0.16;
-     
-     // Get Euler angles approximation from accelerations (we will use
-     // this data after integration when applying a complementary
-     // filter)
-     double Euler_angles_from_acc[DIM];
-     //Euler_angles_from_acc[0]=atan2(aligned_acc_signal_y[i], -aligned_acc_signal_z[i]);
-     Euler_angles_from_acc[0]=atan2(-aligned_acc_signal_y[i], -aligned_acc_signal_z[i]);
-     //Euler_angles_from_acc[1]=atan2(-aligned_acc_signal_x[i],
-     //                               sqrt(aligned_acc_signal_y[i]*aligned_acc_signal_y[i]+
-     //                                    aligned_acc_signal_z[i]*aligned_acc_signal_z[i]));
-     Euler_angles_from_acc[1]=atan2(aligned_acc_signal_x[i],
-                                    sqrt(aligned_acc_signal_y[i]*aligned_acc_signal_y[i]+
-                                         aligned_acc_signal_z[i]*aligned_acc_signal_z[i]));
-     Euler_angles_from_acc[2]=atan2(sqrt(aligned_acc_signal_x[i]*aligned_acc_signal_x[i]+
-                                         aligned_acc_signal_y[i]*aligned_acc_signal_y[i]),
-                                    aligned_acc_signal_x[i]);
-     
-     // ==========================================================================
-     // Process acceleration data [END]
-     // ==========================================================================
-     
+      // ==========================================================================
+      // Process gyro's data [END]
+      // ==========================================================================
+      
+      // ==========================================================================
+      // Process acceleration data [BEGIN]
+      // ==========================================================================
+      
+      // Pre-process aligned acceleration data
+      //aligned_acc_signal_x[i]-=0.26;
+      //aligned_acc_signal_y[i]-=0.01;
+      //aligned_acc_signal_z[i]+=0.16;
+      
+#ifdef TRUNCATED_VALUES
+      aligned_acc_signal_x[i] = trunc(aligned_acc_signal_x[i] * 100.0) / 100.0;
+      aligned_acc_signal_y[i] = trunc(aligned_acc_signal_x[i] * 100.0) / 100.0;
+      aligned_acc_signal_z[i] = trunc(aligned_acc_signal_x[i] * 100.0) / 100.0;
+#endif // #ifdef TRUNCATED_VALUES
+      
+      // Get Euler angles approximation from accelerations (we will use
+      // this data after integration when applying a complementary
+      // filter)
+      double Euler_angles_from_acc[DIM];
+      //Euler_angles_from_acc[0]=atan2(aligned_acc_signal_y[i], -aligned_acc_signal_z[i]);
+      Euler_angles_from_acc[0]=atan2(-aligned_acc_signal_y[i], -aligned_acc_signal_z[i]);
+      //Euler_angles_from_acc[1]=atan2(-aligned_acc_signal_x[i],
+      //                               sqrt(aligned_acc_signal_y[i]*aligned_acc_signal_y[i]+
+      //                                    aligned_acc_signal_z[i]*aligned_acc_signal_z[i]));
+      Euler_angles_from_acc[1]=atan2(aligned_acc_signal_x[i],
+                                     sqrt(aligned_acc_signal_y[i]*aligned_acc_signal_y[i]+
+                                          aligned_acc_signal_z[i]*aligned_acc_signal_z[i]));
+      Euler_angles_from_acc[2]=atan2(sqrt(aligned_acc_signal_x[i]*aligned_acc_signal_x[i]+
+                                          aligned_acc_signal_y[i]*aligned_acc_signal_y[i]),
+                                     aligned_acc_signal_x[i]);
+      
+#ifdef TRUNCATED_VALUES
+      Euler_angles_from_acc[0] = trunc(Euler_angles_from_acc[0] * 100.0) / 100.0;
+      Euler_angles_from_acc[1] = trunc(Euler_angles_from_acc[1] * 100.0) / 100.0;
+      Euler_angles_from_acc[2] = trunc(Euler_angles_from_acc[2] * 100.0) / 100.0; 
+#endif // #ifdef TRUNCATED_VALUES
+      
+       // ==========================================================================
+       // Process acceleration data [END]
+       // ==========================================================================
+      
 #ifdef OUTPUT_EULER_ANGLES_FROM_GYRO_AND_ACCELEROMETER
-     outfile_euler_angles_from_gyro << current_time
-                                    << " " << Euler_angles[0]
-                                    << " " << Euler_angles[1]
-                                    << " " << Euler_angles[2] << std::endl;
+      outfile_euler_angles_from_gyro << current_time
+                                     << " " << Euler_angles[0]
+                                     << " " << Euler_angles[1]
+                                     << " " << Euler_angles[2] << std::endl;
      
-     outfile_euler_angles_from_accelerometer << current_time
-                                             << " " << Euler_angles_from_acc[0]
-                                             << " " << Euler_angles_from_acc[1]
-                                             << " " << Euler_angles_from_acc[2] << std::endl;
+      outfile_euler_angles_from_accelerometer << current_time
+                                              << " " << Euler_angles_from_acc[0]
+                                              << " " << Euler_angles_from_acc[1]
+                                              << " " << Euler_angles_from_acc[2] << std::endl;
 #endif // #ifdef OUTPUT_EULER_ANGLES_FROM_GYRO_AND_ACCELEROMETER
      
-     // ==========================================================================
-     // Gravity compensation [BEGIN]
-     // ==========================================================================
+      // ==========================================================================
+      // Gravity compensation [BEGIN]
+      // ==========================================================================
      
-     // Store body frame accelerations
-     double body_accelerations[DIM];
-     body_accelerations[0]=aligned_acc_signal_x[i];
-     body_accelerations[1]=aligned_acc_signal_y[i];
-     body_accelerations[2]=aligned_acc_signal_z[i];
+      // Store body frame accelerations
+      double body_accelerations[DIM];
+      body_accelerations[0]=aligned_acc_signal_x[i];
+      body_accelerations[1]=aligned_acc_signal_y[i];
+      body_accelerations[2]=aligned_acc_signal_z[i];
           
-     // -------------------------------------------
-     // Gravity compensation
-     // -------------------------------------------
+      // -------------------------------------------
+      // Gravity compensation
+      // -------------------------------------------
      
-     // Store the gravity in the inertial frame (negative because we
-     // want to subtract it later)
-     double gravity_in_inertial_frame[DIM];
-     gravity_in_inertial_frame[0]=0.0;
-     gravity_in_inertial_frame[1]=0.0;
-     gravity_in_inertial_frame[2]=-GRAVITY;
-     //gravity_in_inertial_frame[2]=1.0; // TODO
-     // Store the gravity in the body frame
-     double gravity_in_body_frame[DIM];
+      // Store the gravity in the inertial frame (negative because we
+      // want to subtract it later)
+      double gravity_in_inertial_frame[DIM];
+      gravity_in_inertial_frame[0]=0.0;
+      gravity_in_inertial_frame[1]=0.0;
+      gravity_in_inertial_frame[2]=-GRAVITY;
+      //gravity_in_inertial_frame[2]=1.0; // TODO
+      // Store the gravity in the body frame
+      double gravity_in_body_frame[DIM];
      
-     // Transform gravity into body frame
-     transform_inertial_to_body(Euler_angles, gravity_in_inertial_frame, gravity_in_body_frame);
+      // Transform gravity into body frame
+      transform_inertial_to_body(Euler_angles, gravity_in_inertial_frame, gravity_in_body_frame);
      
 #ifdef OUTPUT_GRAVITY_IN_BODY_FRAME
-     // --------------------------------------------------------------------------
-     // OUTPUT DATA BLOCK [BEGIN]
-     // --------------------------------------------------------------------------
-     {
-      // Gravity in body frame
-      outfile_gravity_in_body_frame << current_time
-                                    << " " << gravity_in_body_frame[0]
-                                    << " " << gravity_in_body_frame[1]
-                                    << " " << gravity_in_body_frame[2] << std::endl;
-     }
-     // --------------------------------------------------------------------------
-     // OUTPUT DATA BLOCK [END]
-     // --------------------------------------------------------------------------
+      // --------------------------------------------------------------------------
+      // OUTPUT DATA BLOCK [BEGIN]
+      // --------------------------------------------------------------------------
+      {
+       // Gravity in body frame
+       outfile_gravity_in_body_frame << current_time
+                                     << " " << gravity_in_body_frame[0]
+                                     << " " << gravity_in_body_frame[1]
+                                     << " " << gravity_in_body_frame[2] << std::endl;
+      }
+      // --------------------------------------------------------------------------
+      // OUTPUT DATA BLOCK [END]
+      // --------------------------------------------------------------------------
 #endif //#ifdef OUTPUT_GRAVITY_IN_BODY_FRAME
      
-     // -------------------------------------------------------
-     // Subtract gravity (in body frame) to generate linear
-     // acceleration (in body frame)
-     // -------------------------------------------------------
+      // -------------------------------------------------------
+      // Subtract gravity (in body frame) to generate linear
+      // acceleration (in body frame)
+      // -------------------------------------------------------
       
-     // Linear acceleration storage
-     double linear_accelerations[DIM];
-     // Subtract gravity (gravity compensation)
-     //linear_accelerations[0]=body_accelerations[0] - 0.4942;
-     //linear_accelerations[0]=body_accelerations[0] * 1.3298;
-     //linear_accelerations[0]=body_accelerations[0]-gravity_in_body_frame[0] + 0.06;
-     //     linear_accelerations[0]=body_accelerations[0]-gravity_in_body_frame[0]+0.1589;
-     //     linear_accelerations[1]=body_accelerations[1]-gravity_in_body_frame[1]-0.0816;
-     //     linear_accelerations[2]=body_accelerations[2]-gravity_in_body_frame[2]-0.0041;
+      // Linear acceleration storage
+      double linear_accelerations[DIM];
+      // Subtract gravity (gravity compensation)
+      //linear_accelerations[0]=body_accelerations[0] - 0.4942;
+      //linear_accelerations[0]=body_accelerations[0] * 1.3298;
+      //linear_accelerations[0]=body_accelerations[0]-gravity_in_body_frame[0] + 0.06;
+      //     linear_accelerations[0]=body_accelerations[0]-gravity_in_body_frame[0]+0.1589;
+      //     linear_accelerations[1]=body_accelerations[1]-gravity_in_body_frame[1]-0.0816;
+      //     linear_accelerations[2]=body_accelerations[2]-gravity_in_body_frame[2]-0.0041;
      
-     // The shift of the acceleartions is computed from the average
-     // errro of each acceleration axis
-     //linear_accelerations[0]=body_accelerations[0]-gravity_in_body_frame[0]-0.0022;//+0.1589;
-     //linear_accelerations[1]=body_accelerations[1]-gravity_in_body_frame[1]-0.1156;//-0.0816;//-0.12;//TODO shift
-     //linear_accelerations[2]=body_accelerations[2]-gravity_in_body_frame[2]-0.0084;
+      // The shift of the acceleartions is computed from the average
+      // errro of each acceleration axis
+      //linear_accelerations[0]=body_accelerations[0]-gravity_in_body_frame[0]-0.0022;//+0.1589;
+      //linear_accelerations[1]=body_accelerations[1]-gravity_in_body_frame[1]-0.1156;//-0.0816;//-0.12;//TODO shift
+      //linear_accelerations[2]=body_accelerations[2]-gravity_in_body_frame[2]-0.0084;
      
-     linear_accelerations[0]=body_accelerations[0]-gravity_in_body_frame[0];
-     linear_accelerations[1]=body_accelerations[1]-gravity_in_body_frame[1];
-     linear_accelerations[2]=body_accelerations[2]-gravity_in_body_frame[2];
+      linear_accelerations[0]=body_accelerations[0]-gravity_in_body_frame[0];
+      linear_accelerations[1]=body_accelerations[1]-gravity_in_body_frame[1];
+      linear_accelerations[2]=body_accelerations[2]-gravity_in_body_frame[2];
 #if 0
-     for (unsigned j = 0; j < DIM; j++)
-      {
-       if (linear_accelerations[i] < 0.0)
-        {
-         linear_accelerations[i]*=1.01;//-1.67;
-        }
+      for (unsigned j = 0; j < DIM; j++)
+       {
+        if (linear_accelerations[i] < 0.0)
+         {
+          linear_accelerations[i]*=1.01;//-1.67;
+         }
        
-       if (linear_accelerations[i] > 0.0)
-        {
-         linear_accelerations[i]=0.0;
-        }
-      }
+        if (linear_accelerations[i] > 0.0)
+         {
+          linear_accelerations[i]=0.0;
+         }
+       }
 #endif // #if 0
      
 #ifdef APPLY_LINEAR_ACCELERATIONS_OFFSET
-     linear_accelerations[0]-=0.0022;//+0.1589;
-     linear_accelerations[1]-=0.1156;//-0.0816;//-0.12;//TODO shift
-     linear_accelerations[2]-=0.0084;
+      linear_accelerations[0]-=0.0022;//+0.1589;
+      linear_accelerations[1]-=0.1156;//-0.0816;//-0.12;//TODO shift
+      linear_accelerations[2]-=0.0084;
 #endif // #ifdef APPLY_LINEAR_ACCELERATIONS_OFFSET
      
 #ifdef FORCE_USING_LINEAR_ACCELERATIONS_FROM_GEOFOG3D
-     linear_accelerations[0]=linear_acceleration_from_table[i][1];
-     linear_accelerations[1]=linear_acceleration_from_table[i][2];
-     linear_accelerations[2]=linear_acceleration_from_table[i][3];
+      linear_accelerations[0]=linear_acceleration_from_table[i][1];
+      linear_accelerations[1]=linear_acceleration_from_table[i][2];
+      linear_accelerations[2]=linear_acceleration_from_table[i][3];
 #endif // #ifdef FORCE_USING_LINEAR_ACCELERATIONS_FROM_GEOFOG3D
      
-     // Set the values for linear acceleration into the odes to
-     // integrate later
-     odes.linear_acceleration() = linear_accelerations;
+      // Set the values for linear acceleration into the odes to
+      // integrate later
+      odes.linear_acceleration() = linear_accelerations;
      
-     // ----------------------------------------------------------
-     // Transform linear acceleration from body frame to inertial
-     // frame
-     // ----------------------------------------------------------
-     
-     // Store inertial frame accelerations
-     double inertial_accelerations[DIM];
-     transform_body_to_inertial(Euler_angles, linear_accelerations, inertial_accelerations);
+      // ----------------------------------------------------------
+      // Transform linear acceleration from body frame to inertial
+      // frame
+      // ----------------------------------------------------------
+      
+      // Store inertial frame accelerations
+      double inertial_accelerations[DIM];
+      transform_body_to_inertial(Euler_angles, linear_accelerations, inertial_accelerations);
      
 #ifdef OUTPUT_ACCELERATIONS
-     // --------------------------------------------------------------------------
-     // OUTPUT DATA BLOCK [BEGIN]
-     // --------------------------------------------------------------------------
-     {
-      // Body frame accelerations
-      outfile_body_acc << current_time
-                       << " " << body_accelerations[0]
-                       << " " << body_accelerations[1]
-                       << " " << body_accelerations[2] << std::endl;
+      // --------------------------------------------------------------------------
+      // OUTPUT DATA BLOCK [BEGIN]
+      // --------------------------------------------------------------------------
+      {
+       // Body frame accelerations
+       outfile_body_acc << current_time
+                        << " " << body_accelerations[0]
+                        << " " << body_accelerations[1]
+                        << " " << body_accelerations[2] << std::endl;
       
-      // Linear accelerations
-      outfile_linear_acc << current_time
-                         << " " << linear_accelerations[0]
-                         << " " << linear_accelerations[1]
-                         << " " << linear_accelerations[2] << std::endl;
+       // Linear accelerations
+       outfile_linear_acc << current_time
+                          << " " << linear_accelerations[0]
+                          << " " << linear_accelerations[1]
+                          << " " << linear_accelerations[2] << std::endl;
       
-      // Inertial frame accelerations
-      outfile_inertial_acc << current_time
-                           << " " << inertial_accelerations[0]
-                           << " " << inertial_accelerations[1]
-                           << " " << inertial_accelerations[2] << std::endl;
-     }
-     // --------------------------------------------------------------------------
-     // OUTPUT DATA BLOCK [END]
-     // --------------------------------------------------------------------------
+       // Inertial frame accelerations
+       outfile_inertial_acc << current_time
+                            << " " << inertial_accelerations[0]
+                            << " " << inertial_accelerations[1]
+                            << " " << inertial_accelerations[2] << std::endl;
+      }
+      // --------------------------------------------------------------------------
+      // OUTPUT DATA BLOCK [END]
+      // --------------------------------------------------------------------------
 #endif //#ifdef OUTPUT_ACCELERATIONS
      
-     // ==========================================================================
-     // Gravity compensation [END]
-     // ==========================================================================
+      // ==========================================================================
+      // Gravity compensation [END]
+      // ==========================================================================
 
-     // ==========================================================================
-     // Velocity processing [BEGIN]
-     // ==========================================================================
+      // ==========================================================================
+      // Velocity processing [BEGIN]
+      // ==========================================================================
      
 #ifdef OUTPUT_VELOCITIES
-     // --------------------------------------------------------------------------
-     // OUTPUT DATA BLOCK [BEGIN]
-     // --------------------------------------------------------------------------
-     {
-      // Linear velocity
-      outfile_velocity << current_time
-                       << " " << y[1][0]
-                       << " " << y[3][0]
-                       << " " << y[5][0]
-                       << std::endl;
+      // --------------------------------------------------------------------------
+      // OUTPUT DATA BLOCK [BEGIN]
+      // --------------------------------------------------------------------------
+      {
+       // Linear velocity
+       outfile_velocity << current_time
+                        << " " << y[1][0]
+                        << " " << y[3][0]
+                        << " " << y[5][0]
+                        << std::endl;
       
-      // North-east velocities
-      const double course_angle = y[8][0];
-      //const double north_velocity = y[1][0]*sin(course_angle);// + y[3][0]*cos(course_angle);
-      //const double east_velocity = y[1][0]*cos(course_angle);// + y[3][0]*sin(course_angle);
-      //const double down_velocity = 0.0;
-      const double north_velocity = y[1][0]*sin(M_PI/2.0 - course_angle);// + y[3][0]*sin(course_angle);
-      const double east_velocity = y[1][0]*cos(M_PI/2.0 - course_angle);// - y[3][0]*cos(course_angle);
-      const double down_velocity = 0.0;
-      outfile_velocity_north_east << current_time
-                                  << " " << north_velocity
-                                  << " " << east_velocity
-                                  << " " << down_velocity
-                                  << std::endl;
-     }
+       // North-east velocities
+       const double course_angle = y[8][0];
+       //const double north_velocity = y[1][0]*sin(course_angle);// + y[3][0]*cos(course_angle);
+       //const double east_velocity = y[1][0]*cos(course_angle);// + y[3][0]*sin(course_angle);
+       //const double down_velocity = 0.0;
+       const double north_velocity = y[1][0]*sin(M_PI/2.0 - course_angle);// + y[3][0]*sin(course_angle);
+       const double east_velocity = y[1][0]*cos(M_PI/2.0 - course_angle);// - y[3][0]*cos(course_angle);
+       const double down_velocity = 0.0;
+       outfile_velocity_north_east << current_time
+                                   << " " << north_velocity
+                                   << " " << east_velocity
+                                   << " " << down_velocity
+                                   << std::endl;
+      }
 #endif // #ifdef OUTPUT_VELOCITIES
      
-     // ==========================================================================
-     // Velocity processing [END]
-     // ==========================================================================
+      // ==========================================================================
+      // Velocity processing [END]
+      // ==========================================================================
      
-     // ==========================================================================
+      // ==========================================================================
      // Integrate the ODE's [BEGIN]
      // ==========================================================================
      // Compute the step size
@@ -1850,6 +1870,10 @@ int main(int argc, char *argv[])
         step = aligned_time[i+1] - aligned_time[i];
       }
      previous_step = step;
+     
+#ifdef TRUNCATED_VALUES
+     step = FIXED_STEP_SIZE_TRUNCATED;
+#endif // #ifdef TRUNCATED_VALUES
      
      integrator->integrate_step(odes, step, current_time, y);
      
@@ -1873,7 +1897,8 @@ int main(int argc, char *argv[])
      // ==========================================================================
      // Complementary filter parameter
      //const double alpha = 0.9995;
-     const double alpha = 0.1;
+     //const double alpha = 0.1;
+     const double alpha = 0.5; // 70kmph_ida1
      
 #ifndef OUTPUT_EULER_ANGLES_FROM_GYRO_AND_ACCELEROMETER // Complementary
                                                         // filter is
@@ -1941,15 +1966,6 @@ int main(int argc, char *argv[])
      // Compute x and y position from angle and radial position
      X_POS+= x_speed_in_m_per_sec*dt*cos(course_angle);
      Y_POS+= y_speed_in_m_per_sec*dt*sin(course_angle);
-     outfile_navigation_data_for_evaluation << current_time << " "
-                                            << latitude_longitude_from_table[0][2] << " "
-                                            << latitude_longitude_from_table[0][1] << " "
-                                            << x_speed_in_m_per_sec*3.6 << " "
-                                            << X_POS << " " << Y_POS << " "
-      //<< y[0][0] << " " << y[2][0] << " "
-      //<< total_speed_in_m_per_sec * dt << " " // TODO
-                                            << instantaneous_travelled_distance << " "
-                                            << current_local_course_in_radians*TO_DEGREES << std::endl;
      
      // Set initial latitude and longitude
      if (!initialised_navigation_reference_data)
@@ -1977,11 +1993,24 @@ int main(int argc, char *argv[])
      compute_current_latitude_and_longitude(instantaneous_travelled_distance,
                                             earth_referenced_course_in_radians,
                                             current_latitude, current_longitude);
-     
+
+     // -----------------------------------------------------------------------------------
      outfile_latitude_and_longitude << current_time << " "
                                     << current_latitude * TO_DEGREES << " "
                                     << current_longitude * TO_DEGREES << std::endl;
      
+     // -----------------------------------------------------------------------------------
+     outfile_navigation_data_for_evaluation << current_time << " "
+                                            << latitude_longitude_from_table[0][2] << " "
+                                            << latitude_longitude_from_table[0][1] << " "
+                                            << x_speed_in_m_per_sec*3.6 << " "
+                                            << X_POS << " " << Y_POS << " "
+      //<< y[0][0] << " " << y[2][0] << " "
+      //<< total_speed_in_m_per_sec * dt << " " // TODO
+                                            << instantaneous_travelled_distance << " "
+      //                                            << current_local_course_in_radians*TO_DEGREES << std::endl;
+                                            << earth_referenced_course_in_radians*TO_DEGREES << std::endl;
+          
      // Update previous time
      previous_time=current_time;
 #endif //  #ifdef NAVIGATION_DATA_TO_EVALUATION

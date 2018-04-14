@@ -35,11 +35,11 @@ namespace chapchom
    
    // Constructor to create an n size zero vector (we assume vectors
    // are created as column vectors, if you need a row vector then
-   // pass "true" as the second parameter).
-   CCVector(const unsigned long n, bool is_transposed = false);
+   // pass "false" as the second parameter)
+   CCVector(const unsigned long n, bool is_column_vector = true);
    
    // Constructor where we pass the data for the vector of size n.
-   CCVector(T *vector_pt, const unsigned long n, bool is_transposed = false);
+   CCVector(T *vector_pt, const unsigned long n, bool is_column_vector = true);
    
    // Copy constructor (we require to define this if we want to use
    // operators overloading as sum and assignment)
@@ -105,7 +105,7 @@ namespace chapchom
    // Transpose the vector
    inline void transpose()
    {
-    this->Is_transposed=!(this->Is_transposed);
+    this->Is_column_vector=!(this->Is_column_vector);
    }
    
    // Get the specified value from the vector (read-only)

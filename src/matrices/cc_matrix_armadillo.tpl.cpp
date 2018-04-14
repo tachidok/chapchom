@@ -102,6 +102,22 @@ namespace chapchom
   // Copy the data from the vector to the Matrix_pt vector
   set_matrix(vector_pt, m, n);
  }
+
+ // ===================================================================
+ // Constructor that creates an Armadillo's matrix from a CCVectorArmadillo
+ // ===================================================================
+ template<class T>
+ CCMatrixArmadillo<T>::CCMatrixArmadillo(CCVectorArmadillo<T> &vector)
+ {
+  // Error message
+  std::ostringstream error_message;
+  error_message << "We need to implement this\n"
+                << "Constructor from CCMatrixArmadillo that receives a"
+                << "CCVectorArmadillo" << std::endl;
+  throw ChapchomLibError(error_message.str(),
+                         CHAPCHOM_CURRENT_FUNCTION,
+                         CHAPCHOM_EXCEPTION_LOCATION);
+ }
  
  // ===================================================================
  // Copy constructor
@@ -208,8 +224,8 @@ namespace chapchom
  }
  
  // ===================================================================
- // Transforms the input vector to a matrix class type (virtual such
- // that each derived class has to implement it)
+ // Transforms the input vector to an armadillo matrix class type
+ // (virtual such that each derived class has to implement it)
  // ===================================================================
  template<class T>
  void CCMatrixArmadillo<T>::set_matrix(const T *matrix_pt,

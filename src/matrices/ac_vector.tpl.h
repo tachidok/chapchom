@@ -26,8 +26,8 @@ namespace chapchom
    
    // Constructor to create an n size zero vector (we assume vectors
    // are created as column vectors, if you need a row vector then
-   // pass "true" as the second parameter)
-   ACVector(const unsigned long n, bool is_transposed = false);
+   // pass "false" as the second parameter)
+   ACVector(const unsigned long n, bool is_column_vector = true);
    
    // Destructor
    virtual ~ACVector();
@@ -97,13 +97,13 @@ namespace chapchom
    // Return the number of entries of the vector
    inline const unsigned long size() const {return NValues;}
    
-   // Check whether the vector should be treated as transposed (we
-   // assume all vectors are created as column vectors)
-   inline bool is_transposed() const {return Is_transposed;}
+   // Check whether the vector should be treated as "row vector" (we
+   // assume all vectors are created as column vectors by default)
+   inline bool is_column_vector() const {return Is_column_vector;}
    
-   // Set transposed status
-   inline void set_transposed_status(bool status)
-   {Is_transposed = status;}
+   // Set as column vector status
+   inline void set_as_column_vector(bool status = true)
+   {Is_column_vector = status;}
    
    // Checks whether the memory of the vector has been allocated by
    // this class
@@ -141,11 +141,11 @@ namespace chapchom
    // is true by default.
    bool Delete_vector;
    
-   // Is transposed vector (we assume all vectors are created as
-   // column vectors, thus this flag is set to true by default). We
-   // check this variable for all its operations such that they are
-   // valid according to the vector dimensions
-   bool Is_transposed;
+   // Is column vector (we assume all vectors are created as column
+   // vectors, thus this flag is set to true by default). We check
+   // this variable for all its operations such that they are valid
+   // according to the vector dimensions
+   bool Is_column_vector;
    
   private:
    
