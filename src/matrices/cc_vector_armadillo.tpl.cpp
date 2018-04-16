@@ -848,7 +848,7 @@ namespace chapchom
   
   // Check that the left vector is a row vector and that the right
   // vector is a column vector
-  if (left_vector.transposed())
+  if (left_vector.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
@@ -859,7 +859,7 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  if (!right_vector.is_transposed())
+  if (!right_vector.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
@@ -870,20 +870,9 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Get the vector pointer of the left vector
-  T *left_vector_pt = left_vector.vector_pt();
-  // Get the vector pointer of the right vector
-  T *right_vector_pt = right_vector.vector_pt();
-  
   // Store the dot product of the vectors
-  T dot_product = 0.0;
-  
-  // Compute the dot product
-  for (unsigned long i = 0; i < n_values_left_vector; i++)
-   {
-    dot_product+= left_vector_pt[i] * right_vector_pt[i];
-   }
-  
+  const T dot_product = arma::dot(*(left_vector.arma_vector_pt()), *(right_vector_pt->arma_vector_pt()));
+  // Return the dot product
   return dot_product;
   
  }
@@ -929,7 +918,7 @@ namespace chapchom
   
   // Check that both vectors have the same transposed status (both are
   // columns vectors or both are row vectors)
-  if (vector_one.is_transposed() != vector_two.is_transposed())
+  if (vector_one.is_column_vector() != vector_two.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
@@ -941,7 +930,7 @@ namespace chapchom
    }
   
   // Get the vector pointer of the solution vector
-  T *solution_vector_pt = solution_vector.vector_pt();
+  arma::Col<T> *arma_solution_vector_pt = solution_vector.arma_vector_pt();
   
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
@@ -950,19 +939,15 @@ namespace chapchom
     // Allocate memory for the vector
     solution_vector.allocate_memory();
     // Get the new vector pointer
-    solution_vector_pt = solution_vector.vector_pt();
+    arma_solution_vector_pt = solution_vector.arma_vector_pt();
    }
   
-  // Get the vector pointer of the vector one
-  T *vector_one_pt = vector_one.vector_pt();
-  // Get the vector pointer of the vector two
-  T *vector_two_pt = vector_two.vector_pt();
+  // Get the vector pointer of the input vectors
+  arma::Col<T> *arma_vector_one_pt = vector_one.arma_vector_pt();
+  arma::Col<T> *arma_vector_two_pt = vector_two.arma_vector_pt();
   
   // Perform the addition
-  for (unsigned long i = 0; i < n_values_vector_one; i++)
-   {
-    solution_vector_pt[i] = vector_one_pt[i] + vector_two_pt[i];
-   }
+  (*arma_solution_vector_pt) = (*arma_vector_one_pt) + (*arma_vector_two_pt);
   
  }
 
@@ -1007,7 +992,7 @@ namespace chapchom
   
   // Check that both vectors have the same transposed status (both are
   // columns vectors or both are row vectors)
-  if (vector_one.is_transposed() != vector_two.is_transposed())
+  if (vector_one.is_column_vector() != vector_two.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
@@ -1019,7 +1004,7 @@ namespace chapchom
    }
   
   // Get the vector pointer of the solution vector
-  T *solution_vector_pt = solution_vector.vector_pt();
+  arma::Col<T> *arma_solution_vector_pt = solution_vector.arma_vector_pt();
   
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
@@ -1028,19 +1013,15 @@ namespace chapchom
     // Allocate memory for the vector
     solution_vector.allocate_memory();
     // Get the new vector pointer
-    solution_vector_pt = solution_vector.vector_pt();
+    arma_solution_vector_pt = solution_vector.arma_vector_pt();
    }
   
-  // Get the vector pointer of the vector one
-  T *vector_one_pt = vector_one.vector_pt();
-  // Get the vector pointer of the vector two
-  T *vector_two_pt = vector_two.vector_pt();
+  // Get the vector pointer of the input vectors
+  arma::Col<T> *arma_vector_one_pt = vector_one.arma_vector_pt();
+  arma::Col<T> *arma_vector_two_pt = vector_two.arma_vector_pt();
   
-  // Perform the substraction of vectors
-  for (unsigned long i = 0; i < n_values_vector_one; i++)
-   {
-    solution_vector_pt[i] = vector_one_pt[i] - vector_two_pt[i];
-   }
+  // Perform the addition
+  (*arma_solution_vector_pt) = (*arma_vector_one_pt) + (*arma_vector_two_pt);
   
  }
 
@@ -1085,7 +1066,7 @@ namespace chapchom
   
   // Check that both vectors have the same transposed status (both are
   // columns vectors or both are row vectors)
-  if (vector_one.is_transposed() != vector_two.is_transposed())
+  if (vector_one.is_column_vector() != vector_two.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
@@ -1097,7 +1078,7 @@ namespace chapchom
    }
   
   // Get the vector pointer of the solution vector
-  T *solution_vector_pt = solution_vector.vector_pt();
+  arma::Col<T> *arma_solution_vector_pt = solution_vector.arma_vector_pt();
   
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
@@ -1106,20 +1087,20 @@ namespace chapchom
     // Allocate memory for the vector
     solution_vector.allocate_memory();
     // Get the new vector pointer
-    solution_vector_pt = solution_vector.vector_pt();
+    arma_solution_vector_pt = solution_vector.arma_vector_pt();
    }
-  
-  // Get the vector pointer of the vector one
-  T *vector_one_pt = vector_one.vector_pt();
-  // Get the vector pointer of the vector two
-  T *vector_two_pt = vector_two.vector_pt();
-  
-  // Perform the substraction of vectors
+
+  // Get the vector pointer of the input vectors
+  arma::Col<T> *arma_vector_one_pt = vector_one.arma_vector_pt();
+  arma::Col<T> *arma_vector_two_pt = vector_two.arma_vector_pt();
+
+  // Perform the operation
   for (unsigned long i = 0; i < n_values_vector_one; i++)
    {
-    solution_vector_pt[i] = vector_one_pt[i] * vector_two_pt[i];
+    (*arma_solution_vector_pt)(i) = (*arma_vector_one_pt)(i) * (*arma_vector_two_pt)(i);
    }
   
  }
  
 }
+

@@ -1,41 +1,88 @@
+
+Array matrix_pt[i]
+
 0 1 2 -1 0 1 -2 -1 0 -3 -2 -1 -4 -3 -2
+
+CCMatrix (A) created from array
+
 0 1 2 
 -1 0 1 
 -2 -1 0 
 -3 -2 -1 
 -4 -3 -2 
+
+Column CCVector (b)
+
 -16 -8 0 8 16 
 -16 
 -8 
 0 
 8 
 16 
+
+Row CCVector (r)
+
 (0): 1
 (1): 2
 (2): 3
+
+CCMatrix (R) created from row CCVector (r)
+
 1 2 3 
+
+Copy CCMatrix constructor (from CCMatrix A create CCMatrix C)
+
 0 1 2 
 -1 0 1 
 -2 -1 0 
 -3 -2 -1 
 -4 -3 -2 
+
+Copy CCMatrix constructor (from CCMatrix B create CCMatrix D)
+
 -16 
 -8 
 0 
 8 
 16 
+
+========================================
+Transpose operations
+
+========================================
+
+Transposed CCMatrix (A)
+
 0 -1 -2 -3 -4 
 1 0 -1 -2 -3 
 2 1 0 -1 -2 
+
+Transposed CCVector (b)
+
 -16 -8 0 8 16 
+
+Transposed CCMatrix (B)
+
 -16 -8 0 8 16 
+
+Transposed row CCVector (r)
+
 (0): 1
 (1): 2
 (2): 3
+
+CCMatrix (R_t) created from transposed row CCVector (r)
+
 1 
 2 
 3 
+
+Transposed CCMatrix (C)
+
 0 -1 -2 -3 -4 
 1 0 -1 -2 -3 
 2 1 0 -1 -2 
+
+Transposed CCMatrix (D)
+
 -16 -8 0 8 16 
