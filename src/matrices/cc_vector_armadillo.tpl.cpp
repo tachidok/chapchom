@@ -65,7 +65,7 @@ namespace chapchom
  // ===================================================================
  template<class T>
  CCVectorArmadillo<T>::CCVectorArmadillo(const CCVectorArmadillo<T> &copy)
-  : ACVector<T>(copy.nvalues(), copy.is_transposed())
+  : ACVector<T>(copy.nvalues(), copy.is_column_vector())
  {
   // Clean any possible previously allocated memory
   clean_up();
@@ -93,7 +93,7 @@ namespace chapchom
   // Clean-up and set values
   set_vector(source_vector.arma_vector_pt(), source_vector.nvalues());
   // Set the transposed status
-  this->set_transposed_status(source_vector.is_transposed());
+  this->set_as_column_vector(source_vector.is_column_vector());
   // Return this (de-referenced pointer)
   return *this;
   
@@ -250,7 +250,7 @@ namespace chapchom
    }
   
   // Store the dot product of the vectors
-  const T dot_product = arma::dot(*Arma_vector_pt, *(right_vector_pt->arma_vector_pt()));
+  const T dot_product = arma::dot(*Arma_vector_pt, *(right_vector.arma_vector_pt()));
   // Return the dot product
   return dot_product;
   
@@ -283,7 +283,7 @@ namespace chapchom
  // Receives an armadillo type column vector
  // ===================================================================
  template<class T>
- void CCMatrixArmadillo<T>::set_vector(arma::Col<T> *arma_vector_pt,
+ void CCVectorArmadillo<T>::set_vector(arma::Col<T> *arma_vector_pt,
                                        const unsigned long n)
  {
   // Clean any possible previously allocated memory
@@ -608,7 +608,7 @@ namespace chapchom
   // Change the status
   this->Is_column_vector=!(this->Is_column_vector);
   // Performs the operation
-  arma::inplace_trans(*Arma_matrix_pt);
+  arma::inplace_trans(*Arma_vector_pt);
  }
  
  // ===================================================================
@@ -871,7 +871,7 @@ namespace chapchom
    }
   
   // Store the dot product of the vectors
-  const T dot_product = arma::dot(*(left_vector.arma_vector_pt()), *(right_vector_pt->arma_vector_pt()));
+  const T dot_product = arma::dot(*(left_vector.arma_vector_pt()), *(right_vector.arma_vector_pt()));
   // Return the dot product
   return dot_product;
   

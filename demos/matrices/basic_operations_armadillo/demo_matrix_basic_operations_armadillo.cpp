@@ -6,7 +6,7 @@
 #include "../../../src/general/utilities.h"
 #include "../../../src/general/initialise.h"
 
-// The class to create a matrix
+// The class to create armadillo's based vector and matrices
 #include "../../../src/matrices/cc_matrix_armadillo.h"
 
 using namespace chapchom;
@@ -55,9 +55,9 @@ void rotate(double *input_vector,
  // Perform the actual transformation
  
  // Create a vector to representation and copy there the input data
- CCVector<double> b(input_vector, DIM);
+ CCVectorArmadillo<double> b(input_vector, DIM);
  // A vector for the output (rotated) data
- CCVector<double> r(DIM);
+ CCVectorArmadillo<double> r(DIM);
  // Apply rotation
  multiply_matrix_times_vector(R, b, r);
  // Copy back result in output structure
@@ -515,7 +515,7 @@ int main(int argc, char *argv[])
   rotate(gravity, rotated_gravity, roll, pitch, yaw);
  
   // Create vectors to output the data
-  CCVector<double> g(gravity, DIM);
+  CCVectorArmadillo<double> g(gravity, DIM);
   std::cout << std::endl << ""
             << "---------------------------------------------------\n"
             << "Gravity vector (0 0 -9.81) m/s^2\n"
@@ -530,7 +530,7 @@ int main(int argc, char *argv[])
   g.output(output_test);
   
   // Rotated gravity vector
-  CCVector<double> rg(rotated_gravity, DIM);
+  CCVectorArmadillo<double> rg(rotated_gravity, DIM);
   std::cout << std::endl << ""
             << "---------------------------------------------------\n"
             << "Rotated gravity vector m/s^2\n"
@@ -549,7 +549,7 @@ int main(int argc, char *argv[])
   double double_rotated_gravity[DIM];
   rotate(rotated_gravity, double_rotated_gravity, roll, pitch, yaw, true);
   // Create a vector to output the data
-  CCVector<double> drg(double_rotated_gravity, DIM);
+  CCVectorArmadillo<double> drg(double_rotated_gravity, DIM);
   std::cout << std::endl << ""
             << "---------------------------------------------------\n"
             << "Rotated-back gravity vector (original vector) m/s^2\n"
@@ -565,7 +565,7 @@ int main(int argc, char *argv[])
   
   // Get the difference between the ORIGINAL gravity vector and the
   // DOUBLE rotated gravity
-  CCVector<double> diff = g - drg;
+  CCVectorArmadillo<double> diff = g - drg;
   // Get the norm
   const double norm = diff.norm_2();
   std::cout << norm << std::endl;
@@ -603,7 +603,7 @@ int main(int argc, char *argv[])
   A(2,0) = 2.0;   A(2,1) = 2.0;   A(2,2) = 2.0;
   
   // Create a vector indicating the data to extract from the matrix
-  CCVector<double> v(DIM);
+  CCVectorArmadillo<double> v(DIM);
   v.allocate_memory();
   // Transpose the vector so that we have a row vector
   v.transpose();

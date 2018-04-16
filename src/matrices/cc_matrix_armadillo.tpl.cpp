@@ -1192,11 +1192,12 @@ namespace chapchom
 
  // ================================================================
  // Multiply vector times vector (if you want to perform dot product
- // use the dot() method defined in the cc_vector.h file instead)
+ // use the dot() method defined in the cc_vector_armadillo.tpl.h file
+ // instead)
  // ================================================================
  template<class T>
- void multiply_vector_times_vector(const CCVector<T> &left_vector,
-                                   const CCVector<T> &right_vector,
+ void multiply_vector_times_vector(const CCVectorArmadillo<T> &left_vector,
+                                   const CCVectorArmadillo<T> &right_vector,
                                    CCMatrixArmadillo<T> &solution_matrix)
  {
   // Check that the left and the right vectors have memory allocated
@@ -1217,7 +1218,7 @@ namespace chapchom
   // Check whether the dimensions of the vectors allow the operation
   unsigned n_rows_left_vector = 0;
   unsigned n_columns_left_vector = 0;
-  if (left_vector.is_transposed()) // a row vector
+  if (!left_vector.is_column_vector()) // a row vector
    {
     n_rows_left_vector = 1;
     n_columns_left_vector = left_vector.nvalues();
@@ -1230,7 +1231,7 @@ namespace chapchom
   
   unsigned n_rows_right_vector = 0;
   unsigned n_columns_right_vector = 0;
-  if (right_vector.is_transposed()) // a row vector
+  if (!right_vector.is_column_vector()) // a row vector
    {
     n_rows_right_vector = 1;
     n_columns_right_vector = right_vector.nvalues();
@@ -1286,11 +1287,17 @@ namespace chapchom
     solution_matrix.allocate_memory();
    }
   
-  // Get both vectors and multiply them
-  T *left_vector_pt = left_vector.vector_pt();
-  T *right_vector_pt = right_vector.vector_pt();
+  // Get the vector pointers of the input vectors
+  arma::Col<T> *arma_vector_left_pt = left_vector.arma_vector_pt();
+  arma::Col<T> *arma_vector_right_pt = right_vector.arma_vector_pt();
+  
+  // Get the matrix pointer to the solution matrix
+  arma::Mat<T> *arma_solution_matrix_pt = solution_matrix.arma_matrix_pt();
   
   // Perform the multiplication
+  (*arma_solution_matrix_pt) = (*arma_vector_left_pt) * (*arma_vector_right_pt);
+  
+#if 0
   for (unsigned long i = 0; i < n_rows_solution_matrix; i++)
    {
     const unsigned offset_left_vector = i * n_columns_left_vector;
@@ -1306,6 +1313,7 @@ namespace chapchom
        }
      }
    }
+#endif // #if 0
   
  }
  
@@ -1313,7 +1321,7 @@ namespace chapchom
  // Multiply vector times matrix
  // ================================================================
  template<class T>
- void multiply_vector_times_matrix(const CCVector<T> &vector,
+ void multiply_vector_times_matrix(const CCVectorArmadillo<T> &vector,
                                    const CCMatrixArmadillo<T> &matrix,
                                    CCMatrixArmadillo<T> &solution_matrix)
  {
@@ -1336,7 +1344,7 @@ namespace chapchom
   // the operation
   unsigned n_rows_vector = 0;
   unsigned n_columns_vector = 0;
-  if (vector.is_transposed()) // a row vector
+  if (!vector.is_column_vector()) // a row vector
    {
     n_rows_vector = 1;
     n_columns_vector = vector.nvalues();
@@ -1396,9 +1404,15 @@ namespace chapchom
     solution_matrix.allocate_memory();
    }
   
-  // Get both the vector and the matrix pointer
-  T *vector_pt = vector.vector_pt();
+  // Get the vector and the matrix pointer
+  arma::Col<T> *arma_vector_pt = vector.arma_vector_pt();
+  arma::Mat<T> *arma_matrix_pt = matrix.arma_matrix_pt();
+  arma::Mat<T> *arma_solution_matrix_pt = solution_matrix.arma_matrix_pt();
   
+  // Perform the multiplication
+  (*arma_solution_matrix_pt) = (*arma_vector_pt) * (*arma_matrix_pt);
+  
+#if 0 
   // Perform the multiplication
   for (unsigned long i = 0; i < n_rows_solution_matrix; i++)
    {
@@ -1414,6 +1428,7 @@ namespace chapchom
        }
      }
    }
+#endif // #if 0
   
  }
  
@@ -1422,8 +1437,8 @@ namespace chapchom
  // ================================================================
  template<class T>
  void multiply_matrix_times_vector(const CCMatrixArmadillo<T> &matrix,
-                                   const CCVector<T> &vector,
-                                   CCVector<T> &solution_vector)
+                                   const CCVectorArmadillo<T> &vector,
+                                   CCVectorArmadillo<T> &solution_vector)
  {
   // Check that the matrix and the vector have memory allocated
   if (!matrix.is_own_memory_allocated() || !vector.is_own_memory_allocated())
@@ -1447,7 +1462,7 @@ namespace chapchom
   
   unsigned n_rows_vector = 0;
   unsigned n_columns_vector = 0;
-  if (vector.is_transposed()) // a row vector
+  if (!vector.is_column_vector()) // a row vector
    {
     n_rows_vector = 1;
     n_columns_vector = vector.nvalues();
@@ -1478,7 +1493,7 @@ namespace chapchom
   // Check whether the dimension of the solution vector is correct
   unsigned n_rows_solution_vector = 0;
   unsigned n_columns_solution_vector = 0;
-  if (solution_vector.is_transposed()) // a row vector
+  if (!solution_vector.is_column_vector()) // a row vector
    {
     n_rows_solution_vector = 1;
     n_columns_solution_vector = solution_vector.nvalues();
@@ -1508,7 +1523,7 @@ namespace chapchom
    }
   
   // Get the vector pointer of the solution vector
-  T *solution_vector_pt = solution_vector.vector_pt();
+  arma::Col<T> *arma_solution_vector_pt = solution_vector.arma_vector_pt();
   
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
@@ -1517,12 +1532,17 @@ namespace chapchom
     // Allocate memory for the matrix
     solution_vector.allocate_memory();
     // Get the new matrix pointer
-    solution_vector_pt = solution_vector.vector_pt();
+    arma_solution_vector_pt = solution_vector.arma_vector_pt();
    }
   
   // Get both the vector and the matrix pointer
-  T *vector_pt = vector.vector_pt();
+  arma::Col<T> *arma_vector_pt = vector.arma_vector_pt();
+  arma::Mat<T> *arma_matrix_pt = matrix.arma_matrix_pt();
   
+  // Perform the multiplication
+  (*arma_solution_vector_pt) = (*arma_matrix_pt) * (*arma_vector_pt);  
+  
+#if 0
   // Perform the multiplication
   for (unsigned long i = 0; i < n_rows_solution_vector; i++)
    {
@@ -1537,7 +1557,7 @@ namespace chapchom
        matrix(i, k) * vector_pt[k];
      }
    }
-  
+#endif // #if 0
   
  }
  
