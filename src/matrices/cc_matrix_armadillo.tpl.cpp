@@ -1288,8 +1288,8 @@ namespace chapchom
    }
   
   // Get the vector pointers of the input vectors
-  arma::Col<T> *arma_vector_left_pt = left_vector.arma_vector_pt();
-  arma::Col<T> *arma_vector_right_pt = right_vector.arma_vector_pt();
+  arma::Mat<T> *arma_vector_left_pt = left_vector.arma_vector_pt();
+  arma::Mat<T> *arma_vector_right_pt = right_vector.arma_vector_pt();
   
   // Get the matrix pointer to the solution matrix
   arma::Mat<T> *arma_solution_matrix_pt = solution_matrix.arma_matrix_pt();
@@ -1405,7 +1405,7 @@ namespace chapchom
    }
   
   // Get the vector and the matrix pointer
-  arma::Col<T> *arma_vector_pt = vector.arma_vector_pt();
+  arma::Mat<T> *arma_vector_pt = vector.arma_vector_pt();
   arma::Mat<T> *arma_matrix_pt = matrix.arma_matrix_pt();
   arma::Mat<T> *arma_solution_matrix_pt = solution_matrix.arma_matrix_pt();
   
@@ -1523,7 +1523,7 @@ namespace chapchom
    }
   
   // Get the vector pointer of the solution vector
-  arma::Col<T> *arma_solution_vector_pt = solution_vector.arma_vector_pt();
+  arma::Mat<T> *arma_solution_vector_pt = solution_vector.arma_vector_pt();
   
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
@@ -1536,7 +1536,7 @@ namespace chapchom
    }
   
   // Get both the vector and the matrix pointer
-  arma::Col<T> *arma_vector_pt = vector.arma_vector_pt();
+  arma::Mat<T> *arma_vector_pt = vector.arma_vector_pt();
   arma::Mat<T> *arma_matrix_pt = matrix.arma_matrix_pt();
   
   // Perform the multiplication

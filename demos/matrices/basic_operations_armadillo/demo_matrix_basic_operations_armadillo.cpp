@@ -499,7 +499,7 @@ int main(int argc, char *argv[])
               << "Matrix vector operations\n"
               << "##############################################################################"
               << std::endl;
- 
+  
   // --------------------------------------------
   // Rotations to test matrix vector operations
   // --------------------------------------------
@@ -568,6 +568,16 @@ int main(int argc, char *argv[])
   CCVectorArmadillo<double> diff = g - drg;
   // Get the norm
   const double norm = diff.norm_2();
+  std::cout << std::endl << ""
+            << "---------------------------------------------------\n"
+            << "Norm 2 of original vector and rotated-back vector\n"
+            << "---------------------------------------------------\n"
+            << std::endl;
+  output_test << std::endl << ""
+              << "---------------------------------------------------\n"
+              << "Norm 2 of original vector and rotated-back vector\n"
+              << "---------------------------------------------------\n"
+              << std::endl;
   std::cout << norm << std::endl;
   output_test << norm << std::endl;
   
@@ -603,10 +613,10 @@ int main(int argc, char *argv[])
   A(2,0) = 2.0;   A(2,1) = 2.0;   A(2,2) = 2.0;
   
   // Create a vector indicating the data to extract from the matrix
-  CCVectorArmadillo<double> v(DIM);
+  CCVectorArmadillo<double> v(DIM, false);
   v.allocate_memory();
   // Transpose the vector so that we have a row vector
-  v.transpose();
+  //v.transpose();
 
   // The following vector states to take the first row of matrix A and
   // add it to half the second row and a quarter of the third row
@@ -617,7 +627,19 @@ int main(int argc, char *argv[])
   CCMatrixArmadillo<double> S(1, DIM);
   
   multiply_vector_times_matrix(v, A, S);
-  
+
+  std::cout << std::endl << ""
+            << "---------------------------------------------------\n"
+            << "Extract data of a matrix by matrix-multiplication\n"
+            << "Get the first row + half the second row + a quarter of the third row\n"
+            << "---------------------------------------------------\n"
+            << std::endl;
+  output_test << std::endl << ""
+              << "---------------------------------------------------\n"
+              << "Extract data of a matrix by matrix-multiplication\n"
+              << "Get the first row + half the second row + a quarter of the third row\n"
+              << "---------------------------------------------------\n"
+              << std::endl; 
   S.output();
   S.output(output_test);
   

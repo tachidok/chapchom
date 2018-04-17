@@ -91,11 +91,11 @@ namespace chapchom
    // Transforms the input vector to an Armadillo vector class type
    // (virtual such that each derived class has to implement it)
    void set_vector(const T *vector_pt,
-                   const unsigned long n);
+                   const unsigned long n, bool is_column_vector = true);
    
-   // Receives an armadillo type column vector
-   void set_vector(arma::Col<T> *arma_column_vector_pt,
-                   const unsigned long n);
+   // Receives an armadillo type Mat
+   void set_vector(arma::Mat<T> *arma_vector_pt,
+                   const unsigned long n, bool is_column_vector = true);
    
    // Clean up for any dynamically stored data
    void clean_up();
@@ -133,7 +133,7 @@ namespace chapchom
    void output(std::ofstream &outfile, bool output_indexes = false) const;
    
    // Get access to the Armadillo's vector
-   inline arma::Col<T> *arma_vector_pt() const {return Arma_vector_pt;}
+   inline arma::Mat<T> *arma_vector_pt() const {return Arma_vector_pt;}
    
    // Computes the norm-1 of the vector
    const double norm_1();
@@ -143,8 +143,11 @@ namespace chapchom
    
   protected:
    
-   // The Armadillo's type vector
-   arma::Col<T> *Arma_vector_pt;
+   // We use an Armadillo type matrix wrapped with specific functions
+   // for vectors. We avoided using Col<T> type because it was not
+   // possible to compute the transpose if the same type of object. We
+   // did not checked but it may be required to create a Row<T> type
+   arma::Mat<T> *Arma_vector_pt;
    
   };
  

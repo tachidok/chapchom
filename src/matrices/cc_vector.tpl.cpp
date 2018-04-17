@@ -39,7 +39,7 @@ namespace chapchom
   : ACVector<T>(n, is_column_vector)
  {
   // Copy the data from the input vector to the Vector_pt vector
-  set_vector(vector_pt, n);
+  set_vector(vector_pt, n, is_column_vector);
  }
  
  // ===================================================================
@@ -50,7 +50,7 @@ namespace chapchom
   : ACVector<T>(copy.nvalues(), copy.is_column_vector())
  {
   // Copy the data from the input vector to the Vector_pt vector
-  set_vector(copy.vector_pt(), this->NValues);
+  set_vector(copy.vector_pt(), this->NValues, copy.is_column_vector());
  }
  
  // ===================================================================
@@ -70,9 +70,9 @@ namespace chapchom
  CCVector<T>& CCVector<T>::operator=(const CCVector<T> &source_vector)
  {
   // Clean-up and set values
-  set_vector(source_vector.vector_pt(), source_vector.nvalues());
-  // Set the transposed status
-  this->set_as_column_vector(source_vector.is_column_vector());
+  set_vector(source_vector.vector_pt(),
+             source_vector.nvalues(),
+             source_vector.is_column_vector());
   // Return this (de-referenced pointer)
   return *this;
   
@@ -247,7 +247,8 @@ namespace chapchom
  // ===================================================================
  template<class T>
  void CCVector<T>::set_vector(const T *vector_pt,
-                              const unsigned long n)
+                              const unsigned long n,
+                              bool is_column_vector)
  {
   // Clean any possible previously allocated memory
   clean_up();
@@ -263,6 +264,9 @@ namespace chapchom
   
   // Copy the vector (an element by element copy, uff!!)
   std::memcpy(Vector_pt, vector_pt, n*sizeof(T));
+  
+  // Set the transposed status
+  this->set_as_column_vector(is_column_vector);
   
  }
  

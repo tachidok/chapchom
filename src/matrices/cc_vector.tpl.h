@@ -77,10 +77,10 @@ namespace chapchom
    // Performs dot product with the current vector
    T dot(const CCVector &right_vector);
    
-   // Transforms the input vector to a vector class type (virtual such
-   // that each derived class has to implement it)
+   // Transforms the input vector to a vector class type
    void set_vector(const T *vector_pt,
-                   const unsigned long n);
+                   const unsigned long n,
+                   bool is_column_vector = true);
    
    // Clean up for any dynamically stored data
    void clean_up();

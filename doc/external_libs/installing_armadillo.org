@@ -80,9 +80,22 @@ but it seems with just =make install= is enough.
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/armadillo/installation/lib/folder
 #+END_SRC
 
-This is the specific path for the installation in my computer
+If you want to add this path "permanently" to your user add the
+following lines to your =~/.profile= file
 #+BEGIN_SRC bash
-LD_LIBRARY_PATH:/home/tachidok/local/working/my_stuff/armadillo-8.300.3/lib/lib/
+export LD_LIBRARY_PATH=/path/to/armadillo/installation/lib/folder
+#+END_SRC
+and relogin.
+
+This is the specific command for the installation in my computer
+#+BEGIN_SRC bash
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/tachidok/local/working/my_stuff/armadillo-8.300.3/lib/lib/
+#+END_SRC
+
+and the specific line I added to my =~/.profile= file
+
+#+BEGIN_SRC bash
+export LD_LIBRARY_PATH=/home/tachidok/local/working/my_stuff/armadillo-8.300.3/lib/lib/
 #+END_SRC
 
 NOTE: You may (or not) need to add this path everytime you restart
