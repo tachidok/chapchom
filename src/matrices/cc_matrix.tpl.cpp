@@ -18,17 +18,6 @@ namespace chapchom
  }
  
  // ===================================================================
- // Constructor to create an n X n matrix.
- // ===================================================================
- template<class T>
- CCMatrix<T>::CCMatrix(const unsigned long n)
- : ACMatrix<T>(n)
- {
-  // Delete any data in memory
-  clean_up();
- }
- 
- // ===================================================================
  // Constructor to create an m X n matrix.
  // ===================================================================
  template<class T>

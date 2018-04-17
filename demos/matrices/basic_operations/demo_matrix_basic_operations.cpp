@@ -605,8 +605,8 @@ int main(int argc, char *argv[])
   A(1,0) = 1.0;   A(1,1) = 1.0;   A(1,2) = 1.0;
   A(2,0) = 2.0;   A(2,1) = 2.0;   A(2,2) = 2.0;
   
-  // Create a vector indicating the data to extract from the matrix
-  // (this is a row vector)
+  // Create a vector indicating the data to extract from the matrix,
+  // the vector is created as a row vector
   bool is_column_vector = false;
   CCVector<double> v(DIM, is_column_vector);
   v.allocate_memory();

@@ -24,9 +24,6 @@ namespace chapchom
    // Empty constructor
    ACMatrix();
    
-   // Constructor to create an n X n zero matrix
-   ACMatrix(const unsigned long n);
-   
    // Constructor to create an m X n zero matrix
    ACMatrix(const unsigned long m, const unsigned long n);
    

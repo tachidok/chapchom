@@ -15,14 +15,6 @@ namespace chapchom
  { }
  
  // ===================================================================
- // Constructor to create an n X n zero matrix
- // ===================================================================
- template<class T>
- ACMatrix<T>::ACMatrix(const unsigned long n)
-  : NRows(n), NColumns(n), Is_own_memory_allocated(false), Delete_matrix(true)
- { }
- 
- // ===================================================================
  // Constructor to create an m X n zero matrix
  // ===================================================================
  template<class T>

@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
  // ----------------------------------------------------------------
  {
   // The right hand side vectors
-  CCMatrix<double> B(n_rows);
+  CCMatrix<double> B(n_rows, n_rows);
   // Allocate memory
   B.allocate_memory();
   
@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
   CCLUSolverNumericalRecipes<double> linear_solver;
   
   // The solution vector
-  CCMatrix<double> SOL(n_cols);
+  CCMatrix<double> SOL(n_cols, n_cols);
   
   // Solve the system of equations
   linear_solver.solve(A, B, SOL);

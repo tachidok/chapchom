@@ -13,7 +13,7 @@ namespace chapchom
  // ===================================================================
  template<class T>
  CCSolverArmadillo<T>::CCSolverArmadillo()
-  : ACLinearSolver<CCMatrixArmadillo<T>, CCMatrixArmadillo<T> >()
+  : ACLinearSolver<CCMatrixArmadillo<T>, CCVectorArmadillo<T> >()
  { }
 
  // ===================================================================
@@ -21,7 +21,7 @@ namespace chapchom
  // ===================================================================
  template<class T>
  CCSolverArmadillo<T>::CCSolverArmadillo(const CCMatrixArmadillo<T> &A)
-  : ACLinearSolver<CCMatrixArmadillo<T>, CCMatrixArmadillo<T> >(A)
+  : ACLinearSolver<CCMatrixArmadillo<T>, CCVectorArmadillo<T> >(A)
  { }
  
  // ===================================================================
@@ -72,6 +72,20 @@ namespace chapchom
    }
   
  }
+
+ // ===================================================================
+ // Solve a system of equations with input A. We specify the
+ // right-hand side b and the x vector where the result is
+ // returned. We assume that the input/output vectors have the
+ // correct dimensions: A.ncolumns() for b, and A.nrows() for x.
+ // ===================================================================
+ template<class T>
+ void CCSolverArmadillo<T>::solve(const CCMatrixArmadillo<T> &A,
+                                  const CCVectorArmadillo<T> &b,
+                                  CCVectorArmadillo<T> &x)
+ {
+  
+ }
  
  // ===================================================================
  // Solve a system of equations with the already stored matrix A. We
@@ -80,8 +94,8 @@ namespace chapchom
  // correct dimensions: A.ncolumns() x A.nrows() for B, and A.nrows()
  // x A.ncolumns() for X.
  // ===================================================================
- template<class T>
- void CCSolverArmadillo<T>::solve(const CCMatrixArmadillo<T> &B,
+  template<class T>
+    void CCSolverArmadillo<T>::solve(const CCMatrixArmadillo<T> &B,
                                   CCMatrixArmadillo<T> &X)
  {
   // We can only call solve if the matrix A has been set
@@ -154,6 +168,19 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
+  
+ }
+
+ // ===================================================================
+ // Solve a system of equations with the already stored matrix A. We
+ // specify the right-hand side b and the x vectors where the result
+ // is returned. We assume that the input/output vectors have the
+ // correct dimensions: A.ncolumns() for b, and A.nrows() for x.
+ // ===================================================================
+ template<class T>
+ void CCSolverArmadillo<T>::solve(const CCVectorArmadillo<T> &b,
+                                  CCVectorArmadillo<T> &x)
+ {
   
  }
  

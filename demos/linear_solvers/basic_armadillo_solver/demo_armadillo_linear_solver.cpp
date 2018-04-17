@@ -37,17 +37,18 @@ int main(int argc, char *argv[])
  // Solve using vectors for a unique right-hand side
  // ----------------------------------------------------------------
  {
-  // The right hand side vector
-  CCMatrixArmadillo<double> b(n_rows, 1);
+  // The right hand side vector (by default it is created as a column
+  // vector)
+  CCVectorArmadillo<double> b(n_rows);
   // Allocate memory
   b.allocate_memory();
   
   // Solve the following system of equations Ax = b
   
   // ... with the following right hand side
-  b(0,0) = 16.0;
-  b(1,0) = -8.0;
-  b(2,0) = 0.0;
+  b(0) = 16.0;
+  b(1) = -8.0;
+  b(2) = 0.0;
   
   // Print the matrices
   std::cout << "Matrix A" << std::endl;
@@ -64,7 +65,7 @@ int main(int argc, char *argv[])
   
   // The solution vector (with the corresponding number of rows, that
   // in this case refers to the number of cols as well)
-  CCMatrixArmadillo<double> sol(n_cols, 1);
+  CCVectorArmadillo<double> sol(n_cols);
   
   // Solve the system of equations
   armadillo_linear_solver.solve(A, b, sol);
@@ -87,7 +88,7 @@ int main(int argc, char *argv[])
  // ----------------------------------------------------------------
  {
   // The right hand side vectors
-  CCMatrixArmadillo<double> B(n_rows, 1);
+  CCMatrixArmadillo<double> B(n_rows, n_rows);
   // Allocate memory
   B.allocate_memory();
   

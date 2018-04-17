@@ -19,20 +19,6 @@ namespace chapchom
  }
  
  // ===================================================================
- // Constructor to create an n X n matrix.
- // ===================================================================
- template<class T>
- CCMatrixArmadillo<T>::CCMatrixArmadillo(const unsigned long n)
- : ACMatrix<T>(n)
- {
-  // Delete any data in memory
-  clean_up();
-  
-  // Create an Armadillo's square matrix
-  Arma_matrix_pt = new arma::Mat<T>(n, n);
- }
- 
- // ===================================================================
  // Constructor to create an m X n matrix.
  // ===================================================================
  template<class T>

@@ -34,9 +34,6 @@ namespace chapchom
    // Empty constructor
    CCMatrixArmadillo();
    
-   // Constructor to create an n X n matrix.
-   CCMatrixArmadillo(const unsigned long n);
-  
    // Constructor to create an m X n matrix.
    CCMatrixArmadillo(const unsigned long m, const unsigned long n);
   

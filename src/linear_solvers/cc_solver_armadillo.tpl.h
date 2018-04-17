@@ -20,7 +20,7 @@ namespace chapchom
  // class uses the methods solve() or spsolve() from Armadillo to
  // perform the solution of the system of equations.
  template<class T>
-  class CCSolverArmadillo : public virtual ACLinearSolver<CCMatrixArmadillo<T>, CCMatrixArmadillo<T> >
+  class CCSolverArmadillo : public virtual ACLinearSolver<CCMatrixArmadillo<T>, CCVectorArmadillo<T> >
   {
  
   public:
@@ -39,13 +39,25 @@ namespace chapchom
    // returned, B and X may be 1-column matrices (vectors). We assume
    // that the input/output matrices have the correct dimensions.
    void solve(const CCMatrixArmadillo<T> &A, const CCMatrixArmadillo<T> &B, CCMatrixArmadillo<T> &X);
-      
+   
+   // Solve a system of equations with input A. We specify the
+   // right-hand side b and the x vector where the result is
+   // returned. We assume that the input/output vectors have the
+   // correct dimensions: A.ncolumns() for b, and A.nrows() for x.
+   void solve(const CCMatrixArmadillo<T> &A, const CCVectorArmadillo<T> &b, CCVectorArmadillo<T> &x);
+   
    // Solve a system of equations with the already stored matrix A. We
    // specify the right-hand side B and the X matrices where the
    // results are returned, B and X may be 1-column matrices
    // (vectors). We assume that the input/output matrices have the
    // correct dimensions.
    void solve(const CCMatrixArmadillo<T> &B, CCMatrixArmadillo<T> &X);
+   
+   // Solve a system of equations with the already stored matrix A. We
+   // specify the right-hand side b and the x vectors where the result
+   // is returned. We assume that the input/output vectors have the
+   // correct dimensions: A.ncolumns() for b, and A.nrows() for x.
+   void solve(const CCVectorArmadillo<T> &b, CCVectorArmadillo<T> &x);
    
   private:
  
