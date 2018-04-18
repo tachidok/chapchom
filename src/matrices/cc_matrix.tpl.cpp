@@ -18,17 +18,6 @@ namespace chapchom
  }
  
  // ===================================================================
- // Constructor to create an n X n matrix.
- // ===================================================================
- template<class T>
- CCMatrix<T>::CCMatrix(const unsigned long n)
- : ACMatrix<T>(n)
- {
-  // Delete any data in memory
-  clean_up();
- }
- 
- // ===================================================================
  // Constructor to create an m X n matrix.
  // ===================================================================
  template<class T>
@@ -1209,7 +1198,7 @@ namespace chapchom
 
  // ================================================================
  // Multiply vector times vector (if you want to perform dot product
- // use the dot() method defined in the cc_vector.h file instead)
+ // use the dot() method defined in the cc_vector.tpl.h file instead)
  // ================================================================
  template<class T>
  void multiply_vector_times_vector(const CCVector<T> &left_vector,

@@ -24,13 +24,21 @@ namespace chapchom
  // pass "true" as the second parameter).
  // ===================================================================
  template<class T>
- CCVectorArmadillo<T>::CCVectorArmadillo(const unsigned long n, bool is_transposed)
-  : ACVector<T>(n, is_transposed)
+ CCVectorArmadillo<T>::CCVectorArmadillo(const unsigned long n, bool is_column_vector)
+  : ACVector<T>(n, is_column_vector)
  {
   // Delete any data in memory
   clean_up();
 
-  Arma_vector_pt = new arma::Col<T>(n);
+  if (is_column_vector)
+   {
+    Arma_vector_pt = new arma::Mat<T>(n, 1);
+   }
+  else
+   {
+    Arma_vector_pt = new arma::Mat<T>(1, n);
+   }
+  
  }
  
  // ===================================================================
@@ -38,11 +46,11 @@ namespace chapchom
  // ===================================================================
  template<class T>
  CCVectorArmadillo<T>::CCVectorArmadillo(T *vector_pt, const unsigned long n,
-                       bool is_transposed)
-  : ACVector<T>(n, is_transposed)
+                                         bool is_column_vector)
+  : ACVector<T>(n, is_column_vector)
  {
   // Copy the data from the input vector to the Vector_pt vector
-  set_vector(vector_pt, n);
+  set_vector(vector_pt, n, is_column_vector);
  }
  
  // ===================================================================
@@ -57,7 +65,7 @@ namespace chapchom
   unsigned long n = vector.nvalues();
   
   // Copy the data from the vector to the Matrix_pt vector
-  set_vector(vector_pt, n);
+  set_vector(vector_pt, n, vector.is_column_vector());
  }
  
  // ===================================================================
@@ -65,13 +73,13 @@ namespace chapchom
  // ===================================================================
  template<class T>
  CCVectorArmadillo<T>::CCVectorArmadillo(const CCVectorArmadillo<T> &copy)
-  : ACVector<T>(copy.nvalues(), copy.is_transposed())
+  : ACVector<T>(copy.nvalues(), copy.is_column_vector())
  {
   // Clean any possible previously allocated memory
   clean_up();
   
   // Call the copy constructor of Armadillo
-  Arma_vector_pt = new arma::Col<T>(*(copy.arma_vector_pt())); 
+  Arma_vector_pt = new arma::Mat<T>(*(copy.arma_vector_pt())); 
  }
  
  // ===================================================================
@@ -91,9 +99,9 @@ namespace chapchom
  CCVectorArmadillo<T>& CCVectorArmadillo<T>::operator=(const CCVectorArmadillo<T> &source_vector)
  {
   // Clean-up and set values
-  set_vector(source_vector.arma_vector_pt(), source_vector.nvalues());
-  // Set the transposed status
-  this->set_transposed_status(source_vector.is_transposed());
+  set_vector(source_vector.arma_vector_pt(),
+             source_vector.nvalues(),
+             source_vector.is_column_vector());
   // Return this (de-referenced pointer)
   return *this;
   
@@ -250,7 +258,7 @@ namespace chapchom
    }
   
   // Store the dot product of the vectors
-  const T dot_product = arma::dot(*Arma_vector_pt, *(right_vector_pt->arma_vector_pt()));
+  const T dot_product = arma::dot(*Arma_vector_pt, *(right_vector.arma_vector_pt()));
   // Return the dot product
   return dot_product;
   
@@ -262,7 +270,8 @@ namespace chapchom
  // ===================================================================
  template<class T>
  void CCVectorArmadillo<T>::set_vector(const T *vector_pt,
-                                       const unsigned long n)
+                                       const unsigned long n,
+                                       bool is_column_vector)
  {
   // Clean any possible previously allocated memory
   clean_up();
@@ -272,19 +281,30 @@ namespace chapchom
   
   // Create an Armadillo's matrix (makes an own copy of the data,
   // therefore 'matrix_pt' may be deleted safely)
-  Arma_vector_pt = new arma::Col<T>(vector_pt, n);
+  if (is_column_vector)
+   {
+    Arma_vector_pt = new arma::Mat<T>(vector_pt, n, 1);
+   }
+  else
+   {
+    Arma_vector_pt = new arma::Mat<T>(vector_pt, 1, n);
+   }
   
   // Mark the vector as allocated its own memory
   this->Is_own_memory_allocated = true;
   
+  // Set the transposed status
+  this->set_as_column_vector(is_column_vector);
+  
  }
  
  // ===================================================================
- // Receives an armadillo type column vector
+ // Receives an armadillo type Mat
  // ===================================================================
  template<class T>
- void CCMatrixArmadillo<T>::set_vector(arma::Col<T> *arma_vector_pt,
-                                       const unsigned long n)
+ void CCVectorArmadillo<T>::set_vector(arma::Mat<T> *arma_vector_pt,
+                                       const unsigned long n,
+                                       bool is_column_vector)
  {
   // Clean any possible previously allocated memory
   clean_up();
@@ -293,10 +313,13 @@ namespace chapchom
   this->NValues = n;
   
   // Call the copy constructor of Armadillo
-  Arma_vector_pt = new arma::Col<T>(*arma_vector_pt);
+  Arma_vector_pt = new arma::Mat<T>(*arma_vector_pt);
   
   // Mark the matrix as having its own memory
   this->Is_own_memory_allocated = true;
+  
+  // Set the transposed status
+  this->set_as_column_vector(is_column_vector);
   
  }
  
@@ -405,7 +428,7 @@ namespace chapchom
    }
   
   // Get the vector pointer of the solution vector
-  arma::Col<T> *arma_solution_vector_pt = solution_vector.arma_vector_pt();
+  arma::Mat<T> *arma_solution_vector_pt = solution_vector.arma_vector_pt();
   
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
@@ -418,7 +441,7 @@ namespace chapchom
    }
   
   // Get the vector pointer of the input vector
-  arma::Col<T> *arma_vector_pt = vector.arma_vector_pt();
+  arma::Mat<T> *arma_vector_pt = vector.arma_vector_pt();
   
   // Perform the addition
   (*arma_solution_vector_pt) = (*Arma_vector_pt) + (*arma_vector_pt);
@@ -477,7 +500,7 @@ namespace chapchom
    }
 
   // Get the vector pointer of the solution vector
-  arma::Col<T> *arma_solution_vector_pt = solution_vector.arma_vector_pt();
+  arma::Mat<T> *arma_solution_vector_pt = solution_vector.arma_vector_pt();
   
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
@@ -490,7 +513,7 @@ namespace chapchom
    }
   
   // Get the vector pointer of the input vector
-  arma::Col<T> *arma_vector_pt = vector.arma_vector_pt();
+  arma::Mat<T> *arma_vector_pt = vector.arma_vector_pt();
   
   // Perform the substraction
   (*arma_solution_vector_pt) = (*Arma_vector_pt) - (*arma_vector_pt);
@@ -550,7 +573,7 @@ namespace chapchom
    }
 
   // Get the vector pointer of the solution vector
-  arma::Col<T> *arma_solution_vector_pt = solution_vector.arma_vector_pt();
+  arma::Mat<T> *arma_solution_vector_pt = solution_vector.arma_vector_pt();
   
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
@@ -563,7 +586,7 @@ namespace chapchom
    }
   
   // Get the vector pointer of the input vector
-  arma::Col<T> *arma_vector_pt = vector.arma_vector_pt();
+  arma::Mat<T> *arma_vector_pt = vector.arma_vector_pt();
   
   // Perform the operation
   for (unsigned long i = 0; i < this->NValues; i++)
@@ -592,11 +615,10 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Copy the vector into the tranposed vector
-  transposed_vector.arma_vector_pt() = &(arma::trans(*(this->Arma_vector_pt)));
-  // Get the current "transpose" status of the vector and set the
-  // transposed status of the new vector
-  transposed_vector.set_transposed_status(~(this->Is_transposed));
+  // Copy all the vector
+  transposed_vector = (*this);
+  // Perform tranposition
+  transposed_vector.transpose();  
  }
  
  // ===================================================================
@@ -605,10 +627,10 @@ namespace chapchom
  template<class T>
  void CCVectorArmadillo<T>::transpose()
  {
+  // Performs the operation
+  arma::inplace_trans(*Arma_vector_pt);
   // Change the status
   this->Is_column_vector=!(this->Is_column_vector);
-  // Performs the operation
-  arma::inplace_trans(*Arma_matrix_pt);
  }
  
  // ===================================================================
@@ -769,9 +791,16 @@ namespace chapchom
  {
   // Delete any data in memory
   clean_up();
-  
+
   // Allocate memory for the vector
-  Arma_vector_pt = new arma::Col<T>(this->NValues);
+  if (this->Is_column_vector)
+   {    
+    Arma_vector_pt = new arma::Mat<T>(this->NValues, 1);
+   }
+  else
+   {
+    Arma_vector_pt = new arma::Mat<T>(1, this->NValues);
+   }
   
   // Mark the vector as allocated its own memory
   this->Is_own_memory_allocated=true;
@@ -848,7 +877,7 @@ namespace chapchom
   
   // Check that the left vector is a row vector and that the right
   // vector is a column vector
-  if (left_vector.transposed())
+  if (left_vector.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
@@ -859,7 +888,7 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  if (!right_vector.is_transposed())
+  if (!right_vector.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
@@ -870,20 +899,9 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Get the vector pointer of the left vector
-  T *left_vector_pt = left_vector.vector_pt();
-  // Get the vector pointer of the right vector
-  T *right_vector_pt = right_vector.vector_pt();
-  
   // Store the dot product of the vectors
-  T dot_product = 0.0;
-  
-  // Compute the dot product
-  for (unsigned long i = 0; i < n_values_left_vector; i++)
-   {
-    dot_product+= left_vector_pt[i] * right_vector_pt[i];
-   }
-  
+  const T dot_product = arma::dot(*(left_vector.arma_vector_pt()), *(right_vector.arma_vector_pt()));
+  // Return the dot product
   return dot_product;
   
  }
@@ -929,7 +947,7 @@ namespace chapchom
   
   // Check that both vectors have the same transposed status (both are
   // columns vectors or both are row vectors)
-  if (vector_one.is_transposed() != vector_two.is_transposed())
+  if (vector_one.is_column_vector() != vector_two.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
@@ -941,7 +959,7 @@ namespace chapchom
    }
   
   // Get the vector pointer of the solution vector
-  T *solution_vector_pt = solution_vector.vector_pt();
+  arma::Mat<T> *arma_solution_vector_pt = solution_vector.arma_vector_pt();
   
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
@@ -950,19 +968,15 @@ namespace chapchom
     // Allocate memory for the vector
     solution_vector.allocate_memory();
     // Get the new vector pointer
-    solution_vector_pt = solution_vector.vector_pt();
+    arma_solution_vector_pt = solution_vector.arma_vector_pt();
    }
   
-  // Get the vector pointer of the vector one
-  T *vector_one_pt = vector_one.vector_pt();
-  // Get the vector pointer of the vector two
-  T *vector_two_pt = vector_two.vector_pt();
+  // Get the vector pointer of the input vectors
+  arma::Mat<T> *arma_vector_one_pt = vector_one.arma_vector_pt();
+  arma::Mat<T> *arma_vector_two_pt = vector_two.arma_vector_pt();
   
   // Perform the addition
-  for (unsigned long i = 0; i < n_values_vector_one; i++)
-   {
-    solution_vector_pt[i] = vector_one_pt[i] + vector_two_pt[i];
-   }
+  (*arma_solution_vector_pt) = (*arma_vector_one_pt) + (*arma_vector_two_pt);
   
  }
 
@@ -1007,7 +1021,7 @@ namespace chapchom
   
   // Check that both vectors have the same transposed status (both are
   // columns vectors or both are row vectors)
-  if (vector_one.is_transposed() != vector_two.is_transposed())
+  if (vector_one.is_column_vector() != vector_two.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
@@ -1019,7 +1033,7 @@ namespace chapchom
    }
   
   // Get the vector pointer of the solution vector
-  T *solution_vector_pt = solution_vector.vector_pt();
+  arma::Mat<T> *arma_solution_vector_pt = solution_vector.arma_vector_pt();
   
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
@@ -1028,19 +1042,15 @@ namespace chapchom
     // Allocate memory for the vector
     solution_vector.allocate_memory();
     // Get the new vector pointer
-    solution_vector_pt = solution_vector.vector_pt();
+    arma_solution_vector_pt = solution_vector.arma_vector_pt();
    }
   
-  // Get the vector pointer of the vector one
-  T *vector_one_pt = vector_one.vector_pt();
-  // Get the vector pointer of the vector two
-  T *vector_two_pt = vector_two.vector_pt();
+  // Get the vector pointer of the input vectors
+  arma::Mat<T> *arma_vector_one_pt = vector_one.arma_vector_pt();
+  arma::Mat<T> *arma_vector_two_pt = vector_two.arma_vector_pt();
   
-  // Perform the substraction of vectors
-  for (unsigned long i = 0; i < n_values_vector_one; i++)
-   {
-    solution_vector_pt[i] = vector_one_pt[i] - vector_two_pt[i];
-   }
+  // Perform the addition
+  (*arma_solution_vector_pt) = (*arma_vector_one_pt) + (*arma_vector_two_pt);
   
  }
 
@@ -1085,7 +1095,7 @@ namespace chapchom
   
   // Check that both vectors have the same transposed status (both are
   // columns vectors or both are row vectors)
-  if (vector_one.is_transposed() != vector_two.is_transposed())
+  if (vector_one.is_column_vector() != vector_two.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
@@ -1097,7 +1107,7 @@ namespace chapchom
    }
   
   // Get the vector pointer of the solution vector
-  T *solution_vector_pt = solution_vector.vector_pt();
+  arma::Mat<T> *arma_solution_vector_pt = solution_vector.arma_vector_pt();
   
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
@@ -1106,20 +1116,20 @@ namespace chapchom
     // Allocate memory for the vector
     solution_vector.allocate_memory();
     // Get the new vector pointer
-    solution_vector_pt = solution_vector.vector_pt();
+    arma_solution_vector_pt = solution_vector.arma_vector_pt();
    }
-  
-  // Get the vector pointer of the vector one
-  T *vector_one_pt = vector_one.vector_pt();
-  // Get the vector pointer of the vector two
-  T *vector_two_pt = vector_two.vector_pt();
-  
-  // Perform the substraction of vectors
+
+  // Get the vector pointer of the input vectors
+  arma::Mat<T> *arma_vector_one_pt = vector_one.arma_vector_pt();
+  arma::Mat<T> *arma_vector_two_pt = vector_two.arma_vector_pt();
+
+  // Perform the operation
   for (unsigned long i = 0; i < n_values_vector_one; i++)
    {
-    solution_vector_pt[i] = vector_one_pt[i] * vector_two_pt[i];
+    (*arma_solution_vector_pt)(i) = (*arma_vector_one_pt)(i) * (*arma_vector_two_pt)(i);
    }
   
  }
  
 }
+

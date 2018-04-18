@@ -24,9 +24,6 @@ namespace chapchom
   // Empty constructor
   CCMatrix();
   
-  // Constructor to create an n X n matrix.
-  CCMatrix(const unsigned long n);
-  
   // Constructor to create an m X n matrix.
   CCMatrix(const unsigned long m, const unsigned long n);
   

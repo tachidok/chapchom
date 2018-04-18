@@ -605,12 +605,12 @@ int main(int argc, char *argv[])
   A(1,0) = 1.0;   A(1,1) = 1.0;   A(1,2) = 1.0;
   A(2,0) = 2.0;   A(2,1) = 2.0;   A(2,2) = 2.0;
   
-  // Create a vector indicating the data to extract from the matrix
-  CCVector<double> v(DIM);
+  // Create a vector indicating the data to extract from the matrix,
+  // the vector is created as a row vector
+  bool is_column_vector = false;
+  CCVector<double> v(DIM, is_column_vector);
   v.allocate_memory();
-  // Transpose the vector so that we have a row vector
-  v.transpose();
-
+  
   // The following vector states to take the first row of matrix A and
   // add it to half the second row and a quarter of the third row
   v(0) = 1.0;  v(1) = 0.5;  v(2) = 0.25;

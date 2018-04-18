@@ -34,9 +34,6 @@ namespace chapchom
    // Empty constructor
    CCMatrixArmadillo();
    
-   // Constructor to create an n X n matrix.
-   CCMatrixArmadillo(const unsigned long n);
-  
    // Constructor to create an m X n matrix.
    CCMatrixArmadillo(const unsigned long m, const unsigned long n);
   
@@ -175,15 +172,26 @@ namespace chapchom
  // ================================================================
  // Extra methods to work with vector and matrices operations
  // ================================================================
+ 
+ // Multiply vector times vector (if you want to perform dot product
+ // use the dot() method defined in the cc_vector_armadillo.tpl.h file
+ // instead)
+ template<class T>
+  void multiply_vector_times_vector(const CCVectorArmadillo<T> &left_vector,
+                                    const CCVectorArmadillo<T> &right_vector,
+                                    CCMatrixArmadillo<T> &solution_matrix);
+ 
  // Multiply vector times matrix
  template<class T>
-  void multiply_vector_times_matrix(const CCVector<T> &vector, const CCMatrixArmadillo<T> &matrix,
+  void multiply_vector_times_matrix(const CCVectorArmadillo<T> &vector,
+                                    const CCMatrixArmadillo<T> &matrix,
                                     CCMatrixArmadillo<T> &solution_matrix);
  
  // Multiply matrix times vector
  template<class T>
-  void multiply_matrix_times_vector(const CCMatrixArmadillo<T> &matrix, const CCVector<T> &vector,
-                                    CCVector<T> &solution_vector);
+  void multiply_matrix_times_vector(const CCMatrixArmadillo<T> &matrix,
+                                    const CCVectorArmadillo<T> &vector,
+                                    CCVectorArmadillo<T> &solution_vector);
  
 }
 

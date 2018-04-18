@@ -41,7 +41,8 @@ namespace chapchom
    // Transforms the input vector to a vector class type (virtual such
    // that each derived class has to implement it)
    virtual void set_vector(const T *vector_pt,
-                           const unsigned long n) = 0;
+                           const unsigned long n,
+                           bool is_column_vector = true) = 0;
    
    // Clean up for any dynamically stored data
    virtual void clean_up() = 0;
