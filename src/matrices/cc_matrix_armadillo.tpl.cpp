@@ -75,7 +75,7 @@ namespace chapchom
   // vector is transposed or not
   unsigned long m = 0;
   unsigned long n = 0;
-  if (vector.is_transposed()) // a row vector
+  if (!vector.is_column_vector()) // a row vector
    {
     m = 1;
     n = vector.nvalues();
@@ -95,14 +95,21 @@ namespace chapchom
  template<class T>
  CCMatrixArmadillo<T>::CCMatrixArmadillo(CCVectorArmadillo<T> &vector)
  {
-  // Error message
-  std::ostringstream error_message;
-  error_message << "We need to implement this\n"
-                << "Constructor from CCMatrixArmadillo that receives a"
-                << "CCVectorArmadillo" << std::endl;
-  throw ChapchomLibError(error_message.str(),
-                         CHAPCHOM_CURRENT_FUNCTION,
-                         CHAPCHOM_EXCEPTION_LOCATION);
+  // Compute the dimension of the new matrix by checking whether the
+  // vector is transposed or not
+  unsigned long m = 0;
+  unsigned long n = 0;
+  if (!vector.is_column_vector()) // a row vector
+   {
+    m = 1;
+    n = vector.nvalues();
+   }
+  else // a column vector
+   {
+    m = vector.nvalues();
+    n = 1;
+   }
+  set_matrix(vector.arma_vector_pt(), m, n);
  }
  
  // ===================================================================

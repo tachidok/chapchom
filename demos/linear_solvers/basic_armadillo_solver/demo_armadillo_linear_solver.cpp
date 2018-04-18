@@ -51,14 +51,24 @@ int main(int argc, char *argv[])
   b(2) = 0.0;
   
   // Print the matrices
+  std::cout << std::endl;
   std::cout << "Matrix A" << std::endl;
+  std::cout << std::endl;
+  output_test << std::endl;
+  output_test << "Matrix A" << std::endl;
+  output_test << std::endl;
   A.print();
   A.print(output_test);
   std::cout << std::endl;
   std::cout << "Vector b" << std::endl;
+  std::cout << std::endl;
+  output_test << std::endl;
+  output_test << "Vector b" << std::endl;
+  output_test << std::endl;
   b.print();
   b.print(output_test);
   std::cout << std::endl;
+  output_test << std::endl;
   
   // Create an Armadillo linear solver
   CCSolverArmadillo<double> armadillo_linear_solver;
@@ -71,14 +81,25 @@ int main(int argc, char *argv[])
   armadillo_linear_solver.solve(A, b, sol);
   
   // Print the solution
-  std::cout << "Vector sol" << std::endl;
+  std::cout << std::endl;
+  std::cout << "Vector sol -----" << std::endl;
+  std::cout << std::endl;
+  output_test << std::endl;
+  output_test << "Vector sol -----" << std::endl;
+  output_test << std::endl;
   sol.print();
   sol.print(output_test);
   std::cout << std::endl;
+  output_test << std::endl;
   
-  // Apply the solution and check the result
+   // Apply the solution and check the result
   CCMatrixArmadillo<double> C = A*sol;
+  std::cout << std::endl;
   std::cout << "Matrix C" << std::endl;
+  std::cout << std::endl;
+  output_test << std::endl;
+  output_test << "Matrix C" << std::endl;
+  output_test << std::endl;
   C.print();
   C.print(output_test);
  }
@@ -108,14 +129,24 @@ int main(int argc, char *argv[])
   B(2,2) = 0.0;
   
   // Print the matrices
+  std::cout << std::endl;
   std::cout << "Matrix A" << std::endl;
+  std::cout << std::endl;
+  output_test << std::endl;
+  output_test << "Matrix A" << std::endl;
+  output_test << std::endl;
   A.print();
   A.print(output_test);
   std::cout << std::endl;
   std::cout << "Matrix B" << std::endl;
+  std::cout << std::endl;
+  output_test << std::endl;
+  output_test << "Matrix B" << std::endl;
+  output_test << std::endl;
   B.print();
   B.print(output_test);
   std::cout << std::endl;
+  output_test << std::endl;
   
   // Create an Armadillo linear solver
   CCSolverArmadillo<double> armadillo_linear_solver;
@@ -127,14 +158,25 @@ int main(int argc, char *argv[])
   armadillo_linear_solver.solve(A, B, SOL);
   
   // Print the solution
-  std::cout << "Matrix SOL" << std::endl;
+  std::cout << std::endl;
+  std::cout << "Matrix SOL -----" << std::endl;
+  std::cout << std::endl;
+  output_test << std::endl;
+  output_test << "Matrix SOL -----" << std::endl;
+  output_test << std::endl;
   SOL.print();
   SOL.print(output_test);
   std::cout << std::endl;
+  output_test << std::endl;
   
   // Apply the solution and check the result
   CCMatrixArmadillo<double> C = A*SOL;
+  std::cout << std::endl;
   std::cout << "Matrix C" << std::endl;
+  std::cout << std::endl;
+  output_test << std::endl;
+  output_test << "Matrix C" << std::endl;
+  output_test << std::endl;
   C.print();
   C.print(output_test);
  }
