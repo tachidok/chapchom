@@ -1,5 +1,5 @@
 # Indicate source files and dependencies in the files
-SET(SRC_demo_basic_n_body demo_basic_n_body.cpp)
+SET(SRC_demo_basic_n_body demo_basic_n_body.cpp cc_odes_basic_n_body.cpp)
 
 # Do not create executable but add them to the 'make' list
 ADD_EXECUTABLE(demo_basic_n_body EXCLUDE_FROM_ALL ${SRC_demo_basic_n_body})

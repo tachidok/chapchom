@@ -1,5 +1,5 @@
-# Check for cmake minimum required version
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+# Check for cmake minimum required version (previously working with v2.8)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.5)
 
 # ----------------------------------------------------------------------
 # Project intialisation
@@ -8,7 +8,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 # Project name (this case library's name)
 PROJECT(chapchom)
 SET(${CMAKE_PROJECT_NAME}_MAJOR_VERSION 0)
-SET(${CMAKE_PROJECT_NAME}_MINOR_VERSION 2)
+SET(${CMAKE_PROJECT_NAME}_MINOR_VERSION 3)
 SET(${CMAKE_PROJECT_NAME}_PATCH_LEVEL 0)
 
 # Prints a lot of stuff
@@ -61,12 +61,15 @@ MESSAGE( STATUS "** ARMADILLO'S LIBRARY INFORMATION **" )
 MESSAGE( STATUS "-----------------------------------------------------------------------" )
 IF (CHAPCHOM_USES_ARMADILLO)
   IF (CHAPCHOM_AUTO_FIND_ARMADILLO_PATHS)
+    # Set the suggested folder where to look for Armadillo's library (where the
+    # ArmadilloConfig.cmake) file lives
+    LIST(APPEND CMAKE_PREFIX_PATH ${ARMADILLO_AUTO_FIND_FOLDER})
     # Try to find Armadillo to enable Armadillo wrappers
     FIND_PACKAGE(Armadillo REQUIRED)
     IF (ARMADILLO_FOUND)
       MESSAGE( STATUS "FOUND ARMADILLO_INCLUDE_DIRS:             " ${ARMADILLO_INCLUDE_DIRS} )
       MESSAGE( STATUS "FOUND ARMADILLO_LIBRARIES:                " ${ARMADILLO_LIBRARIES} )
-      INCLUDE_DIRECTORIES($ARMADILLO_INCLUDE_DIRS)
+      INCLUDE_DIRECTORIES(${ARMADILLO_INCLUDE_DIRS})
     ENDIF (ARMADILLO_FOUND)
   ELSE (CHAPCHOM_AUTO_FIND_ARMADILLO_PATHS)
     MESSAGE( STATUS "USING YOUR OWN ARMADILLO'S INCLUDE AND LIB PATHS")
@@ -85,6 +88,34 @@ IF (CHAPCHOM_USES_ARMADILLO)
   FIND_PACKAGE(Threads REQUIRED)
   
 ENDIF (CHAPCHOM_USES_ARMADILLO)
+
+# ----------------------------------------------------------------------
+# Do we want to compile using VTK? It should be a must
+# ----------------------------------------------------------------------
+MESSAGE( STATUS "" )
+MESSAGE( STATUS "-----------------------------------------------------------------------" )
+MESSAGE( STATUS "** VTK'S LIBRARY INFORMATION **" )
+MESSAGE( STATUS "-----------------------------------------------------------------------" )
+IF (CHAPCHOM_USES_VTK)
+  IF (CHAPCHOM_AUTO_FIND_VTK_PATHS)
+    # Set the suggested folder where to look for VTK's library (where the
+    # VTKConfig.cmake) file lives
+    LIST(APPEND CMAKE_PREFIX_PATH ${VTK_AUTO_FIND_FOLDER})
+    # Try to find VTK to enable VTK wrappers
+    FIND_PACKAGE(VTK 8.1 REQUIRED)
+    IF (VTK_FOUND)
+      MESSAGE( STATUS "FOUND VTK_INCLUDE_DIRS:             " ${VTK_INCLUDE_DIRS} )
+      MESSAGE( STATUS "FOUND VTK_LIBRARIES:                " ${VTK_LIBRARIES} )
+      INCLUDE_DIRECTORIES(${VTK_INCLUDE_DIRS})
+    ENDIF (VTK_FOUND)
+  ELSE (CHAPCHOM_AUTO_FIND_VTK_PATHS)
+    MESSAGE( STATUS "USING YOUR OWN VTK'S INCLUDE AND LIB PATHS")
+    MESSAGE( STATUS "VTK_INCLUDE_DIRS:             " ${VTK_INCLUDE_DIRS} )
+    MESSAGE( STATUS "VTK_LIBRARIES:                " ${VTK_LIBRARIES} )
+    INCLUDE_DIRECTORIES(${VTK_INCLUDE_DIRS})
+  ENDIF (CHAPCHOM_AUTO_FIND_VTK_PATHS)
+  
+ENDIF (CHAPCHOM_USES_VTK)
 MESSAGE( STATUS "-----------------------------------------------------------------------" )
 
 # ----------------------------------------------------------------------

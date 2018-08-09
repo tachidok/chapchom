@@ -58,6 +58,9 @@ set(CMAKE_C_FLAGS "-fPIC -DPRNTlevel=0 -DAdd_ ${CMAKE_C_FLAGS}")
 make
 #+END_SRC
 
+You can try =make -j # of processors= instead of =make= to use more
+processors at compilation time.
+
 - Install it ...
 
 #+BEGIN_SRC bash

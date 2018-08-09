@@ -3,9 +3,9 @@
 #+AUTHOR: Julio C.
 
 This guide is to allow [[https://github.com/tachidok/chapchom][chapchom]] to work with external libraries such
-as =Armadillo= and =SuperLU= in =Ubuntu 16.04 LTS 64 bits=. If you
-find any problem or something in this guide makes no sense please
-contact the author.
+as =Armadillo=, =SuperLU= and =VTK (for visualisation)= in =Ubuntu
+16.04 LTS 64 bits=. If you find any problem or something in this guide
+makes no sense please contact the author.
 
 * Requirements
 Before installing any of the external libraries in your system ensure
@@ -27,5 +27,6 @@ Suggested (and working) installation order
 - OpenBLAS
 - SuperLU
 - Armadillo
+- VTK
 
 

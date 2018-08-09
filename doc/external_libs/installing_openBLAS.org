@@ -43,6 +43,9 @@ recommend you to install them to improve performance.
 make
 #+END_SRC
 
+You can try =make -j # of processors= instead of =make= to use more
+processors at compilation time.
+
 - Once compilation is finished you are able to install it using the
   following command (we recommned you to create a folder where to
   install the library, ex. =/lib/=)

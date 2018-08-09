@@ -1,0 +1,84 @@
+#+STARTUP: showall
+#+TITLE: Installing VTK
+#+AUTHOR: Julio C.
+
+This guide is to allow [[https://github.com/tachidok/chapchom][chapchom]] to work with =VTK 8.1.1= in =Ubuntu
+16.04 LTS 64 bits=. If you find any problem or something in this guide
+makes no sense please contact the author.
+
+Please also refer to the [[https://www.vtk.org/vtk-users-guide/][VTK-user guide]] in case you are having
+troubles with the installation.
+
+* Requirements
+Before installing this version of VTK please check that you have not
+any other version of VTK already installed in your system. If that is
+the case then proceed to uninstall it.
+
+Once you ensure that VTK is not already installed in your system then
+proceed to check that you have the following packages installed in
+your system.
+- cmake (tested with =cmake 3.5.1-1ubuntu3=)
+- freeglut3 (tested with version =2.8.1-2=)
+- freeglut3-dev (tested with version =2.8.1-2=)
+
+Based on the official documentation this installation process may take
+about one to four hours depending on the speed of the machine. Most of
+the time is spent compiling the source code and only about 10 to 30
+minutes of human interaction are required. Also, make sure to have at
+least 300Mb free in the system for installation.
+
+* Installation
+
+- Extract the compressed file =/external_src/vtk/VTK-8.1.1.tar.gz= in
+  a folder of your preference. We recommend you to extract it out of
+  the chapchom project folder to avoid adding the files to the git
+  repository. If you do extract it inside the chapchom project folder
+  please extreme precautions when adding your files to the git
+  repository.
+
+- At the same level where you extracted the compressed file create a
+  new folder by typing
+
+#+BEGIN_SRC bash
+mkdir VTK-bin
+cd VTK-bin
+cmake-gui ../VTK-8.1.1 -DCMAKE_INSTALL_PREFIX=./lib
+#+END_SRC
+
+the last line indicates where to perform the installation, I use to
+install it in the =lib= directory of the VTK-bin folder, that is why
+that value. However, if you have root privileges then you may not need
+to specify a value for the =CMAKE_INSTALL_PREFIX= variable. Click on
+the =configure= button, then in the =generate= button.
+
+NOTE: Make sure that the source code and build binary directories are
+correctly set.
+
+NOTE2: It seems that when working with =MPI= one needs to enable MPI
+modules; look for the variable =VTK_Group_MPI= when using the
+=cmake-gui= option
+
+NOTE3: Also check for the building type =DEBUG= or =RELEASE=.
+
+- When the process finish then type
+
+#+BEGIN_SRC bash
+make
+#+END_SRC
+
+You can try =make -j # of processors= instead of =make= to use more
+processors at compilation time.
+
+- Install it by typing
+
+#+BEGIN_SRC bash
+make install
+#+END_SRC
+
+this will install VTK into the folder specified by the build option
+=DCMAKE_INSTALL_PREFIX=.
+
+* Learning VTK by examples
+The suggested way to learn VTK is by exploring examples, I personally
+recommend reading chapters 1, 2, 3, 11 and 12 of the [[https://www.vtk.org/vtk-users-guide/][VTK-user guide]].
+
