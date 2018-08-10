@@ -16,12 +16,141 @@
 // Odes for N body problem
 #include "cc_odes_basic_n_body.h"
 
+// Include the VTK libraries to generate the output
+#include <vtkUnstructuredGrid.h>
+#include <vtkXMLUnstructuredGridWriter.h>
+#include <vtkSmartPointer.h>
+#include <vtkPoints.h>
+
+#include <vtkDoubleArray.h>
+#include <vtkFieldData.h>
+#include <vtkPointData.h>
+
 // -------------------------------------------------
 // Constants
 // -------------------------------------------------
 #define G 4*M_PI // Gravitational constant for problem
 
 using namespace chapchom;
+
+// ==================================================================
+// Functions for VTK output
+// ==================================================================
+void add_time_to_vtk_data_set(double time,
+                              vtkSmartPointer<vtkUnstructuredGrid> &data_set)
+{
+ // Add time stamp for the current file
+ vtkSmartPointer<vtkDoubleArray> array = vtkSmartPointer<vtkDoubleArray>::New();
+ array->SetName("TIME");
+ array->SetNumberOfTuples(1);
+ array->SetTuple1(0, time);
+ data_set->GetFieldData()->AddArray(array);
+}
+
+void add_particles_to_vtk_data_set(const std::vector<std::vector <double> > &particles_data,
+                                   vtkSmartPointer<vtkPoints> &data_points,
+                                   vtkSmartPointer<vtkUnstructuredGrid> &data_set)
+{
+ const unsigned n_data_per_particle = 6;
+ const int n_particles = particles_data.size()/n_data_per_particle;
+ // An array to store the particles IDs
+ vtkSmartPointer<vtkDoubleArray> ids = vtkSmartPointer<vtkDoubleArray>::New();
+ ids->SetNumberOfComponents(1);
+ ids->SetNumberOfTuples(n_particles);
+ ids->SetName("ID");
+#if 0
+ // An array to store the particles radius
+ vtkSmartPointer<vtkDoubleArray> radius = vtkSmartPointer<vtkDoubleArray>::New();
+ radius->SetNumberOfComponents(3);
+ radius->SetNumberOfTuples(n_particles);
+ radius->SetName("Radius");
+#endif // #if 0
+ // An array to store the particles positions
+ vtkSmartPointer<vtkDoubleArray> position = vtkSmartPointer<vtkDoubleArray>::New();
+ position->SetNumberOfComponents(3);
+ position->SetNumberOfTuples(n_particles);
+ position->SetName("Position");
+ // An array to store the particles velocity
+ vtkSmartPointer<vtkDoubleArray> velocity = vtkSmartPointer<vtkDoubleArray>::New();
+ velocity->SetNumberOfComponents(3);
+ velocity->SetNumberOfTuples(n_particles);
+ velocity->SetName("Velocity");
+
+ // Temporal vector to extract data
+ double pos[3];
+ double vel[3];
+ int global_id = 0;
+ // Loop through particles data
+ for (unsigned i = 0; i < n_particles*n_data_per_particle; i+=n_data_per_particle)
+  {
+   // Position
+   pos[0] = particles_data[i][0];
+   pos[1] = particles_data[i+2][0];
+   pos[2] = particles_data[i+4][0];
+   data_points->SetPoint(global_id, pos);
+   
+   // IDs
+   ids->InsertValue(global_id, global_id);
+   
+   // Velocity
+   vel[0] = particles_data[i+1][0];
+   vel[1] = particles_data[i+3][0];
+   vel[2] = particles_data[i+5][0];
+   velocity->InsertTuple(global_id, vel);
+   
+   global_id++;
+  }
+ 
+ // Add particles data to data set
+ data_set->GetPointData()->AddArray(ids);
+ //data_set->GetPointData()->AddArray(radius);
+ //data_set->GetPointData()->AddArray(position);
+ data_set->GetPointData()->AddArray(velocity);
+}
+
+void output_particles(double time,
+                      const std::vector<std::vector <double> > &particles_data,
+                      std::ostringstream &file_name)
+{
+ // Create a VTK writer
+ vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer =
+  vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
+ 
+ // Generate the filename with the proper extension
+ file_name << "." << writer->GetDefaultFileExtension();
+ writer->SetFileName((file_name.str()).c_str());
+ 
+ // Create a pointer to a VTK Unstructured Grid data set
+ vtkSmartPointer<vtkUnstructuredGrid> data_set =
+  vtkSmartPointer<vtkUnstructuredGrid>::New();
+ 
+ // Set up pointer to data point
+ vtkSmartPointer<vtkPoints> data_points =
+  vtkSmartPointer<vtkPoints>::New();
+ 
+ // Get the total number of particles
+ const int n_points = particles_data.size()/6;
+ data_points->SetNumberOfPoints(n_points);
+ 
+ // Add time
+ add_time_to_vtk_data_set(time, data_set);
+ 
+ // Add the particle data to the unstructured grid
+ add_particles_to_vtk_data_set(particles_data, data_points, data_set);
+ 
+ // Set the points
+ data_set->SetPoints(data_points);
+ // Remove unused memory
+ data_set->Squeeze();
+ 
+ // Set the writer's input data set
+ writer->SetInputData(data_set);
+ //writer->SetDataModelToBinary();
+ writer->SetDataModeToAscii();
+ writer->Write();
+ 
+}
+
 
 // ==================================================================
 // ==================================================================
@@ -66,17 +195,18 @@ int main(int argc, char *argv[])
  // For each ode we allocate space for the histoy values + 1 (to store
  // the history values and the current one)
  for (unsigned i = 0; i < n_odes; i++)
-         {
-          y[i].resize(n_history_values+1);
-         }
+  {
+   y[i].resize(n_history_values+1);
+  }
  
-        // Set initial conditions
+ // Set initial conditions
  odes.set_initial_conditions(y);
  
  // Prepare time integration data
  double initial_time = 0.0; // years
  double final_time = 300.0; // years
- double time_step_size = 0.001; // years
+ //double time_step_size = 0.001; // years
+ double time_step_size = 0.1; // years
  double current_time = initial_time; // years
  
  // Output the initial data to screen
@@ -87,6 +217,12 @@ int main(int argc, char *argv[])
  // ----------------------------------------------------------------
  // Integrator initialisation [END]
  // ----------------------------------------------------------------
+
+ unsigned output_file_index = 0;
+ // Initial output
+ std::ostringstream output_filename;
+ output_filename << "./RESLT/soln" << "_" << std::setfill('0') << std::setw(5) << output_file_index++;
+ output_particles(0.0, y, output_filename);
  
  // Flag to indicate whether to continue processing
  bool LOOP = true;
@@ -125,6 +261,11 @@ int main(int argc, char *argv[])
    std::cout.precision(8);
    std::cout << "t: " << current_time
              << "\t" << y[0][0] << "\t" << y[6][0] << "\t" << y[12][0] << "\t" << y[18][0] << std::endl;
+   
+   // Output to file
+   std::ostringstream output_filename;
+   output_filename << "./RESLT/soln" << "_" << std::setfill('0') << std::setw(5) << output_file_index++;
+   output_particles(current_time, y, output_filename);
    
   } // while(LOOP)
  
