@@ -27,6 +27,9 @@ the time is spent compiling the source code and only about 10 to 30
 minutes of human interaction are required. Also, make sure to have at
 least 300Mb free in the system for installation.
 
+You will need Paraview software to visualise results, we tested the
+output produced by VTK 8.1.1 with ParaView-5.5.2-Qt5-MPI-Linux-64bit.
+
 * Installation
 
 - Extract the compressed file =/external_src/vtk/VTK-8.1.1.tar.gz= in

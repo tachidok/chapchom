@@ -45,6 +45,7 @@ namespace chapchom
   y[9][0] = 0.0; // y-velocity
   y[10][0] = 0.0; // z-position
   y[11][0] = 0.0; // z-velocity
+#if 0
   // Initial conditions for 3rd body
   y[12][0] = -4.503; // x-position
   y[13][0] = -1.38; // x-velocity
@@ -58,8 +59,24 @@ namespace chapchom
   y[20][0] = 2.6; // y-position
   y[21][0] = 2.39; // y-velocity
   y[22][0] = 0.0; // z-position
+  y[23][0] = 0.0; // z-velocity
+#endif // #if 0
+#if 1
+  // Initial conditions for 3rd body
+  y[12][0] = -0.5; // x-position
+  y[13][0] = -0.03; // x-velocity
+  y[14][0] = 4.8; // y-position
+  y[15][0] = -0.3; // y-velocity
+  y[16][0] = 0.0; // z-position
+  y[17][0] = 0.0; // z-velocity
+  // Initial conditions for 4th body
+  y[18][0] = 0.5; // x-position
+  y[19][0] = -0.03; // x-velocity
+  y[20][0] = 5.6; // y-position
+  y[21][0] = 0.3; // y-velocity
+  y[22][0] = 0.0; // z-position
   y[23][0] = 0.0; // z-velocity 
-  
+#endif // #if 1
  }
  
  // ===================================================================

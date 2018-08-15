@@ -29,7 +29,8 @@
 // -------------------------------------------------
 // Constants
 // -------------------------------------------------
-#define G 4*M_PI // Gravitational constant for problem
+//#define G 4*M_PI*M_PI // Gravitational constant for problem
+#define G -0.01 // Gravitational constant for problem
 
 using namespace chapchom;
 
@@ -75,10 +76,16 @@ void add_particles_to_vtk_data_set(const std::vector<std::vector <double> > &par
  velocity->SetNumberOfComponents(3);
  velocity->SetNumberOfTuples(n_particles);
  velocity->SetName("Velocity");
+ // An array to store the particles masses
+ vtkSmartPointer<vtkDoubleArray> masses = vtkSmartPointer<vtkDoubleArray>::New();
+ masses->SetNumberOfComponents(1);
+ masses->SetNumberOfTuples(n_particles);
+ masses->SetName("Masses");
 
  // Temporal vector to extract data
  double pos[3];
  double vel[3];
+ double mass[1];
  int global_id = 0;
  // Loop through particles data
  for (unsigned i = 0; i < n_particles*n_data_per_particle; i+=n_data_per_particle)
@@ -98,6 +105,9 @@ void add_particles_to_vtk_data_set(const std::vector<std::vector <double> > &par
    vel[2] = particles_data[i+5][0];
    velocity->InsertTuple(global_id, vel);
    
+   mass[0] = global_id;
+   masses->InsertTuple(global_id, mass);
+   
    global_id++;
   }
  
@@ -106,6 +116,7 @@ void add_particles_to_vtk_data_set(const std::vector<std::vector <double> > &par
  //data_set->GetPointData()->AddArray(radius);
  //data_set->GetPointData()->AddArray(position);
  data_set->GetPointData()->AddArray(velocity);
+ data_set->GetPointData()->AddArray(masses);
 }
 
 void output_particles(double time,
@@ -170,9 +181,12 @@ int main(int argc, char *argv[])
  CCODEsBasicNBody odes(G, 4);
  // Set the masses of the objects
  odes.m(0) = 1.0;
- odes.m(1) = 0.001;
- odes.m(2) = 0.0;
- odes.m(3) = 0.0;
+ //odes.m(1) = 0.001;
+ //odes.m(2) = 0.0;
+ //odes.m(3) = 0.0;
+ odes.m(1) = 0.01;
+ odes.m(2) = 0.001;
+ odes.m(3) = 0.001;
  
  // ----------------------------------------------------------------
  // Integrator initialisation [BEGIN]
