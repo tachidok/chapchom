@@ -124,10 +124,10 @@ namespace chapchom
    inline T *vector_pt() const {return Vector_pt;}
    
    // Computes the norm-1 of the vector
-   const double norm_1();
+   double norm_1();
    
    // Computes the norm-2 of the vector
-   const double norm_2();
+   double norm_2();
    
   protected:
       

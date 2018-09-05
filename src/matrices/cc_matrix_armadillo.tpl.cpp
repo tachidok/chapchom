@@ -55,8 +55,8 @@ namespace chapchom
   // Get the pointer to the matrix data
   T *matrix_pt = matrix.matrix_pt();
   // Get the dimension of the new matrix
-  unsigned long m = matrix.nrows();
-  unsigned long n = matrix.ncolumns();
+  unsigned long m = matrix.n_rows();
+  unsigned long n = matrix.n_columns();
   
   // Copy the data from the vector to the Matrix_pt vector
   set_matrix(matrix_pt, m, n);
@@ -78,11 +78,11 @@ namespace chapchom
   if (!vector.is_column_vector()) // a row vector
    {
     m = 1;
-    n = vector.nvalues();
+    n = vector.n_values();
    }
   else // a column vector
    {
-    m = vector.nvalues();
+    m = vector.n_values();
     n = 1;
    }
   // Copy the data from the vector to the Matrix_pt vector
@@ -102,11 +102,11 @@ namespace chapchom
   if (!vector.is_column_vector()) // a row vector
    {
     m = 1;
-    n = vector.nvalues();
+    n = vector.n_values();
    }
   else // a column vector
    {
-    m = vector.nvalues();
+    m = vector.n_values();
     n = 1;
    }
   set_matrix(vector.arma_vector_pt(), m, n);
@@ -117,7 +117,7 @@ namespace chapchom
  // ===================================================================
  template<class T>
  CCMatrixArmadillo<T>::CCMatrixArmadillo(const CCMatrixArmadillo<T> &copy)
-  : ACMatrix<T>(copy.nrows(), copy.ncolumns())
+  : ACMatrix<T>(copy.n_rows(), copy.n_columns())
  {
   // Clean any possible previously allocated memory
   clean_up();
@@ -144,8 +144,8 @@ namespace chapchom
  {
   // Clean-up and set values
   set_matrix(source_matrix.arma_matrix_pt(),
-             source_matrix.nrows(),
-             source_matrix.ncolumns());
+             source_matrix.n_rows(),
+             source_matrix.n_columns());
   
   // Return this (de-referenced pointer)
   return *this;
@@ -209,7 +209,7 @@ namespace chapchom
  CCMatrixArmadillo<T> CCMatrixArmadillo<T>::operator*(const CCMatrixArmadillo<T> &right_matrix)
  { 
   // Create a zero matrix where to store the result
-  CCMatrixArmadillo<T> solution(this->NRows, right_matrix.ncolumns());
+  CCMatrixArmadillo<T> solution(this->NRows, right_matrix.n_columns());
   // Perform the multiplication
   multiply_by_matrix(right_matrix, solution);
   // Return the solution matrix
@@ -340,8 +340,8 @@ namespace chapchom
    }
   
   // Check whether the dimensions of the matrices are the same
-  const unsigned long n_rows_input_matrix = matrix.nrows();
-  const unsigned long n_columns_input_matrix = matrix.ncolumns();
+  const unsigned long n_rows_input_matrix = matrix.n_rows();
+  const unsigned long n_columns_input_matrix = matrix.n_columns();
   const unsigned long n_rows = this->NRows;
   const unsigned long n_columns = this->NColumns;
   if (n_rows != n_rows_input_matrix || n_columns != n_columns_input_matrix)
@@ -359,8 +359,8 @@ namespace chapchom
    }
   
   // Check whether the dimension of the solution matrix are correct
-  const unsigned long n_rows_solution_matrix = solution_matrix.nrows();
-  const unsigned long n_columns_solution_matrix = solution_matrix.ncolumns();
+  const unsigned long n_rows_solution_matrix = solution_matrix.n_rows();
+  const unsigned long n_columns_solution_matrix = solution_matrix.n_columns();
   if (n_rows != n_rows_solution_matrix || n_columns != n_columns_solution_matrix)
    {
     // Error message
@@ -419,8 +419,8 @@ namespace chapchom
    }
   
   // Check whether the dimensions of the matrices are the same
-  const unsigned long n_rows_input_matrix = matrix.nrows();
-  const unsigned long n_columns_input_matrix = matrix.ncolumns();
+  const unsigned long n_rows_input_matrix = matrix.n_rows();
+  const unsigned long n_columns_input_matrix = matrix.n_columns();
   const unsigned long n_rows = this->NRows;
   const unsigned long n_columns = this->NColumns;
   if (n_rows != n_rows_input_matrix || n_columns != n_columns_input_matrix)
@@ -438,8 +438,8 @@ namespace chapchom
    }
   
   // Check whether the dimension of the solution matrix are correct
-  const unsigned long n_rows_solution_matrix = solution_matrix.nrows();
-  const unsigned long n_columns_solution_matrix = solution_matrix.ncolumns();
+  const unsigned long n_rows_solution_matrix = solution_matrix.n_rows();
+  const unsigned long n_columns_solution_matrix = solution_matrix.n_columns();
   if (n_rows != n_rows_solution_matrix || n_columns != n_columns_solution_matrix)
    {
     // Error message
@@ -499,8 +499,8 @@ namespace chapchom
   
   // Check whether the dimensions of the matrices allow for
   // multiplication
-  const unsigned long n_rows_right_matrix = right_matrix.nrows();
-  const unsigned long n_columns_right_matrix = right_matrix.ncolumns();
+  const unsigned long n_rows_right_matrix = right_matrix.n_rows();
+  const unsigned long n_columns_right_matrix = right_matrix.n_columns();
   const unsigned long n_rows_left_matrix = this->NRows;
   const unsigned long n_columns_left_matrix = this->NColumns;
   if (n_columns_left_matrix != n_rows_right_matrix)
@@ -519,8 +519,8 @@ namespace chapchom
    }
   
   // Check whether the dimension of the solution matrix are correct
-  const unsigned long n_rows_solution_matrix = solution_matrix.nrows();
-  const unsigned long n_columns_solution_matrix = solution_matrix.ncolumns();
+  const unsigned long n_rows_solution_matrix = solution_matrix.n_rows();
+  const unsigned long n_columns_solution_matrix = solution_matrix.n_columns();
   if (n_rows_left_matrix != n_rows_solution_matrix ||
       n_columns_right_matrix != n_columns_solution_matrix)
    {
@@ -948,10 +948,10 @@ namespace chapchom
    }
   
   // Check whether the dimensions of the matrices are the same
-  const unsigned long n_rows_matrix_one = matrix_one.nrows();
-  const unsigned long n_columns_matrix_one = matrix_one.ncolumns();
-  const unsigned long n_rows_matrix_two = matrix_two.nrows();
-  const unsigned long n_columns_matrix_two = matrix_two.ncolumns();
+  const unsigned long n_rows_matrix_one = matrix_one.n_rows();
+  const unsigned long n_columns_matrix_one = matrix_one.n_columns();
+  const unsigned long n_rows_matrix_two = matrix_two.n_rows();
+  const unsigned long n_columns_matrix_two = matrix_two.n_columns();
   if (n_rows_matrix_one != n_rows_matrix_two ||
       n_columns_matrix_one != n_columns_matrix_two)
    {
@@ -969,8 +969,8 @@ namespace chapchom
    }
   
   // Check whether the dimension of the solution matrix are correct
-  const unsigned long n_rows_solution_matrix = solution_matrix.nrows();
-  const unsigned long n_columns_solution_matrix = solution_matrix.ncolumns();
+  const unsigned long n_rows_solution_matrix = solution_matrix.n_rows();
+  const unsigned long n_columns_solution_matrix = solution_matrix.n_columns();
   if (n_rows_matrix_one != n_rows_solution_matrix ||
       n_columns_matrix_one != n_columns_solution_matrix)
    {
@@ -1032,10 +1032,10 @@ namespace chapchom
    }
   
   // Check whether the dimensions of the matrices are the same
-  const unsigned long n_rows_matrix_one = matrix_one.nrows();
-  const unsigned long n_columns_matrix_one = matrix_one.ncolumns();
-  const unsigned long n_rows_matrix_two = matrix_two.nrows();
-  const unsigned long n_columns_matrix_two = matrix_two.ncolumns();
+  const unsigned long n_rows_matrix_one = matrix_one.n_rows();
+  const unsigned long n_columns_matrix_one = matrix_one.n_columns();
+  const unsigned long n_rows_matrix_two = matrix_two.n_rows();
+  const unsigned long n_columns_matrix_two = matrix_two.n_columns();
   if (n_rows_matrix_one != n_rows_matrix_two ||
       n_columns_matrix_one != n_columns_matrix_two)
    {
@@ -1053,8 +1053,8 @@ namespace chapchom
    }
   
   // Check whether the dimension of the solution matrix are correct
-  const unsigned long n_rows_solution_matrix = solution_matrix.nrows();
-  const unsigned long n_columns_solution_matrix = solution_matrix.ncolumns();
+  const unsigned long n_rows_solution_matrix = solution_matrix.n_rows();
+  const unsigned long n_columns_solution_matrix = solution_matrix.n_columns();
   if (n_rows_matrix_one != n_rows_solution_matrix ||
       n_columns_matrix_one != n_columns_solution_matrix)
    {
@@ -1117,10 +1117,10 @@ namespace chapchom
   
   // Check whether the dimensions of the matrices allow for
   // multiplication
-  const unsigned long n_rows_left_matrix = left_matrix.nrows();
-  const unsigned long n_columns_left_matrix = left_matrix.ncolumns();
-  const unsigned long n_rows_right_matrix = right_matrix.nrows();
-  const unsigned long n_columns_right_matrix = right_matrix.ncolumns();
+  const unsigned long n_rows_left_matrix = left_matrix.n_rows();
+  const unsigned long n_columns_left_matrix = left_matrix.n_columns();
+  const unsigned long n_rows_right_matrix = right_matrix.n_rows();
+  const unsigned long n_columns_right_matrix = right_matrix.n_columns();
   if (n_columns_left_matrix != n_rows_right_matrix)
    {
     // Error message
@@ -1137,8 +1137,8 @@ namespace chapchom
    }
   
   // Check whether the dimension of the solution matrix are correct
-  const unsigned long n_rows_solution_matrix = solution_matrix.nrows();
-  const unsigned long n_columns_solution_matrix = solution_matrix.ncolumns();
+  const unsigned long n_rows_solution_matrix = solution_matrix.n_rows();
+  const unsigned long n_columns_solution_matrix = solution_matrix.n_columns();
   if (n_rows_left_matrix != n_rows_solution_matrix ||
       n_columns_right_matrix != n_columns_solution_matrix)
    {
@@ -1214,11 +1214,11 @@ namespace chapchom
   if (!left_vector.is_column_vector()) // a row vector
    {
     n_rows_left_vector = 1;
-    n_columns_left_vector = left_vector.nvalues();
+    n_columns_left_vector = left_vector.n_values();
    }
   else // a column vector
    {
-    n_rows_left_vector = left_vector.nvalues();
+    n_rows_left_vector = left_vector.n_values();
     n_columns_left_vector = 1;
    }
   
@@ -1227,11 +1227,11 @@ namespace chapchom
   if (!right_vector.is_column_vector()) // a row vector
    {
     n_rows_right_vector = 1;
-    n_columns_right_vector = right_vector.nvalues();
+    n_columns_right_vector = right_vector.n_values();
    }
   else // a column vector
    {
-    n_rows_right_vector = right_vector.nvalues();
+    n_rows_right_vector = right_vector.n_values();
     n_columns_right_vector = 1;
    }
   
@@ -1252,8 +1252,8 @@ namespace chapchom
    }
   
   // Check whether the dimension of the solution matrix are correct
-  const unsigned long n_rows_solution_matrix = solution_matrix.nrows();
-  const unsigned long n_columns_solution_matrix = solution_matrix.ncolumns();
+  const unsigned long n_rows_solution_matrix = solution_matrix.n_rows();
+  const unsigned long n_columns_solution_matrix = solution_matrix.n_columns();
   if (n_rows_left_vector != n_rows_solution_matrix ||
       n_columns_right_vector != n_columns_solution_matrix)
    {
@@ -1340,16 +1340,16 @@ namespace chapchom
   if (!vector.is_column_vector()) // a row vector
    {
     n_rows_vector = 1;
-    n_columns_vector = vector.nvalues();
+    n_columns_vector = vector.n_values();
    }
   else // a column vector
    {
-    n_rows_vector = vector.nvalues();
+    n_rows_vector = vector.n_values();
     n_columns_vector = 1;
    }
   
-  unsigned n_rows_matrix = matrix.nrows();
-  unsigned n_columns_matrix = matrix.ncolumns();
+  unsigned n_rows_matrix = matrix.n_rows();
+  unsigned n_columns_matrix = matrix.n_columns();
   
   // Check that the dimension of the vector and the matrix allow the
   // operation
@@ -1369,8 +1369,8 @@ namespace chapchom
    }
   
   // Check whether the dimension of the solution matrix are correct
-  const unsigned long n_rows_solution_matrix = solution_matrix.nrows();
-  const unsigned long n_columns_solution_matrix = solution_matrix.ncolumns();
+  const unsigned long n_rows_solution_matrix = solution_matrix.n_rows();
+  const unsigned long n_columns_solution_matrix = solution_matrix.n_columns();
   if (n_rows_vector != n_rows_solution_matrix ||
       n_columns_matrix != n_columns_solution_matrix)
    {
@@ -1450,19 +1450,19 @@ namespace chapchom
   
   // Check whether the dimensions of the matrix and the vector allow
   // the operation
-  unsigned n_rows_matrix = matrix.nrows();
-  unsigned n_columns_matrix = matrix.ncolumns();
+  unsigned n_rows_matrix = matrix.n_rows();
+  unsigned n_columns_matrix = matrix.n_columns();
   
   unsigned n_rows_vector = 0;
   unsigned n_columns_vector = 0;
   if (!vector.is_column_vector()) // a row vector
    {
     n_rows_vector = 1;
-    n_columns_vector = vector.nvalues();
+    n_columns_vector = vector.n_values();
    }
   else // a column vector
    {
-    n_rows_vector = vector.nvalues();
+    n_rows_vector = vector.n_values();
     n_columns_vector = 1;
    }
   
@@ -1489,11 +1489,11 @@ namespace chapchom
   if (!solution_vector.is_column_vector()) // a row vector
    {
     n_rows_solution_vector = 1;
-    n_columns_solution_vector = solution_vector.nvalues();
+    n_columns_solution_vector = solution_vector.n_values();
    }
   else // a column vector
    {
-    n_rows_solution_vector = solution_vector.nvalues();
+    n_rows_solution_vector = solution_vector.n_values();
     n_columns_solution_vector = 1;
    }
   

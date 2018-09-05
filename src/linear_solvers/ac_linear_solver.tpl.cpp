@@ -64,8 +64,8 @@ namespace chapchom
   if (Matrix_A_has_been_set)
    {
     // Delete the content of the matrix
-    A.free_memory_for_matrix();
-      
+    A.clean_up();
+    
     // Mark the matrix as not been set
     Matrix_A_has_been_set = false;
    }

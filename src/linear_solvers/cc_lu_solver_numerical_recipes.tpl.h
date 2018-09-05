@@ -35,19 +35,20 @@ namespace chapchom
  
   // Empty destructor
   ~CCLUSolverNumericalRecipes();
- 
-  // Solve a system of equations with input A. We
-  // specify the right-hand side B and the X matrices where the
-  // results are returned. We assume that the input/output matrices
-  // have the correct dimensions: A.ncolumns() x A.nrows() for B, and
-  // A.nrows() x A.ncolumns() for X.
-  void solve(const CCMatrix<T> &A, const CCMatrix<T> &B, CCMatrix<T> &X);
+  
+  // Solves a system of equations with input A_mat. We specify the
+  // right-hand side B and the X matrices where the results are
+  // returned. We assume that the input/output matrices have the
+  // correct dimensions: A_mat.ncolumns() x A_mat.nrows() for B, and
+  // A_mat.nrows() x A_mat.ncolumns() for X.
+  void solve(const CCMatrix<T> &A_mat, const CCMatrix<T> &B, CCMatrix<T> &X);
 
-  // Solve a system of equations with input A. We specify the
+  // Solves a system of equations with input A_mat. We specify the
   // right-hand side b and the x vector where the result is
   // returned. We assume that the input/output vectors have the
-  // correct dimensions: A.ncolumns() for b, and A.nrows() for x.
-  void solve(const CCMatrix<T> &A, const CCVector<T> &b, CCVector<T> &x);
+  // correct dimensions: A_mat.ncolumns() for b, and A_mat.nrows() for
+  // x.
+  void solve(const CCMatrix<T> &A_mat, const CCVector<T> &b, CCVector<T> &x);
   
   // Solve a system of equations with the already stored matrix A. We
   // specify the right-hand side B and the X matrices where the
@@ -82,7 +83,7 @@ namespace chapchom
   // Performs LU factorisation of the input matrix, the factorisation
   // is internally stored such that it can be re-used when calling
   // resolve
-  void factorise(const CCMatrix<T> &A);
+  void factorise(const CCMatrix<T> &A_mat);
  
   // Performs LU factorisation of already stored matrix A, the
   // factorisation is internally stored such that it can be re-used
@@ -95,22 +96,24 @@ namespace chapchom
   // Performs the back substitution with the LU decomposed matrix
   void back_substitution(const CCVector<T> &b, CCVector<T> &x);
   
- protected:
+  protected:
  
   // Flag to indicate whether resolve is enabled (only after calling
   // factorise)
   bool Resolve_enabled;
  
- private:
+  private:
  
   // Copy constructor (we do not want this class to be copiable because
   // it contains dynamically allocated variables, A in this
   // case). Check
   // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
   CCLUSolverNumericalRecipes(const CCLUSolverNumericalRecipes<T> &copy)
-   {
-    BrokenCopy::broken_copy("CCLUSolverNumericalRecipes");
-   }
+   : ACLinearSolver<CCMatrix<T>, CCVector<T> >(),
+   Resolve_enabled(false)
+    {
+     BrokenCopy::broken_copy("CCLUSolverNumericalRecipes");
+    }
  
   // Copy constructor (we do not want this class to be copiable because
   // it contains dynamically allocated variables, A in this

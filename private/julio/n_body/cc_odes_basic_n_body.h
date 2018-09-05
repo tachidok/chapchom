@@ -5,8 +5,10 @@
 #include "../../../src/general/common_includes.h"
 #include "../../../src/general/utilities.h"
 #include "../../../src/general/initialise.h"
+// The class used to store the values of u and dudt
+#include "../../../src/data_structures/cc_data.h"
 // The class implementing the interfaces for the ODEs
-#include "../../../src/odes/ac_odes.h"
+#include "../../../src/data_structures/ac_odes.h"
 
 // The dimension of the problem, the number of coordinates for the
 // n-bodies
@@ -35,20 +37,12 @@ namespace chapchom
   virtual ~CCODEsBasicNBody(); 
   
   /// Set initial conditions
-  void set_initial_conditions(std::vector<std::vector<double> > &y);
+  void set_initial_conditions(CCData<double> &u);
   
   /// Evaluates the system of odes at time "t". The values of the i-th
-  /// function at previous times are accessible via y[i][1], y[i][2]
-  /// and so on. The evaluation produces results in the vector dy.
-  void evaluate(const double t,
-                const std::vector<std::vector<double> > &y,
-                std::vector<double> &dy);
-
-  /// Evaluates the i-th ode at time "t". The values of the function
-  /// at previous times are stores at y[1], y[2] and so on. The
-  /// evaluation stores the result in dy.
-  void evaluate(const unsigned i, const double t,
-                const std::vector<double> &y, double &dy);
+  /// function at previous times are accessible via u(i,1), u(i,2) and
+  /// so on. The evaluation produces results in the vector dudt.
+  void evaluate(const double t, CCData<double> &y, CCData<double> &dudt);
   
   // Gets access to the masses vector
   inline const double m(const unsigned i) const {return M[i];}

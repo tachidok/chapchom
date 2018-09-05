@@ -34,17 +34,18 @@ namespace chapchom
    // Empty destructor
    ~CCSolverArmadillo();
    
-   // Solve a system of equations with input A. We specify the
+   // Solves a system of equations with input A_mat. We specify the
    // right-hand side B and the X matrices where the results are
-   // returned, B and X may be 1-column matrices (vectors). We assume
-   // that the input/output matrices have the correct dimensions.
-   void solve(const CCMatrixArmadillo<T> &A, const CCMatrixArmadillo<T> &B, CCMatrixArmadillo<T> &X);
+   // returned. We assume that the input/output matrices have the
+   // correct dimensions: A_mat.n_columns() x A_mat.n_rows() for B, and
+   // A_mat.n_rows() x A_mat.n_columns() for X.
+   void solve(const CCMatrixArmadillo<T> &A_mat, const CCMatrixArmadillo<T> &B, CCMatrixArmadillo<T> &X);
    
-   // Solve a system of equations with input A. We specify the
+   // Solves a system of equations with input A_mat. We specify the
    // right-hand side b and the x vector where the result is
-   // returned. We assume that the input/output vectors have the
-   // correct dimensions: A.ncolumns() for b, and A.nrows() for x.
-   void solve(const CCMatrixArmadillo<T> &A, const CCVectorArmadillo<T> &b, CCVectorArmadillo<T> &x);
+   // returned. We assume that the input/output vectors have the correct
+   // dimensions: A_mat.n_columns() for b, and A_mat.n_rows() for x.
+   void solve(const CCMatrixArmadillo<T> &A_mat, const CCVectorArmadillo<T> &b, CCVectorArmadillo<T> &x);
    
    // Solve a system of equations with the already stored matrix A. We
    // specify the right-hand side B and the X matrices where the
@@ -66,6 +67,7 @@ namespace chapchom
    // case). Check
    // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
    CCSolverArmadillo(const CCSolverArmadillo<T> &copy)
+    : ACLinearSolver<CCMatrixArmadillo<T>, CCVectorArmadillo<T> >()
     {
      BrokenCopy::broken_copy("CCSolverArmadillo");
     }

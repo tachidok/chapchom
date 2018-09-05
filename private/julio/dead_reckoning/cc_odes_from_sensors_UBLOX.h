@@ -6,7 +6,7 @@
 #include "../../../src/general/utilities.h"
 #include "../../../src/general/initialise.h"
 // The class implementing the interfaces for the ODEs
-#include "../../../src/odes/ac_odes.h"
+#include "../../../src/data_structures/ac_odes.h"
 
 // The UBLOX decoder
 #include "cc_ublox_decoder.h"

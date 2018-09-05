@@ -90,13 +90,13 @@ namespace chapchom
    {output(outfile, output_indexes);}
    
    // Return the number of entries of the vector
-   inline const unsigned long nvalues() const {return NValues;}
+   inline unsigned long n_values() const {return NValues;}
    
    // Return the number of entries of the vector
-   inline const unsigned long nentries() const {return NValues;}
+   inline unsigned long n_entries() const {return NValues;}
    
    // Return the number of entries of the vector
-   inline const unsigned long size() const {return NValues;}
+   inline unsigned long size() const {return NValues;}
    
    // Check whether the vector should be treated as "row vector" (we
    // assume all vectors are created as column vectors by default)
@@ -120,10 +120,10 @@ namespace chapchom
    inline void disable_delete_vector() {Delete_vector=false;}
    
    // Computes the norm-1 of the vector
-   virtual const double norm_1() = 0;
+   virtual double norm_1() = 0;
    
    // Computes the norm-2 of the vector
-   virtual const double norm_2() = 0;
+   virtual double norm_2() = 0;
    
   protected:
       

@@ -8,11 +8,11 @@
 
 // The class to solve linear systems using numerical recipes
 // implementation
-#include "../../../src/interpolation/cc_newton_interpolator.h"
+#include "../../../src/problem/cc_newton_interpolator.h"
 
 using namespace chapchom;
 
-inline const double f(const double x)
+inline double f(const double x)
 {return sin(x);}
 
 int main(int argc, char *argv[])

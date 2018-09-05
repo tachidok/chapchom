@@ -30,6 +30,10 @@ namespace chapchom
    // Destructor
    virtual ~ACMatrix();
    
+   // Allows to create a matrix with the given size but with no data
+   void allocate_memory(const unsigned long m,
+                        const unsigned long n);
+   
    // Allocates memory to store entries of the matrix
    virtual void allocate_memory() = 0;
    
@@ -103,10 +107,10 @@ namespace chapchom
    {output(outfile, output_indexes);}
    
    // Return the number of rows of the matrix
-   inline const unsigned long nrows() const {return NRows;}
+   inline unsigned long n_rows() const {return NRows;}
    
    // Return the number of columns of the matrix
-   inline const unsigned long ncolumns() const {return NColumns;}
+   inline unsigned long n_columns() const {return NColumns;}
    
    // Checks whether the memory of the matrix has been allocated by
    // this class

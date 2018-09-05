@@ -31,19 +31,19 @@ namespace chapchom
  CCLUSolverNumericalRecipes<T>::~CCLUSolverNumericalRecipes() { }
 
  // ===================================================================
- // Solve a system of equations with input A. We specify the
+ // Solves a system of equations with input A_mat. We specify the
  // right-hand side B and the X matrices where the results are
  // returned. We assume that the input/output matrices have the
- // correct dimensions: A.ncolumns() x A.nrows() for B, and A.nrows()
- // x A.ncolumns() for X.
+ // correct dimensions: A_mat.n_columns() x A_mat.n_rows() for B, and
+ // A_mat.n_rows() x A_mat.n_columns() for X.
  // ===================================================================
  template<class T>
- void CCLUSolverNumericalRecipes<T>::solve(const CCMatrix<T> &A,
+ void CCLUSolverNumericalRecipes<T>::solve(const CCMatrix<T> &A_mat,
                                            const CCMatrix<T> &B,
                                            CCMatrix<T> &X)
  {
   // Set the matrix and its size
-  this->set_matrix_A(A);
+  this->set_matrix_A(A_mat);
   
   // Solve
   solve(B, X);
@@ -51,18 +51,18 @@ namespace chapchom
  }
 
  // ===================================================================
- // Solve a system of equations with input A. We specify the
+ // Solves a system of equations with input A_mat. We specify the
  // right-hand side b and the x vector where the result is
- // returned. We assume that the input/output vectors have the
- // correct dimensions: A.ncolumns() for b, and A.nrows() for x.
+ // returned. We assume that the input/output vectors have the correct
+ // dimensions: A_mat.n_columns() for b, and A_mat.n_rows() for x.
  // ===================================================================
  template<class T>
- void CCLUSolverNumericalRecipes<T>::solve(const CCMatrix<T> &A,
+ void CCLUSolverNumericalRecipes<T>::solve(const CCMatrix<T> &A_mat,
                                            const CCVector<T> &b,
                                            CCVector<T> &x)
  {
   // Set the matrix and its size
-  this->set_matrix_A(A);
+  this->set_matrix_A(A_mat);
   
   // Solve
   solve(b, x);
@@ -72,8 +72,8 @@ namespace chapchom
  // Solve a system of equations with the already stored matrix A. We
  // specify the right-hand side B and the X matrices where the results
  // are returned. We assume that the input/output matrices have the
- // correct dimensions: A.ncolumns() x A.nrows() for B, and A.nrows()
- // x A.ncolumns() for X.
+ // correct dimensions: A.n_columns() x A.n_rows() for B, and A.n_rows()
+ // x A.n_columns() for X.
  // ===================================================================
  template<class T>
  void CCLUSolverNumericalRecipes<T>::solve(const CCMatrix<T> &B,
@@ -84,26 +84,26 @@ namespace chapchom
    {
     // Check correct size of the matrix, right hand side and solution
     // vector    
-    if (this->A.ncolumns() != B.nrows())
+    if (this->A.n_columns() != B.n_rows())
      {
       // Error message
       std::ostringstream error_message;
       error_message << "The number of columns of the matrix and the number "
                     << "of rows of the rhs matrix are not the same:\n"
-                    << "A.ncolumns() = (" << this->A.ncolumns() << ")\n"
-                    << "B.nrows() = (" << B.nrows() << ")\n" << std::endl;
+                    << "A.n_columns() = (" << this->A.n_columns() << ")\n"
+                    << "B.n_rows() = (" << B.n_rows() << ")\n" << std::endl;
       throw ChapchomLibError(error_message.str(),
                              CHAPCHOM_CURRENT_FUNCTION,
                              CHAPCHOM_EXCEPTION_LOCATION);
      }
-    else if (this->A.nrows() != X.nrows())
+    else if (this->A.n_rows() != X.n_rows())
      {
       // Error message
       std::ostringstream error_message;
       error_message << "The number of rows of the matrix and the number "
                     << "of rows of the solution matrix are not the same:\n"
-                    << "A.nrows() = (" << this->A.nrows() << ")\n"
-                    << "X.nrows() = (" << X.nrows() << ")\n" << std::endl;
+                    << "A.n_rows() = (" << this->A.n_rows() << ")\n"
+                    << "X.n_rows() = (" << X.n_rows() << ")\n" << std::endl;
       throw ChapchomLibError(error_message.str(),
                              CHAPCHOM_CURRENT_FUNCTION,
                              CHAPCHOM_EXCEPTION_LOCATION);
@@ -122,7 +122,7 @@ namespace chapchom
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "You have not specific any matrix for the system of\n"
+    error_message << "You have not specified any matrix for the system of\n"
                   << "equations. Set one matrix first by calling the/"
                   << "set_matrix() method or use the solve() method where\n"
                   << "you can specify the matrix associated to the system\n"
@@ -138,7 +138,7 @@ namespace chapchom
  // Solve a system of equations with the already stored matrix A. We
  // specify the right-hand side b and the x vectors where the result
  // is returned. We assume that the input/output vectors have the
- // correct dimensions: A.ncolumns() for b, and A.nrows() for x.
+ // correct dimensions: A.n_columns() for b, and A.n_rows() for x.
  // ===================================================================
  template<class T>
  void CCLUSolverNumericalRecipes<T>::solve(const CCVector<T> &b,
@@ -149,26 +149,26 @@ namespace chapchom
    {
     // Check correct size of the matrix, right hand side and solution
     // vector    
-    if (this->A.ncolumns() != b.nvalues())
+    if (this->A.n_columns() != b.n_values())
      {
       // Error message
       std::ostringstream error_message;
       error_message << "The number of columns of the matrix and the number "
                     << "of rows of the rhs vector are not the same:\n"
-                    << "A.ncolumns() = (" << this->A.ncolumns() << ")\n"
-                    << "b.nvalues() = (" << b.nvalues() << ")\n" << std::endl;
+                    << "A.n_columns() = (" << this->A.n_columns() << ")\n"
+                    << "b.n_values() = (" << b.n_values() << ")\n" << std::endl;
       throw ChapchomLibError(error_message.str(),
                              CHAPCHOM_CURRENT_FUNCTION,
                              CHAPCHOM_EXCEPTION_LOCATION);
      }
-    else if (this->A.nrows() != x.nvalues())
+    else if (this->A.n_rows() != x.n_values())
      {
       // Error message
       std::ostringstream error_message;
       error_message << "The number of rows of the matrix and the number "
                     << "of rows of the solution vector are not the same:\n"
-                    << "A.nrows() = (" << this->A.nrows() << ")\n"
-                    << "x.nvalues() = (" << x.nvalues() << ")\n" << std::endl;
+                    << "A.n_rows() = (" << this->A.n_rows() << ")\n"
+                    << "x.n_values() = (" << x.n_values() << ")\n" << std::endl;
       throw ChapchomLibError(error_message.str(),
                              CHAPCHOM_CURRENT_FUNCTION,
                              CHAPCHOM_EXCEPTION_LOCATION);
@@ -203,8 +203,8 @@ namespace chapchom
  // Re-solve a system of equations with the already stored matrix
  // A. Reusing the LU decomposition. We specify the right-hand side B
  // and the X matrices where the results are returned. We assume that
- // the input/output vectors have the correct dimensions: A.ncolumns()
- // x A.nrows() for B, and A.nrows() x A.ncolumns() for X.
+ // the input/output vectors have the correct dimensions: A.n_columns()
+ // x A.n_rows() for B, and A.n_rows() x A.n_columns() for X.
  // ===================================================================
  template<class T>
  void CCLUSolverNumericalRecipes<T>::resolve(const CCMatrix<T> &B,
@@ -234,8 +234,8 @@ namespace chapchom
  // iterative solver). BROKEN beacuse iterative solvers may not
  // implement it. We specify the right-hand side b and the x vector
  // where the result is returned. We assume that the input/output
- // vectors have the correct dimensions: A.ncolumns() for b, and
- // A.nrows() for x.
+ // vectors have the correct dimensions: A.n_columns() for b, and
+ // A.n_rows() for x.
  // ===================================================================
  template<class T>
  void CCLUSolverNumericalRecipes<T>::resolve(const CCVector<T> &b,
@@ -264,10 +264,10 @@ namespace chapchom
  // internally stored such that it can be re-used when calling resolve
  // ===================================================================
  template<class T>
- void CCLUSolverNumericalRecipes<T>::factorise(const CCMatrix<T> &A)
+ void CCLUSolverNumericalRecipes<T>::factorise(const CCMatrix<T> &A_mat)
  {
   // Set the matrix and its size
-  set_matrix_A(A);
+  set_matrix_A(A_mat);
  
   // Factorise
   factorise();
@@ -286,8 +286,8 @@ namespace chapchom
  
   // Check that we are working with an square matrix, otherwise this
   // will not work
-  const unsigned long n_rows = this->A.nrows();
-  const unsigned long n_columns = this->A.ncolumns();
+  const unsigned long n_rows = this->A.n_rows();
+  const unsigned long n_columns = this->A.n_columns();
   if (n_rows!=n_columns)
    {
     // Error message
@@ -342,20 +342,20 @@ namespace chapchom
   // Prepare the data to call lubksb()
   
   // The size of the right-hand side
-  const unsigned n_rows = B.nrows();
+  const unsigned n_rows = B.n_rows();
   
   // Number of right hand sizes (same as the number of output
   // X-vectors)
-  const unsigned n_rhs = B.ncolumns();
+  const unsigned n_rhs = B.n_columns();
   
-  if (n_rhs != X_output.ncolumns())
+  if (n_rhs != X_output.n_columns())
    {
     // Error message
     std::ostringstream error_message;
     error_message << "The number of columns of the rhs vector and the number "
                   << "of columns of the solution matrix are not the same:\n"
                   << "n_rhs = (" << n_rhs << ")\n"
-                  << "X_output.ncolumns() = (" << X_output.ncolumns() << ")\n"
+                  << "X_output.n_columns() = (" << X_output.n_columns() << ")\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
@@ -404,7 +404,7 @@ namespace chapchom
   // Prepare the data to call lubksb()
   
   // The size of the right-hand side
-  const unsigned n_rows = b.nvalues();
+  const unsigned n_rows = b.n_values();
   
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!

@@ -29,115 +29,115 @@ namespace chapchom
  // ======================================================================
  /// Set initial conditions
  // ======================================================================
- void CCODEsBasicNBody::set_initial_conditions(std::vector<std::vector<double> > &y)
+ void CCODEsBasicNBody::set_initial_conditions(CCData<double> &u)
  {
   // Initial conditions for 1st body
-  y[0][0] = 0.0; // x-position
-  y[1][0] = 0.0; // x-velocity
-  y[2][0] = 0.0; // y-position
-  y[3][0] = 0.0; // y-velocity
-  y[4][0] = 0.0; // z-position
-  y[5][0] = 0.0; // z-velocity
+  u(0,0) = 0.0; // x-position
+  u(1,0) = 0.0; // x-velocity
+  u(2,0) = 0.0; // y-position
+  u(3,0) = 0.0; // y-velocity
+  u(4,0) = 0.0; // z-position
+  u(5,0) = 0.0; // z-velocity
   // Initial conditions for 2nd body
-  y[6][0] = 0.0; // x-position
-  y[7][0] = -2.75674; // x-velocity
-  y[8][0] = 5.2; // y-position
-  y[9][0] = 0.0; // y-velocity
-  y[10][0] = 0.0; // z-position
-  y[11][0] = 0.0; // z-velocity
+  u(6,0) = 0.0; // x-position
+  u(7,0) = -2.75674; // x-velocity
+  u(8,0) = 5.2; // y-position
+  u(9,0) = 0.0; // y-velocity
+  u(10,0) = 0.0; // z-position
+  u(11,0) = 0.0; // z-velocity
 #if 0
   // Initial conditions for 3rd body
-  y[12][0] = -4.503; // x-position
-  y[13][0] = -1.38; // x-velocity
-  y[14][0] = 2.6; // y-position
-  y[15][0] = -2.39; // y-velocity
-  y[16][0] = 0.0; // z-position
-  y[17][0] = 0.0; // z-velocity
+  u(12,0) = -4.503; // x-position
+  u(13,0) = -1.38; // x-velocity
+  u(14,0) = 2.6; // y-position
+  u(15,0) = -2.39; // y-velocity
+  u(16,0) = 0.0; // z-position
+  u(17,0) = 0.0; // z-velocity
   // Initial conditions for 4th body
-  y[18][0] = 4.503; // x-position
-  y[19][0] = -1.38; // x-velocity
-  y[20][0] = 2.6; // y-position
-  y[21][0] = 2.39; // y-velocity
-  y[22][0] = 0.0; // z-position
-  y[23][0] = 0.0; // z-velocity
+  u(18,0) = 4.503; // x-position
+  u(19,0) = -1.38; // x-velocity
+  u(20,0) = 2.6; // y-position
+  u(21,0) = 2.39; // y-velocity
+  u(22,0) = 0.0; // z-position
+  u(23,0) = 0.0; // z-velocity
 #endif // #if 0
 #if 1
   // Initial conditions for 3rd body
-  y[12][0] = -0.5; // x-position
-  y[13][0] = -0.03; // x-velocity
-  y[14][0] = 4.8; // y-position
-  y[15][0] = -0.3; // y-velocity
-  y[16][0] = 0.0; // z-position
-  y[17][0] = 0.0; // z-velocity
+  u(12,0) = -0.5; // x-position
+  u(13,0) = -0.03; // x-velocity
+  u(14,0) = 4.8; // y-position
+  u(15,0) = -0.3; // y-velocity
+  u(16,0) = 0.0; // z-position
+  u(17,0) = 0.0; // z-velocity
   // Initial conditions for 4th body
-  y[18][0] = 0.5; // x-position
-  y[19][0] = -0.03; // x-velocity
-  y[20][0] = 5.6; // y-position
-  y[21][0] = 0.3; // y-velocity
-  y[22][0] = 0.0; // z-position
-  y[23][0] = 0.0; // z-velocity 
+  u(18,0) = 0.5; // x-position
+  u(19,0) = -0.03; // x-velocity
+  u(20,0) = 5.6; // y-position
+  u(21,0) = 0.3; // y-velocity
+  u(22,0) = 0.0; // z-position
+  u(23,0) = 0.0; // z-velocity 
 #endif // #if 1
  }
  
  // ===================================================================
  /// Evaluates the system of odes at time "t". The values of the i-th
- /// function at previous times are accessible via y[i][1], y[i][2]
- /// and so on. The evaluation produces results in the vector dy.
+ /// function at previous times are accessible via u(i,1), u(i,2) and
+ /// so on. The evaluation produces results in the vector dudt.
  // ===================================================================
  void CCODEsBasicNBody::evaluate(const double t,
-                                 const std::vector<std::vector<double> > &y,
-                                 std::vector<double> &dy)
+                                 CCData<double> &u,
+                                 CCData<double> &dudt)
  {
   // -----------------
-  // y[0][0] Current x-position of the 1st body
-  // y[1][0] Current x-velocity of the 1st body
-  // y[2][0] Current y-position of the 1st body
-  // y[3][0] Current y-velocity of the 1st body
-  // y[4][0] Current z-position of the 1st body
-  // y[5][0] Current z-velocity of the 1st body
-  // y[6][0] Current x-position of the 2nd body
-  // y[7][0] Current x-velocity of the 2nd body
-  // y[8][0] Current y-position of the 2nd body
-  // y[9][0] Current y-velocity of the 2nd body
-  // y[10][0] Current z-position of the 2nd body
-  // y[11][0] Current z-velocity of the 2nd body
-  // y[12][0] Current x-position of the 3rd body
-  // y[13][0] Current x-velocity of the 3rd body
-  // y[14][0] Current y-position of the 3rd body
-  // y[15][0] Current y-velocity of the 3rd body
-  // y[16][0] Current z-position of the 3rd body
-  // y[17][0] Current z-velocity of the 3rd body
-  // y[18][0] Current x-position of the 4th body
-  // y[19][0] Current x-velocity of the 4th body
-  // y[20][0] Current y-position of the 4th body
-  // y[21][0] Current y-velocity of the 4th body
-  // y[22][0] Current z-position of the 4th body
-  // y[23][0] Current z-velocity of the 4th body
+  // u(0,0) Current x-position of the 1st body
+  // u(1,0) Current x-velocity of the 1st body
+  // u(2,0) Current y-position of the 1st body
+  // u(3,0) Current y-velocity of the 1st body
+  // u(4,0) Current z-position of the 1st body
+  // u(5,0) Current z-velocity of the 1st body
+  // u(6,0) Current x-position of the 2nd body
+  // u(7,0) Current x-velocity of the 2nd body
+  // u(8,0) Current y-position of the 2nd body
+  // u(9,0) Current y-velocity of the 2nd body
+  // u(10,0) Current z-position of the 2nd body
+  // u(11,0) Current z-velocity of the 2nd body
+  // u(12,0) Current x-position of the 3rd body
+  // u(13,0) Current x-velocity of the 3rd body
+  // u(14,0) Current y-position of the 3rd body
+  // u(15,0) Current y-velocity of the 3rd body
+  // u(16,0) Current z-position of the 3rd body
+  // u(17,0) Current z-velocity of the 3rd body
+  // u(18,0) Current x-position of the 4th body
+  // u(19,0) Current x-velocity of the 4th body
+  // u(20,0) Current y-position of the 4th body
+  // u(21,0) Current y-velocity of the 4th body
+  // u(22,0) Current z-position of the 4th body
+  // u(23,0) Current z-velocity of the 4th body
   // -----------------
-  // dy[0] x-velocity of the 1st body
-  // dy[1] x-acceleration of the 1st body
-  // dy[2] y-velocity of the 1st body
-  // dy[3] y-acceleration of the 1st body
-  // dy[4] z-velocity of the 1st body
-  // dy[5] z-acceleration of the 1st body
-  // dy[6] x-velocity of the 2nd body
-  // dy[7] x-acceleration of the 2nd body
-  // dy[8] y-velocity of the 2nd body
-  // dy[9] y-acceleration of the 2nd body
-  // dy[10] z-velocity of the 2nd body
-  // dy[11] z-acceleration of the 2nd body
-  // dy[12] x-velocity of the 3rd body
-  // dy[13] x-acceleration of the 3rd body
-  // dy[14] y-velocity of the 3rd body
-  // dy[15] y-acceleration of the 3rd body
-  // dy[16] z-velocity of the 3rd body
-  // dy[17] z-acceleration of the 3rd body
-  // dy[18] x-velocity of the 4th body
-  // dy[19] x-acceleration of the 4th body
-  // dy[20] y-velocity of the 4th body
-  // dy[21] y-acceleration of the 4th body
-  // dy[22] z-velocity of the 4th body
-  // dy[23] z-acceleration of the 4th body
+  // dudt(0) x-velocity of the 1st body
+  // dudt(1) x-acceleration of the 1st body
+  // dudt(2) y-velocity of the 1st body
+  // dudt(3) y-acceleration of the 1st body
+  // dudt(4) z-velocity of the 1st body
+  // dudt(5) z-acceleration of the 1st body
+  // dudt(6) x-velocity of the 2nd body
+  // dudt(7) x-acceleration of the 2nd body
+  // dudt(8) y-velocity of the 2nd body
+  // dudt(9) y-acceleration of the 2nd body
+  // dudt(10) z-velocity of the 2nd body
+  // dudt(11) z-acceleration of the 2nd body
+  // dudt(12) x-velocity of the 3rd body
+  // dudt(13) x-acceleration of the 3rd body
+  // dudt(14) y-velocity of the 3rd body
+  // dudt(15) y-acceleration of the 3rd body
+  // dudt(16) z-velocity of the 3rd body
+  // dudt(17) z-acceleration of the 3rd body
+  // dudt(18) x-velocity of the 4th body
+  // dudt(19) x-acceleration of the 4th body
+  // dudt(20) y-velocity of the 4th body
+  // dudt(21) y-acceleration of the 4th body
+  // dudt(22) z-velocity of the 4th body
+  // dudt(23) z-acceleration of the 4th body
 
   // A 3D matrix that stores the difference in position of each body
   // within each body for each dimension
@@ -150,9 +150,9 @@ namespace chapchom
     for (unsigned j = 0; j < N_bodies; j++)
      {
       diff_positions[i][j].resize(DIM);
-      diff_positions[i][j][0] = y[6*i+0][0] - y[6*j+0][0];
-      diff_positions[i][j][1] = y[6*i+2][0] - y[6*j+2][0];
-      diff_positions[i][j][2] = y[6*i+4][0] - y[6*j+4][0];
+      diff_positions[i][j][0] = u(6*i+0,0) - u(6*j+0,0);
+      diff_positions[i][j][1] = u(6*i+2,0) - u(6*j+2,0);
+      diff_positions[i][j][2] = u(6*i+4,0) - u(6*j+4,0);
      } // for (j < N_bodies)
    } // for (i < N_bodies)
 
@@ -178,49 +178,31 @@ namespace chapchom
      } // for (j < N_bodies)
    } // for (i < N_bodies) 
   
-  dy[0] = y[1][0];
-  dy[1] = sum[0][0]*G;
-  dy[2] = y[3][0];
-  dy[3] = sum[0][1]*G;
-  dy[4] = y[5][0];
-  dy[5] = sum[0][2]*G;
-  dy[6] = y[7][0];
-  dy[7] = sum[1][0]*G;
-  dy[8] = y[9][0];
-  dy[9] = sum[1][1]*G;
-  dy[10] = y[11][0];
-  dy[11] = sum[1][2]*G;
-  dy[12] = y[13][0];
-  dy[13] = sum[2][0]*G;
-  dy[14] = y[15][0];
-  dy[15] = sum[2][1]*G;
-  dy[16] = y[17][0];
-  dy[17] = sum[2][2]*G;
-  dy[18] = y[19][0];
-  dy[19] = sum[3][0]*G;
-  dy[20] = y[21][0];
-  dy[21] = sum[3][1]*G;
-  dy[22] = y[23][0];
-  dy[23] = sum[3][2]*G;
+  dudt(0) = u(1,0);
+  dudt(1) = sum[0][0]*G;
+  dudt(2) = u(3,0);
+  dudt(3) = sum[0][1]*G;
+  dudt(4) = u(5,0);
+  dudt(5) = sum[0][2]*G;
+  dudt(6) = u(7,0);
+  dudt(7) = sum[1][0]*G;
+  dudt(8) = u(9,0);
+  dudt(9) = sum[1][1]*G;
+  dudt(10) = u(11,0);
+  dudt(11) = sum[1][2]*G;
+  dudt(12) = u(13,0);
+  dudt(13) = sum[2][0]*G;
+  dudt(14) = u(15,0);
+  dudt(15) = sum[2][1]*G;
+  dudt(16) = u(17,0);
+  dudt(17) = sum[2][2]*G;
+  dudt(18) = u(19,0);
+  dudt(19) = sum[3][0]*G;
+  dudt(20) = u(21,0);
+  dudt(21) = sum[3][1]*G;
+  dudt(22) = u(23,0);
+  dudt(23) = sum[3][2]*G;
   
  }
  
- // ===================================================================
- /// Evaluates the i-th ode at time "t". The values of the function
- /// at previous times are stores at y[1], y[2] and so on. The
- /// evaluation stores the result in dy.
- // ===================================================================
- void CCODEsBasicNBody::evaluate(const unsigned i, const double t,
-                                 const std::vector<double> &y, double &dy)
- {
-  // Error message
-  std::ostringstream error_message;
-  error_message << "This method is not implemented for this class"
-                << std::endl;
-  throw ChapchomLibError(error_message.str(),
-                         CHAPCHOM_CURRENT_FUNCTION,
-                         CHAPCHOM_EXCEPTION_LOCATION);
- }
-
-
 }

@@ -346,7 +346,7 @@ int main(int argc, char *argv[])
   // --------------------------------------------------
   // Apply transpose
   // --------------------------------------------------
-  CCMatrixArmadillo<double> b_t(b.ncolumns(), b.nrows());
+  CCMatrixArmadillo<double> b_t(b.n_columns(), b.n_rows());
   b.transpose(b_t);
   std::cout << std::endl << "The transposed matrix:"
             << std::endl << std::endl;

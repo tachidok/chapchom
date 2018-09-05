@@ -47,7 +47,7 @@ namespace chapchom
  // ===================================================================
  template<class T>
  CCVector<T>::CCVector(const CCVector<T> &copy)
-  : ACVector<T>(copy.nvalues(), copy.is_column_vector())
+  : ACVector<T>(copy.n_values(), copy.is_column_vector())
  {
   // Copy the data from the input vector to the Vector_pt vector
   set_vector(copy.vector_pt(), this->NValues, copy.is_column_vector());
@@ -71,7 +71,7 @@ namespace chapchom
  {
   // Clean-up and set values
   set_vector(source_vector.vector_pt(),
-             source_vector.nvalues(),
+             source_vector.n_values(),
              source_vector.is_column_vector());
   // Return this (de-referenced pointer)
   return *this;
@@ -149,7 +149,7 @@ namespace chapchom
     n_values_left_vector = 1;
    }
   // (Second dimension for the right vector)
-  long unsigned n_values_right_vector = vector.nvalues();
+  long unsigned n_values_right_vector = vector.n_values();
   if (vector.is_column_vector())
    {
     n_values_right_vector = 1;
@@ -186,8 +186,8 @@ namespace chapchom
    }
   
   // Check whether the dimensions of the vectors allow the operation
-  const unsigned long n_values_right_vector = right_vector.nvalues();
-  const unsigned long n_values_this_vector = this->nvalues();
+  const unsigned long n_values_right_vector = right_vector.n_values();
+  const unsigned long n_values_this_vector = this->n_values();
   if (n_values_this_vector != n_values_right_vector)
    {
     // Error message
@@ -346,8 +346,8 @@ namespace chapchom
    }
   
   // Check whether the dimensions of the vectors are the same
-  const unsigned long n_values_input_vector = vector.nvalues();
-  const unsigned long n_values_this_vector = this->nvalues();
+  const unsigned long n_values_input_vector = vector.n_values();
+  const unsigned long n_values_this_vector = this->n_values();
   if (n_values_this_vector != n_values_input_vector)
    {
     // Error message
@@ -420,8 +420,8 @@ namespace chapchom
    }
   
   // Check whether the dimensions of the vectors are the same
-  const unsigned long n_values_input_vector = vector.nvalues();
-  const unsigned long n_values_this_vector = this->nvalues();
+  const unsigned long n_values_input_vector = vector.n_values();
+  const unsigned long n_values_this_vector = this->n_values();
   if (n_values_this_vector != n_values_input_vector)
    {
     // Error message
@@ -495,8 +495,8 @@ namespace chapchom
    }
   
   // Check whether the dimensions of the vectors are the same
-  const unsigned long n_values_input_vector = vector.nvalues();
-  const unsigned long n_values_this_vector = this->nvalues();
+  const unsigned long n_values_input_vector = vector.n_values();
+  const unsigned long n_values_this_vector = this->n_values();
   if (n_values_this_vector != n_values_input_vector)
    {
     // Error message
@@ -676,7 +676,7 @@ namespace chapchom
  // Computes the norm-1 of the vector
  // ===================================================================
  template<class T>
- const double CCVector<T>::norm_1()
+ double CCVector<T>::norm_1()
  {
   // Sum
   double sum = 0.0;
@@ -709,7 +709,7 @@ namespace chapchom
  // Computes the norm-2 of the vector
  // ===================================================================
  template<class T>
- const double CCVector<T>::norm_2()
+ double CCVector<T>::norm_2()
  {
   // Sum
   double sum = 0.0;
@@ -808,8 +808,8 @@ namespace chapchom
    }
   
   // Check whether the dimensions of the vectors allow the operation
-  const unsigned long n_values_left_vector = left_vector.nvalues();
-  const unsigned long n_values_right_vector = right_vector.nvalues();
+  const unsigned long n_values_left_vector = left_vector.n_values();
+  const unsigned long n_values_right_vector = right_vector.n_values();
   if (n_values_left_vector != n_values_right_vector)
    {
     // Error message
@@ -889,8 +889,8 @@ namespace chapchom
    }
   
   // Check whether the dimensions of the vectors are the same
-  const unsigned long n_values_vector_one = vector_one.nvalues();
-  const unsigned long n_values_vector_two = vector_two.nvalues();
+  const unsigned long n_values_vector_one = vector_one.n_values();
+  const unsigned long n_values_vector_two = vector_two.n_values();
   if (n_values_vector_one != n_values_vector_two)
    {
     // Error message
@@ -967,8 +967,8 @@ namespace chapchom
    }
   
   // Check whether the dimensions of the vectors are the same
-  const unsigned long n_values_vector_one = vector_one.nvalues();
-  const unsigned long n_values_vector_two = vector_two.nvalues();
+  const unsigned long n_values_vector_one = vector_one.n_values();
+  const unsigned long n_values_vector_two = vector_two.n_values();
   if (n_values_vector_one != n_values_vector_two)
    {
     // Error message
@@ -1045,8 +1045,8 @@ namespace chapchom
    }
   
   // Check whether the dimensions of the vectors are the same
-  const unsigned long n_values_vector_one = vector_one.nvalues();
-  const unsigned long n_values_vector_two = vector_two.nvalues();
+  const unsigned long n_values_vector_one = vector_one.n_values();
+  const unsigned long n_values_vector_two = vector_two.n_values();
   if (n_values_vector_one != n_values_vector_two)
    {
     // Error message

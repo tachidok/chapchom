@@ -46,18 +46,19 @@ namespace chapchom
   // Clean up for any dynamically stored data
   void clean_up();
   
-  // Virtual function to solve a system of equations with input A. We
-  // specify the right-hand side B and the X matrices where the
-  // results are returned. We assume that the input/output matrices
-  // have the correct dimensions: A.ncolumns() x A.nrows() for B, and
-  // A.nrows() x A.ncolumns() for X.
-  virtual void solve(const MAT_TYPE &A, const MAT_TYPE &B, MAT_TYPE &X) = 0;
+  // Virtual function to solve a system of equations with input
+  // A_mat. We specify the right-hand side B and the X matrices where
+  // the results are returned. We assume that the input/output
+  // matrices have the correct dimensions: A_mat.ncolumns() x
+  // A_mat.nrows() for B, and A_mat.nrows() x A_mat.ncolumns() for X.
+  virtual void solve(const MAT_TYPE &A_mat, const MAT_TYPE &B, MAT_TYPE &X) = 0;
   
-  // Virtual function to solve a system of equations with input A. We
-  // specify the right-hand side b and the x vector where the result
-  // is returned. We assume that the input/output vectors have the
-  // correct dimensions: A.ncolumns() for b, and A.nrows() for x.
-  virtual void solve(const MAT_TYPE &A, const VEC_TYPE &b, VEC_TYPE &x) = 0;
+  // Virtual function to solve a system of equations with input
+  // A_mat. We specify the right-hand side b and the x vector where
+  // the result is returned. We assume that the input/output vectors
+  // have the correct dimensions: A_mat.ncolumns() for b, and
+  // A_mat.nrows() for x.
+  virtual void solve(const MAT_TYPE &A_mat, const VEC_TYPE &b, VEC_TYPE &x) = 0;
   
   // Virtual function to solve a system of equations with the already
   // stored matrix A. We specify the right-hand side B and the X
