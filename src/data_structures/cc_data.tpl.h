@@ -23,6 +23,9 @@ namespace chapchom
  {
   
  public:
+
+  // Empty constructor
+  CCData();
   
   // Constructor. Allocates memory for the values. Initialise them to
   // zero
@@ -69,6 +72,9 @@ namespace chapchom
   
   // Free allocated memory
   void free_memory_of_values();
+  
+  // Shift history values (mostly used for time integration)
+  void shift_history_values(const unsigned n_shift_positions = 1);
   
   // Get the specified value (read-only)
   const T value(const unsigned &i, const unsigned t=0) const;

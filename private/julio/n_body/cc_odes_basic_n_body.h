@@ -34,15 +34,12 @@ namespace chapchom
   CCODEsBasicNBody(const double g, const unsigned n_bodies = NBODIES);
   
   /// Empty destructor
-  virtual ~CCODEsBasicNBody(); 
-  
-  /// Set initial conditions
-  void set_initial_conditions(CCData<double> &u);
+  virtual ~CCODEsBasicNBody();
   
   /// Evaluates the system of odes at time "t". The values of the i-th
   /// function at previous times are accessible via u(i,1), u(i,2) and
   /// so on. The evaluation produces results in the vector dudt.
-  void evaluate(const double t, CCData<double> &y, CCData<double> &dudt);
+  void evaluate(const double t, CCData<double> &u, CCData<double> &dudt);
   
   // Gets access to the masses vector
   inline const double m(const unsigned i) const {return M[i];}

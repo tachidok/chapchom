@@ -1,6 +1,7 @@
 # Add source files in order of dependence, the ones with no dependency
 # first then the others
-SET(SRC_FILES ac_interpolator.cpp cc_newton_interpolator.cpp)
+SET(SRC_FILES ac_interpolator.cpp cc_newton_interpolator.cpp ac_problem.cpp ac_ivp_for_odes.cpp)
+#SET(SRC_FILES ac_interpolator.cpp cc_newton_interpolator.cpp ac_problem.cpp ac_ivp_for_odes.cpp ac_jacobian.tpl.cpp cc_jacobian_by_fd_from_odes.tpl.cpp cc_newtons_method.tpl.cpp)
 
 # Include current directory to the path
 #INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})

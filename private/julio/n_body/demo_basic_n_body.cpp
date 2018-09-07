@@ -6,7 +6,6 @@
 #include "../../../src/general/common_includes.h"
 #include "../../../src/general/utilities.h"
 #include "../../../src/general/initialise.h"
-#include "../../../src/data_structures/cc_data.tpl.h"
 
 // The required classes to solve Initial Value Problems (IVP)
 // The factory to create the time stepper (integration method)
@@ -14,6 +13,9 @@
 // Integration methods
 #include "../../../src/time_steppers/cc_euler_method.h"
 #include "../../../src/time_steppers/cc_RK4_method.h"
+
+// Base class for the concrete problem
+#include "../../../src/problem/ac_ivp_for_odes.h"
 // Odes for N body problem
 #include "cc_odes_basic_n_body.h"
 
@@ -163,6 +165,118 @@ void output_particles(double time,
  
 }
 
+/// This class implements inherits from the ACIVPForODEs class, we
+/// implement specific functions to solve the n body problem
+class CCNBodyProblem : public virtual ACIVPForODEs
+{
+  
+public:
+ 
+ /// Constructor
+ CCNBodyProblem(ACODEs *odes_pt, ACTimeStepper *time_stepper_pt, CCData<double> *u_pt)
+  : ACIVPForODEs(odes_pt, time_stepper_pt, u_pt)
+ {
+  
+ }
+ 
+ /// Destructor
+ ~CCNBodyProblem()
+ {
+  
+ }
+ 
+ // Set initial conditions
+ void set_initial_conditions()
+ {
+  set_initial_conditions((*U_pt));
+  
+  // Document initial state
+  complete_problem_setup();
+ }
+ 
+ // Set initial conditions
+ void set_initial_conditions(CCData<double> &u)
+ {
+  // Initial conditions for 1st body
+  u(0,0) = 0.0; // x-position
+  u(1,0) = 0.0; // x-velocity
+  u(2,0) = 0.0; // y-position
+  u(3,0) = 0.0; // y-velocity
+  u(4,0) = 0.0; // z-position
+  u(5,0) = 0.0; // z-velocity
+  // Initial conditions for 2nd body
+  u(6,0) = 0.0; // x-position
+  u(7,0) = -2.75674; // x-velocity
+  u(8,0) = 5.2; // y-position
+  u(9,0) = 0.0; // y-velocity
+  u(10,0) = 0.0; // z-position
+  u(11,0) = 0.0; // z-velocity
+#if 0
+  // Initial conditions for 3rd body
+  u(12,0) = -4.503; // x-position
+  u(13,0) = -1.38; // x-velocity
+  u(14,0) = 2.6; // y-position
+  u(15,0) = -2.39; // y-velocity
+  u(16,0) = 0.0; // z-position
+  u(17,0) = 0.0; // z-velocity
+  // Initial conditions for 4th body
+  u(18,0) = 4.503; // x-position
+  u(19,0) = -1.38; // x-velocity
+  u(20,0) = 2.6; // y-position
+  u(21,0) = 2.39; // y-velocity
+  u(22,0) = 0.0; // z-position
+  u(23,0) = 0.0; // z-velocity
+#endif // #if 0
+#if 1
+  // Initial conditions for 3rd body
+  u(12,0) = -0.5; // x-position
+  u(13,0) = -0.03; // x-velocity
+  u(14,0) = 4.8; // y-position
+  u(15,0) = -0.3; // y-velocity
+  u(16,0) = 0.0; // z-position
+  u(17,0) = 0.0; // z-velocity
+  // Initial conditions for 4th body
+  u(18,0) = 0.5; // x-position
+  u(19,0) = -0.03; // x-velocity
+  u(20,0) = 5.6; // y-position
+  u(21,0) = 0.3; // y-velocity
+  u(22,0) = 0.0; // z-position
+  u(23,0) = 0.0; // z-velocity 
+#endif // #if 1
+  
+ }
+ 
+ // Set boundary conditions
+ void set_boundary_conditions() { }
+ 
+ // A helper function to complete the problem setup (call
+ // set_initial_conditions(), set_boundary_conditions() and document
+ // the initial problem configuration)
+ void complete_problem_setup()
+ {
+  std::ostringstream output_filename;
+  output_filename << "./RESLT/soln" << "_" << std::setfill('0') << std::setw(5) << Output_file_index++;
+  output_particles(Time, (*U_pt), output_filename);
+ }
+ 
+ // Document the solution
+ void document_solution(std::ostringstream &output_filename)
+ {
+  output_particles(Time, (*U_pt), output_filename);
+  
+  // Output
+  std::cout.precision(8);
+  std::cout << "t: " << Time
+            << "\t" << U_pt->value(0) << "\t" << U_pt->value(6) << "\t" << U_pt->value(12) << "\t" << U_pt->value(18) << std::endl;
+  
+ }
+ 
+protected:
+ 
+ // The set of actions to be performed after a time stepping
+ void actions_after_time_stepping() { }
+ 
+}; // class CCNBodyProblem
 
 // ==================================================================
 // ==================================================================
@@ -173,8 +287,6 @@ void output_particles(double time,
 // ==================================================================
 int main(int argc, char *argv[])
 {
- // Initialise chapchom
- initialise_chapchom();
  
  // -----------------------------------------------------------------
  // Instantiation of the problem
@@ -190,15 +302,19 @@ int main(int argc, char *argv[])
  odes.m(3) = 0.001;
  
  // ----------------------------------------------------------------
- // Integrator initialisation [BEGIN]
+ // Time stepper
  // ----------------------------------------------------------------
  // Create the factory for the time steppers (integration methods)
- CCFactoryTimeStepper *factory_time_stepper_pt = new CCFactoryTimeStepper();
+ CCFactoryTimeStepper factory_time_stepper;
  // Create an instance of the integration method
  //ACTimeStepper *time_stepper_pt =
- // factory_time_stepper_pt->create_time_stepper("Euler");
+ // factory_time_stepper.create_time_stepper("Euler");
  ACTimeStepper *time_stepper_pt =
-  factory_time_stepper_pt->create_time_stepper("RK4");
+  factory_time_stepper.create_time_stepper("RK4");
+ 
+ // ----------------------------------------------------------------
+ // Prepare output vector u
+ // ----------------------------------------------------------------
  // Get the number of history values required by the integration
  // method
  const unsigned n_history_values = time_stepper_pt->n_history_values();
@@ -207,73 +323,50 @@ int main(int argc, char *argv[])
  // Storage for the values of the function u (results from time stepper)
  CCData<double> u(n_odes, n_history_values);
  
- // Set initial conditions
- odes.set_initial_conditions(u);
+ // Create an instance of the problem
+ CCNBodyProblem n_body_problem(&odes, time_stepper_pt, &u);
  
  // Prepare time integration data
- double initial_time = 0.0; // years
- double final_time = 300.0; // years
- //double time_step_size = 0.001; // years
- double time_step_size = 0.1; // years
- double current_time = initial_time; // years
- 
- // Output the initial data to screen
- std::cout.precision(8);
- std::cout << "t: " << current_time
-           << "\t" << u(0) << "\t" << u(6) << "\t" << u(12) << "\t" << u(18) << std::endl;
+ const double initial_time = 0.0; // years
+ const double final_time = 300.0; // years
+ const unsigned n_time_steps = 1000;
  
  // ----------------------------------------------------------------
- // Integrator initialisation [END]
+ // Configure problem
  // ----------------------------------------------------------------
-
- unsigned output_file_index = 0;
- // Initial output
- std::ostringstream output_filename;
- output_filename << "./RESLT/soln" << "_" << std::setfill('0') << std::setw(5) << output_file_index++;
- output_particles(0.0, u, output_filename);
+ // Initial time
+ n_body_problem.time() = initial_time;
+ 
+ // Initial time step
+ n_body_problem.time_step() = (final_time - initial_time) / n_time_steps; // years
+ 
+ // Set initial conditions
+ n_body_problem.set_initial_conditions();
  
  // Flag to indicate whether to continue processing
  bool LOOP = true;
  
- // Main LOOP (continue looping until all data in the input file is
- // processed)
+ // Main LOOP (loop until reaching final time)
  while(LOOP)
   {
-   // ==========================================================================
-   // Integrate the ODE's [BEGIN]
-   // ==========================================================================     
-   time_stepper_pt->time_step(odes, time_step_size, current_time, u);
+   // Performs an unsteady solve
+   n_body_problem.unsteady_solve();
    
-   // Update data (shift the history values)
-   for (unsigned j = 0; j < n_odes; j++)
-    {
-     for (unsigned k = 0; k < n_history_values; k++)
-      {
-       u(j,k) = u(j,k+1);
-      }
-    }
-   // Update time
-   current_time+=time_step_size;
+   // Update time of the problem
+   n_body_problem.time()+=n_body_problem.time_step();
    
    // Check whether we have reached the final time
-   if (current_time >= final_time)
+   if (n_body_problem.time() >= final_time)
     {
      LOOP = false;
     }
    
-   // ==========================================================================
-   // Integrate the ODE's [END]
-   // ==========================================================================
-   
-   // Output
-   std::cout.precision(8);
-   std::cout << "t: " << current_time
-             << "\t" << u(0) << "\t" << u(6) << "\t" << u(12) << "\t" << u(18) << std::endl;
-   
    // Output to file
    std::ostringstream output_filename;
-   output_filename << "./RESLT/soln" << "_" << std::setfill('0') << std::setw(5) << output_file_index++;
-   output_particles(current_time, u, output_filename);
+   output_filename
+    << "./RESLT/soln" << "_" << std::setfill('0') << std::setw(5) << n_body_problem.output_file_index()++;
+   
+   n_body_problem.document_solution(output_filename);
    
   } // while(LOOP)
  
@@ -282,13 +375,8 @@ int main(int argc, char *argv[])
  // Free memory
  delete time_stepper_pt;
  time_stepper_pt = 0;
-
- delete factory_time_stepper_pt;
- factory_time_stepper_pt = 0;
  
- // Finalise chapcom
- finalise_chapchom();
-
  return 0;
  
 }
+

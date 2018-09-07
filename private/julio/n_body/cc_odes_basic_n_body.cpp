@@ -26,59 +26,6 @@ namespace chapchom
  CCODEsBasicNBody::~CCODEsBasicNBody()
  { }
  
- // ======================================================================
- /// Set initial conditions
- // ======================================================================
- void CCODEsBasicNBody::set_initial_conditions(CCData<double> &u)
- {
-  // Initial conditions for 1st body
-  u(0,0) = 0.0; // x-position
-  u(1,0) = 0.0; // x-velocity
-  u(2,0) = 0.0; // y-position
-  u(3,0) = 0.0; // y-velocity
-  u(4,0) = 0.0; // z-position
-  u(5,0) = 0.0; // z-velocity
-  // Initial conditions for 2nd body
-  u(6,0) = 0.0; // x-position
-  u(7,0) = -2.75674; // x-velocity
-  u(8,0) = 5.2; // y-position
-  u(9,0) = 0.0; // y-velocity
-  u(10,0) = 0.0; // z-position
-  u(11,0) = 0.0; // z-velocity
-#if 0
-  // Initial conditions for 3rd body
-  u(12,0) = -4.503; // x-position
-  u(13,0) = -1.38; // x-velocity
-  u(14,0) = 2.6; // y-position
-  u(15,0) = -2.39; // y-velocity
-  u(16,0) = 0.0; // z-position
-  u(17,0) = 0.0; // z-velocity
-  // Initial conditions for 4th body
-  u(18,0) = 4.503; // x-position
-  u(19,0) = -1.38; // x-velocity
-  u(20,0) = 2.6; // y-position
-  u(21,0) = 2.39; // y-velocity
-  u(22,0) = 0.0; // z-position
-  u(23,0) = 0.0; // z-velocity
-#endif // #if 0
-#if 1
-  // Initial conditions for 3rd body
-  u(12,0) = -0.5; // x-position
-  u(13,0) = -0.03; // x-velocity
-  u(14,0) = 4.8; // y-position
-  u(15,0) = -0.3; // y-velocity
-  u(16,0) = 0.0; // z-position
-  u(17,0) = 0.0; // z-velocity
-  // Initial conditions for 4th body
-  u(18,0) = 0.5; // x-position
-  u(19,0) = -0.03; // x-velocity
-  u(20,0) = 5.6; // y-position
-  u(21,0) = 0.3; // y-velocity
-  u(22,0) = 0.0; // z-position
-  u(23,0) = 0.0; // z-velocity 
-#endif // #if 1
- }
- 
  // ===================================================================
  /// Evaluates the system of odes at time "t". The values of the i-th
  /// function at previous times are accessible via u(i,1), u(i,2) and

@@ -7,6 +7,17 @@ namespace chapchom
 {
  
  // ===================================================================
+ // Empty constructor
+ // ===================================================================
+ template<class T>
+ CCData<T>::CCData()
+  : Is_values_empty(true), Is_status_empty(true), Delete_values_storage(true),
+    N_values(0), N_history_values(0)
+ {
+  
+ }
+ 
+ // ===================================================================
  // Constructor. Allocates memory for the values. Initialise them to
  // zero
  // ===================================================================
@@ -206,6 +217,25 @@ namespace chapchom
    }
   
  }
+
+ // ===================================================================
+ // Shift history values (mostly used for time integration)
+ // ===================================================================
+ template<class T>
+ void CCData<T>::shift_history_values(const unsigned n_shift_positions)
+ {
+  const unsigned cache_n_values = n_values();
+  const unsigned cache_n_history_values = n_history_values();
+  // Loop over the number of values
+  for (unsigned i = 0; i < cache_n_values; i++)
+   {
+    // Loop over the history values
+    for (unsigned j = 0; j <= cache_n_history_values-n_shift_positions; j++)
+     {
+      value(i,j) = value(i,j+n_shift_positions);
+     }
+   }
+ }
  
  // ===================================================================
  // Get the specified value (read-only)
@@ -377,3 +407,4 @@ namespace chapchom
  }
  
 }
+

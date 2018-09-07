@@ -8,32 +8,35 @@ namespace chapchom
  // framework
  // ===================================================================
  ACProblem::ACProblem()
+  : Time(0.0), Time_step(0.0), Output_file_index(0)
  { 
-
+  initialise_problem();
  }
 
  // ===================================================================
  // Destructor
  // ===================================================================
  ACProblem::~ACProblem()
- { 
-
+ {
+  finalise_problem();
+ }
+ 
+ // ===================================================================
+ // Initialise problem (sets framework ready to work)
+ // ===================================================================
+ void ACProblem::initialise_problem()
+ {
+  // Initialise chapchom
+  initialise_chapchom();
  }
 
+ // =================================================================== 
+ // Finalise problem (performs operations to free resources)
  // ===================================================================
- // Problem steady solve
- // ===================================================================
- void ACProblem::steady_solve()
+ void ACProblem::finalise_problem()
  {
-  
- }
-
- // ===================================================================
- // Problem unsteady solve
- // ===================================================================
- void ACProblem::unsteady_solve()
- {
-  
+  // Finalise chapcom
+  finalise_chapchom();
  }
  
 }
