@@ -24,14 +24,23 @@ namespace chapchom
  public:
   
   /// Constructor
-  ACIVPForODEs(ACODEs *odes_pt, ACTimeStepper *time_stepper_pt, CCData<double> *u_pt);
+  ACIVPForODEs(ACODEs *odes_pt, ACTimeStepper *time_stepper_pt);
   
-  /// Destructor (empty)
-  virtual ~ACIVPForODEs() { }
+  /// Destructor
+  virtual ~ACIVPForODEs();
   
-  // -----------------------------------------------------
-  // MOVE THIS TO THE CONCRETE PROBLEM CLASS [BEGIN]
-  // -----------------------------------------------------
+  // Get access to the U vector
+  CCData<double> *u_pt() const {return U_pt;}
+  
+  // Read-only access to the vector U values
+  inline const double u(const unsigned i, const unsigned t = 0) const {return U_pt->value(i,t);}
+  
+  // Write access to the vector U values
+  inline double &u(const unsigned i, const unsigned t = 0) {return U_pt->value(i,t);}
+  
+  // -------------------------------------------------------------------------
+  // THESE METHODS MUST BE IMPLEMENTED IN THE CONCRETE PROBLEM CLASS [BEGIN]
+  // -------------------------------------------------------------------------
   // Set initial conditions
   virtual void set_initial_conditions() = 0;
   
@@ -46,9 +55,9 @@ namespace chapchom
   // Document the solution
   virtual void document_solution(std::ostringstream &output_filename) = 0;
   
-  // -----------------------------------------------------
-  // MOVE THIS TO THE CONCRETE PROBLEM CLASS [END]
-  // -----------------------------------------------------
+  // -------------------------------------------------------------------------
+  // THESE METHODS MUST BE IMPLEMENTED IN THE CONCRETE PROBLEM CLASS [END]
+  // -------------------------------------------------------------------------
   
   // Problem steady solve (empty)
   void steady_solve() { }

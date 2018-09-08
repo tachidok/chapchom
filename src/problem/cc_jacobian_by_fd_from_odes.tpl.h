@@ -11,8 +11,8 @@ namespace chapchom
  // A concrete class to compute the Jacobian matrix using Finite
  // Differences from a set of ODES
  template<class MAT_TYPE>
-  class CCJacobianByFDFromODEs : virtual public ACJacobian
- {
+  class CCJacobianByFDFromODEs : virtual public ACJacobian<MAT_TYPE>
+  {
   
  public:
   
@@ -64,7 +64,7 @@ namespace chapchom
   // it contains dynamically allocated variables, A in this
   // case). Check
   // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
-  CCJacobianByFDFromODEs(const CCJacobianByFDFromODEs<T> &copy)
+  CCJacobianByFDFromODEs(const CCJacobianByFDFromODEs<MAT_TYPE> &copy)
    {
     BrokenCopy::broken_copy("CCJacobianByFDFromODEs");
    }
@@ -73,7 +73,7 @@ namespace chapchom
   // it contains dynamically allocated variables, A in this
   // case). Check
   // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
-  void operator=(const CCJacobianByFDFromODEs<T> &copy)
+  void operator=(const CCJacobianByFDFromODEs<MAT_TYPE> &copy)
    {
     BrokenCopy::broken_assign("CCJacobianByFDFromODEs");
    }

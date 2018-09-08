@@ -1,5 +1,5 @@
-#ifndef ACJACOBIAN_H
-#define ACJACOBIAN_H
+#ifndef ACJACOBIAN_TPL_H
+#define ACJACOBIAN_TPL_H
 
 #include "../general/common_includes.h"
 #include "../general/utilities.h"
@@ -46,7 +46,7 @@ namespace chapchom
    // it contains dynamically allocated variables, A in this
    // case). Check
    // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
-   ACJacobian(const ACJacobian<T> &copy)
+   ACJacobian(const ACJacobian<MAT_TYPE> &copy)
     {
      BrokenCopy::broken_copy("ACJacobian");
     }
@@ -55,7 +55,7 @@ namespace chapchom
    // it contains dynamically allocated variables, A in this
    // case). Check
    // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
-   void operator=(const ACJacobian<T> &copy)
+   void operator=(const ACJacobian<MAT_TYPE> &copy)
     {
      BrokenCopy::broken_assign("ACJacobian");
     }
@@ -64,5 +64,5 @@ namespace chapchom
  
 }
 
-#endif // #ifndef ACJACOBIAN_H
+#endif // #ifndef ACJACOBIAN_TPL_H
 

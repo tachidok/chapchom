@@ -29,12 +29,6 @@
 #include <vtkFieldData.h>
 #include <vtkPointData.h>
 
-// -------------------------------------------------
-// Constants
-// -------------------------------------------------
-//#define G 4*M_PI*M_PI // Gravitational constant for problem
-#define G -0.01 // Gravitational constant for problem
-
 using namespace chapchom;
 
 // ==================================================================
@@ -62,7 +56,7 @@ void add_particles_to_vtk_data_set(CCData<double> &particles_data,
  ids->SetNumberOfComponents(1);
  ids->SetNumberOfTuples(n_particles);
  ids->SetName("ID");
-#if 0
+ #if 0
  // An array to store the particles radius
  vtkSmartPointer<vtkDoubleArray> radius = vtkSmartPointer<vtkDoubleArray>::New();
  radius->SetNumberOfComponents(3);
@@ -173,8 +167,8 @@ class CCNBodyProblem : public virtual ACIVPForODEs
 public:
  
  /// Constructor
- CCNBodyProblem(ACODEs *odes_pt, ACTimeStepper *time_stepper_pt, CCData<double> *u_pt)
-  : ACIVPForODEs(odes_pt, time_stepper_pt, u_pt)
+ CCNBodyProblem(ACODEs *odes_pt, ACTimeStepper *time_stepper_pt)
+  : ACIVPForODEs(odes_pt, time_stepper_pt)
  {
   
  }
@@ -188,15 +182,6 @@ public:
  // Set initial conditions
  void set_initial_conditions()
  {
-  set_initial_conditions((*U_pt));
-  
-  // Document initial state
-  complete_problem_setup();
- }
- 
- // Set initial conditions
- void set_initial_conditions(CCData<double> &u)
- {
   // Initial conditions for 1st body
   u(0,0) = 0.0; // x-position
   u(1,0) = 0.0; // x-velocity
@@ -206,9 +191,9 @@ public:
   u(5,0) = 0.0; // z-velocity
   // Initial conditions for 2nd body
   u(6,0) = 0.0; // x-position
-  u(7,0) = -2.75674; // x-velocity
+  u(7,0) = -5.0; // x-velocity
   u(8,0) = 5.2; // y-position
-  u(9,0) = 0.0; // y-velocity
+  u(9,0) = -2.5; // y-velocity
   u(10,0) = 0.0; // z-position
   u(11,0) = 0.0; // z-velocity
 #if 0
@@ -230,20 +215,22 @@ public:
 #if 1
   // Initial conditions for 3rd body
   u(12,0) = -0.5; // x-position
-  u(13,0) = -0.03; // x-velocity
-  u(14,0) = 4.8; // y-position
-  u(15,0) = -0.3; // y-velocity
+  u(13,0) = -2.5; // x-velocity
+  u(14,0) = 5.0; // y-position
+  u(15,0) = -1.25; // y-velocity
   u(16,0) = 0.0; // z-position
   u(17,0) = 0.0; // z-velocity
   // Initial conditions for 4th body
   u(18,0) = 0.5; // x-position
-  u(19,0) = -0.03; // x-velocity
-  u(20,0) = 5.6; // y-position
-  u(21,0) = 0.3; // y-velocity
+  u(19,0) = -2.5; // x-velocity
+  u(20,0) = 5.4; // y-position
+  u(21,0) = 1.25; // y-velocity
   u(22,0) = 0.0; // z-position
   u(23,0) = 0.0; // z-velocity 
 #endif // #if 1
   
+  // Document initial state
+  complete_problem_setup();
  }
  
  // Set boundary conditions
@@ -291,15 +278,9 @@ int main(int argc, char *argv[])
  // -----------------------------------------------------------------
  // Instantiation of the problem
  // -----------------------------------------------------------------
- CCODEsBasicNBody odes(G, 4);
- // Set the masses of the objects
- odes.m(0) = 1.0;
- //odes.m(1) = 0.001;
- //odes.m(2) = 0.0;
- //odes.m(3) = 0.0;
- odes.m(1) = 0.01;
- odes.m(2) = 0.001;
- odes.m(3) = 0.001;
+ CCODEsBasicNBody odes(4);
+ 
+ odes.set_odes_parameters();
  
  // ----------------------------------------------------------------
  // Time stepper
@@ -312,23 +293,12 @@ int main(int argc, char *argv[])
  ACTimeStepper *time_stepper_pt =
   factory_time_stepper.create_time_stepper("RK4");
  
- // ----------------------------------------------------------------
- // Prepare output vector u
- // ----------------------------------------------------------------
- // Get the number of history values required by the integration
- // method
- const unsigned n_history_values = time_stepper_pt->n_history_values();
- // Get the number of odes from the problem
- const unsigned n_odes = odes.n_odes();
- // Storage for the values of the function u (results from time stepper)
- CCData<double> u(n_odes, n_history_values);
- 
  // Create an instance of the problem
- CCNBodyProblem n_body_problem(&odes, time_stepper_pt, &u);
+ CCNBodyProblem n_body_problem(&odes, time_stepper_pt);
  
  // Prepare time integration data
  const double initial_time = 0.0; // years
- const double final_time = 300.0; // years
+ const double final_time = 10.0; // years
  const unsigned n_time_steps = 1000;
  
  // ----------------------------------------------------------------

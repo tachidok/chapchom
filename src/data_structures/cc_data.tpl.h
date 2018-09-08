@@ -23,9 +23,6 @@ namespace chapchom
  {
   
  public:
-
-  // Empty constructor
-  CCData();
   
   // Constructor. Allocates memory for the values. Initialise them to
   // zero
@@ -41,7 +38,7 @@ namespace chapchom
   CCData(const CCData<T> &copy);
   
   // Destructor
-  ~CCData();
+  virtual ~CCData();
   
   // Assignment operator
   CCData &operator=(const CCData<T> &source_values);

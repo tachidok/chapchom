@@ -7,16 +7,16 @@ namespace chapchom
  // ===================================================================
  // Constructor, sets the number of odes. We currently have 10 odes
  // ===================================================================
- CCODEsBasicNBody::CCODEsBasicNBody(const double g,
-                                    const unsigned n_bodies)
+ CCODEsBasicNBody::CCODEsBasicNBody(const unsigned n_bodies)
   : ACODEs(n_bodies*DIM*2), // The times 2 is because we are storing
                             // the position and the velocity of each
                             // body
-    N_bodies(n_bodies),
-    G(g)
+    N_bodies(n_bodies)
  {  
   // Resize the vector storing the masses
   M.resize(N_bodies);
+  // Resize the vector storing the gravity
+  G.resize(N_bodies);
   
  }
  
@@ -126,29 +126,50 @@ namespace chapchom
    } // for (i < N_bodies) 
   
   dudt(0) = u(1,0);
-  dudt(1) = sum[0][0]*G;
+  dudt(1) = sum[0][0]*g(0);
   dudt(2) = u(3,0);
-  dudt(3) = sum[0][1]*G;
+  dudt(3) = sum[0][1]*g(0);
   dudt(4) = u(5,0);
-  dudt(5) = sum[0][2]*G;
+  dudt(5) = sum[0][2]*g(0);
   dudt(6) = u(7,0);
-  dudt(7) = sum[1][0]*G;
+  dudt(7) = sum[1][0]*g(1);
   dudt(8) = u(9,0);
-  dudt(9) = sum[1][1]*G;
+  dudt(9) = sum[1][1]*g(1);
   dudt(10) = u(11,0);
-  dudt(11) = sum[1][2]*G;
+  dudt(11) = sum[1][2]*g(1);
   dudt(12) = u(13,0);
-  dudt(13) = sum[2][0]*G;
+  dudt(13) = sum[2][0]*g(2);
   dudt(14) = u(15,0);
-  dudt(15) = sum[2][1]*G;
+  dudt(15) = sum[2][1]*g(2);
   dudt(16) = u(17,0);
-  dudt(17) = sum[2][2]*G;
+  dudt(17) = sum[2][2]*g(2);
   dudt(18) = u(19,0);
-  dudt(19) = sum[3][0]*G;
+  dudt(19) = sum[3][0]*g(3);
   dudt(20) = u(21,0);
-  dudt(21) = sum[3][1]*G;
+  dudt(21) = sum[3][1]*g(3);
   dudt(22) = u(23,0);
-  dudt(23) = sum[3][2]*G;
+  dudt(23) = sum[3][2]*g(3);
+  
+ }
+
+ // ===================================================================
+ // Set parameters for odes
+ // ===================================================================
+ void CCODEsBasicNBody::set_odes_parameters()
+ {
+  // Set the masses of the objects
+  m(0) = 1.0;
+  //odes.m(1) = 0.001;
+  //odes.m(2) = 0.0;
+  //odes.m(3) = 0.0;
+  m(1) = 0.001;
+  m(2) = 0.0;
+  m(3) = 0.0;
+  
+  g(0) = GRAVITY;
+  g(1) = GRAVITY;
+  g(2) = GRAVITY;
+  g(3) = GRAVITY;
   
  }
  

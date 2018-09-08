@@ -15,58 +15,58 @@ namespace chapchom
  /// the integration methods
  class ACODEs
  {
-   
-  public:
- 
-   /// Constructor, sets the number of odes
-   ACODEs(const unsigned n_odes);
-   
-   /// Empty destructor
-   virtual ~ACODEs();
-   
-   /// Gets the number of odes
-   unsigned n_odes() const
-   {return N_odes;}
   
-   /// Gets the vector storing the number of calls to the odes
-   const std::vector<unsigned> &ncalls_odes()
-   {return N_calls_ode;}
+ public:
   
-   /// Gets the number of calls to an specific ode
-   unsigned ncalls_ode(const unsigned i) const
-   {return N_calls_ode[i];}
+  /// Constructor, sets the number of odes
+  ACODEs(const unsigned n_odes);
+  
+  /// Empty destructor
+  virtual ~ACODEs();
    
-   /// Evaluates the system of odes at time "t". The values of the
-   /// i-th function at previous times are accessible via u(i,1),
-   /// u(i,2) and so on. The evaluation produces results in the vector
-   /// dudt.
-   virtual void evaluate(const double t, CCData<double> &u, CCData<double> &dudt) = 0;
+  /// Gets the number of odes
+  unsigned n_odes() const
+  {return N_odes;}
+  
+  /// Gets the vector storing the number of calls to the odes
+  const std::vector<unsigned> &ncalls_odes()
+  {return N_calls_ode;}
+  
+  /// Gets the number of calls to an specific ode
+  unsigned ncalls_ode(const unsigned i) const
+  {return N_calls_ode[i];}
    
+  /// Evaluates the system of odes at time "t". The values of the
+  /// i-th function at previous times are accessible via u(i,1),
+  /// u(i,2) and so on. The evaluation produces results in the vector
+  /// dudt.
+  virtual void evaluate(const double t, CCData<double> &u, CCData<double> &dudt) = 0;
+  
  protected:
    
-   /// Copy constructor (we do not want this class to be
-   /// copiable). Check
-   /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
-   ACODEs(const ACODEs &copy)
-    {
-     BrokenCopy::broken_copy("ACODEs");
-    }
+  /// Copy constructor (we do not want this class to be
+  /// copiable). Check
+  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
+  ACODEs(const ACODEs &copy)
+   {
+    BrokenCopy::broken_copy("ACODEs");
+   }
   
-   /// Assignment operator (we do not want this class to be
-   /// copiable. Check
-   /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
-   void operator=(const ACODEs &copy)
-    {
-     BrokenCopy::broken_assign("ACODEs");
-    }
+  /// Assignment operator (we do not want this class to be
+  /// copiable. Check
+  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
+  void operator=(const ACODEs &copy)
+   {
+    BrokenCopy::broken_assign("ACODEs");
+   }
    
-   /// The number of odes
-   unsigned N_odes;
+  /// The number of odes
+  unsigned N_odes;
    
-   /// The number of calls for each ode
-   std::vector<unsigned> N_calls_ode;
+  /// The number of calls for each ode
+  std::vector<unsigned> N_calls_ode;
   
-  };
+ };
  
 }
 

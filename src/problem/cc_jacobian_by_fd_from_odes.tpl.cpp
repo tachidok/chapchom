@@ -46,7 +46,7 @@ namespace chapchom
    }
   
   // Get the number of ODEs
-  const unsigned n_dof = ODEs.nodes();
+  const unsigned n_dof = ODEs.n_odes();
   
   // Allocate memory for the Jacobian (delete previous data)
   this->Jacobian.allocate_memory(n_dof, n_dof);

@@ -15,6 +15,7 @@
 #define DIM 3 // This specialised implementation assumes we are
               // working with 4 bodies in 3 dimensions
 #define NBODIES 4
+#define GRAVITY -1.0
 
 namespace chapchom
 {
@@ -31,7 +32,7 @@ namespace chapchom
   /// Constructor, sets the number of bodies (this specialised
   // implementation assumes we are working with 4 bodies in 3
   // dimensions)
-  CCODEsBasicNBody(const double g, const unsigned n_bodies = NBODIES);
+  CCODEsBasicNBody(const unsigned n_bodies = NBODIES);
   
   /// Empty destructor
   virtual ~CCODEsBasicNBody();
@@ -41,11 +42,20 @@ namespace chapchom
   /// so on. The evaluation produces results in the vector dudt.
   void evaluate(const double t, CCData<double> &u, CCData<double> &dudt);
   
+  // Set parameters for odes
+  void set_odes_parameters();
+  
   // Gets access to the masses vector
   inline const double m(const unsigned i) const {return M[i];}
   
   // Sets the value of the i-th body
   inline double &m(const unsigned i) {return M[i];}
+  
+  // Gets access to the gravity vector
+  inline const double g(const unsigned i) const {return G[i];}
+  
+  // Sets the value of the i-th body
+  inline double &g(const unsigned i) {return G[i];}
   
  protected:
   
@@ -53,7 +63,7 @@ namespace chapchom
   /// copiable). Check
   /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
  CCODEsBasicNBody(const CCODEsBasicNBody &copy)
-  : ACODEs(copy), N_bodies(0), G(0)
+  : ACODEs(copy), N_bodies(0)
    {
     BrokenCopy::broken_copy("CCODEsBasicNBody");
    }
@@ -71,9 +81,9 @@ namespace chapchom
 
   // The masses of the bodies
   std::vector<double> M;
-
+  
   // The gravitational constant
-  const double G;
+  std::vector<double> G;
   
  };
  

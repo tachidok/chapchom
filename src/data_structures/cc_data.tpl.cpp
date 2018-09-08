@@ -7,17 +7,6 @@ namespace chapchom
 {
  
  // ===================================================================
- // Empty constructor
- // ===================================================================
- template<class T>
- CCData<T>::CCData()
-  : Is_values_empty(true), Is_status_empty(true), Delete_values_storage(true),
-    N_values(0), N_history_values(0)
- {
-  
- }
- 
- // ===================================================================
  // Constructor. Allocates memory for the values. Initialise them to
  // zero
  // ===================================================================

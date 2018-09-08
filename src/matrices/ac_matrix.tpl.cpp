@@ -36,6 +36,9 @@ namespace chapchom
  void ACMatrix<T>::allocate_memory(const unsigned long m,
                                    const unsigned long n)
  {
+  // Clean any possibly stored data
+  clean_up();
+  
   // Set the number of rows and columns of the matrix
   NRows = m;
   NColumns = n;
