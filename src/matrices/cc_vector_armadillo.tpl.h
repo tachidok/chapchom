@@ -136,10 +136,13 @@ namespace chapchom
    inline arma::Mat<T> *arma_vector_pt() const {return Arma_vector_pt;}
    
    // Computes the norm-1 of the vector
-   double norm_1();
+   T norm_1();
    
    // Computes the norm-2 of the vector
-   double norm_2();
+   T norm_2();
+   
+   // Computes the maximum value (infinite norm)
+   T max();
    
   protected:
    

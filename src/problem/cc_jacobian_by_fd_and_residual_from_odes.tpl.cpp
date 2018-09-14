@@ -1,14 +1,15 @@
-#include "cc_jacobian_by_fd_from_odes.tpl.h"
+#include "cc_jacobian_by_fd_and_residual_from_odes.tpl.h"
 
 namespace chapchom
 {
  // ===================================================================
  // Constructor
  // ===================================================================
- template<class MAT_TYPE>
- CCJacobianByFDFromODEs<MAT_TYPE>::CCJacobianByFDFromODEs()
+ template<class MAT_TYPE, class VEC_TYPE>
+ CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::CCJacobianByFDAndResidualFromODEs()
   : ODEs_has_been_set(false),
-    U_has_been_set(false)
+    U_has_been_set(false),
+    Constant_time_has_been_set(false)
  {
  
  }
@@ -16,8 +17,8 @@ namespace chapchom
  // ===================================================================
  // Destructor
  // ===================================================================
- template<class MAT_TYPE>
- CCJacobianByFDFromODEs<MAT_TYPE>::~CCJacobianByFDFromODEs()
+ template<class MAT_TYPE, class VEC_TYPE>
+ CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::~CCJacobianByFDAndResidualFromODEs()
  {
  
  }
@@ -26,9 +27,37 @@ namespace chapchom
  // In charge of computing the Jacobian using Finite Differences
  // (virtual function implementation)
  // ===================================================================
- template<class MAT_TYPE>
- void CCJacobianByFDFromODEs<MAT_TYPE>::compute_jacobian()
+ template<class MAT_TYPE, class VEC_TYPE>
+ void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::compute_jacobian()
  {
+  // Check whether the ODEs have been set
+  if (!ODEs_has_been_set)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "You have not established the ODEs that should be\n"
+                  << "used to compute the Jacobian matrix\n."
+                  << "Call the method set_ODEs() to specify the set of ODEs\n"
+                  << "used to compute the Jacobian matrix." << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check whether the U values have been set
+  if (!U_has_been_set)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "You have not established the values of the function U\n"
+                  << "that are used to help computing the Jacobian matrix\n."
+                  << "Call the method set_U() to specify the values of the U\n"
+                  << "function used to compute the Jacobian matrix." << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
   // Check whether the constant time has been set
   if (!Constant_time_has_been_set)
    {
@@ -37,7 +66,7 @@ namespace chapchom
     error_message << "You have not established a constant time to compute\n"
                   << "the Jacobian matrix\n."
                   << "You need to call the method\n\n"
-                  << "compute_jacobian(const double t)\n\n"
+                  << "set_constant_time(const double t)\n\n"
                   << "which automatically calls this method to compute the\n"
                   << "Jacobian matrix." << std::endl;
     throw ChapchomLibError(error_message.str(),
@@ -85,70 +114,29 @@ namespace chapchom
      }
    }
   
+  // Unset constant time
+  Constant_time = 0.0;
+  
   // Change the status of the constant time flag to avoid calling by
   // error again
   Constant_time_has_been_set = false;
   
  }
- 
+
  // ===================================================================
- // In charge of computing the Jacobian using Finite Differences
+ // In charge of computing the residual
  // ===================================================================
- template<class MAT_TYPE>
- void CCJacobianByFDFromODEs<MAT_TYPE>::compute_jacobian(const double t)
+ template<class MAT_TYPE, class VEC_TYPE>
+ void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::compute_residual()
  {
-  // Check whether the ODEs have been set
-  if (!ODEs_has_been_set)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "You have not established the ODEs that should be\n"
-                  << "used to compute the Jacobian matrix\n."
-                  << "Call the method set_ODEs() to specify the set of ODEs\n"
-                  << "used to compute the Jacobian matrix." << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
-  
-  // Check whether the U values have been set
-  if (!U_has_been_set)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "You have not established the values of the function U\n"
-                  << "that are used to help computing the Jacobian matrix\n."
-                  << "Call the method set_U() to specify the values of the U\n"
-                  << "function used to compute the Jacobian matrix." << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
-  
-  // Set the constant time
-  Constant_time = t;
-
-  // Indicate that the constant time has been set
-  Constant_time_has_been_set = true;
-
-  // ----------------------------------------------------
-  // Perform the computation of the Jacobian
-  // ----------------------------------------------------
-  compute_jacobian();
-  
-  // Unset constant time
-  Constant_time = 0.0;
-
-  // Disable calling of the method that computes the Jacobian
-  Constant_time_has_been_set = false;
   
  }
  
  // ===================================================================
  // Set the ODEs to compute the Jacobian
  // ===================================================================
- template<class MAT_TYPE>
- void CCJacobianByFDFromODEs<MAT_TYPE>::set_ODEs(const ACODEs &odes)
+ template<class MAT_TYPE, class VEC_TYPE>
+ void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::set_ODEs(const ACODEs &odes)
  {
   // Set a pointer to the odes
   ODEs = odes;
@@ -162,8 +150,8 @@ namespace chapchom
  // Set the U vector/matrix with the values of the function at the
  // current time
  // ===================================================================
- template<class MAT_TYPE>
- void CCJacobianByFDFromODEs<MAT_TYPE>::set_U(const CCData<double> &u)
+ template<class MAT_TYPE, class VEC_TYPE>
+ void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::set_U(const CCData<double> &u)
  {
   // Set a pointer to the storage of the data 
   U = u;
@@ -172,5 +160,19 @@ namespace chapchom
   U_has_been_set = true;
   
  }
-
+ 
+ // ===================================================================
+ // In charge of setting the constant time to compute the Jacobian
+ // using Finite Differences
+ // ===================================================================
+ template<class MAT_TYPE, class VEC_TYPE>
+ void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::set_constant_time(const double t)
+ {  
+  // Set the constant time
+  Constant_time = t;
+  
+  // Indicate that the constant time has been set
+  Constant_time_has_been_set = true; 
+ }
+ 
 }

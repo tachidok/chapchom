@@ -1,7 +1,7 @@
 // Include header and tpl.cpp files implementing templates. We may use
 // this file to force the instantiation of specific templates
-#ifndef ACJACOBIAN_H
-#define ACJACOBIAN_H
-#include "ac_jacobian.tpl.h"
-#include "ac_jacobian.tpl.cpp"
-#endif // #ifndef ACJACOBIAN_H
+#ifndef ACRESIDUAL_H
+#define ACRESIDUAL_H
+#include "ac_residual.tpl.h"
+#include "ac_residual.tpl.cpp"
+#endif // #ifndef ACRESIDUAL_H

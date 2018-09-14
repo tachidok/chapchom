@@ -676,7 +676,7 @@ namespace chapchom
  // Computes the norm-1 of the vector
  // ===================================================================
  template<class T>
- double CCVector<T>::norm_1()
+ T CCVector<T>::norm_1()
  {
   // Sum
   double sum = 0.0;
@@ -709,7 +709,7 @@ namespace chapchom
  // Computes the norm-2 of the vector
  // ===================================================================
  template<class T>
- double CCVector<T>::norm_2()
+ T CCVector<T>::norm_2()
  {
   // Sum
   double sum = 0.0;
@@ -738,6 +738,42 @@ namespace chapchom
   
  }
 
+ // ===================================================================
+ // Computes the maximum value (infinite norm)
+ // ===================================================================
+ template<class T>
+ T CCVector<T>::max()
+ {
+  // Maximum
+  double max = 0.0;
+  // Check whether the vector has memory allocated
+  if (this->Is_own_memory_allocated)
+   {
+    // Initialise the maximum with the first value
+    max = Vector_pt[0];
+    // Compute the norm
+    for (unsigned long i = 1; i < this->NValues; i++)
+     {
+      if (Vector_pt[i] > max)
+       max = Vector_pt[i];
+     }
+   }
+  else
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "We can not compute the maximum of a vector with no memory allocated\n"
+                  << "this->Is_own_memory_allocated = "
+                  << this->Is_own_memory_allocated << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  return max;
+  
+ }
+ 
  // ===================================================================
  // Allocates memory to store entries of the vector
  // ===================================================================

@@ -1,4 +1,4 @@
-#include "ac_jacobian.tpl.h"
+#include "ac_jacobian_and_residual.tpl.h"
 
 namespace chapchom
 {
@@ -6,8 +6,8 @@ namespace chapchom
  // ===================================================================
  // Constructor
  // ===================================================================
- template<class MAT_TYPE>
- ACJacobian<MAT_TYPE>::ACJacobian()
+ template<class MAT_TYPE, class VEC_TYPE>
+ ACJacobianAndResidual<MAT_TYPE, VEC_TYPE>::ACJacobianAndResidual()
  {
  
  }
@@ -15,8 +15,8 @@ namespace chapchom
  // ===================================================================
  // Destructor
  // ===================================================================
- template<class MAT_TYPE>
- ACJacobian<MAT_TYPE>::~ACJacobian()
+ template<class MAT_TYPE, class VEC_TYPE>
+ ACJacobianAndResidual<MAT_TYPE, VEC_TYPE>::~ACJacobianAndResidual()
  {
   
  }

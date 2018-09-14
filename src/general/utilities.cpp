@@ -69,7 +69,7 @@ namespace chapchom
    Exception_stringstream_pt=new std::stringstream;
    std::set_terminate(spawn_errors_from_uncaught_errors);
   }
-
+  
   /// \short Flush string stream of error messages (call when error has been
   /// caught)
   void suppress_exception_error_messages()

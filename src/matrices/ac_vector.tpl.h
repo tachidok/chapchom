@@ -120,13 +120,16 @@ namespace chapchom
    inline void disable_delete_vector() {Delete_vector=false;}
    
    // Computes the norm-1 of the vector
-   virtual double norm_1() = 0;
+   virtual T norm_1() = 0;
    
    // Computes the norm-2 of the vector
-   virtual double norm_2() = 0;
+   virtual T norm_2() = 0;
+   
+   // Computes the maximum value (infinite norm)
+   virtual T max() = 0;
    
   protected:
-      
+   
    // The size of the vector
    unsigned long NValues;
    
