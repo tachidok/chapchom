@@ -1,6 +1,6 @@
 # Add source files in order of dependence, the ones with no dependency
 # first then the others
-SET(SRC_FILES ac_time_stepper.cpp cc_euler_method.cpp cc_RK4_method.cpp cc_factory_time_stepper.cpp)
+SET(SRC_FILES cc_jacobian_by_fd_and_residual_from_odes.tpl.cpp ac_time_stepper.cpp cc_euler_method.cpp cc_RK4_method.cpp cc_factory_time_stepper.cpp)
 
 # Include current directory to the path
 #INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})

@@ -1,7 +1,7 @@
 #ifndef CCJACOBIANBYFDANDRESIDUALFROMODES_TPL_H
 #define CCJACOBIANBYFDANDRESIDUALFROMODES_TPL_H
 
-#include "ac_jacobian_and_residual.h"
+#include "../equations/ac_jacobian_and_residual.h"
 #include "../data_structures/ac_odes.h"
 
 namespace chapchom

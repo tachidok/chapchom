@@ -18,7 +18,7 @@
 
 // Includes the abstract class for strategies to compute the Jacobian
 // and the residual
-#include "ac_jacobian_and_residual.h"
+#include "../equations/ac_jacobian_and_residual.h"
 // Includes the abstract class for linear solvers
 #include "../linear_solvers/ac_linear_solver.h"
 
