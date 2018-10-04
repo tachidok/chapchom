@@ -44,23 +44,36 @@ namespace chapchom
    ~CCNewtonsMethod();
    
    // Set the Jacobian and residual computation strategy
-   void set_jacobian_and_residual_computation_strategy(const ACJacobianAndResidual<MAT_TYPE,VEC_TYPE> *jacobian_and_residual_strategy_pt);
-   
-   // Gets access to the Jacobian and residual computation strategy
-   inline ACJacobianAndResidual<MAT_TYPE,VEC_TYPE> *jacobian_and_residual_strategy_pt() {return Jacobian_and_residual_strategy_pt;}
+   void set_jacobian_and_residual_strategy(const ACJacobianAndResidual<MAT_TYPE,VEC_TYPE> *jacobian_and_residual_strategy_pt);
    
    // Set the Linear solver
    void set_linear_solver(const ACLinearSolver<MAT_TYPE, VEC_TYPE> *linear_solver_pt);
    
+   // Gets access to the Jacobian and residual computation strategy
+   const ACJacobianAndResidual<MAT_TYPE,VEC_TYPE> *jacobian_and_residual_strategy_pt();
+   
    // Gets access to the linear solver
-   inline ACLinearSolver<MAT_TYPE, VEC_TYPE> *linear_solver_pt() {return Linear_solver_pt;}
+   const ACLinearSolver<MAT_TYPE, VEC_TYPE> *linear_solver_pt();
    
    // Applies Newton's method to solve the problem given by the
-   // already stored Jacobian and the rhs. The initial guess is set in
-   // the dx vector where the final solution (if any) is returned
-   void solve(const VEC_TYPE &rhs, VEC_TYPE &dx);
+   // Jacobian and the residual computed by the estalished strategy.
+   // The initial guess is set in the dx vector where the final
+   // solution (if any) is returned
+   void solve(VEC_TYPE &dx);
    
   protected:
+   
+   // A function that may be overloaded to implement actions before
+   // initial converngence check
+   virtual void actions_before_initial_convergence_check() { }
+   
+   // A function that may be overloaded to implement actions before
+   // Newton's method step
+   virtual void actions_before_newton_step() { }
+   
+   // A function that may be overloaded to implement actions after
+   // Newton's method step
+   virtual void actions_after_newton_step() { }
    
    // A pointer for the strategy to compute the Jacobian and the residual
    ACJacobianAndResidual<MAT_TYPE,VEC_TYPE> *Jacobian_and_residual_strategy_pt;
@@ -79,7 +92,7 @@ namespace chapchom
    
    // Flag to indicate whether the Jacobian and residual computation
    // strategy has been set
-   bool Jacobian_and_residual_computation_strategy_has_been_set; 
+   bool Jacobian_and_residual_strategy_has_been_set; 
    
    // Flag to indicate whether a linear solver has been set or not
    bool Linear_solver_has_been_set;
@@ -95,13 +108,13 @@ namespace chapchom
    // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
    CCNewtonsMethod(const CCNewtonsMethod<MAT_TYPE, VEC_TYPE> &copy)
     {
-     BrokenCopy::broken_copy("CCNewtonsMethod");
-    }
+    BrokenCopy::broken_copy("CCNewtonsMethod");
+   }
    
-   // Copy constructor (we do not want this class to be copiable because
-   // it contains dynamically allocated variables, A in this
-   // case). Check
-   // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
+  // Copy constructor (we do not want this class to be copiable because
+  // it contains dynamically allocated variables, A in this
+  // case). Check
+  // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
    void operator=(const CCNewtonsMethod<MAT_TYPE, VEC_TYPE> &copy)
     {
      BrokenCopy::broken_assign("CCNewtonsMethod");

@@ -5,6 +5,7 @@
 #include "../general/utilities.h"
 
 #include "../data_structures/ac_odes.h"
+#include "../data_structures/cc_data.h"
 
 namespace chapchom
 {

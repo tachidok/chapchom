@@ -13,6 +13,15 @@
 // Integration methods
 #include "../../../src/time_steppers/cc_euler_method.h"
 #include "../../../src/time_steppers/cc_RK4_method.h"
+#include "../../../src/time_steppers/cc_backward_euler_method.h"
+
+#include "../../../src/matrices/cc_matrix.h"
+
+#ifdef CHAPCHOM_USES_ARMADILLO
+// Include Armadillo type matrices since the templates may include
+// Armadillo type matrices
+#include "../../../src/matrices/cc_matrix_armadillo.h"
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
 
 // Base class for the concrete problem
 #include "../../../src/problem/ac_ivp_for_odes.h"
@@ -286,12 +295,15 @@ int main(int argc, char *argv[])
  // Time stepper
  // ----------------------------------------------------------------
  // Create the factory for the time steppers (integration methods)
- CCFactoryTimeStepper factory_time_stepper;
+ //CCFactoryTimeStepper<CCMatrixArmadillo<double>, CCVectorArmadillo<double> > factory_time_stepper;
+ CCFactoryTimeStepper<CCMatrix<double>, CCVector<double> > factory_time_stepper;
  // Create an instance of the integration method
  //ACTimeStepper *time_stepper_pt =
  // factory_time_stepper.create_time_stepper("Euler");
+ //ACTimeStepper *time_stepper_pt =
+ //  factory_time_stepper.create_time_stepper("RK4"); 
  ACTimeStepper *time_stepper_pt =
-  factory_time_stepper.create_time_stepper("RK4");
+  factory_time_stepper.create_time_stepper("BDF1");
  
  // Create an instance of the problem
  CCNBodyProblem n_body_problem(&odes, time_stepper_pt);

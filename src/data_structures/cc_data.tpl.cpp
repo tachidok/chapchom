@@ -206,7 +206,7 @@ namespace chapchom
    }
   
  }
-
+ 
  // ===================================================================
  // Shift history values (mostly used for time integration)
  // ===================================================================
@@ -224,6 +224,36 @@ namespace chapchom
       value(i,j) = value(i,j+n_shift_positions);
      }
    }
+ }
+
+ // ===================================================================
+ // Extract history values column
+ // ===================================================================
+ template<class T>
+ void CCData<T>::extract_history_values(T *extracted_column_pt,
+                                        const unsigned n_column_history_values)
+ {
+  // Verify that the requested column is within the data storage
+  if (n_column_history_values + 1 > N_history_values)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The history values column number you asked for is out of range\n"
+                  << "Requested column: " << n_column_history_values + 1
+                  << "Number of history values: " << N_history_values
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  const unsigned cache_n_values = n_values(); 
+  // Loop over the data and store them in the output vector
+  for (unsigned i = 0; i < cache_n_values; i++)
+   {
+    extracted_column_pt[i] = value(i, n_column_history_values);
+   }
+  
  }
  
  // ===================================================================

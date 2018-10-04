@@ -9,9 +9,9 @@ namespace chapchom
  CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::CCJacobianByFDAndResidualFromODEs()
   : ODEs_has_been_set(false),
     U_has_been_set(false),
-    Constant_time_has_been_set(false)
+    Current_time_has_been_set(false)
  {
- 
+  
  }
  
  // ===================================================================
@@ -35,56 +35,54 @@ namespace chapchom
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "You have not established the ODEs that should be\n"
-                  << "used to compute the Jacobian matrix\n."
-                  << "Call the method set_ODEs() to specify the set of ODEs\n"
-                  << "used to compute the Jacobian matrix." << std::endl;
+    error_message << "You have not established the ODEs used to compute\n"
+                  << "the Jacobian matrix\n."
+                  << "You need to call the method set_ODEs()\n"
+                  << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Check whether the U values have been set
+   // Check whether the U values have been set
   if (!U_has_been_set)
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "You have not established the values of the function U\n"
-                  << "that are used to help computing the Jacobian matrix\n."
-                  << "Call the method set_U() to specify the values of the U\n"
-                  << "function used to compute the Jacobian matrix." << std::endl;
+    error_message << "You have not established the U function values\n"
+                  << "used to compute the Jacobian matrix\n."
+                  << "You need to call the method set_U()\n"
+                  << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
   // Check whether the constant time has been set
-  if (!Constant_time_has_been_set)
+  if (Current_time_has_been_set)
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "You have not established a constant time to compute\n"
-                  << "the Jacobian matrix\n."
-                  << "You need to call the method\n\n"
-                  << "set_constant_time(const double t)\n\n"
-                  << "which automatically calls this method to compute the\n"
-                  << "Jacobian matrix." << std::endl;
+    error_message << "You have not established the current time\n"
+                  << "used to compute the Jacobian matrix\n."
+                  << "You need to call the method set_current_time()\n"
+                  << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
   // Get the number of ODEs
-  const unsigned n_dof = ODEs.n_odes();
+  const unsigned n_dof = ODEs_pt->n_odes();
   
   // Allocate memory for the Jacobian (delete previous data)
   this->Jacobian.allocate_memory(n_dof, n_dof);
   
   // Store the evaluation of the ODEs with the current U's values
   CCData<double> dudt(n_dof);
-
+  
   // Evaluate the ODEs
-  ODEs.evaluate(Constant_time, U, dudt);
+  ODEs_pt->evaluate(Current_time, U, dudt);
   
   // Compute the approximated Jacobian
   for (unsigned i = 0; i < n_dof; i++)
@@ -101,7 +99,7 @@ namespace chapchom
     // Evaluate the ODEs with the slighted perturbed data
     CCData<double> dudt_plus(n_dof);
     // Evaluate the ODEs
-    ODEs.evaluate(Constant_time, U_plus, dudt_plus);
+    ODEs_pt->evaluate(Current_time, U_plus, dudt_plus);
     // Compute the values for the Jacobian matrix, add entries for the
     // current i-column only (all functions with an slight
     // perturbation in the i-th dof)
@@ -114,15 +112,8 @@ namespace chapchom
      }
    }
   
-  // Unset constant time
-  Constant_time = 0.0;
-  
-  // Change the status of the constant time flag to avoid calling by
-  // error again
-  Constant_time_has_been_set = false;
-  
  }
-
+ 
  // ===================================================================
  // In charge of computing the residual
  // ===================================================================
@@ -133,14 +124,14 @@ namespace chapchom
  }
  
  // ===================================================================
- // Set the ODEs to compute the Jacobian
+ // Set the ODEs
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::set_ODEs(const ACODEs &odes)
+ void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::set_ODEs(ACODEs *odes_pt)
  {
-  // Set a pointer to the odes
-  ODEs = odes;
-
+  // Set the odes
+  ODEs_pt = odes_pt;
+  
   // Indicate that the ODEs have been set
   ODEs_has_been_set = true;
   
@@ -151,9 +142,9 @@ namespace chapchom
  // current time
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::set_U(const CCData<double> &u)
+ void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::set_U(CCData<double> &u)
  {
-  // Set a pointer to the storage of the data 
+  // Set the storage of the data
   U = u;
   
   // Indicate that the U vector has been set
@@ -162,17 +153,16 @@ namespace chapchom
  }
  
  // ===================================================================
- // In charge of setting the constant time to compute the Jacobian
- // using Finite Differences
+ // Sets the current time
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::set_constant_time(const double t)
+ void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::set_current_time(const double t)
  {  
   // Set the constant time
-  Constant_time = t;
+  Current_time = t;
   
-  // Indicate that the constant time has been set
-  Constant_time_has_been_set = true; 
+  // Indicate that the current time has been set
+  Current_time_has_been_set = true; 
  }
  
 }

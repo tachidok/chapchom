@@ -15,7 +15,7 @@
 
 namespace chapchom
 {
-
+ 
  // A concrete class for solving a linear system of equations. This
  // class uses the methods solve() or spsolve() from Armadillo to
  // perform the solution of the system of equations.

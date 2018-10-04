@@ -2,7 +2,7 @@
 
 namespace chapchom
 {
-
+ 
  // ===================================================================
  // Constructor, in charge of initialising any stuff required for the
  // framework

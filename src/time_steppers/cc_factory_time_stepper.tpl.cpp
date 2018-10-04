@@ -1,4 +1,4 @@
-#include "cc_factory_time_stepper.h"
+#include "cc_factory_time_stepper.tpl.h"
 
 namespace chapchom
 {
@@ -6,7 +6,8 @@ namespace chapchom
  // ===================================================================
  // Empty constructor
  // ===================================================================
- CCFactoryTimeStepper::CCFactoryTimeStepper()
+ template<class MAT_TYPE, class VEC_TYPE>
+ CCFactoryTimeStepper<MAT_TYPE,VEC_TYPE>::CCFactoryTimeStepper()
  { 
 
  }
@@ -14,7 +15,8 @@ namespace chapchom
  // ===================================================================
  // Empty destructor
  // ===================================================================
- CCFactoryTimeStepper::~CCFactoryTimeStepper()
+ template<class MAT_TYPE, class VEC_TYPE>
+ CCFactoryTimeStepper<MAT_TYPE,VEC_TYPE>::~CCFactoryTimeStepper()
  { 
 
  }
@@ -22,7 +24,8 @@ namespace chapchom
  // ===================================================================
  // Returns the specified time stepper (integration method)
  // ===================================================================
- ACTimeStepper* CCFactoryTimeStepper::
+ template<class MAT_TYPE, class VEC_TYPE>
+ ACTimeStepper* CCFactoryTimeStepper<MAT_TYPE,VEC_TYPE>::
  create_time_stepper(std::string time_stepper_name)
  {
   // Get the string and change it to lower case 
@@ -42,6 +45,11 @@ namespace chapchom
    {
     return new CCRK4Method();
    }
+  // Backward Euler method
+  else if (time_stepper_name.compare("bdf1")==0)
+   {
+    return new CCBackwardEulerMethod<MAT_TYPE,VEC_TYPE>();
+   }
   else
    {
     std::ostringstream error_message;
@@ -50,7 +58,9 @@ namespace chapchom
                   << "another one\n\n"
                   << "Availables ones\n"
                   << "- Euler (euler)\n"
-                  << "- Runge-Kutta 4 (rk4)\n"<< std::endl;
+                  << "- Runge-Kutta 4 (rk4)\n"
+                  << "- Backward Euler (bdf1)\n"
+                  << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);

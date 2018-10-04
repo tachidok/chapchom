@@ -59,10 +59,10 @@ namespace chapchom
    {
     BrokenCopy::broken_assign("ACODEs");
    }
-   
+  
   /// The number of odes
   unsigned N_odes;
-   
+  
   /// The number of calls for each ode
   std::vector<unsigned> N_calls_ode;
   
