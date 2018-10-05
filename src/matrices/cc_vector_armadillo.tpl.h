@@ -79,6 +79,9 @@ namespace chapchom
    // the dot() method instead
    CCMatrixArmadillo<T> operator*(const CCVectorArmadillo &vector);
    
+   // Allows to create a vector with the given size but with no data 
+   void allocate_memory(const unsigned long n);
+   
    // Allocates memory to store entries of the vector
    void allocate_memory();
    

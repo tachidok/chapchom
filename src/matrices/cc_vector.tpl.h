@@ -62,12 +62,15 @@ namespace chapchom
    
    // Substraction operator
    CCVector operator-(const CCVector &vector);
-
+   
    // Multiplication operator (it returns a matrix with the
    // corresponding size, if you require a dot product operation use
    // the dot() method instead
    CCMatrix<T> operator*(const CCVector &vector);
-
+   
+   // Allows to create a vector with the given size but with no data 
+   void allocate_memory(const unsigned long n);
+   
    // Allocates memory to store entries of the vector
    void allocate_memory();
    

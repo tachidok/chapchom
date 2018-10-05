@@ -18,30 +18,22 @@ namespace chapchom
   Jacobian_and_residual_for_backward_euler_pt =
    new CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE>();
   
-  // Create the Jacobian strategy for F(Y) (if you have the analytical
-  // Jacobian you can set it here)
-  Jacobian_FY_pt = new CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>();
+  // Set Jacobian strategy for Newton's method
+  Newtons_method.set_jacobian_and_residual_strategy(Jacobian_and_residual_for_backward_euler_pt);
   
-  // Set the Jacobian for F(Y) for Backward Euler
-  Jacobian_and_residual_for_backward_euler_pt->set_jacobian_and_residual_strategy_for_FY(Jacobian_FY_pt);
-  
-  // Create Newton's method for time stepping
-  Newtons_method_pt = new CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>();
-  
-  // Set Jacobian strategy
-  Newtons_method_pt->
-   set_jacobian_and_residual_strategy(Jacobian_and_residual_for_backward_euler_pt);
-  
-#ifdef CHAPCHOM_USES_ARMADILLO
   // Create the linear solver
+#ifdef CHAPCHOM_USES_ARMADILLO
   Linear_solver_pt = new CCSolverArmadillo<double>();
 #else
-   // Create the linear solver
   Linear_solver_pt = new CCLUSolverNumericalRecipes<double>();
 #endif
   
-  // Set linear solver
-  Newtons_method_pt->set_linear_solver(Linear_solver_pt);
+  // Set linear solver for Newton's method
+  Newtons_method.set_linear_solver(Linear_solver_pt);
+  
+  // Create an instance of an explicit method to compute the initial
+  // guess for Newton's method
+  Time_stepper_initial_guess_pt = new CCEulerMethod();
   
  }
  
@@ -50,19 +42,15 @@ namespace chapchom
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  CCBackwardEulerMethod<MAT_TYPE,VEC_TYPE>::~CCBackwardEulerMethod()
- {
-  // Deallocate memory
-  delete Jacobian_FY_pt;
-  Jacobian_FY_pt = 0;
-  
+ {  
   delete Jacobian_and_residual_for_backward_euler_pt;
   Jacobian_and_residual_for_backward_euler_pt = 0;
   
-  delete Newtons_method_pt;
-  Newtons_method_pt = 0;
-  
   delete Linear_solver_pt;
   Linear_solver_pt = 0;
+
+  delete Time_stepper_initial_guess_pt;
+  Time_stepper_initial_guess_pt = NULL;
   
  }
  
@@ -95,24 +83,20 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Pass the data required to the jacobian strategies
-  Jacobian_and_residual_for_backward_euler_pt->set_odes(&odes);
-  Jacobian_and_residual_for_backward_euler_pt->set_U(u);
-  Jacobian_and_residual_for_backward_euler_pt->set_time_step(h);
-  Jacobian_and_residual_for_backward_euler_pt->set_current_time(t);
-
+  // Pass the data required to Newton's method
+  Newtons_method.set_ODEs(&odes);
+  Newtons_method.set_U(&u);
+  Newtons_method.set_time_step(h);
+  Newtons_method.set_current_time(t);
+  
   // -----------------------------------------------------------------
   // Compute initial guess
   // -----------------------------------------------------------------
-  // Create an instance of an explicit method to compute the initial
-  // guess in for Newton's method
-  CCEulerMethod euler_method;
-  
   // Temporary storage for Newton's method
   CCData<double> u_guess(u);
   
   // Compute the initial guess for Newton's method
-  euler_method.time_step(odes, h, t, u_guess);
+  Time_stepper_initial_guess_pt->time_step(odes, h, t, u_guess);
   
   // Create a temporary vector to store the extracted history values
   double *extracted_column_initial_guess_pt = new double(n_odes);
@@ -123,7 +107,7 @@ namespace chapchom
   VEC_TYPE du(extracted_column_initial_guess_pt, n_odes);
   
   // Set Newton's U iterate u_{t+1}
-  Newtons_method_pt->solve(du);
+  Newtons_method.solve(du);
   
   // Index for history values
   const unsigned k = 0;

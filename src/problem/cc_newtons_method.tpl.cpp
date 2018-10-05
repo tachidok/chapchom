@@ -33,7 +33,7 @@ namespace chapchom
  // Set the Jacobian matrix
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::set_jacobian_and_residual_strategy(const ACJacobianAndResidual<MAT_TYPE,VEC_TYPE> *jacobian_and_residual_strategy_pt)
+ void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::set_jacobian_and_residual_strategy(ACJacobianAndResidual<MAT_TYPE,VEC_TYPE> *jacobian_and_residual_strategy_pt)
  {
   // Set the Jacobian and residual computation strategy
   Jacobian_and_residual_strategy_pt = jacobian_and_residual_strategy_pt;
@@ -48,7 +48,7 @@ namespace chapchom
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::
- set_linear_solver(const ACLinearSolver<MAT_TYPE, VEC_TYPE> *linear_solver_pt)
+ set_linear_solver(ACLinearSolver<MAT_TYPE, VEC_TYPE> *linear_solver_pt)
  {
   Linear_solver_pt = linear_solver_pt;
   
@@ -112,7 +112,7 @@ namespace chapchom
  {
   // We need to check whether a Jacobian computation strategy has been
   // set
-  if (!this->Jacobian_computation_strategy_has_been_set)
+  if (Jacobian_and_residual_strategy_pt == NULL || !Jacobian_and_residual_strategy_has_been_set)
    {
     // Error message
     std::ostringstream error_message;
@@ -126,7 +126,7 @@ namespace chapchom
    }
   
   // We need to check whether a linear solver has been set
-  if (!this->Linear_solver_has_been_set)
+  if (Linear_solver_pt == NULL || !Linear_solver_has_been_set)
    {
     // Error message
     std::ostringstream error_message;
@@ -256,7 +256,7 @@ namespace chapchom
       
      // Compute the norm of the residual
      current_residual_norm = residual.max();
-      
+     
      chapchom_output << "Newton iteration " << n_newton_iterations
      << ": Residual norm " << current_residual_norm << std::endl;
       

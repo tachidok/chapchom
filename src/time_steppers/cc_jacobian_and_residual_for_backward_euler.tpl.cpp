@@ -7,12 +7,14 @@ namespace chapchom
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE>::CCJacobianAndResidualForBackwardEuler()
-  : ODEs_has_been_set(false),
+  : ODEs_pt(NULL),
+    ODEs_has_been_set(false), 
+    U_pt(NULL),
     U_has_been_set(false),
+    U_next_pt(NULL),
     U_next_has_been_set(false),
     Current_time_has_been_set(false),
-    Time_step_has_been_set(false),
-    Jacobian_for_FY_has_been_set(false)
+    Time_step_has_been_set(false)
  {
   
  }
@@ -34,7 +36,7 @@ namespace chapchom
  void CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE>::compute_jacobian()
  {
   // Check whether the ODEs have been set
-  if (!ODEs_has_been_set)
+  if (!ODEs_has_been_set || ODEs_pt == NULL)
    {
     // Error message
     std::ostringstream error_message;
@@ -48,7 +50,7 @@ namespace chapchom
    }
   
   // Check whether the U values have been set
-  if (!U_has_been_set)
+  if (!U_has_been_set || U_pt == NULL)
    {
     // Error message
     std::ostringstream error_message;
@@ -62,7 +64,7 @@ namespace chapchom
    }
   
   // Check whether the U_next values have been set
-  if (!U_next_has_been_set)
+  if (!U_next_has_been_set || U_next_pt == NULL)
    {
     // Error message
     std::ostringstream error_message;
@@ -103,21 +105,6 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Check whether the Jacobian strategy for F(Y) has been set
-  if (!Jacobian_for_FY_has_been_set)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "You have not established an strategy to compute the\n"
-                  << "Jacobian matrix for F(Y)\n"
-                  << "You need to call the method\n\n"
-                  << "set_jacobian_and_residual_strategy_for_FY()\n\n"
-                  << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
-  
   // Get the number of ODEs
   const unsigned n_dof = ODEs_pt->n_odes();
   
@@ -125,13 +112,16 @@ namespace chapchom
   this->Jacobian.allocate_memory(n_dof, n_dof);
   
   // Set the data required to compute the Jacobian of F(Y)
-  Jacobian_FY_pt->set_odes(ODEs_pt);
-  Jacobian_FY_pt->set_U(U_next);
-  Jacobian_FY_pt->set_current_time(Current_time);
+  Jacobian_FY_strategy.set_ODEs(ODEs_pt);
+  Jacobian_FY_strategy.set_U(U_next_pt);
+  Jacobian_FY_strategy.set_current_time(Current_time);
+  
+  // Compute Jacobian
+  Jacobian_FY_strategy.compute_jacobian();
   
   // Store the Jacobian for FY, used in the computation of the
   // backward Euler Jacobian $J = I - (h * Jacobian_{FY})$
-  MAT_TYPE Jacobian_FY = Jacobian_FY_pt->compute_jacobian();
+  MAT_TYPE Jacobian_FY = Jacobian_FY_strategy.jacobian();
   
   // Compute the approximated Jacobian (I - h * Jacobian_FY(i, j))
   for (unsigned i = 0; i < n_dof; i++)
@@ -158,7 +148,7 @@ namespace chapchom
  void CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE>::compute_residual()
  {
   // Check whether the ODEs have been set
-  if (!ODEs_has_been_set)
+  if (!ODEs_has_been_set || ODEs_pt == NULL)
    {
     // Error message
     std::ostringstream error_message;
@@ -172,7 +162,7 @@ namespace chapchom
    }
   
   // Check whether the U values have been set
-  if (!U_has_been_set)
+  if (!U_has_been_set || U_pt == NULL)
    {
     // Error message
     std::ostringstream error_message;
@@ -186,7 +176,7 @@ namespace chapchom
    }
   
   // Check whether the U_next values have been set
-  if (!U_next_has_been_set)
+  if (!U_next_has_been_set || U_next_pt == NULL)
    {
     // Error message
     std::ostringstream error_message;
@@ -226,22 +216,7 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
-  
-  // Check whether the Jacobian strategy for F(Y) has been set
-  if (!this->Jacobian_for_FY_has_been_set)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "You have not established an strategy to compute the\n"
-                  << "residual vector\n"
-                  << "You need to call the method\n\n"
-                  << "set_jacobian_and_residual_strategy_for_FY()\n\n"
-                  << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
-  
+    
   // Get the number of ODEs
   const unsigned n_dof = ODEs_pt->n_odes();
   
@@ -250,11 +225,14 @@ namespace chapchom
   
   // Evaluate the ODE at time "t" using the "u" values of the current
   // Newton's iteration
-  ODEs_pt->evaluate(Current_time, U_next, dudt);
+  ODEs_pt->evaluate(Current_time, (*U_next_pt), dudt);
+  
+  // Allocate memory for the Residual (delete previous data)
+  this->Residual.allocate_memory(n_dof);
   
   for (unsigned i = 0; i < n_dof; i++)
    {
-    this->Residual(i) =  U_next(i) - U(i) - (Time_step * dudt(i));
+    this->Residual(i) =  U_next_pt->value(i) - U_pt->value(i) - (Time_step * dudt(i));
    }
   
  }
@@ -278,10 +256,10 @@ namespace chapchom
  // current time
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_U(CCData<double> &u)
+ void CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_U(CCData<double> *u_pt)
  {
   // Set the storage of the data
-  U = u;
+  U_pt = u_pt;
   
   // Indicate that the U vector has been set
   U_has_been_set = true;
@@ -293,10 +271,10 @@ namespace chapchom
  // current Newton's iteration
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_U_next(CCData<double> &u_next)
+ void CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_U_next(CCData<double> *u_next_pt)
  {
   // Set the storage of the data
-  U_next = u_next;
+  U_next_pt = u_next_pt;
   
   // Indicate that the U_next vector has been set
   U_next_has_been_set = true;
@@ -328,20 +306,6 @@ namespace chapchom
   // Indicate that the time step has been set
   Time_step_has_been_set = true;
   
- }
- 
- // ===================================================================
- // Set the strategy used to compute the Jacobian of FY and the residual
- // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE>::
- set_jacobian_and_residual_strategy_for_FY(ACJacobianAndResidual<MAT_TYPE, VEC_TYPE> *jacobian_FY_pt)
- {
-  // Set a pointer to the Jacobian strategy for F(Y)
-  Jacobian_FY_pt = jacobian_FY_pt;
-  
-  // Indicate that the jacobian strategy for F(Y) has been set
-  Jacobian_for_FY_has_been_set = true;
  }
  
 }

@@ -32,6 +32,9 @@ namespace chapchom
    // Destructor
    virtual ~ACVector();
    
+   // Allows to create a vector with the given size but with no data
+   virtual void allocate_memory(const unsigned long n) = 0;
+   
    // Allocates memory to store entries of the vector
    virtual void allocate_memory() = 0;
    

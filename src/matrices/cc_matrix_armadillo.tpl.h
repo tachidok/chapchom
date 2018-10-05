@@ -74,6 +74,10 @@ namespace chapchom
    // Multiplication operator
    CCMatrixArmadillo operator*(const CCMatrixArmadillo &right_matrix);
    
+   // Allows to create a matrix with the given size but with no data
+   void allocate_memory(const unsigned long m,
+                        const unsigned long n);
+   
    // Allocates memory to store entries of the vector
    void allocate_memory();
    

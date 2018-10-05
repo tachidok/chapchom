@@ -7,7 +7,9 @@ namespace chapchom
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::CCJacobianByFDAndResidualFromODEs()
-  : ODEs_has_been_set(false),
+  : ODEs_pt(NULL),
+    ODEs_has_been_set(false),
+    U_pt(NULL),
     U_has_been_set(false),
     Current_time_has_been_set(false)
  {
@@ -31,7 +33,7 @@ namespace chapchom
  void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::compute_jacobian()
  {
   // Check whether the ODEs have been set
-  if (!ODEs_has_been_set)
+  if (!ODEs_has_been_set || ODEs_pt == NULL)
    {
     // Error message
     std::ostringstream error_message;
@@ -44,8 +46,8 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-   // Check whether the U values have been set
-  if (!U_has_been_set)
+     // Check whether the U values have been set
+  if (!U_has_been_set || U_pt == NULL)
    {
     // Error message
     std::ostringstream error_message;
@@ -82,7 +84,7 @@ namespace chapchom
   CCData<double> dudt(n_dof);
   
   // Evaluate the ODEs
-  ODEs_pt->evaluate(Current_time, U, dudt);
+  ODEs_pt->evaluate(Current_time, (*U_pt), dudt);
   
   // Compute the approximated Jacobian
   for (unsigned i = 0; i < n_dof; i++)
@@ -91,7 +93,7 @@ namespace chapchom
     // the current DOF (indicated by the index i) and evaluate all the
     // equations (this will helps us to approximate the column i of
     // the Jacobian)
-    CCData<double> U_plus(U);
+    CCData<double> U_plus((*U_pt));
     const double delta_u = 1.0e-8;
     // ... the perturbation
     U_plus(i)+=delta_u;
@@ -142,10 +144,10 @@ namespace chapchom
  // current time
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::set_U(CCData<double> &u)
+ void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::set_U(CCData<double> *u_pt)
  {
   // Set the storage of the data
-  U = u;
+  U_pt = u_pt;
   
   // Indicate that the U vector has been set
   U_has_been_set = true;

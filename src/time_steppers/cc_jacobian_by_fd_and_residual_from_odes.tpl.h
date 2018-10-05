@@ -21,7 +21,7 @@ namespace chapchom
   
    // Destructor
    ~CCJacobianByFDAndResidualFromODEs();
-  
+   
    // In charge of computing the Jacobian using Finite Differences
    // (virtual function implementation)
    void compute_jacobian();
@@ -34,7 +34,7 @@ namespace chapchom
    
    // Set the U vector/matrix with the values of the function at the
    // current time
-   void set_U(CCData<double> &u);
+   void set_U(CCData<double> *u_pt);
    
    // Sets the current time
    void set_current_time(const double t);
@@ -66,7 +66,7 @@ namespace chapchom
    bool ODEs_has_been_set;
    
    // The U values of the function at the current time
-   CCData<double> U;
+   CCData<double> *U_pt;
    
    // A flag to indicate whether the U values have been set or not
    bool U_has_been_set;

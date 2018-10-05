@@ -34,8 +34,8 @@ namespace chapchom
    
   // Set the U vector/matrix with the values of the function at the
   // current time
-  void set_U(CCData<double> &u);
-   
+  void set_U(CCData<double> *u_pt);
+  
   // Sets the current time
   void set_current_time(const double t);
    
@@ -59,12 +59,12 @@ namespace chapchom
   
   // The ODEs
   ACODEs* ODEs_pt;
-   
+  
   // A flag to indicate whether the ODEs have been set or not
   bool ODEs_has_been_set;
-   
+  
   // The U values of the function at the current time
-  CCData<double> U;
+  CCData<double> *U_pt;
    
   // A flag to indicate whether the U values have been set or not
   bool U_has_been_set;

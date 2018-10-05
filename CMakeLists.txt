@@ -158,10 +158,23 @@ ENDIF(${CHAPCHOM_BUILD_VERSION} STREQUAL DEBUG)
 #SET(CHAPCHOM_LINKER_FLAGS "-lmath")
 
 # ----------------------------------------------------------------------
+# Append extra definitions based on configuration files
+# ----------------------------------------------------------------------
+SET(CHAPCHOM_ARMADILLO_DEFINE "-DCHAPCHOM_USES_ARMADILLO")
+IF (CHAPCHOM_USES_ARMADILLO)
+  SET(CHAPCHOM_CXX_FLAGS "${CHAPCHOM_CXX_FLAGS} ${CHAPCHOM_ARMADILLO_DEFINE}" )
+ENDIF (CHAPCHOM_USES_ARMADILLO)
+
+SET(CHAPCHOM_VTK_DEFINE "-DCHAPCHOM_USES_VTK")
+IF (CHAPCHOM_USES_VTK)
+  SET(CHAPCHOM_CXX_FLAGS "${CHAPCHOM_CXX_FLAGS} ${CHAPCHOM_VTK_DEFINE}" )
+ENDIF (CHAPCHOM_USES_VTK)
+
+# ----------------------------------------------------------------------
 # Set modified compilation variables
 # ----------------------------------------------------------------------
-SET(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${CHAPCHOM_C_FLAGS}" )
-SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${CHAPCHOM_CXX_FLAGS}" )
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CHAPCHOM_C_FLAGS}" )
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CHAPCHOM_CXX_FLAGS}" )
 
 # Uncomment this line if you added extra libraries
 #SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}" )

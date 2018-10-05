@@ -9,7 +9,7 @@ namespace chapchom
  template<class MAT_TYPE, class VEC_TYPE>
  ACJacobianAndResidual<MAT_TYPE, VEC_TYPE>::ACJacobianAndResidual()
  {
- 
+  
  }
 
  // ===================================================================

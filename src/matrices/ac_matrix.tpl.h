@@ -31,8 +31,8 @@ namespace chapchom
    virtual ~ACMatrix();
    
    // Allows to create a matrix with the given size but with no data
-   void allocate_memory(const unsigned long m,
-                        const unsigned long n);
+   virtual void allocate_memory(const unsigned long m,
+                                const unsigned long n) = 0;
    
    // Allocates memory to store entries of the matrix
    virtual void allocate_memory() = 0;

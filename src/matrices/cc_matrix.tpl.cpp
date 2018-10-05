@@ -861,7 +861,26 @@ namespace chapchom
    }
   
  }
-
+ 
+ // ===================================================================
+ // Allows to create a matrix with the given size but with no data
+ // ===================================================================
+ template<class T>
+ void CCMatrix<T>::allocate_memory(const unsigned long m,
+                                   const unsigned long n)
+ {
+  // Clean any possibly stored data
+  clean_up();
+  
+  // Set the number of rows and columns of the matrix
+  this->NRows = m;
+  this->NColumns = n;
+  
+  // Allocate memory
+  allocate_memory();
+  
+ }
+ 
  // ===================================================================
  // Allocates memory to store entries of the matrix
  // ===================================================================

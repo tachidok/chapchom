@@ -12,7 +12,9 @@ namespace chapchom
  template<class MAT_TYPE, class VEC_TYPE>
  CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::CCNewtonsMethodForBackwardEuler()
   : CCNewtonsMethod<MAT_TYPE, VEC_TYPE>(),
+  ODEs_pt(NULL),
   ODEs_has_been_set(false),
+  U_pt(NULL),
   U_has_been_set(false),
   Current_time_has_been_set(false),
   Time_step_has_been_set(false)
@@ -33,7 +35,11 @@ namespace chapchom
  template<class MAT_TYPE, class VEC_TYPE>
  void CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::actions_before_initial_convergence_check()
  {
-  
+  jacobian_and_residual_for_backward_euler_pt()->set_ODEs(ODEs_pt);
+  jacobian_and_residual_for_backward_euler_pt()->set_U(U_pt);
+  jacobian_and_residual_for_backward_euler_pt()->set_U_next(U_pt);
+  jacobian_and_residual_for_backward_euler_pt()->set_current_time(Current_time);
+  jacobian_and_residual_for_backward_euler_pt()->set_time_step(Time_step);
  }
  
  // ===================================================================
@@ -51,7 +57,7 @@ namespace chapchom
  template<class MAT_TYPE, class VEC_TYPE>
  void CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::actions_after_newton_step()
  {
-  
+  jacobian_and_residual_for_backward_euler_pt()->set_U_next(U_pt);
  }
  
  // ===================================================================
@@ -100,10 +106,10 @@ namespace chapchom
  // current time
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_U(CCData<double> &u)
+ void CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_U(CCData<double> *u_pt)
  {
   // Set the storage of the data
-  U = u;
+  U_pt = u_pt;
   
   // Indicate that the U vector has been set
   U_has_been_set = true;

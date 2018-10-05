@@ -5,6 +5,8 @@
 #include "../general/utilities.h"
 
 #include "../data_structures/cc_data.h"
+#include "../matrices/ac_vector.h"
+#include "../matrices/ac_matrix.h"
 #include "../matrices/cc_vector.h"
 #include "../matrices/cc_matrix.h"
 
@@ -46,15 +48,15 @@ namespace chapchom
    inline VEC_TYPE &residual() {return Residual;}
    
   protected:
-
+   
    // Storage for the Jacobian matrix
    MAT_TYPE Jacobian;
-
+   
    // Storage for the residual vector
    VEC_TYPE Residual;
    
   private:
-  
+   
    // Copy constructor (we do not want this class to be
    // copiable. Check
    // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/

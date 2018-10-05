@@ -14,18 +14,14 @@
 #include "../linear_solvers/cc_solver_armadillo.h"
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
 
-// Explicit time stepping method to compute the initial guess for
-// Newton's method
-#include "cc_euler_method.h"
-
 // Newton's method
 #include "cc_newtons_method_for_backward_euler.h"
 
 // The Jacobian strategy used for Newton's method for Backward Euler
 #include "cc_jacobian_and_residual_for_backward_euler.h"
 
-// One of the possible Jacobian strategies to compute FY
-#include "cc_jacobian_by_fd_and_residual_from_odes.h"
+// Time stepper to compute the initial guess for Newton's method
+#include "cc_euler_method.h"
 
 namespace chapchom
 {
@@ -68,8 +64,8 @@ namespace chapchom
     BrokenCopy::broken_assign("CCBackwardEulerMethod");
    }
   
-  // A pointer for Newton's method for backward Euler
-  CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE> *Newtons_method_pt;
+  // Newton's method for backward Euler
+  CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE> Newtons_method;
   
   // A linear solver for Newton's method
   ACLinearSolver<MAT_TYPE, VEC_TYPE> *Linear_solver_pt;
@@ -78,10 +74,8 @@ namespace chapchom
   // residual during time stepping call for Newton's method
   CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE> *Jacobian_and_residual_for_backward_euler_pt;
   
-  // A pointer for the strategy to compute the Jacobian
-  // $\frac{\partial \mathbf{F}(\mathbf{Y})}{\partial \mathbf{Y}}$,
-  // where $\mathbf{Y} = \mathbf{y}_{k+1}$.
-  ACJacobianAndResidual<MAT_TYPE, VEC_TYPE> *Jacobian_FY_pt;
+  // The time stepper used to compute the initial guess
+  ACTimeStepper *Time_stepper_initial_guess_pt;
   
  };
  

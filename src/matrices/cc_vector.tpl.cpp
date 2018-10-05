@@ -775,6 +775,22 @@ namespace chapchom
  }
  
  // ===================================================================
+ // Allows to create a vector with the given size but with no data
+ // ===================================================================
+ template<class T>
+ void CCVector<T>::allocate_memory(const unsigned long n)
+ {
+  // Clean any possibly stored data
+  clean_up();
+  
+  // Set the number of rows and columns of the matrix
+  this->NValues = n;
+  
+  // Allocate memory
+  allocate_memory();
+ }
+ 
+ // ===================================================================
  // Allocates memory to store entries of the vector
  // ===================================================================
  template<class T>
@@ -789,7 +805,7 @@ namespace chapchom
   // Mark the vector as allocated its own memory
   this->Is_own_memory_allocated=true;
  }
-
+ 
  // ===================================================================
  // Fills the vector with zeroes
  // ===================================================================

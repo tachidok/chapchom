@@ -58,9 +58,13 @@ namespace chapchom
   // Multiplication operator
   CCMatrix operator*(const CCMatrix &right_matrix);
   
+  // Allows to create a matrix with the given size but with no data
+  void allocate_memory(const unsigned long m,
+                       const unsigned long n); 
+  
   // Allocates memory to store entries of the vector
   void allocate_memory();
-   
+  
   // Fills the vector with zeroes
   void fill_with_zeroes();
   
@@ -70,53 +74,53 @@ namespace chapchom
                   const unsigned long m,
                   const unsigned long n);
   
-  // Clean up for any dynamically stored data
-  void clean_up();
+    // Clean up for any dynamically stored data
+    void clean_up();
   
-  // Free allocated memory for matrix
-  void free_memory_for_matrix();
+    // Free allocated memory for matrix
+    void free_memory_for_matrix();
   
-  // Performs sum of matrices
-  void add_matrix(const CCMatrix &matrix, CCMatrix &solution_matrix);
+    // Performs sum of matrices
+    void add_matrix(const CCMatrix &matrix, CCMatrix &solution_matrix);
   
-  // Performs substraction of matrices
-  void substract_matrix(const CCMatrix &matrix, CCMatrix &solution_matrix);
+    // Performs substraction of matrices
+    void substract_matrix(const CCMatrix &matrix, CCMatrix &solution_matrix);
   
-  // Performs multiplication of matrices
-  void multiply_by_matrix(const CCMatrix &right_matrix, CCMatrix &solution_matrix);
+    // Performs multiplication of matrices
+    void multiply_by_matrix(const CCMatrix &right_matrix, CCMatrix &solution_matrix);
   
-  // Computes the transpose and store it in the transpose matrix
-  void transpose(CCMatrix &transposed_matrix);
+    // Computes the transpose and store it in the transpose matrix
+    void transpose(CCMatrix &transposed_matrix);
   
-  // Transpose the matrix
-  void transpose();
+    // Transpose the matrix
+    void transpose();
   
-  // Get the specified value from the matrix (read-only)
-  const T value(const unsigned long i, const unsigned long j) const;
+    // Get the specified value from the matrix (read-only)
+    const T value(const unsigned long i, const unsigned long j) const;
   
-  // Set values in the matrix (write version)
-  T &value(const unsigned long i, const unsigned long j);
+    // Set values in the matrix (write version)
+    T &value(const unsigned long i, const unsigned long j);
   
-  /// Permute the rows in the list
-  void permute_rows(std::vector<std::pair<unsigned long, unsigned long> > &permute_list);
+    /// Permute the rows in the list
+    void permute_rows(std::vector<std::pair<unsigned long, unsigned long> > &permute_list);
   
-  /// Permute the columns in the list
-  void permute_columns(std::vector<std::pair<unsigned long, unsigned long> > &permute_list);
+    /// Permute the columns in the list
+    void permute_columns(std::vector<std::pair<unsigned long, unsigned long> > &permute_list);
   
-  /// Permute rows i and j
-  void permute_rows(const unsigned long &i, const unsigned long &j);
+    /// Permute rows i and j
+    void permute_rows(const unsigned long &i, const unsigned long &j);
    
-  /// Permute columns i and j
-  void permute_columns(const unsigned long &i, const unsigned long &j);
+    /// Permute columns i and j
+    void permute_columns(const unsigned long &i, const unsigned long &j);
   
-  // Output the matrix
-  void output(bool output_indexes = false) const;
+    // Output the matrix
+    void output(bool output_indexes = false) const;
   
-  // Output to file
-  void output(std::ofstream &outfile, bool output_indexes = false) const;
+    // Output to file
+    void output(std::ofstream &outfile, bool output_indexes = false) const;
   
-  // Get access to the Matrix_pt
-  inline T *matrix_pt() const {return Matrix_pt;}
+    // Get access to the Matrix_pt
+    inline T *matrix_pt() const {return Matrix_pt;}
   
  protected:
     

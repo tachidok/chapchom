@@ -44,10 +44,10 @@ namespace chapchom
    ~CCNewtonsMethod();
    
    // Set the Jacobian and residual computation strategy
-   void set_jacobian_and_residual_strategy(const ACJacobianAndResidual<MAT_TYPE,VEC_TYPE> *jacobian_and_residual_strategy_pt);
+   void set_jacobian_and_residual_strategy(ACJacobianAndResidual<MAT_TYPE,VEC_TYPE> *jacobian_and_residual_strategy_pt);
    
    // Set the Linear solver
-   void set_linear_solver(const ACLinearSolver<MAT_TYPE, VEC_TYPE> *linear_solver_pt);
+   void set_linear_solver(ACLinearSolver<MAT_TYPE, VEC_TYPE> *linear_solver_pt);
    
    // Gets access to the Jacobian and residual computation strategy
    const ACJacobianAndResidual<MAT_TYPE,VEC_TYPE> *jacobian_and_residual_strategy_pt();

@@ -58,7 +58,7 @@ namespace chapchom
  template<class T>
  CCData<T>::CCData(const CCData<T> &copy)
   : Is_values_empty(true), Is_status_empty(true), Delete_values_storage(true),
-    N_values(copy.n_values()), N_history_values(copy.n_history_values())
+    N_values(copy.n_values()), N_history_values(copy.n_history_values()+1)
  {
   // Copy the data from the copy object to the Values_pt vector
   set_values(copy.values_pt());
@@ -104,14 +104,14 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  if (N_history_values != source_values.n_history_values())
+  if (N_history_values != source_values.n_history_values()+1)
    {
     // Error message
     std::ostringstream error_message;
     error_message << "The number of history values from the source and the destination\n"
                   << "CCData object are not the same\n"
                   << "N_history_values: " << N_history_values << "\n"
-                  << "source_values.n_history_values(): " << source_values.n_history_values() << "\n"
+                  << "source_values.n_history_values()+1: " << source_values.n_history_values()+1 << "\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
@@ -214,7 +214,7 @@ namespace chapchom
  void CCData<T>::shift_history_values(const unsigned n_shift_positions)
  {
   const unsigned cache_n_values = n_values();
-  const unsigned cache_n_history_values = n_history_values();
+  const unsigned cache_n_history_values = N_history_values-1;
   // Loop over the number of values
   for (unsigned i = 0; i < cache_n_values; i++)
    {
