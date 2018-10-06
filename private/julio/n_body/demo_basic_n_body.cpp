@@ -299,7 +299,7 @@ int main(int argc, char *argv[])
  CCFactoryTimeStepper<CCMatrix<double>, CCVector<double> > factory_time_stepper;
  // Create an instance of the integration method
  //ACTimeStepper *time_stepper_pt =
- // factory_time_stepper.create_time_stepper("Euler");
+ //  factory_time_stepper.create_time_stepper("Euler");
  //ACTimeStepper *time_stepper_pt =
  //  factory_time_stepper.create_time_stepper("RK4"); 
  ACTimeStepper *time_stepper_pt =

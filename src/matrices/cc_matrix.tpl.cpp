@@ -891,7 +891,7 @@ namespace chapchom
   clean_up();
   
   // Allocate memory for the matrix
-  Matrix_pt = new T[this->NRows*this->NColumns];
+  Matrix_pt = new T[this->NRows * this->NColumns];
   
   // Mark the matrix as allocated its own memory
   this->Is_own_memory_allocated=true;
@@ -907,7 +907,7 @@ namespace chapchom
   if (this->Is_own_memory_allocated)
    {
     // Fill the matrix with zeroes
-    std::memset(Matrix_pt, 0, this->NRows*this->NColumns*sizeof(T));
+    std::memset(Matrix_pt, 0, this->NRows * this->NColumns * sizeof(T));
    }
   else
    {

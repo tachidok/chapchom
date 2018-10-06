@@ -81,8 +81,11 @@ namespace chapchom
   // Flag to indicate whether the time step has been set
   bool Time_step_has_been_set;
   
- private:
-   
+  // The U next values of the function used for Newton's method
+  CCData<double> *U_next_pt;
+  
+  private:
+  
   // Copy constructor (we do not want this class to be copiable because
   // it contains dynamically allocated variables, A in this
   // case). Check

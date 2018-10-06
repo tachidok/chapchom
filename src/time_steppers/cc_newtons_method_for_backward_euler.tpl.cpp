@@ -37,7 +37,7 @@ namespace chapchom
  {
   jacobian_and_residual_for_backward_euler_pt()->set_ODEs(ODEs_pt);
   jacobian_and_residual_for_backward_euler_pt()->set_U(U_pt);
-  jacobian_and_residual_for_backward_euler_pt()->set_U_next(U_pt);
+  jacobian_and_residual_for_backward_euler_pt()->set_U_next(U_next_pt);
   jacobian_and_residual_for_backward_euler_pt()->set_current_time(Current_time);
   jacobian_and_residual_for_backward_euler_pt()->set_time_step(Time_step);
  }
@@ -57,7 +57,15 @@ namespace chapchom
  template<class MAT_TYPE, class VEC_TYPE>
  void CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::actions_after_newton_step()
  {
-  jacobian_and_residual_for_backward_euler_pt()->set_U_next(U_pt);
+  // Update U next
+  const unsigned long n_data = U_next_pt->n_values();
+  for (unsigned long i = 0; i < n_data; i++)
+   {
+    U_next_pt->value(i)+=this->Dx_pt->value(i);
+   }
+  
+  jacobian_and_residual_for_backward_euler_pt()->set_U_next(U_next_pt);
+  
  }
  
  // ===================================================================
@@ -113,6 +121,9 @@ namespace chapchom
   
   // Indicate that the U vector has been set
   U_has_been_set = true;
+  
+  // Create U next
+  U_next_pt = new CCData<double>((*U_pt));
   
  }
  

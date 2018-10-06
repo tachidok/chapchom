@@ -41,7 +41,7 @@ namespace chapchom
     // Error message
     std::ostringstream error_message;
     error_message << "You have not established the ODEs used to compute\n"
-                  << "the Jacobian matrix\n."
+                  << "the Jacobian matrix.\n"
                   << "You need to call the method set_ODEs()\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
@@ -55,7 +55,7 @@ namespace chapchom
     // Error message
     std::ostringstream error_message;
     error_message << "You have not established the U function values\n"
-                  << "used to compute the Jacobian matrix\n."
+                  << "used to compute the Jacobian matrix.\n"
                   << "You need to call the method set_U()\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
@@ -69,7 +69,7 @@ namespace chapchom
     // Error message
     std::ostringstream error_message;
     error_message << "You have not established the U_next function values\n"
-                  << "used to compute the Jacobian matrix\n."
+                  << "used to compute the Jacobian matrix.\n"
                   << "You need to call the method set_U_next()\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
@@ -83,7 +83,7 @@ namespace chapchom
     // Error message
     std::ostringstream error_message;
     error_message << "You have not established the current time\n"
-                  << "used to compute the Jacobian matrix\n."
+                  << "used to compute the Jacobian matrix.\n"
                   << "You need to call the method set_current_time()\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
@@ -97,7 +97,7 @@ namespace chapchom
     // Error message
     std::ostringstream error_message;
     error_message << "You have not established the time step to compute\n"
-                  << "the residual vector and the Jacobian matrix\n."
+                  << "the residual vector and the Jacobian matrix.\n"
                   << "You need to call the method set_time_step()\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
@@ -153,7 +153,7 @@ namespace chapchom
     // Error message
     std::ostringstream error_message;
     error_message << "You have not established the ODEs used to compute\n"
-                  << "the Jacobian matrix\n."
+                  << "the Jacobian matrix.\n"
                   << "You need to call the method set_ODEs()\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
@@ -167,7 +167,7 @@ namespace chapchom
     // Error message
     std::ostringstream error_message;
     error_message << "You have not established the U function values\n"
-                  << "used to compute the Jacobian matrix\n."
+                  << "used to compute the Jacobian matrix.\n"
                   << "You need to call the method set_U()\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
@@ -181,7 +181,7 @@ namespace chapchom
     // Error message
     std::ostringstream error_message;
     error_message << "You have not established the U_next function values\n"
-                  << "used to compute the Jacobian matrix\n."
+                  << "used to compute the Jacobian matrix.\n"
                   << "You need to call the method set_U_next()\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
@@ -195,7 +195,7 @@ namespace chapchom
     // Error message
     std::ostringstream error_message;
     error_message << "You have not established the current time\n"
-                  << "used to compute the Jacobian matrix\n."
+                  << "used to compute the Jacobian matrix.\n"
                   << "You need to call the method set_current_time()\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
@@ -209,7 +209,7 @@ namespace chapchom
     // Error message
     std::ostringstream error_message;
     error_message << "You have not established the time step to compute\n"
-                  << "the residual vector and the Jacobian matrix\n."
+                  << "the residual vector and the Jacobian matrix.\n"
                   << "You need to call the method set_time_step()\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
@@ -232,7 +232,7 @@ namespace chapchom
   
   for (unsigned i = 0; i < n_dof; i++)
    {
-    this->Residual(i) =  U_next_pt->value(i) - U_pt->value(i) - (Time_step * dudt(i));
+    this->Residual(i) = -(U_next_pt->value(i) - U_pt->value(i) - (Time_step * dudt(i)));
    }
   
  }

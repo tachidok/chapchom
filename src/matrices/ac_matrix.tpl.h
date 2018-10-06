@@ -126,7 +126,7 @@ namespace chapchom
    inline void disable_delete_matrix() {Delete_matrix=false;}
    
   protected:
-      
+   
    // The size of the matrix
    unsigned long NRows;
    unsigned long NColumns;

@@ -61,6 +61,15 @@ namespace chapchom
    // solution (if any) is returned
    void solve(VEC_TYPE &dx);
    
+   // Set Newton's solver tolerance
+   void set_newton_solver_tolerance(const double new_newton_solver_tolerance);
+   
+   // Set the Maximun number of Newton's iterations
+   void set_maximum_newton_interations(const unsigned new_maximum_newton_iterations);
+   
+   // Set the Maximum allowed residual
+   void set_maximum_allowed_residual(const double new_maximum_allowed_residual);
+   
   protected:
    
    // A function that may be overloaded to implement actions before
@@ -81,11 +90,14 @@ namespace chapchom
    // A pointer to the linear solver
    ACLinearSolver<MAT_TYPE, VEC_TYPE> *Linear_solver_pt;
    
+   // A pointer to provide access to the solution vector during newton steps
+   VEC_TYPE *Dx_pt;
+   
    // Newton's solver tolerance
    double Newton_solver_tolerance;
    
    // Maximun number of Newton's iterations
-   unsigned Maximum_newton_interations;
+   unsigned Maximum_newton_iterations;
    
    // Maximum allowed residual
    double Maximum_allowed_residual;
@@ -108,13 +120,13 @@ namespace chapchom
    // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
    CCNewtonsMethod(const CCNewtonsMethod<MAT_TYPE, VEC_TYPE> &copy)
     {
-    BrokenCopy::broken_copy("CCNewtonsMethod");
-   }
+     BrokenCopy::broken_copy("CCNewtonsMethod");
+    }
    
-  // Copy constructor (we do not want this class to be copiable because
-  // it contains dynamically allocated variables, A in this
-  // case). Check
-  // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
+   // Copy constructor (we do not want this class to be copiable because
+   // it contains dynamically allocated variables, A in this
+   // case). Check
+   // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
    void operator=(const CCNewtonsMethod<MAT_TYPE, VEC_TYPE> &copy)
     {
      BrokenCopy::broken_assign("CCNewtonsMethod");

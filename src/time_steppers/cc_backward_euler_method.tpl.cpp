@@ -99,7 +99,7 @@ namespace chapchom
   Time_stepper_initial_guess_pt->time_step(odes, h, t, u_guess);
   
   // Create a temporary vector to store the extracted history values
-  double *extracted_column_initial_guess_pt = new double(n_odes);
+  double *extracted_column_initial_guess_pt = new double[n_odes];
   
   u_guess.extract_history_values(extracted_column_initial_guess_pt);
   
@@ -117,6 +117,9 @@ namespace chapchom
    {
     u(i,k+1) = u(i,k) + du(i);
    }
+  
+  delete [] extracted_column_initial_guess_pt;
+  extracted_column_initial_guess_pt = 0;
   
  }
 
