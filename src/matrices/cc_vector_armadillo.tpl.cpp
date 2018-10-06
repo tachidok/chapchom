@@ -78,8 +78,17 @@ namespace chapchom
   // Clean any possible previously allocated memory
   clean_up();
   
+  // Set the number of values
+  this->NValues = copy.n_values();
+  
   // Call the copy constructor of Armadillo
   Arma_vector_pt = new arma::Mat<T>(*(copy.arma_vector_pt())); 
+  
+  // Mark the matrix as having its own memory
+  this->Is_own_memory_allocated = true;
+  
+  // Set the transposed status
+  this->set_as_column_vector(copy.is_column_vector()); 
  }
  
  // ===================================================================

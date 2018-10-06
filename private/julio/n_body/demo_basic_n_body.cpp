@@ -295,8 +295,8 @@ int main(int argc, char *argv[])
  // Time stepper
  // ----------------------------------------------------------------
  // Create the factory for the time steppers (integration methods)
- //CCFactoryTimeStepper<CCMatrixArmadillo<double>, CCVectorArmadillo<double> > factory_time_stepper;
- CCFactoryTimeStepper<CCMatrix<double>, CCVector<double> > factory_time_stepper;
+ CCFactoryTimeStepper<CCMatrixArmadillo<double>, CCVectorArmadillo<double> > factory_time_stepper;
+ //CCFactoryTimeStepper<CCMatrix<double>, CCVector<double> > factory_time_stepper;
  // Create an instance of the integration method
  //ACTimeStepper *time_stepper_pt =
  //  factory_time_stepper.create_time_stepper("Euler");
