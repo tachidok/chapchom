@@ -27,9 +27,9 @@ namespace chapchom
  // Applies Runge-Kutta 4 method to the given odes from the current
  // time "t" to the time "t+h"
  // ===================================================================
- void CCRK4Method::time_step(ACODEs &odes, const double h,
-                             const double t,
-                             CCData<double> &u)
+ void CCRK4Method::time_step(ACODEs &odes, const Real h,
+                             const Real t,
+                             CCData<Real> &u)
  {
   // Get the number of odes
   const unsigned n_odes = odes.n_odes();
@@ -52,7 +52,7 @@ namespace chapchom
    }
   
   // Temporary vector to store the evaluation of the odes
-  CCData<double> dudt(n_odes);
+  CCData<Real> dudt(n_odes);
   
   // Evaluate the ODE at time "t" using the current values of "u"
   odes.evaluate(t, u, dudt);
@@ -62,20 +62,20 @@ namespace chapchom
   
   // Temporary vector to store the K_i evaluations proper of
   // Runge-Kutta methods
-  CCData<double> K1(n_odes);
-  CCData<double> K2(n_odes);
-  CCData<double> K3(n_odes);
-  CCData<double> K4(n_odes);
+  CCData<Real> K1(n_odes);
+  CCData<Real> K2(n_odes);
+  CCData<Real> K3(n_odes);
+  CCData<Real> K4(n_odes);
   
   // Create a copy of the y vector
-  CCData<double> u_temp(u);
+  CCData<Real> u_temp(u);
   
   // --------------------------------------------------------------------
   // Evaluate the ODE at time "t" using the current values of "u"
   odes.evaluate(t, u, K1);
   // --------------------------------------------------------------------
   // Evaluate the ODE at time "t+(h/2)" and with "u+(h/2)K1"
-  const double h_half = h*0.5;
+  const Real h_half = h*0.5;
   for (unsigned i = 0; i < n_odes; i++)
    {
     u_temp(i,k) = u(i,k)+h_half*K1(i);

@@ -221,7 +221,7 @@ namespace chapchom
   const unsigned n_dof = ODEs_pt->n_odes();
   
   // Temporary vector to store the evaluation of the odes
-  CCData<double> dudt(n_dof);
+  CCData<Real> dudt(n_dof);
   
   // Evaluate the ODE at time "t" using the "u" values of the current
   // Newton's iteration
@@ -256,7 +256,7 @@ namespace chapchom
  // current time
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_U(CCData<double> *u_pt)
+ void CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_U(CCData<Real> *u_pt)
  {
   // Set the storage of the data
   U_pt = u_pt;
@@ -271,7 +271,7 @@ namespace chapchom
  // current Newton's iteration
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_U_next(CCData<double> *u_next_pt)
+ void CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_U_next(CCData<Real> *u_next_pt)
  {
   // Set the storage of the data
   U_next_pt = u_next_pt;
@@ -285,7 +285,7 @@ namespace chapchom
  // Sets the current time
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_current_time(const double t)
+ void CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_current_time(const Real t)
  {
   // Set the constant time
   Current_time = t;
@@ -298,7 +298,7 @@ namespace chapchom
  // Sets the time step
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_time_step(const double h)
+ void CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_time_step(const Real h)
  {
   // Set the time step 
   Time_step = h;

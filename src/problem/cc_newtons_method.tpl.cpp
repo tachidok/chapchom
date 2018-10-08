@@ -106,7 +106,7 @@ namespace chapchom
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::
- set_newton_solver_tolerance(const double new_newton_solver_tolerance)
+ set_newton_solver_tolerance(const Real new_newton_solver_tolerance)
  {
   Newton_solver_tolerance = new_newton_solver_tolerance;
  }
@@ -126,7 +126,7 @@ namespace chapchom
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::
- set_maximum_allowed_residual(const double new_maximum_allowed_residual)
+ set_maximum_allowed_residual(const Real new_maximum_allowed_residual)
  {
   Maximum_allowed_residual = new_maximum_allowed_residual;
  }
@@ -185,7 +185,7 @@ namespace chapchom
   VEC_TYPE residual = Jacobian_and_residual_strategy_pt->residual();
   
   // Compute the norm of the residual
-  const double initial_residual_norm = residual.max();
+  const Real initial_residual_norm = residual.max();
   
   chapchom_output << "Initial residual norm: " << initial_residual_norm << std::endl;
   
@@ -207,7 +207,7 @@ namespace chapchom
   unsigned n_newton_iterations = 0;
   
   // Store the residual of the current iteration
-  double current_residual_norm = initial_residual_norm;
+  Real current_residual_norm = initial_residual_norm;
   
   // Time Newton's method
   clock_t initial_clock_time_for_newtons_method = Timing::cpu_clock_time();

@@ -51,26 +51,26 @@ namespace chapchom
   {U.unpin(i);}
   
   // Get access to the spatial position of the node
-  inline CCData<double> &x() {return X;}
+  inline CCData<Real> &x() {return X;}
   
   // Get the i-th spatial position of the node at time t
-  inline double get_position(const unsigned &i, const unsigned t=0)
+  inline Real get_position(const unsigned &i, const unsigned t=0)
   {return X.value(i,t);}
   
   // Set the i-th spatial position of the node at time t
-  inline void set_position(const double i_position,
+  inline void set_position(const Real i_position,
                            const unsigned &i, const unsigned t=0)
   {X.value(i,t)=i_position;}
   
   // Get access to variables stored in the node
-  inline CCData<double> &u() {return U;}
+  inline CCData<Real> &u() {return U;}
   
   // Get the i-th variable value at time t
-  inline double get_variable(const unsigned &i, const unsigned t=0)
+  inline Real get_variable(const unsigned &i, const unsigned t=0)
   {return U.value(i,t);}
   
   // Set the i-th variable value at time t
-  inline void set_variable(const double i_variable,
+  inline void set_variable(const Real i_variable,
                            const unsigned &i, const unsigned t=0)
   {U.value(i,t)=i_variable;}
   
@@ -92,7 +92,7 @@ namespace chapchom
   const unsigned N_history_values;
   
   // Store the spatial position of the node
-  CCData<double> X;
+  CCData<Real> X;
   
   // Store the values of the variables stored in the node
   CCData<T> U;

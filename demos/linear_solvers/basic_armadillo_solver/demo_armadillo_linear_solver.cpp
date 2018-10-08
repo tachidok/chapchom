@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
  const unsigned n_cols = n_rows;
  
  // The matrix A
- CCMatrixArmadillo<double> A(n_rows, n_cols);
+ CCMatrixArmadillo<Real> A(n_rows, n_cols);
  // Allocate memory
  A.allocate_memory();
  
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
  {
   // The right hand side vector (by default it is created as a column
   // vector)
-  CCVectorArmadillo<double> b(n_rows);
+  CCVectorArmadillo<Real> b(n_rows);
   // Allocate memory
   b.allocate_memory();
   
@@ -71,11 +71,11 @@ int main(int argc, char *argv[])
   output_test << std::endl;
   
   // Create an Armadillo linear solver
-  CCSolverArmadillo<double> armadillo_linear_solver;
+  CCSolverArmadillo<Real> armadillo_linear_solver;
   
   // The solution vector (with the corresponding number of rows, that
   // in this case refers to the number of cols as well)
-  CCVectorArmadillo<double> sol(n_cols);
+  CCVectorArmadillo<Real> sol(n_cols);
   
   // Solve the system of equations
   armadillo_linear_solver.solve(A, b, sol);
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
   output_test << std::endl;
   
    // Apply the solution and check the result
-  CCMatrixArmadillo<double> C = A*sol;
+  CCMatrixArmadillo<Real> C = A*sol;
   std::cout << std::endl;
   std::cout << "Matrix C" << std::endl;
   std::cout << std::endl;
@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
  // ----------------------------------------------------------------
  {
   // The right hand side vectors
-  CCMatrixArmadillo<double> B(n_rows, n_rows);
+  CCMatrixArmadillo<Real> B(n_rows, n_rows);
   // Allocate memory
   B.allocate_memory();
   
@@ -149,10 +149,10 @@ int main(int argc, char *argv[])
   output_test << std::endl;
   
   // Create an Armadillo linear solver
-  CCSolverArmadillo<double> armadillo_linear_solver;
+  CCSolverArmadillo<Real> armadillo_linear_solver;
   
   // The solution vector
-  CCMatrixArmadillo<double> SOL(n_cols, 1);
+  CCMatrixArmadillo<Real> SOL(n_cols, 1);
   
   // Solve the system of equations
   armadillo_linear_solver.solve(A, B, SOL);
@@ -170,7 +170,7 @@ int main(int argc, char *argv[])
   output_test << std::endl;
   
   // Apply the solution and check the result
-  CCMatrixArmadillo<double> C = A*SOL;
+  CCMatrixArmadillo<Real> C = A*SOL;
   std::cout << std::endl;
   std::cout << "Matrix C" << std::endl;
   std::cout << std::endl;

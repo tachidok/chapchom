@@ -6,7 +6,11 @@
 #include "nrutil.h"
 using namespace std;
 
+#ifdef TYPEDEF_REAL_IS_DOUBLE
 typedef double DP;
+#else
+typedef float DP;
+#endif // #ifdef TYPEDEF_REAL_IS_DOUBLE
 
 // Vector Types
 

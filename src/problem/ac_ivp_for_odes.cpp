@@ -15,7 +15,7 @@ namespace chapchom
   // Get the number of odes
   const unsigned n_odes = odes_pt->n_odes();
   const unsigned n_history_values = time_stepper_pt->n_history_values();
-  U_pt = new CCData<double>(n_odes, n_history_values);
+  U_pt = new CCData<Real>(n_odes, n_history_values);
   
  }
  

@@ -43,7 +43,7 @@ using namespace chapchom;
 // ==================================================================
 // Functions for VTK output
 // ==================================================================
-void add_time_to_vtk_data_set(double time,
+void add_time_to_vtk_data_set(Real time,
                               vtkSmartPointer<vtkUnstructuredGrid> &data_set)
 {
  // Add time stamp for the current file
@@ -54,7 +54,7 @@ void add_time_to_vtk_data_set(double time,
  data_set->GetFieldData()->AddArray(array);
 }
 
-void add_particles_to_vtk_data_set(CCData<double> &particles_data,
+void add_particles_to_vtk_data_set(CCData<Real> &particles_data,
                                    vtkSmartPointer<vtkPoints> &data_points,
                                    vtkSmartPointer<vtkUnstructuredGrid> &data_set)
 {
@@ -89,9 +89,9 @@ void add_particles_to_vtk_data_set(CCData<double> &particles_data,
  masses->SetName("Masses");
 
  // Temporal vector to extract data
- double pos[3];
- double vel[3];
- double mass[1];
+ Real pos[3];
+ Real vel[3];
+ Real mass[1];
  int global_id = 0;
  // Loop through particles data
  for (unsigned i = 0; i < n_particles*n_data_per_particle; i+=n_data_per_particle)
@@ -125,8 +125,8 @@ void add_particles_to_vtk_data_set(CCData<double> &particles_data,
  data_set->GetPointData()->AddArray(masses);
 }
 
-void output_particles(double time,
-                      CCData<double> &particles_data,
+void output_particles(Real time,
+                      CCData<Real> &particles_data,
                       std::ostringstream &file_name)
 {
  // Create a VTK writer
@@ -295,8 +295,8 @@ int main(int argc, char *argv[])
  // Time stepper
  // ----------------------------------------------------------------
  // Create the factory for the time steppers (integration methods)
- CCFactoryTimeStepper<CCMatrixArmadillo<double>, CCVectorArmadillo<double> > factory_time_stepper;
- //CCFactoryTimeStepper<CCMatrix<double>, CCVector<double> > factory_time_stepper;
+ CCFactoryTimeStepper<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > factory_time_stepper;
+ //CCFactoryTimeStepper<CCMatrix<Real>, CCVector<Real> > factory_time_stepper;
  // Create an instance of the integration method
  //ACTimeStepper *time_stepper_pt =
  //  factory_time_stepper.create_time_stepper("Euler");
@@ -309,8 +309,8 @@ int main(int argc, char *argv[])
  CCNBodyProblem n_body_problem(&odes, time_stepper_pt);
  
  // Prepare time integration data
- const double initial_time = 0.0; // years
- const double final_time = 10.0; // years
+ const Real initial_time = 0.0; // years
+ const Real final_time = 10.0; // years
  const unsigned n_time_steps = 1000;
  
  // ----------------------------------------------------------------

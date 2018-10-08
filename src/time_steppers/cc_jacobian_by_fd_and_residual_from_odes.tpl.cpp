@@ -81,7 +81,7 @@ namespace chapchom
   this->Jacobian.allocate_memory(n_dof, n_dof);
   
   // Store the evaluation of the ODEs with the current U's values
-  CCData<double> dudt(n_dof);
+  CCData<Real> dudt(n_dof);
   
   // Evaluate the ODEs
   ODEs_pt->evaluate(Current_time, (*U_pt), dudt);
@@ -93,13 +93,13 @@ namespace chapchom
     // the current DOF (indicated by the index i) and evaluate all the
     // equations (this will helps us to approximate the column i of
     // the Jacobian)
-    CCData<double> U_plus((*U_pt));
-    const double delta_u = 1.0e-8;
+    CCData<Real> U_plus((*U_pt));
+    const Real delta_u = 1.0e-8;
     // ... the perturbation
     U_plus(i)+=delta_u;
     
     // Evaluate the ODEs with the slighted perturbed data
-    CCData<double> dudt_plus(n_dof);
+    CCData<Real> dudt_plus(n_dof);
     // Evaluate the ODEs
     ODEs_pt->evaluate(Current_time, U_plus, dudt_plus);
     // Compute the values for the Jacobian matrix, add entries for the
@@ -144,7 +144,7 @@ namespace chapchom
  // current time
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::set_U(CCData<double> *u_pt)
+ void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::set_U(CCData<Real> *u_pt)
  {
   // Set the storage of the data
   U_pt = u_pt;
@@ -158,7 +158,7 @@ namespace chapchom
  // Sets the current time
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::set_current_time(const double t)
+ void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::set_current_time(const Real t)
  {  
   // Set the constant time
   Current_time = t;

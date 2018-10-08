@@ -9,7 +9,11 @@
 #include <stdlib.h>
 using namespace std;
 
+#ifdef TYPEDEF_REAL_IS_DOUBLE
 typedef double DP;
+#else
+typedef float DP;
+#endif // #ifdef TYPEDEF_REAL_IS_DOUBLE
 
 template<class T>
 inline const T SQR(const T a) {return a*a;}

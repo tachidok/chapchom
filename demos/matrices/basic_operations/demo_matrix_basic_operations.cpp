@@ -14,24 +14,24 @@ using namespace chapchom;
 // ===================================================================
 // Rotate
 // ===================================================================
-void rotate(double *input_vector,
-            double *rotated_vector,
-            const double roll, const double pitch, const double yaw,
+void rotate(Real *input_vector,
+            Real *rotated_vector,
+            const Real roll, const Real pitch, const Real yaw,
             bool inverse_rotation = false)
 {
  // The number of elements in the input vector is three
  const unsigned DIM = 3;
  
  // Create the rotation matrix
- CCMatrix<double> R(DIM, DIM);
+ CCMatrix<Real> R(DIM, DIM);
  R.allocate_memory();
  
- const double sin_theta_x = sin(roll);
- const double sin_theta_y = sin(pitch);
- const double sin_theta_z = sin(yaw);
- const double cos_theta_x = cos(roll);
- const double cos_theta_y = cos(pitch);
- const double cos_theta_z = cos(yaw);
+ const Real sin_theta_x = sin(roll);
+ const Real sin_theta_y = sin(pitch);
+ const Real sin_theta_z = sin(yaw);
+ const Real cos_theta_x = cos(roll);
+ const Real cos_theta_y = cos(pitch);
+ const Real cos_theta_z = cos(yaw);
  
  R(0,0) = cos_theta_y*cos_theta_z;
  R(0,1) = cos_theta_y*sin_theta_z;
@@ -55,9 +55,9 @@ void rotate(double *input_vector,
  // Perform the actual transformation
  
  // Create a vector to representation and copy there the input data
- CCVector<double> b(input_vector, DIM);
+ CCVector<Real> b(input_vector, DIM);
  // A vector for the output (rotated) data
- CCVector<double> r(DIM);
+ CCVector<Real> r(DIM);
  // Apply rotation
  multiply_matrix_times_vector(R, b, r);
  // Copy back result in output structure
@@ -86,8 +86,8 @@ int main(int argc, char *argv[])
   // ----------------------------------------------------------
   // Identity matrix
   // ----------------------------------------------------------
-  // Instantiate double type matrices.
-  CCMatrix<double> I(n_rows, n_columns);
+  // Instantiate Real type matrices.
+  CCMatrix<Real> I(n_rows, n_columns);
   
   // Allocate memory
   I.allocate_memory();
@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
   // Matrix from vector
   // ----------------------------------------------------------
   // Create an array to initialise another matrix with it
-  double *matrix_pt = new double[n_rows*n_columns];
+  Real *matrix_pt = new Real[n_rows*n_columns];
  
   // Add some data to the array
   for (unsigned i = 0; i < n_rows; i++)
@@ -129,8 +129,8 @@ int main(int argc, char *argv[])
   // ---------------------------------------
   // Create the matrix from the vector data
   // ---------------------------------------
-  CCMatrix<double> B(matrix_pt, n_rows, n_columns);
-  CCMatrix<double> B_t;
+  CCMatrix<Real> B(matrix_pt, n_rows, n_columns);
+  CCMatrix<Real> B_t;
   B.transpose(B_t);
  
   std::cout << std::endl << "Matrix created from vector" << std::endl << std::endl;
@@ -147,8 +147,8 @@ int main(int argc, char *argv[])
   // Create a matrix where to store results
   // ----------------------------------------------------------
   // Solution matrix
-  // Instantiate double type matrices.
-  CCMatrix<double> C(n_rows, n_columns);
+  // Instantiate Real type matrices.
+  CCMatrix<Real> C(n_rows, n_columns);
 
   // Allocate memory
   C.allocate_memory();
@@ -255,7 +255,7 @@ int main(int argc, char *argv[])
   // -----------------------------------------------------------------------------
   const unsigned long n_rows_A = 5;
   const unsigned long n_columns_A = 10;
-  double *matrix_A_pt = new double[n_rows_A*n_columns_A];
+  Real *matrix_A_pt = new Real[n_rows_A*n_columns_A];
  
   // Add some data to the array
   for (unsigned i = 0; i < n_rows_A; i++)
@@ -274,7 +274,7 @@ int main(int argc, char *argv[])
      }
    }
   // Create the non square matrix
-  CCMatrix<double> A(matrix_A_pt, n_rows_A, n_columns_A);
+  CCMatrix<Real> A(matrix_A_pt, n_rows_A, n_columns_A);
   std::cout << std::endl << "Non square matrix"
             << std::endl << std::endl;
   output_test << std::endl << "Non square matrix"
@@ -288,7 +288,7 @@ int main(int argc, char *argv[])
   // -----------------------------------------------------------------------------
   const unsigned long n_rows_x = 10;
   const unsigned long n_columns_x = 1;
-  double *matrix_x_pt = new double[n_rows_x*n_columns_x];
+  Real *matrix_x_pt = new Real[n_rows_x*n_columns_x];
  
   // Add some data to the array
   for (unsigned i = 0; i < n_rows_x; i++)
@@ -308,7 +308,7 @@ int main(int argc, char *argv[])
    }
  
   // Create the vector (matrix)
-  CCMatrix<double> x(matrix_x_pt, n_rows_x, n_columns_x);
+  CCMatrix<Real> x(matrix_x_pt, n_rows_x, n_columns_x);
   std::cout << std::endl << "Vector"
             << std::endl << std::endl;
   output_test << std::endl << "Vector"
@@ -319,7 +319,7 @@ int main(int argc, char *argv[])
   // --------------------------------------
   // Matrix multiplication A * x = b
   // --------------------------------------
-  CCMatrix<double> b(n_rows_A, n_columns_x); // Note that we do not
+  CCMatrix<Real> b(n_rows_A, n_columns_x); // Note that we do not
   // need to force the
   // allocation of memory to
   // store the entries of
@@ -339,7 +339,7 @@ int main(int argc, char *argv[])
   // --------------------------------------------------
   // Apply transpose
   // --------------------------------------------------
-  CCMatrix<double> b_t(b.n_columns(), b.n_rows());
+  CCMatrix<Real> b_t(b.n_columns(), b.n_rows());
   b.transpose(b_t);
   std::cout << std::endl << "The transposed matrix:"
             << std::endl << std::endl;
@@ -498,17 +498,17 @@ int main(int argc, char *argv[])
   // --------------------------------------------
   const unsigned DIM = 3;
   // The gravity vector
-  double gravity[] ={0.0, 0.0, -9.81};
+  Real gravity[] ={0.0, 0.0, -9.81};
   // The rotated gravity vector
-  double rotated_gravity[DIM];
+  Real rotated_gravity[DIM];
   // Roll, pitch and yaw Euluer angles
-  const double roll = M_PI/4.0;
-  const double pitch = M_PI/3.0;
-  const double yaw = -M_PI/8.0;
+  const Real roll = M_PI/4.0;
+  const Real pitch = M_PI/3.0;
+  const Real yaw = -M_PI/8.0;
   rotate(gravity, rotated_gravity, roll, pitch, yaw);
  
   // Create vectors to output the data
-  CCVector<double> g(gravity, DIM);
+  CCVector<Real> g(gravity, DIM);
   std::cout << std::endl << ""
             << "---------------------------------------------------\n"
             << "Gravity vector (0 0 -9.81) m/s^2\n"
@@ -523,7 +523,7 @@ int main(int argc, char *argv[])
   g.output(output_test);
 
   // Rotated gravity vector
-  CCVector<double> rg(rotated_gravity, DIM); 
+  CCVector<Real> rg(rotated_gravity, DIM); 
   std::cout << std::endl << ""
             << "---------------------------------------------------\n"
             << "Rotated gravity vector m/s^2\n"
@@ -539,10 +539,10 @@ int main(int argc, char *argv[])
   
   // Rotate the vector again to validate matrix vector operations and
   // rotations
-  double double_rotated_gravity[DIM];
-  rotate(rotated_gravity, double_rotated_gravity, roll, pitch, yaw, true);
+  Real Real_rotated_gravity[DIM];
+  rotate(rotated_gravity, Real_rotated_gravity, roll, pitch, yaw, true);
   // Create a vector to output the data
-  CCVector<double> drg(double_rotated_gravity, DIM);
+  CCVector<Real> drg(Real_rotated_gravity, DIM);
   std::cout << std::endl << ""
             << "---------------------------------------------------\n"
             << "Rotated-back gravity vector (original vector) m/s^2\n"
@@ -557,10 +557,10 @@ int main(int argc, char *argv[])
   drg.output(output_test);
   
   // Get the difference between the ORIGINAL gravity vector and the
-  // DOUBLE rotated gravity
-  CCVector<double> diff = g - drg;
+  // REAL rotated gravity
+  CCVector<Real> diff = g - drg;
   // Get the norm
-  const double norm = diff.norm_2();
+  const Real norm = diff.norm_2();
   std::cout << std::endl << ""
             << "---------------------------------------------------\n"
             << "Norm 2 of original vector and rotated-back vector\n"
@@ -598,7 +598,7 @@ int main(int argc, char *argv[])
   const unsigned DIM = 3;
 
   // Create a matrix
-  CCMatrix<double> A(DIM, DIM);
+  CCMatrix<Real> A(DIM, DIM);
   A.allocate_memory();
   
   A(0,0) = 0.5;   A(0,1) = 0.5;   A(0,2) = 0.5;
@@ -608,7 +608,7 @@ int main(int argc, char *argv[])
   // Create a vector indicating the data to extract from the matrix,
   // the vector is created as a row vector
   bool is_column_vector = false;
-  CCVector<double> v(DIM, is_column_vector);
+  CCVector<Real> v(DIM, is_column_vector);
   v.allocate_memory();
   
   // The following vector states to take the first row of matrix A and
@@ -617,7 +617,7 @@ int main(int argc, char *argv[])
 
   // A vector (as a matrix) where to store the resulting vector-matrix
   // multiplication
-  CCMatrix<double> S(1, DIM);
+  CCMatrix<Real> S(1, DIM);
   
   multiply_vector_times_matrix(v, A, S);
 

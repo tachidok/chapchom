@@ -23,9 +23,9 @@ namespace chapchom
   
   // Create the linear solver
 #ifdef CHAPCHOM_USES_ARMADILLO
-  Linear_solver_pt = new CCSolverArmadillo<double>();
+  Linear_solver_pt = new CCSolverArmadillo<Real>();
 #else
-  Linear_solver_pt = new CCLUSolverNumericalRecipes<double>();
+  Linear_solver_pt = new CCLUSolverNumericalRecipes<Real>();
 #endif
   
   // Set linear solver for Newton's method
@@ -59,9 +59,9 @@ namespace chapchom
  // to the time "t+h"
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCBackwardEulerMethod<MAT_TYPE,VEC_TYPE>::time_step(ACODEs &odes, const double h,
-                                                          const double t,
-                                                          CCData<double> &u)
+ void CCBackwardEulerMethod<MAT_TYPE,VEC_TYPE>::time_step(ACODEs &odes, const Real h,
+                                                          const Real t,
+                                                          CCData<Real> &u)
  {
   // Get the number of odes
   const unsigned n_odes = odes.n_odes();
@@ -93,13 +93,13 @@ namespace chapchom
   // Compute initial guess
   // -----------------------------------------------------------------
   // Temporary storage for Newton's method
-  CCData<double> u_guess(u);
+  CCData<Real> u_guess(u);
   
   // Compute the initial guess for Newton's method
   Time_stepper_initial_guess_pt->time_step(odes, h, t, u_guess);
   
   // Create a temporary vector to store the extracted history values
-  double *extracted_column_initial_guess_pt = new double[n_odes];
+  Real *extracted_column_initial_guess_pt = new Real[n_odes];
   
   u_guess.extract_history_values(extracted_column_initial_guess_pt);
   

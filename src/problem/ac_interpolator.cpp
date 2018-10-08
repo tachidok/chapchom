@@ -23,10 +23,10 @@ namespace chapchom
  // Does 1D interpolation specifying the data points, the order of the
  // interpolation and the desired "x" value to interpolate
  // ===================================================================
- double ACInterpolator::interpolate_1D(std::vector<double> &x_points,
-                                       std::vector<double> &fx_points,
-                                       const double x,
-                                       const unsigned order)
+ Real ACInterpolator::interpolate_1D(std::vector<Real> &x_points,
+                                     std::vector<Real> &fx_points,
+                                     const Real,
+                                     const unsigned order)
  {
   // Error message
   std::ostringstream error_message;
@@ -41,10 +41,10 @@ namespace chapchom
  // Does 1D interpolation specifying the data points, the order of
  // the interpolation and the desired "x" values to interpolate
  // ===================================================================
- void ACInterpolator::interpolate_1D(std::vector<double> &x_points,
-                                     std::vector<double> &fx_points,
-                                     std::vector<double> &x,
-                                     std::vector<double> &fx,
+ void ACInterpolator::interpolate_1D(std::vector<Real> &x_points,
+                                     std::vector<Real> &fx_points,
+                                     std::vector<Real> &x,
+                                     std::vector<Real> &fx,
                                      const unsigned order)
  {
   // Error message
@@ -60,10 +60,10 @@ namespace chapchom
  // Does 2D interpolation specifying the data points, the order of the
  // interpolation and the desired "x" value to interpolate
  // ===================================================================
- double ACInterpolator::interpolate_2D(std::vector<std::vector<double> > &x_points,
-                                       std::vector<double> &fx_points,
-                                       std::vector<double> &x,
-                                       const unsigned order)
+ Real ACInterpolator::interpolate_2D(std::vector<std::vector<Real> > &x_points,
+                                     std::vector<Real> &fx_points,
+                                     std::vector<Real> &x,
+                                     const unsigned order)
  {
   // Error message
   std::ostringstream error_message;
@@ -78,10 +78,10 @@ namespace chapchom
  // Does 2D interpolation specifying the data points, the order of the
  // interpolation and the desired "x" values to interpolate
  // ===================================================================
- void ACInterpolator::interpolate_2D(std::vector<std::vector<double> > &x_points,
-                                     std::vector<double> &fx_points,
-                                     std::vector<std::vector<double> > &x,
-                                     std::vector<double> &fx,
+ void ACInterpolator::interpolate_2D(std::vector<std::vector<Real> > &x_points,
+                                     std::vector<Real> &fx_points,
+                                     std::vector<std::vector<Real> > &x,
+                                     std::vector<Real> &fx,
                                      const unsigned order)
  {
   // Error message
@@ -97,10 +97,10 @@ namespace chapchom
  // Does 3D interpolation specifying the data points, the order of the
  // interpolation and the desired "x" value to interpolate
  // ===================================================================
- double ACInterpolator::interpolate_3D(std::vector<std::vector<double> > &x_points,
-                                       std::vector<double> &fx_points,
-                                       std::vector<std::vector<double> > &x,
-                                       const unsigned order)
+ Real ACInterpolator::interpolate_3D(std::vector<std::vector<Real> > &x_points,
+                                     std::vector<Real> &fx_points,
+                                     std::vector<std::vector<Real> > &x,
+                                     const unsigned order)
  {
   // Error message
   std::ostringstream error_message;
@@ -115,10 +115,10 @@ namespace chapchom
  // Does 3D interpolation specifying the data points, the order of the
  // interpolation and the desired "x" values to interpolate
  // ===================================================================
- void ACInterpolator::interpolate_3D(std::vector<std::vector<double> > &x_points,
-                                     std::vector<double> &fx_points,
-                                     std::vector<std::vector<double> > &x,
-                                     std::vector<double> &fx,
+ void ACInterpolator::interpolate_3D(std::vector<std::vector<Real> > &x_points,
+                                     std::vector<Real> &fx_points,
+                                     std::vector<std::vector<Real> > &x,
+                                     std::vector<Real> &fx,
                                      const unsigned order)
  {
   // Error message

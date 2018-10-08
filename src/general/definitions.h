@@ -4,6 +4,12 @@
 namespace chapchom
 {
 
+#ifdef TYPEDEF_REAL_IS_DOUBLE
+ typedef double Real;
+#else
+ typedef float Real;
+#endif // #ifdef TYPEDEF_REAL_IS_DOUBLE
+ 
 #define CHAPCHOM_WITH_DEBUG
 #ifdef CHAPCHOM_WITH_DEBUG
  // =======================================================================

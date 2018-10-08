@@ -27,9 +27,9 @@ namespace chapchom
  // Applies Eulers method to the given odes from the current time "t"
  // to the time "t+h"
  // ===================================================================
- void CCEulerMethod::time_step(ACODEs &odes, const double h,
-                               const double t,
-                               CCData<double> &u)
+ void CCEulerMethod::time_step(ACODEs &odes, const Real h,
+                               const Real t,
+                               CCData<Real> &u)
  {
   // Get the number of odes
   const unsigned n_odes = odes.n_odes();
@@ -52,7 +52,7 @@ namespace chapchom
    }
   
   // Temporary vector to store the evaluation of the odes
-  CCData<double> dudt(n_odes);
+  CCData<Real> dudt(n_odes);
   
   // Evaluate the ODE at time "t" using the current values of "u"
   odes.evaluate(t, u, dudt);

@@ -62,13 +62,13 @@ namespace chapchom
    void solve(VEC_TYPE &dx);
    
    // Set Newton's solver tolerance
-   void set_newton_solver_tolerance(const double new_newton_solver_tolerance);
+   void set_newton_solver_tolerance(const Real new_newton_solver_tolerance);
    
    // Set the Maximun number of Newton's iterations
    void set_maximum_newton_interations(const unsigned new_maximum_newton_iterations);
    
    // Set the Maximum allowed residual
-   void set_maximum_allowed_residual(const double new_maximum_allowed_residual);
+   void set_maximum_allowed_residual(const Real new_maximum_allowed_residual);
    
   protected:
    
@@ -94,13 +94,13 @@ namespace chapchom
    VEC_TYPE *Dx_pt;
    
    // Newton's solver tolerance
-   double Newton_solver_tolerance;
+   Real Newton_solver_tolerance;
    
    // Maximun number of Newton's iterations
    unsigned Maximum_newton_iterations;
    
    // Maximum allowed residual
-   double Maximum_allowed_residual;
+   Real Maximum_allowed_residual;
    
    // Flag to indicate whether the Jacobian and residual computation
    // strategy has been set

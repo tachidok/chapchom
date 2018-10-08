@@ -30,13 +30,13 @@ namespace chapchom
   virtual ~ACIVPForODEs();
   
   // Get access to the U vector
-  CCData<double> *u_pt() const {return U_pt;}
+  CCData<Real> *u_pt() const {return U_pt;}
   
   // Read-only access to the vector U values
-  inline const double u(const unsigned i, const unsigned t = 0) const {return U_pt->value(i,t);}
+  inline const Real u(const unsigned i, const unsigned t = 0) const {return U_pt->value(i,t);}
   
   // Write access to the vector U values
-  inline double &u(const unsigned i, const unsigned t = 0) {return U_pt->value(i,t);}
+  inline Real &u(const unsigned i, const unsigned t = 0) {return U_pt->value(i,t);}
   
   // -------------------------------------------------------------------------
   // THESE METHODS MUST BE IMPLEMENTED IN THE CONCRETE PROBLEM CLASS [BEGIN]
@@ -105,7 +105,7 @@ namespace chapchom
   
   // The storage for the approximated solution of the time integration
   // of the ODEs
-  CCData<double> *U_pt;
+  CCData<Real> *U_pt;
   
  };
  

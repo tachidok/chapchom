@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
  const unsigned n_cols = n_rows;
  
  // The matrix A
- CCMatrix<double> A(n_rows, n_cols);
+ CCMatrix<Real> A(n_rows, n_cols);
  // Allocate memory
  A.allocate_memory();
  
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
  // ----------------------------------------------------------------
  {
   // The right hand side vector
-  CCVector<double> b(n_rows);
+  CCVector<Real> b(n_rows);
   // Allocate memory
   b.allocate_memory();
   
@@ -71,11 +71,11 @@ int main(int argc, char *argv[])
   output_test << std::endl;
   
   // Create a linear solver
-  CCLUSolverNumericalRecipes<double> linear_solver;
+  CCLUSolverNumericalRecipes<Real> linear_solver;
   
   // The solution vector (with the corresponding number of rows, that
   // in this case refers to the number of cols as well)
-  CCVector<double> sol(n_cols);
+  CCVector<Real> sol(n_cols);
   
   // Solve the system of equations
   linear_solver.solve(A, b, sol);
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
   output_test << std::endl;
   
   // Apply the solution and check the result
-  CCMatrix<double> C = A*sol;
+  CCMatrix<Real> C = A*sol;
   std::cout << std::endl;
   std::cout << "Matrix C" << std::endl;
   std::cout << std::endl;
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
  // ----------------------------------------------------------------
  {
   // The right hand side vectors
-  CCMatrix<double> B(n_rows, n_rows);
+  CCMatrix<Real> B(n_rows, n_rows);
   // Allocate memory
   B.allocate_memory();
   
@@ -154,10 +154,10 @@ int main(int argc, char *argv[])
   output_test << std::endl;
   
   // Create a linear solver
-  CCLUSolverNumericalRecipes<double> linear_solver;
+  CCLUSolverNumericalRecipes<Real> linear_solver;
   
   // The solution vector
-  CCMatrix<double> SOL(n_cols, n_cols);
+  CCMatrix<Real> SOL(n_cols, n_cols);
   
   // Solve the system of equations
   linear_solver.solve(A, B, SOL);
@@ -175,7 +175,7 @@ int main(int argc, char *argv[])
   output_test << std::endl;
   
   // Apply the solution and check the result
-  CCMatrix<double> C = A*SOL;
+  CCMatrix<Real> C = A*SOL;
   std::cout << std::endl;
   std::cout << "Matrix C" << std::endl;
   std::cout << std::endl;

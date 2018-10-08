@@ -739,7 +739,7 @@ namespace chapchom
  T CCVectorArmadillo<T>::norm_1()
  {
   // Sum
-  double sum = 0.0;
+  Real sum = 0.0;
   // Check whether the vector has memory allocated
   if (this->Is_own_memory_allocated)
    {
@@ -769,7 +769,7 @@ namespace chapchom
  T CCVectorArmadillo<T>::norm_2()
  {
   // Sum
-  double sum = 0.0;
+  Real sum = 0.0;
   // Check whether the vector has memory allocated
   if (this->Is_own_memory_allocated)
    {
@@ -799,7 +799,7 @@ namespace chapchom
  T CCVectorArmadillo<T>::max()
  {
   // Maximum
-  double max = 0.0;
+  Real max = 0.0;
   // Check whether the vector has memory allocated
   if (this->Is_own_memory_allocated)
    {

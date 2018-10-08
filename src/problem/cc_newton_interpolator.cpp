@@ -28,10 +28,10 @@ namespace chapchom
  // b1(x_interpolate-x0) + b2(x_interpolate-x0)(x_interpolate-x1) +
  // b3(x_interpolate-x0)(x_interpolate-x1)(x_interpolate-x2) ...
  // ===================================================================
- double CCNewtonInterpolator::interpolate_1D(std::vector<double> &x,
-                                             std::vector<double> &fx,
-                                             const double x_interpolate,
-                                             const unsigned order)
+ Real CCNewtonInterpolator::interpolate_1D(std::vector<Real> &x,
+                                           std::vector<Real> &fx,
+                                           const Real x_interpolate,
+                                           const unsigned order)
  {
   // We assume the data points are in order, thus we do not check for
   // that
@@ -81,7 +81,7 @@ namespace chapchom
   
   // The coefficients vector (we use b as mostly used in Newton's
   // polynomial notation)
-  std::vector<double> b(order + 1);
+  std::vector<Real> b(order + 1);
   
   // What interpolation to perform
   if (order == 0) // zero interpolation or no interpolation
@@ -93,7 +93,7 @@ namespace chapchom
    {
     b[0] = fx[0];
     // Using divided differences notation
-    const double f10 =
+    const Real f10 =
      (fx[1] - fx[0]) / (x[1] - x[0]);
     b[1] = f10;
     
@@ -104,12 +104,12 @@ namespace chapchom
    {    
     b[0] = fx[0];
     // Using divided differences notation
-    const double f10 =
+    const Real f10 =
      (fx[1] - fx[0]) / (x[1] - x[0]);
     b[1] = f10;
-    const double f21 =
+    const Real f21 =
      (fx[2] - fx[1]) / (x[2] - x[1]);
-    const double f210 =
+    const Real f210 =
      (f21 - f10) / (x[2] - x[0]);
     b[2] = f210;
     
@@ -122,19 +122,19 @@ namespace chapchom
    {    
     b[0] = fx[0];
     // Using divided differences notation
-    const double f10 =
+    const Real f10 =
      (fx[1] - fx[0]) / (x[1] - x[0]);
     b[1] = f10;
-    const double f21 =
+    const Real f21 =
      (fx[2] - fx[1]) / (x[2] - x[1]);
-    const double f32 =
+    const Real f32 =
      (fx[3] - fx[2]) / (x[3] - x[2]);
-    const double f210 =
+    const Real f210 =
      (f21 - f10) / (x[2] - x[0]);
     b[2] = f210;
-    const double f321 =
+    const Real f321 =
      (f32 - f21) / (x[3] - x[1]);
-    const double f3210 =
+    const Real f3210 =
      (f321 - f210) / (x[3] - x[0]);
     b[3] = f3210;
     
@@ -169,10 +169,10 @@ namespace chapchom
  /// b2(x_interpolate-x0)(x_interpolate-x1) +
  /// b3(x_interpolate-x0)(x_interpolate-x1)(x_interpolate-x2) ...
  // ===================================================================
- void CCNewtonInterpolator::interpolate_1D(std::vector<double> &x,
-                                           std::vector<double> &fx,
-                                           std::vector<double> &x_interpolate,
-                                           std::vector<double> &fx_interpolated,
+ void CCNewtonInterpolator::interpolate_1D(std::vector<Real> &x,
+                                           std::vector<Real> &fx,
+                                           std::vector<Real> &x_interpolate,
+                                           std::vector<Real> &fx_interpolated,
                                            const unsigned order)
  {
   // We assume the data points are in order, thus we do not check for
@@ -336,8 +336,8 @@ namespace chapchom
     if (do_interpolation)
      {
       // Vectors to extract the near values to perform interpolation
-      std::vector<double> sub_x(order + 1);
-      std::vector<double> sub_fx(order + 1);
+      std::vector<Real> sub_x(order + 1);
+      std::vector<Real> sub_fx(order + 1);
       
       // Check whether the number of data to the right are enough to
       // perform the interpolation

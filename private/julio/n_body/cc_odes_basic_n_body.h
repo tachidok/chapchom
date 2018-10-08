@@ -40,22 +40,22 @@ namespace chapchom
   /// Evaluates the system of odes at time "t". The values of the i-th
   /// function at previous times are accessible via u(i,1), u(i,2) and
   /// so on. The evaluation produces results in the vector dudt.
-  void evaluate(const double t, CCData<double> &u, CCData<double> &dudt);
+  void evaluate(const Real t, CCData<Real> &u, CCData<Real> &dudt);
   
   // Set parameters for odes
   void set_odes_parameters();
   
   // Gets access to the masses vector
-  inline const double m(const unsigned i) const {return M[i];}
+  inline const Real m(const unsigned i) const {return M[i];}
   
   // Sets the value of the i-th body
-  inline double &m(const unsigned i) {return M[i];}
+  inline Real &m(const unsigned i) {return M[i];}
   
   // Gets access to the gravity vector
-  inline const double g(const unsigned i) const {return G[i];}
+  inline const Real g(const unsigned i) const {return G[i];}
   
   // Sets the value of the i-th body
-  inline double &g(const unsigned i) {return G[i];}
+  inline Real &g(const unsigned i) {return G[i];}
   
  protected:
   
@@ -80,10 +80,10 @@ namespace chapchom
   const unsigned N_bodies;
 
   // The masses of the bodies
-  std::vector<double> M;
+  std::vector<Real> M;
   
   // The gravitational constant
-  std::vector<double> G;
+  std::vector<Real> G;
   
  };
  

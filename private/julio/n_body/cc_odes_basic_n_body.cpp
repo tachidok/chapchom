@@ -31,9 +31,9 @@ namespace chapchom
  /// function at previous times are accessible via u(i,1), u(i,2) and
  /// so on. The evaluation produces results in the vector dudt.
  // ===================================================================
- void CCODEsBasicNBody::evaluate(const double t,
-                                 CCData<double> &u,
-                                 CCData<double> &dudt)
+ void CCODEsBasicNBody::evaluate(const Real t,
+                                 CCData<Real> &u,
+                                 CCData<Real> &dudt)
  {
   // -----------------
   // u(0,0) Current x-position of the 1st body
@@ -88,7 +88,7 @@ namespace chapchom
 
   // A 3D matrix that stores the difference in position of each body
   // within each body for each dimension
-  std::vector<std::vector<std::vector<double> > > diff_positions(N_bodies);
+  std::vector<std::vector<std::vector<Real> > > diff_positions(N_bodies);
   
   // Resize and compute the difference between each body's position
   for (unsigned i = 0; i < N_bodies; i++)
@@ -108,7 +108,7 @@ namespace chapchom
   // constant
   // \sum_{j=1}^N, with i!=j G m_{j} (x_i-x_j) / |x_i-x_j|^3
 
-  std::vector<std::vector<double> > sum(N_bodies);
+  std::vector<std::vector<Real> > sum(N_bodies);
   for (unsigned i = 0; i < N_bodies; i++)
    {
     // Resize and initialise sum to zero

@@ -27,9 +27,9 @@ namespace chapchom
   
   /// Performs a time step applying a time integration method to the
   /// given odes from the current time "t" to the time "t+h".
-  virtual void time_step(ACODEs &odes, const double h,
-                         const double t,
-                         CCData<double> &u) = 0;
+  virtual void time_step(ACODEs &odes, const Real h,
+                         const Real t,
+                         CCData<Real> &u) = 0;
   
   /// Get the associated number of history values (each method is in
   /// charge of setting this value based on the number of history

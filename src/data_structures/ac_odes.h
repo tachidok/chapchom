@@ -40,7 +40,7 @@ namespace chapchom
   /// i-th function at previous times are accessible via u(i,1),
   /// u(i,2) and so on. The evaluation produces results in the vector
   /// dudt.
-  virtual void evaluate(const double t, CCData<double> &u, CCData<double> &dudt) = 0;
+  virtual void evaluate(const Real t, CCData<Real> &u, CCData<Real> &dudt) = 0;
   
  protected:
    

@@ -114,7 +114,7 @@ namespace chapchom
  // current time
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_U(CCData<double> *u_pt)
+ void CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_U(CCData<Real> *u_pt)
  {
   // Set the storage of the data
   U_pt = u_pt;
@@ -123,7 +123,7 @@ namespace chapchom
   U_has_been_set = true;
   
   // Create U next
-  U_next_pt = new CCData<double>((*U_pt));
+  U_next_pt = new CCData<Real>((*U_pt));
   
  }
  
@@ -131,7 +131,7 @@ namespace chapchom
  // Sets the current time
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_current_time(const double t)
+ void CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_current_time(const Real t)
  {
   // Set the constant time
   Current_time = t;
@@ -144,7 +144,7 @@ namespace chapchom
  // Sets the time step
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_time_step(const double h)
+ void CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_time_step(const Real h)
  {
   // Set the time step 
   Time_step = h;
