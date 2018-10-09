@@ -32,6 +32,11 @@ set_target_properties( demo_matrix_basic_operations_armadillo
 ADD_TEST(NAME TEST_demo_matrix_basic_operations_armadillo_run
   COMMAND demo_matrix_basic_operations_armadillo)
 # Validate output
+IF (CHAPCHOM_USES_DOUBLE_PRECISION)
+   SET (VALIDATE_FILENAME_demo_matrix_basic_operations_armadillo "validate_double_demo_matrix_basic_operations_armadillo.dat")
+ELSE (CHAPCHOM_USES_DOUBLE_PRECISION)
+     SET (VALIDATE_FILENAME_demo_matrix_basic_operations_armadillo "validate_demo_matrix_basic_operations_armadillo.dat")
+ENDIF (CHAPCHOM_USES_DOUBLE_PRECISION)
 ADD_TEST(NAME TEST_demo_matrix_basic_operations_armadillo_check_output
-  COMMAND sdiff -s ${CMAKE_CURRENT_SOURCE_DIR}/validate/validate_demo_matrix_basic_operations_armadillo.dat ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)
+  COMMAND sdiff -s ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_matrix_basic_operations_armadillo} ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)
 

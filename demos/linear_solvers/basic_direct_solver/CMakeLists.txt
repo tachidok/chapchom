@@ -34,5 +34,10 @@ ADD_TEST(NAME TEST_demo_linear_solver_run
 #WORKING_DIRECTORY TESTS
 #ADD_TEST(NAME TEST_demo_linear_solver_check_output
 #         COMMAND ${CMAKE_COMMAND} -E compare_files output_correct.dat output_test.dat)
+IF (CHAPCHOM_USES_DOUBLE_PRECISION)
+   SET (VALIDATE_FILENAME_demo_linear_solver "validate_double_demo_linear_solver.dat")
+ELSE (CHAPCHOM_USES_DOUBLE_PRECISION)
+     SET (VALIDATE_FILENAME_demo_linear_solver "validate_demo_linear_solver.dat")
+ENDIF (CHAPCHOM_USES_DOUBLE_PRECISION)
 ADD_TEST(NAME TEST_demo_linear_solver_check_output
-         COMMAND sdiff -s ${CMAKE_CURRENT_SOURCE_DIR}/validate/validate_demo_linear_solver.dat ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)
+         COMMAND sdiff -s ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_linear_solver} ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)

@@ -32,5 +32,10 @@ set_target_properties(demo_basic_interpolation
 ADD_TEST(NAME TEST_demo_basic_interpolation_run
           COMMAND demo_basic_interpolation)
 # Validate output
+IF (CHAPCHOM_USES_DOUBLE_PRECISION)
+   SET (VALIDATE_FILENAME_demo_basic_interpolation "validate_double_demo_basic_interpolation.dat")
+ELSE (CHAPCHOM_USES_DOUBLE_PRECISION)
+     SET (VALIDATE_FILENAME_demo_basic_interpolation "validate_demo_basic_interpolation.dat")
+ENDIF (CHAPCHOM_USES_DOUBLE_PRECISION)
 ADD_TEST(NAME TEST_demo_basic_interpolation_check_output
-         COMMAND sdiff -s ${CMAKE_CURRENT_SOURCE_DIR}/validate/validate_demo_basic_interpolation.dat ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)
+         COMMAND sdiff -s ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_basic_interpolation} ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)

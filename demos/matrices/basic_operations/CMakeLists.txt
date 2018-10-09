@@ -41,11 +41,21 @@ set_target_properties( demo_copy_matrices
 ADD_TEST(NAME TEST_demo_matrix_basic_operations_run
          COMMAND demo_matrix_basic_operations)
 # Validate output
+IF (CHAPCHOM_USES_DOUBLE_PRECISION)
+   SET (VALIDATE_FILENAME_demo_matrix_basic_operations "validate_double_demo_matrix_basic_operations.dat")
+ELSE (CHAPCHOM_USES_DOUBLE_PRECISION)
+   SET (VALIDATE_FILENAME_demo_matrix_basic_operations "validate_demo_matrix_basic_operations.dat")
+ENDIF (CHAPCHOM_USES_DOUBLE_PRECISION)
 ADD_TEST(NAME TEST_demo_matrix_basic_operations_check_output
-         COMMAND sdiff -s ${CMAKE_CURRENT_SOURCE_DIR}/validate/validate_demo_matrix_basic_operations.dat ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)
+         COMMAND sdiff -s ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_matrix_basic_operations} ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)
 # Run the application to check it works
 ADD_TEST(NAME TEST_demo_copy_matrices_run
          COMMAND demo_copy_matrices)
 # Validate output
+IF (CHAPCHOM_USES_DOUBLE_PRECISION)
+   SET (VALIDATE_FILENAME_demo_copy_matrices "validate_double_demo_copy_matrices.dat")
+ELSE (CHAPCHOM_USES_DOUBLE_PRECISION)
+   SET (VALIDATE_FILENAME_demo_copy_matrices "validate_demo_copy_matrices.dat")
+ENDIF (CHAPCHOM_USES_DOUBLE_PRECISION)
 ADD_TEST(NAME TEST_demo_copy_matrices_check_output
-         COMMAND sdiff -s ${CMAKE_CURRENT_SOURCE_DIR}/validate/validate_demo_copy_matrices.dat ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)
+         COMMAND sdiff -s ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_copy_matrices} ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)
