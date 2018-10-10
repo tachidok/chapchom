@@ -240,7 +240,7 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "The history values column number you asked for is out of range\n"
                   << "Requested column: " << n_column_history_values + 1
-                  << "Number of history values: " << N_history_values
+                  << "Number of columns for history values: " << N_history_values
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
@@ -262,7 +262,41 @@ namespace chapchom
  template<class T>
  const T CCData<T>::value(const unsigned &i, const unsigned t) const
  {
-  // TODO: Julio - Implement range check access
+#ifdef CHAPCHOM_RANGE_CHECK
+  if (is_empty())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The values vector or the status vector are empty\n" << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  if (i > N_values)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The entry you are trying to access is out of range\n"
+                  << "Number of values: " << N_values << std::endl
+                  << "Requested entry: " << i << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                            CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  if ((t + 1) > N_history_values)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The history value you are trying to access is out of range\n"
+                  << "Number of history values: " << N_history_values << std::endl
+                  << "Requested entry: " << t + 1 << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+#endif // #ifdef CHAPCHOM_RANGE_CHECK
   return Values_pt[i*N_history_values+t];
  }
  
@@ -272,7 +306,41 @@ namespace chapchom
  template<class T>
  T &CCData<T>::value(const unsigned &i, const unsigned t)
  {
-  // TODO: Julio - Implement range check access
+#ifdef CHAPCHOM_RANGE_CHECK
+  if (is_empty())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The values vector or the status vector are empty\n" << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  if (i > N_values)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The entry you are trying to access is out of range\n"
+                  << "Number of values: " << N_values << std::endl
+                  << "Requested entry: " << i << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  if ((t + 1) > N_history_values)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The history value you are trying to access is out of range\n"
+                  << "Number of history values: " << N_history_values << std::endl
+                  << "Requested entry: " << t + 1 << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+#endif // #ifdef CHAPCHOM_RANGE_CHECK
   return Values_pt[i*N_history_values+t];
  }
  
@@ -282,43 +350,29 @@ namespace chapchom
  template<class T>
  void CCData<T>::output(bool output_indexes) const
  {
-  if (Is_values_empty)
+  // Check whether we should output the indexes
+  if (output_indexes)
    {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "The Values_pt vector is empty" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
+    for (unsigned i = 0; i < N_values; i++)
+     {
+      for (unsigned j = 0; j < N_history_values; j++)
+       {
+        std::cout << "(" << i << ", " << j << "): "
+                  << value(i,j) << std::endl; 
+       } // for (j < N_history_values)
+     } // for (i < N_values)
+   } // if (output_indexes)
   else
    {
-    // Check whether we should output the indexes
-    if (output_indexes)
+    for (unsigned i = 0; i < N_values; i++)
      {
-      for (unsigned i = 0; i < N_values; i++)
+      for (unsigned j = 0; j < N_history_values; j++)
        {
-        for (unsigned j = 0; j < N_history_values; j++)
-         {
-          std::cout << "(" << i << ", " << j << "): "
-                    << Values_pt[i*N_history_values+j]
-                    << std::endl; 
-         } // for (j < N_history_values)
-       } // for (i < N_values)
-     } // if (output_indexes)
-    else
-     {
-      for (unsigned i = 0; i < N_values; i++)
-       {
-        for (unsigned j = 0; j < N_history_values; j++)
-         {
-          std::cout << Values_pt[i*N_history_values+j] << " ";
-         } // for (j < N_history_values)
-        std::cout << std::endl;
-       } // for (i < N_values)
-     } // else if (output_indexes)
-    
-   }
+        std::cout << value(i,j) << " ";
+       } // for (j < N_history_values)
+      std::cout << std::endl;
+     } // for (i < N_values)
+   } // else if (output_indexes)
   
  }
  
@@ -329,43 +383,29 @@ namespace chapchom
  void CCData<T>::output(std::ofstream &outfile,
                           bool output_indexes) const
  {
-  if (Is_values_empty)
+  // Check whether we should output the indexes
+  if (output_indexes)
    {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "The Values_pt vector is empty" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
+    for (unsigned i = 0; i < N_values; i++)
+     {
+      for (unsigned j = 0; j < N_history_values; j++)
+       {
+        outfile << "(" << i << ", " << j << "): "
+                << value(i,j) << std::endl; 
+       } // for (j < N_history_values)
+     } // for (i < N_values)
+   } // if (output_indexes)
   else
    {
-    // Check whether we should output the indexes
-    if (output_indexes)
+    for (unsigned i = 0; i < N_values; i++)
      {
-      for (unsigned i = 0; i < N_values; i++)
+      for (unsigned j = 0; j < N_history_values; j++)
        {
-        for (unsigned j = 0; j < N_history_values; j++)
-         {
-          outfile << "(" << i << ", " << j << "): "
-                  << Values_pt[i*N_history_values+j]
-                  << std::endl; 
-         } // for (j < N_history_values)
-       } // for (i < N_values)
-     } // if (output_indexes)
-    else
-     {
-      for (unsigned i = 0; i < N_values; i++)
-       {
-        for (unsigned j = 0; j < N_history_values; j++)
-         {
-          outfile << Values_pt[i*N_history_values+j] << " ";
-         } // for (j < N_history_values)
-        outfile << std::endl;
-       } // for (i < N_values)
-     } // else if (output_indexes)
-    
-   }
+        outfile << value(i,j) << " ";
+       } // for (j < N_history_values)
+      outfile << std::endl;
+     } // for (i < N_values)
+   } // else if (output_indexes)
   
  }
  

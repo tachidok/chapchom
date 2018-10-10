@@ -156,7 +156,8 @@ namespace chapchom
   
   // The number of values
   const unsigned N_values;
-  
+
+  // The number of history values
   const unsigned N_history_values;
   
   // Store the values of the i-th data at th t-th history

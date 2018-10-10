@@ -607,6 +607,42 @@ namespace chapchom
  template<class T>
  const T CCMatrixArmadillo<T>::value(const unsigned long i, const unsigned long j) const
  {
+#ifdef CHAPCHOM_RANGE_CHECK
+  if (!(this->is_own_memory_allocated()))
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The matrix has no memory allocated"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  if (i > this->n_rows())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The row you are trying to access is out of range\n"
+                  << "Number of rows: " << this->n_rows() << std::endl
+                  << "Requested row: " << i << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  if (j > this->n_columns())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The column you are trying to access is out of range\n"
+                  << "Number of columns: " << this->n_columns() << std::endl
+                  << "Requested column: " << j << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+#endif // #ifdef CHAPCHOM_RANGE_CHECK
   // Return the value at row i and column j
   return (*Arma_matrix_pt)(i, j);
  }
@@ -617,6 +653,42 @@ namespace chapchom
  template<class T>
  T &CCMatrixArmadillo<T>::value(const unsigned long i, const unsigned long j)
  {
+#ifdef CHAPCHOM_RANGE_CHECK
+  if (!(this->is_own_memory_allocated()))
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The matrix has no memory allocated"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  if (i > this->n_rows())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The row you are trying to access is out of range\n"
+                  << "Number of rows: " << this->n_rows() << std::endl
+                  << "Requested row: " << i << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  if (j > this->n_columns())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The column you are trying to access is out of range\n"
+                  << "Number of columns: " << this->n_columns() << std::endl
+                  << "Requested column: " << j << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+#endif // #ifdef CHAPCHOM_RANGE_CHECK
   // Return the value at row i and column j
   return (*Arma_matrix_pt)(i, j);
  }
@@ -824,17 +896,17 @@ namespace chapchom
         for (unsigned long j = 0; j < this->NColumns; j++)
          {
           std::cout << "(" << i << ", " << j << "): "
-                    << (*Arma_matrix_pt)(i, j) << std::endl; 
+                    << value(i,j) << std::endl; 
          } // for (j < this->NColumns)
        } // for (i < this->NRows)
      } // if (output_indexes)
-    else
+   else
      {
       Arma_matrix_pt->print();
      } // else if (output_indexes)
-    
+   
    }
-  
+ 
  }
 
  // ===================================================================
@@ -863,7 +935,7 @@ namespace chapchom
         for (unsigned long j = 0; j < this->NColumns; j++)
          {
           outfile << "(" << i << ", " << j << "): "
-                  << (*Arma_matrix_pt)(i, j) << std::endl; 
+                  << value(i,j) << std::endl; 
          } // for (j < this->NColumns)
        } // for (i < this->NRows)
      } // if (output_indexes)
@@ -871,9 +943,8 @@ namespace chapchom
      {
       Arma_matrix_pt->print(outfile);
      } // else if (output_indexes)
-    
-   }
-  
+  }
+      
  }
  
  // ===================================================================

@@ -578,7 +578,30 @@ namespace chapchom
  template<class T>
  const T CCVector<T>::value(const unsigned long i) const
  {
-  // TODO: Julio - Implement range check access
+#ifdef CHAPCHOM_RANGE_CHECK
+  if (!(this->is_own_memory_allocated()))
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The vector has no memory allocated"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  if (i > this->n_values())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The entry you are trying to access is out of range\n"
+                  << "Number of values: " << this->n_values() << std::endl
+                  << "Requested entry: " << i << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   } 
+#endif // #ifdef CHAPCHOM_RANGE_CHECK
   // Return the value at position i
   return Vector_pt[i];
  }
@@ -589,7 +612,30 @@ namespace chapchom
  template<class T>
  T &CCVector<T>::value(const unsigned long i)
  {
-  // TODO: Julio - Implement range check access
+#ifdef CHAPCHOM_RANGE_CHECK
+  if (!(this->is_own_memory_allocated()))
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The vector has no memory allocated"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  if (i > this->n_values())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The entry you are trying to access is out of range\n"
+                  << "Number of values: " << this->n_values() << std::endl
+                  << "Requested entry: " << i << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   } 
+#endif // #ifdef CHAPCHOM_RANGE_CHECK
   // Return the value at row i and column j
   return Vector_pt[i];
  }
@@ -616,7 +662,7 @@ namespace chapchom
      {
       for (unsigned long i = 0; i < this->NValues; i++)
        {
-        std::cout << "(" << i << "): " << Vector_pt[i]
+        std::cout << "(" << i << "): " << value(i)
                   << std::endl; 
        } // for (i < this->NValues)
      } // if (output_indexes)
@@ -624,11 +670,10 @@ namespace chapchom
      {
       for (unsigned long i = 0; i < this->NValues; i++)
        {
-        std::cout << Vector_pt[i] << " ";
+        std::cout << value(i) << " ";
        } // for (i < this->NValues)
       std::cout << std::endl;
      } // else if (output_indexes)
-    
    }
   
  }
@@ -655,7 +700,7 @@ namespace chapchom
      {
       for (unsigned long i = 0; i < this->NValues; i++)
        {
-        outfile << "(" << i << "): " << Vector_pt[i]
+        outfile << "(" << i << "): " << value(i)
                 << std::endl; 
        } // for (i < this->NValues)
      } // if (output_indexes)
@@ -663,11 +708,10 @@ namespace chapchom
      {
       for (unsigned long i = 0; i < this->NValues; i++)
        {
-        outfile << Vector_pt[i] << " ";
+        outfile << value(i) << " ";
        } // for (i < this->NValues)
       outfile << std::endl;
      } // else if (output_indexes)
-    
    }
   
  }

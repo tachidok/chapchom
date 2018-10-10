@@ -534,7 +534,7 @@ namespace chapchom
    {
     for (unsigned j = 0; j < n_columns; j++)
      {    
-      transposed_matrix_pt[j*n_rows+i] = Matrix_pt[i*n_columns+j];
+      transposed_matrix_pt[j*n_rows+i] = value(i,j);
      }
    }
   
@@ -553,7 +553,7 @@ namespace chapchom
  void CCMatrix<T>::transpose()
  {
   // Check that THIS matrix has memory allocated
-  if (!this->Is_own_memory_allocated)
+  if (!(this->is_own_memory_allocated()))
    {
     // Error message
     std::ostringstream error_message;
@@ -575,7 +575,42 @@ namespace chapchom
  template<class T>
  const T CCMatrix<T>::value(const unsigned long i, const unsigned long j) const
  {
-  // TODO: Julio - Implement range check access
+#ifdef CHAPCHOM_RANGE_CHECK
+  if (!(this->is_own_memory_allocated()))
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The matrix has no memory allocated"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  if (i > this->n_rows())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The row you are trying to access is out of range\n"
+                  << "Number of rows: " << this->n_rows() << std::endl
+                  << "Requested row: " << i << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  if (j > this->n_columns())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The column you are trying to access is out of range\n"
+                  << "Number of columns: " << this->n_columns() << std::endl
+                  << "Requested column: " << j << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+#endif // #ifdef CHAPCHOM_RANGE_CHECK
   // Return the value at row i and column j
   return Matrix_pt[i*this->NColumns+j];
  }
@@ -586,7 +621,42 @@ namespace chapchom
  template<class T>
  T &CCMatrix<T>::value(const unsigned long i, const unsigned long j)
  {
-  // TODO: Julio - Implement range check access
+#ifdef CHAPCHOM_RANGE_CHECK
+  if (!(this->is_own_memory_allocated()))
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The matrix has no memory allocated"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  if (i > this->n_rows())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The row you are trying to access is out of range\n"
+                  << "Number of rows: " << this->n_rows() << std::endl
+                  << "Requested row: " << i << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  if (j > this->n_columns())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The column you are trying to access is out of range\n"
+                  << "Number of columns: " << this->n_columns() << std::endl
+                  << "Requested column: " << j << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+#endif // #ifdef CHAPCHOM_RANGE_CHECK
   // Return the value at row i and column j
   return Matrix_pt[i*this->NColumns+j];
  }
@@ -794,7 +864,7 @@ namespace chapchom
         for (unsigned long j = 0; j < this->NColumns; j++)
          {
           std::cout << "(" << i << ", " << j << "): "
-                    << Matrix_pt[i*this->NColumns+j]
+                    << value(i,j)
                     << std::endl; 
          } // for (j < this->NColumns)
        } // for (i < this->NRows)
@@ -805,7 +875,7 @@ namespace chapchom
        {
         for (unsigned long j = 0; j < this->NColumns; j++)
          {
-          std::cout << Matrix_pt[i*this->NColumns+j] << " ";
+          std::cout << value(i,j) << " ";
          } // for (j < this->NColumns)
         std::cout << std::endl;
        } // for (i < this->NRows)
@@ -841,7 +911,7 @@ namespace chapchom
         for (unsigned long j = 0; j < this->NColumns; j++)
          {
           outfile << "(" << i << ", " << j << "): "
-                  << Matrix_pt[i*this->NColumns+j]
+                  << value(i,j)
                   << std::endl; 
          } // for (j < this->NColumns)
        } // for (i < this->NRows)
@@ -852,12 +922,12 @@ namespace chapchom
        {
         for (unsigned long j = 0; j < this->NColumns; j++)
          {
-          outfile << Matrix_pt[i*this->NColumns+j] << " ";
+          outfile << value(i,j) << " ";
          } // for (j < this->NColumns)
         outfile << std::endl;
        } // for (i < this->NRows)
      } // else if (output_indexes)
-    
+
    }
   
  }
