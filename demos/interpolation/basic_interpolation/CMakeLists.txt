@@ -37,5 +37,7 @@ IF (CHAPCHOM_USES_DOUBLE_PRECISION)
 ELSE (CHAPCHOM_USES_DOUBLE_PRECISION)
      SET (VALIDATE_FILENAME_demo_basic_interpolation "validate_demo_basic_interpolation.dat")
 ENDIF (CHAPCHOM_USES_DOUBLE_PRECISION)
+#ADD_TEST(NAME TEST_demo_basic_interpolation_check_output
+#         COMMAND sdiff -s ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_basic_interpolation} ${#CMAKE_CURRENT_BINARY_DIR}/output_test.dat)
 ADD_TEST(NAME TEST_demo_basic_interpolation_check_output
-         COMMAND sdiff -s ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_basic_interpolation} ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)
+         COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_basic_interpolation} ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)

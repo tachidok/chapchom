@@ -38,5 +38,5 @@ ELSE (CHAPCHOM_USES_DOUBLE_PRECISION)
      SET (VALIDATE_FILENAME_demo_matrix_basic_operations_armadillo "validate_demo_matrix_basic_operations_armadillo.dat")
 ENDIF (CHAPCHOM_USES_DOUBLE_PRECISION)
 ADD_TEST(NAME TEST_demo_matrix_basic_operations_armadillo_check_output
-  COMMAND sdiff -s ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_matrix_basic_operations_armadillo} ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)
+  COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_matrix_basic_operations_armadillo} ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)
 
