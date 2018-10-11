@@ -41,64 +41,25 @@ public:
  CCLotkaVolterraProblem(ACODEs *odes_pt, ACTimeStepper *time_stepper_pt)
   : ACIVPForODEs(odes_pt, time_stepper_pt)
  {
-  
+  // Name the outputfile and open it
+  std::ostringstream output_filename;
+  output_filename << "./RESLT/soln0.dat";
+  output_filename.precision(8);
+  Output_file.open((output_filename.str()).c_str());
  }
  
  /// Destructor
  ~CCLotkaVolterraProblem()
  {
-  
+  Output_file.close();
  }
  
  // Set initial conditions
  void set_initial_conditions()
  {
-  // Initial conditions for 1st body
-  u(0,0) = 0.0; // x-position
-  u(1,0) = 0.0; // x-velocity
-  u(2,0) = 0.0; // y-position
-  u(3,0) = 0.0; // y-velocity
-  u(4,0) = 0.0; // z-position
-  u(5,0) = 0.0; // z-velocity
-  // Initial conditions for 2nd body
-  u(6,0) = 0.0; // x-position
-  u(7,0) = -5.0; // x-velocity
-  u(8,0) = 5.2; // y-position
-  u(9,0) = -2.5; // y-velocity
-  u(10,0) = 0.0; // z-position
-  u(11,0) = 0.0; // z-velocity
-#if 0
-  // Initial conditions for 3rd body
-  u(12,0) = -4.503; // x-position
-  u(13,0) = -1.38; // x-velocity
-  u(14,0) = 2.6; // y-position
-  u(15,0) = -2.39; // y-velocity
-  u(16,0) = 0.0; // z-position
-  u(17,0) = 0.0; // z-velocity
-  // Initial conditions for 4th body
-  u(18,0) = 4.503; // x-position
-  u(19,0) = -1.38; // x-velocity
-  u(20,0) = 2.6; // y-position
-  u(21,0) = 2.39; // y-velocity
-  u(22,0) = 0.0; // z-position
-  u(23,0) = 0.0; // z-velocity
-#endif // #if 0
-#if 1
-  // Initial conditions for 3rd body
-  u(12,0) = -0.5; // x-position
-  u(13,0) = -2.5; // x-velocity
-  u(14,0) = 5.0; // y-position
-  u(15,0) = -1.25; // y-velocity
-  u(16,0) = 0.0; // z-position
-  u(17,0) = 0.0; // z-velocity
-  // Initial conditions for 4th body
-  u(18,0) = 0.5; // x-position
-  u(19,0) = -2.5; // x-velocity
-  u(20,0) = 5.4; // y-position
-  u(21,0) = 1.25; // y-velocity
-  u(22,0) = 0.0; // z-position
-  u(23,0) = 0.0; // z-velocity 
-#endif // #if 1
+  // Initial conditions
+  u(0) = 2.0; // Initial number of prey
+  u(1) = 1.0; // Initial number of predators
   
   // Document initial state
   complete_problem_setup();
@@ -112,22 +73,24 @@ public:
  // the initial problem configuration)
  void complete_problem_setup()
  {
-  std::ostringstream output_filename;
-  output_filename << "./RESLT/soln" << "_" << std::setfill('0') << std::setw(5) << Output_file_index++;
-  output_particles(Time, (*U_pt), output_filename);
+  // Initial problem configuration
+  Output_file << Time << "\t" << u(0) << "\t" << u(1) << std::endl;
  }
  
  // Document the solution
- void document_solution(std::ostringstream &output_filename)
+ void document_solution(std::ostringstream &output_filename) { }
+ 
+ // Document the solution
+ void document_solution()
  {
-  output_particles(Time, (*U_pt), output_filename);
-  
-  // Output
-  std::cout.precision(8);
-  std::cout << "t: " << Time
-            << "\t" << U_pt->value(0) << "\t" << U_pt->value(6) << "\t" << U_pt->value(12) << "\t" << U_pt->value(18) << std::endl;
-  
+  // Initial problem configuration
+  Output_file << Time << "\t" << u(0) << "\t" << u(1) << std::endl;
  }
+ 
+protected:
+
+ // The output file
+ std::ofstream Output_file;
  
 }; // class CCLotkaVolterraProblem
 
@@ -144,9 +107,7 @@ int main(int argc, char *argv[])
  // -----------------------------------------------------------------
  // Instantiation of the problem
  // -----------------------------------------------------------------
- CCLotkaVolterraProblem odes(4);
- 
- odes.set_odes_parameters();
+ CCLotkaVolterraODEs odes(1.2, 0.6, 0.8, 0.3);
  
  // ----------------------------------------------------------------
  // Time stepper
@@ -156,31 +117,33 @@ int main(int argc, char *argv[])
  //CCFactoryTimeStepper<CCMatrix<Real>, CCVector<Real> > factory_time_stepper;
  // Create an instance of the integration method
  //ACTimeStepper *time_stepper_pt =
- //  factory_time_stepper.create_time_stepper("Euler");
+ // factory_time_stepper.create_time_stepper("Euler");
  //ACTimeStepper *time_stepper_pt =
- //  factory_time_stepper.create_time_stepper("RK4"); 
+ // factory_time_stepper.create_time_stepper("RK4");
  ACTimeStepper *time_stepper_pt =
   factory_time_stepper.create_time_stepper("BDF1");
  
  // Create an instance of the problem
- CCNBodyProblem n_body_problem(&odes, time_stepper_pt);
+ CCLotkaVolterraProblem lotka_volterra_problem(&odes, time_stepper_pt);
  
  // Prepare time integration data
- const Real initial_time = 0.0; // years
- const Real final_time = 10.0; // years
- const unsigned n_time_steps = 1000;
+ const Real initial_time = 0.0;
+ const Real final_time = 40.0;
+ //const unsigned n_time_steps = 1000;
+ //const Real time_step = 0.0625;
+ const Real time_step = 1.0;
  
  // ----------------------------------------------------------------
  // Configure problem
  // ----------------------------------------------------------------
  // Initial time
- n_body_problem.time() = initial_time;
+ lotka_volterra_problem.time() = initial_time;
  
  // Initial time step
- n_body_problem.time_step() = (final_time - initial_time) / n_time_steps; // years
+ lotka_volterra_problem.time_step() = time_step;
  
  // Set initial conditions
- n_body_problem.set_initial_conditions();
+ lotka_volterra_problem.set_initial_conditions();
  
  // Flag to indicate whether to continue processing
  bool LOOP = true;
@@ -189,23 +152,18 @@ int main(int argc, char *argv[])
  while(LOOP)
   {
    // Performs an unsteady solve
-   n_body_problem.unsteady_solve();
+   lotka_volterra_problem.unsteady_solve();
    
    // Update time of the problem
-   n_body_problem.time()+=n_body_problem.time_step();
+   lotka_volterra_problem.time()+=lotka_volterra_problem.time_step();
    
    // Check whether we have reached the final time
-   if (n_body_problem.time() >= final_time)
+   if (lotka_volterra_problem.time() >= final_time)
     {
      LOOP = false;
     }
    
-   // Output to file
-   std::ostringstream output_filename;
-   output_filename
-    << "./RESLT/soln" << "_" << std::setfill('0') << std::setw(5) << n_body_problem.output_file_index()++;
-   
-   n_body_problem.document_solution(output_filename);
+   lotka_volterra_problem.document_solution();
    
   } // while(LOOP)
  

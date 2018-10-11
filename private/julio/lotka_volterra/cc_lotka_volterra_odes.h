@@ -18,7 +18,7 @@ namespace chapchom
  /// This class implements the simplest version of the Lotka-Volterra
  /// equations
  ///
- /// \frac{du_{1}}{dt} = a*u_{1} - b*u_{1}*u_{2}\\
+ /// \frac{du_{1}}{dt} = a*u_{1} - b*u_{1}*u_{2}
  /// \frac{du_{2}}{dt} = -c*u_{2} + d*u_{1}*u_{2}
  class CCLotkaVolterraODEs : public virtual ACODEs
  {
@@ -40,10 +40,10 @@ namespace chapchom
   /// copiable). Check
   /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
  CCLotkaVolterraODEs(const CCLotkaVolterraODEs &copy)
-  : ACODEs(copy), N_bodies(0)
-   {
-    BrokenCopy::broken_copy("CCLotkaVolterraODEs");
-   }
+  : ACODEs(copy)
+  {
+   BrokenCopy::broken_copy("CCLotkaVolterraODEs");
+  }
   
   /// Assignment operator (we do not want this class to be
   /// copiable. Check

@@ -124,6 +124,10 @@ namespace chapchom
   
   // Call the copy constructor of Armadillo
   Arma_matrix_pt = new arma::Mat<T>(*(copy.arma_matrix_pt()));
+  
+  // Mark the matrix as having its own memory
+  this->Is_own_memory_allocated = true;
+  
  }
  
  // ===================================================================
