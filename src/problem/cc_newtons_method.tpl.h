@@ -50,16 +50,30 @@ namespace chapchom
    void set_linear_solver(ACLinearSolver<MAT_TYPE, VEC_TYPE> *linear_solver_pt);
    
    // Gets access to the Jacobian and residual computation strategy
-   const ACJacobianAndResidual<MAT_TYPE,VEC_TYPE> *jacobian_and_residual_strategy_pt();
+   ACJacobianAndResidual<MAT_TYPE,VEC_TYPE> *jacobian_and_residual_strategy_pt();
    
    // Gets access to the linear solver
-   const ACLinearSolver<MAT_TYPE, VEC_TYPE> *linear_solver_pt();
+   ACLinearSolver<MAT_TYPE, VEC_TYPE> *linear_solver_pt();
+   
+   // Gets access to the last stored solution vector
+   const VEC_TYPE *x_pt();
+   
+   // Set the initial guess. You should override this method if you
+   // require to copy the initial guess to some other data structures
+   virtual void set_initial_guess(VEC_TYPE &x);
    
    // Applies Newton's method to solve the problem given by the
    // Jacobian and the residual computed by the estalished strategy.
-   // The initial guess is set in the dx vector where the final
-   // solution (if any) is returned
-   void solve(VEC_TYPE &dx);
+   // The initial guess is already set by previously calling the
+   // function set_initial_guess(). The final solution (if any) is
+   // stored in the X_pt vector
+   void solve();
+   
+   // Applies Newton's method to solve the problem given by the
+   // Jacobian and the residual computed by the estalished strategy.
+   // The initial guess is set in the input/ouptut x vector where the
+   // final solution (if any) is returned
+   void solve(VEC_TYPE &x);
    
    // Set Newton's solver tolerance
    void set_newton_solver_tolerance(const Real new_newton_solver_tolerance);
@@ -84,15 +98,6 @@ namespace chapchom
    // Newton's method step
    virtual void actions_after_newton_step() { }
    
-   // A pointer for the strategy to compute the Jacobian and the residual
-   ACJacobianAndResidual<MAT_TYPE,VEC_TYPE> *Jacobian_and_residual_strategy_pt;
-   
-   // A pointer to the linear solver
-   ACLinearSolver<MAT_TYPE, VEC_TYPE> *Linear_solver_pt;
-   
-   // A pointer to provide access to the solution vector during newton steps
-   VEC_TYPE *Dx_pt;
-   
    // Newton's solver tolerance
    Real Newton_solver_tolerance;
    
@@ -101,6 +106,9 @@ namespace chapchom
    
    // Maximum allowed residual
    Real Maximum_allowed_residual;
+   
+   // Flag to indicate whether the initial guess has been set or not
+   bool Initial_guess_has_been_set;
    
    // Flag to indicate whether the Jacobian and residual computation
    // strategy has been set
@@ -116,9 +124,9 @@ namespace chapchom
    
    // Copy constructor (we do not want this class to be copiable because
    // it contains dynamically allocated variables, A in this
-   // case). Check
-   // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
-   CCNewtonsMethod(const CCNewtonsMethod<MAT_TYPE, VEC_TYPE> &copy)
+    // case). Check
+    // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
+    CCNewtonsMethod(const CCNewtonsMethod<MAT_TYPE, VEC_TYPE> &copy)
     {
      BrokenCopy::broken_copy("CCNewtonsMethod");
     }
@@ -131,6 +139,21 @@ namespace chapchom
     {
      BrokenCopy::broken_assign("CCNewtonsMethod");
     }
+
+   // -----------------------------------------------------------------
+   // There varibles are here to enforce use of access routines by
+   // derived classes
+   // -----------------------------------------------------------------
+   
+   // A pointer for the strategy to compute the Jacobian and the residual
+   ACJacobianAndResidual<MAT_TYPE,VEC_TYPE> *Jacobian_and_residual_strategy_pt;
+   
+   // A pointer to the linear solver
+   ACLinearSolver<MAT_TYPE, VEC_TYPE> *Linear_solver_pt;
+   
+   // A pointer to provide access to the current solution during
+   // newton steps
+   VEC_TYPE *X_pt;
    
   };
  

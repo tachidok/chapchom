@@ -7,14 +7,15 @@ namespace chapchom
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE>::CCJacobianAndResidualForBackwardEuler()
-  : ODEs_pt(NULL),
-    ODEs_has_been_set(false), 
-    U_pt(NULL),
-    U_has_been_set(false),
-    U_next_pt(NULL),
-    U_next_has_been_set(false),
-    Current_time_has_been_set(false),
-    Time_step_has_been_set(false)
+  : ACJacobianAndResidual<MAT_TYPE, VEC_TYPE>(),
+  ODEs_pt(NULL),
+  ODEs_has_been_set(false), 
+  U_pt(NULL),
+  U_has_been_set(false),
+  U_next_pt(NULL),
+  U_next_has_been_set(false),
+  Current_time_has_been_set(false),
+  Time_step_has_been_set(false)
  {
   
  }

@@ -104,10 +104,10 @@ namespace chapchom
   u_guess.extract_history_values(extracted_column_initial_guess_pt);
   
   // Create a vector with the initial guess
-  VEC_TYPE du(extracted_column_initial_guess_pt, n_odes);
+  VEC_TYPE u_0(extracted_column_initial_guess_pt, n_odes);
   
-  // Set Newton's U iterate u_{t+1}
-  Newtons_method.solve(du);
+  // Solver using Newton's method
+  Newtons_method.solve(u_0);
   
   // Index for history values
   const unsigned k = 0;
@@ -115,7 +115,7 @@ namespace chapchom
   // Copy solution into output vector
   for (unsigned i = 0; i < n_odes; i++)
    {
-    u(i,k+1) = u(i,k) + du(i);
+    u(i,k+1) = u_0(i);
    }
   
   delete [] extracted_column_initial_guess_pt;

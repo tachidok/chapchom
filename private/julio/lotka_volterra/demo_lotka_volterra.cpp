@@ -130,8 +130,8 @@ int main(int argc, char *argv[])
  const Real initial_time = 0.0;
  const Real final_time = 40.0;
  //const unsigned n_time_steps = 1000;
- //const Real time_step = 0.0625;
- const Real time_step = 1.0;
+ const Real time_step = 0.0625;
+ //const Real time_step = 1.0;
  
  // ----------------------------------------------------------------
  // Configure problem

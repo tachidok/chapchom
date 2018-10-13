@@ -17,7 +17,8 @@ namespace chapchom
   U_pt(NULL),
   U_has_been_set(false),
   Current_time_has_been_set(false),
-  Time_step_has_been_set(false)
+  Time_step_has_been_set(false),
+  U_next_pt(NULL)
  { }
  
  // ===================================================================
@@ -26,6 +27,30 @@ namespace chapchom
  template<class MAT_TYPE, class VEC_TYPE>
  CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::~CCNewtonsMethodForBackwardEuler()
  {
+  delete U_next_pt;
+  U_next_pt = 0;
+ }
+ 
+ // ===================================================================
+ // Set the initial guess, we copy the initial guess to the 'U_next'
+ // structure, we could do this as well in the
+ // actions_before_initial_convergence_check() method
+ // ===================================================================
+ template<class MAT_TYPE, class VEC_TYPE>
+ void CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::
+ set_initial_guess(VEC_TYPE &x)
+ {
+  // Create U next
+  U_next_pt = new CCData<Real>(x.n_values());
+  // Set values for U next
+  const unsigned long n_data = U_next_pt->n_values();
+  for (unsigned long i = 0; i < n_data; i++)
+   {
+    U_next_pt->value(i)=x(i);
+   }
+  
+  // Call parent class method
+  CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::set_initial_guess(x);
   
  }
  
@@ -61,10 +86,9 @@ namespace chapchom
   const unsigned long n_data = U_next_pt->n_values();
   for (unsigned long i = 0; i < n_data; i++)
    {
-    U_next_pt->value(i)+=this->Dx_pt->value(i);
+    U_next_pt->value(i)=this->x_pt()->value(i);
+    printf("U_next_pt: %f\n", U_next_pt->value(i));
    }
-  
-  jacobian_and_residual_for_backward_euler_pt()->set_U_next(U_next_pt);
   
  }
  
@@ -76,7 +100,7 @@ namespace chapchom
  CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE> *CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::jacobian_and_residual_for_backward_euler_pt()
  {
   CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE> *jacobian_and_residual_cast_pt = 
-   dynamic_cast<CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE>* >(this->Jacobian_and_residual_strategy_pt);
+   dynamic_cast<CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE>* >(this->jacobian_and_residual_strategy_pt());
   if (jacobian_and_residual_cast_pt!=0)
    {
     return jacobian_and_residual_cast_pt;
@@ -121,9 +145,6 @@ namespace chapchom
   
   // Indicate that the U vector has been set
   U_has_been_set = true;
-  
-  // Create U next
-  U_next_pt = new CCData<Real>((*U_pt));
   
  }
  

@@ -2,14 +2,10 @@
 #define CCBACKWARDEULERMETHOD_TPL_H
 
 #include "ac_time_stepper.h"
-#include "../matrices/cc_matrix.h"
 #include "../linear_solvers/ac_linear_solver.h"
 #include "../linear_solvers/cc_lu_solver_numerical_recipes.h"
 
 #ifdef CHAPCHOM_USES_ARMADILLO
-// Include Armadillo type matrices since the templates may include
-// Armadillo type matrices
-#include "../matrices/cc_matrix_armadillo.h"
 // Linear solver using ARMADILLO matrices
 #include "../linear_solvers/cc_solver_armadillo.h"
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO

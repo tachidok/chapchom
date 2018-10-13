@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
  deb.close();
  
  // Finalise chapcom
- finalise_chapchom(); 
+ finalise_chapchom();
  
  return 0;
  

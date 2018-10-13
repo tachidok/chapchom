@@ -29,6 +29,11 @@ namespace chapchom
   // Empty destructor
   ~CCNewtonsMethodForBackwardEuler();
   
+  // Set the initial guess, we copy the initial guess to the 'U_next'
+  // structure, we could do this as well in the
+  // actions_before_initial_convergence_check() method
+  void set_initial_guess(VEC_TYPE &x);
+  
   // Set the ODEs
   void set_ODEs(ACODEs *odes_pt);
    
