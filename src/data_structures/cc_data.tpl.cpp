@@ -134,11 +134,13 @@ namespace chapchom
   // Clean any possible previously allocated memory
   clean_up();
   
-  // Allocate memory for Values_pt vector
-  Values_pt = new T[N_values*N_history_values];
+  // Allocate memory for Values_pt vector. Values_pt[t*N_values+i],
+  // the values are stored by row, i.e. the whole values at t-th
+  // history is in row t
+  Values_pt = new T[N_history_values*N_values];
   
   // Copy the values (an element by element copy, uff!!)
-  std::memcpy(Values_pt, values_pt, N_values*N_history_values*sizeof(T));
+  std::memcpy(Values_pt, values_pt, N_history_values*N_values*sizeof(T));
   
   // Mark the Values_pt vector as having elements
   Is_values_empty = false;
@@ -213,47 +215,54 @@ namespace chapchom
  template<class T>
  void CCData<T>::shift_history_values(const unsigned n_shift_positions)
  {
-  const unsigned cache_n_values = n_values();
-  const unsigned cache_n_history_values = N_history_values-1;
-  // Loop over the number of values
-  for (unsigned i = 0; i < cache_n_values; i++)
-   {
-    // Loop over the history values
-    for (unsigned j = 0; j <= cache_n_history_values-n_shift_positions; j++)
-     {
-      value(i,j) = value(i,j+n_shift_positions);
-     }
-   }
- }
-
- // ===================================================================
- // Extract history values column
- // ===================================================================
- template<class T>
- void CCData<T>::extract_history_values(T *extracted_column_pt,
-                                        const unsigned n_column_history_values)
- {
-  // Verify that the requested column is within the data storage
-  if (n_column_history_values + 1 > N_history_values)
+#ifdef CHAPCHOM_RANGE_CHECK
+  if (n_shift_positions > N_history_values)
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "The history values column number you asked for is out of range\n"
-                  << "Requested column: " << n_column_history_values + 1
-                  << "Number of columns for history values: " << N_history_values
-                  << std::endl;
+    error_message << "The requested number of shift positions is greater\n"
+                  << "than the number of history values\n"
+                  << "Number of shift positions: " << n_shift_positions << std::endl
+                  << "Number of history values: " << N_history_values << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                            CHAPCHOM_EXCEPTION_LOCATION);
+   }
+#endif // #ifdef CHAPCHOM_RANGE_CHECK
+  
+  const unsigned upper_limit = (N_history_values-1) + n_shift_positions;
+  // Loop over the history values
+  for (unsigned i = 0; i < upper_limit; i++)
+   {
+    // Get the i-th row and the i-th row to shift with
+    T *i_row_pt = history_values_row_pt(i);
+    T *i_shift_row_pt = history_values_row_pt(i+n_shift_positions);
+    
+    std::memcpy(i_row_pt, i_shift_row_pt, N_values*sizeof(T));
+   }
+  
+ }
+
+ // ===================================================================
+ // Get a pointer to the t-th history values
+ // ===================================================================
+ template<class T>
+ T *CCData<T>::history_values_row_pt(const unsigned t)
+ {
+#ifdef CHAPCHOM_RANGE_CHECK
+  if (t + 1 > N_history_values)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The history values row you are trying to access is out of range\n"
+                  << "Number of history values: " << N_history_values << std::endl
+                  << "Requested entry: " << t + 1 << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
-  
-  const unsigned cache_n_values = n_values(); 
-  // Loop over the data and store them in the output vector
-  for (unsigned i = 0; i < cache_n_values; i++)
-   {
-    extracted_column_pt[i] = value(i, n_column_history_values);
-   }
-  
+#endif // #ifdef CHAPCHOM_RANGE_CHECK
+  return &(Values_pt[t*N_values]);
  }
  
  // ===================================================================
@@ -297,7 +306,7 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
 #endif // #ifdef CHAPCHOM_RANGE_CHECK
-  return Values_pt[i*N_history_values+t];
+  return Values_pt[t*N_values+i];
  }
  
  // ===================================================================
@@ -341,7 +350,7 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
 #endif // #ifdef CHAPCHOM_RANGE_CHECK
-  return Values_pt[i*N_history_values+t];
+  return Values_pt[t*N_values+i];
  }
  
  // ===================================================================
@@ -420,7 +429,7 @@ namespace chapchom
   clean_up();
   
   // Allocate memory for Values_pt
-  Values_pt = new T[N_values*N_history_values];
+  Values_pt = new T[N_history_values*N_values];
   // Allocate memory for Status_pt
   Status_pt = new Data_status[N_values];
   // Set status as undefined

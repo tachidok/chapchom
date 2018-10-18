@@ -16,9 +16,10 @@ namespace chapchom
   ODEs_has_been_set(false),
   U_pt(NULL),
   U_has_been_set(false),
+  U_new_pt(NULL),
+  U_new_has_been_set(false),
   Current_time_has_been_set(false),
-  Time_step_has_been_set(false),
-  U_next_pt(NULL)
+  Time_step_has_been_set(false)
  { }
  
  // ===================================================================
@@ -27,30 +28,6 @@ namespace chapchom
  template<class MAT_TYPE, class VEC_TYPE>
  CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::~CCNewtonsMethodForBackwardEuler()
  {
-  delete U_next_pt;
-  U_next_pt = 0;
- }
- 
- // ===================================================================
- // Set the initial guess, we copy the initial guess to the 'U_next'
- // structure, we could do this as well in the
- // actions_before_initial_convergence_check() method
- // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::
- set_initial_guess(VEC_TYPE &x)
- {
-  // Create U next
-  U_next_pt = new CCData<Real>(x.n_values());
-  // Set values for U next
-  const unsigned long n_data = U_next_pt->n_values();
-  for (unsigned long i = 0; i < n_data; i++)
-   {
-    U_next_pt->value(i)=x(i);
-   }
-  
-  // Call parent class method
-  CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::set_initial_guess(x);
   
  }
  
@@ -62,7 +39,7 @@ namespace chapchom
  {
   jacobian_and_residual_for_backward_euler_pt()->set_ODEs(ODEs_pt);
   jacobian_and_residual_for_backward_euler_pt()->set_U(U_pt);
-  jacobian_and_residual_for_backward_euler_pt()->set_U_next(U_next_pt);
+  jacobian_and_residual_for_backward_euler_pt()->set_U_new(U_new_pt);
   jacobian_and_residual_for_backward_euler_pt()->set_current_time(Current_time);
   jacobian_and_residual_for_backward_euler_pt()->set_time_step(Time_step);
  }
@@ -83,11 +60,11 @@ namespace chapchom
  void CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::actions_after_newton_step()
  {
   // Update U next
-  const unsigned long n_data = U_next_pt->n_values();
+  const unsigned long n_data = U_new_pt->n_values();
   for (unsigned long i = 0; i < n_data; i++)
    {
-    U_next_pt->value(i)=this->x_pt()->value(i);
-    printf("U_next_pt: %f\n", U_next_pt->value(i));
+    U_new_pt->value(i)=this->x_pt()->value(i);
+    printf("U_new_pt: %f\n", U_new_pt->value(i));
    }
   
  }
@@ -145,6 +122,21 @@ namespace chapchom
   
   // Indicate that the U vector has been set
   U_has_been_set = true;
+  
+ }
+
+ // ===================================================================
+ // Set the U new vector/matrix storage for the new values of the
+ // function after Newton's iteration
+ // ===================================================================
+ template<class MAT_TYPE, class VEC_TYPE>
+ void CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_U_new(CCData<Real> *u_new_pt)
+ {
+  // Set the storage of the data
+  U_new_pt = u_new_pt;
+  
+  // Indicate that the U new vector has been set
+  U_new_has_been_set = true;
   
  }
  

@@ -73,8 +73,8 @@ namespace chapchom
   // Shift history values (mostly used for time integration)
   void shift_history_values(const unsigned n_shift_positions = 1);
   
-  // Extract history values column
-  void extract_history_values(T *extracted_column_pt, const unsigned n_column_history_values = 0);
+  // Get a pointer to the t-th history values
+  T *history_values_row_pt(const unsigned t = 0);
   
   // Get the specified value (read-only)
   const T value(const unsigned &i, const unsigned t=0) const;
@@ -161,7 +161,8 @@ namespace chapchom
   const unsigned N_history_values;
   
   // Store the values of the i-th data at th t-th history
-  // Values_pt[i*N_history_values+t];
+  // Values_pt[t*N_values+i], the values are stored by row, i.e. the
+  // whole values at t-th history is in row t
   T *Values_pt;
   
   // Indicates the status of the current (0 index history) Value

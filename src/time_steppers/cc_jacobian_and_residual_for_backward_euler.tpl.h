@@ -39,9 +39,9 @@ namespace chapchom
    // current time
    void set_U(CCData<Real> *u_pt);
    
-   // Set the U vector/matrix with the values of the function at the
-   // current Newton's iteration
-   void set_U_next(CCData<Real> *u_next_pt);
+   // Set the U new vector/matrix with the values of the function at
+   // the current Newton's iteration
+   void set_U_new(CCData<Real> *u_new_pt);
    
    // Sets the current time
    void set_current_time(const Real t);
@@ -82,11 +82,11 @@ namespace chapchom
    bool U_has_been_set;
    
    // The U values of the function at the current Newton's iteration
-   CCData<Real> *U_next_pt;
+   CCData<Real> *U_new_pt;
    
-   // A flag to indicate whether the U values for the current Newton's
-   // iteration has been set or not
-   bool U_next_has_been_set;
+   // A flag to indicate whether the U new values for the current
+   // Newton's iteration has been set or not
+   bool U_new_has_been_set;
    
    // The current time
    Real Current_time;

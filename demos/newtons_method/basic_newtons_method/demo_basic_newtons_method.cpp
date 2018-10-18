@@ -41,8 +41,7 @@ public:
  
  // Constructor (empty)
  CCJacobianAndResidualBasic()
-  : ACJacobianAndResidual<MAT_TYPE, VEC_TYPE>(),
-  N_dof(1)
+  : ACJacobianAndResidual<MAT_TYPE, VEC_TYPE>()
  { }
  
  // Destructor (empty)
@@ -52,19 +51,21 @@ public:
  // (virtual function implementation)
  void compute_jacobian()
  {
+  Real x = x_value();
   this->Jacobian.allocate_memory(1,1);
-  this->Jacobian(0,0) = 3.0*(X*X); // The derivative of F(x)=x^3-27 w.r.t. x
+  this->Jacobian(0,0) = 3.0*(x*x); // The derivative of F(x)=x^3-27 w.r.t. x
  }
  
  // In charge of computing the residual
  // (virtual function implementation)
  void compute_residual()
  {
+  Real x = x_value();
   this->Residual.allocate_memory(1);
-  this->Residual(0) = -(X*X*X - 27.0); // -F(x)
+  this->Residual(0) = -((x*x*x) - 27.0); // -F(x)
  }
  
- inline void set_x(const double x) {X = x;}
+ inline void set_x_pt(VEC_TYPE *x_pt) {X_pt = x_pt;}
  
 private:
  
@@ -86,10 +87,11 @@ private:
   BrokenCopy::broken_assign("CCJacobianAndResidualBasic");
  }
  
- // The number of independent variables (dof) 
- const unsigned N_dof;
+ // Access function for X
+ inline Real x_value(){return X_pt->value(0);}
  
- double X;
+ // A pointer to the vector where the values are stored
+ VEC_TYPE *X_pt;
  
 };
 
@@ -146,24 +148,26 @@ int main(int argc, char *argv[])
  
  // Create a vector with the initial guess
 #ifdef CHAPCHOM_USES_ARMADILLO
- CCVectorArmadillo<double> u_0(n_dof);
+ CCVectorArmadillo<double> x(n_dof);
 #else 
- CCVector<double> u_0(n_dof);
+ CCVector<double> x(n_dof);
 #endif
- u_0.allocate_memory();
- u_0(0) = initial_guess;
+ x.allocate_memory();
+ x(0) = initial_guess;
  
  // Set initial dofs in Jacobian and residual strategy
- jacobian_and_residual_pt->set_x(initial_guess);
+ jacobian_and_residual_pt->set_x_pt(&x);
  
  // Change maximum allowed residual
  newtons_method.set_maximum_allowed_residual(100.0);
  
  // Solver using Newton's method
- newtons_method.solve(u_0);
-   
- output_test << "Error linear interpolation: " << std::endl;
-   
+ newtons_method.solve(x);
+ 
+ // Print result
+ x.print();
+ x.print(output_test);
+ 
  // Close the output for test
  output_test.close();
    

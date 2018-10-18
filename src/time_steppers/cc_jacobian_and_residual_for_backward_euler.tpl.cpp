@@ -12,8 +12,8 @@ namespace chapchom
   ODEs_has_been_set(false), 
   U_pt(NULL),
   U_has_been_set(false),
-  U_next_pt(NULL),
-  U_next_has_been_set(false),
+  U_new_pt(NULL),
+  U_new_has_been_set(false),
   Current_time_has_been_set(false),
   Time_step_has_been_set(false)
  {
@@ -64,14 +64,14 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Check whether the U_next values have been set
-  if (!U_next_has_been_set || U_next_pt == NULL)
+  // Check whether the U_new values have been set
+  if (!U_new_has_been_set || U_new_pt == NULL)
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "You have not established the U_next function values\n"
+    error_message << "You have not established the U_new function values\n"
                   << "used to compute the Jacobian matrix.\n"
-                  << "You need to call the method set_U_next()\n"
+                  << "You need to call the method set_U_new()\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
@@ -114,7 +114,7 @@ namespace chapchom
   
   // Set the data required to compute the Jacobian of F(Y)
   Jacobian_FY_strategy.set_ODEs(ODEs_pt);
-  Jacobian_FY_strategy.set_U(U_next_pt);
+  Jacobian_FY_strategy.set_U(U_new_pt);
   Jacobian_FY_strategy.set_current_time(Current_time);
   
   // Compute Jacobian
@@ -176,14 +176,14 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Check whether the U_next values have been set
-  if (!U_next_has_been_set || U_next_pt == NULL)
+  // Check whether the U_new values have been set
+  if (!U_new_has_been_set || U_new_pt == NULL)
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "You have not established the U_next function values\n"
+    error_message << "You have not established the U_new function values\n"
                   << "used to compute the Jacobian matrix.\n"
-                  << "You need to call the method set_U_next()\n"
+                  << "You need to call the method set_U_new()\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
@@ -226,14 +226,14 @@ namespace chapchom
   
   // Evaluate the ODE at time "t" using the "u" values of the current
   // Newton's iteration
-  ODEs_pt->evaluate(Current_time, (*U_next_pt), dudt);
+  ODEs_pt->evaluate(Current_time, (*U_new_pt), dudt);
   
   // Allocate memory for the Residual (delete previous data)
   this->Residual.allocate_memory(n_dof);
   
   for (unsigned i = 0; i < n_dof; i++)
    {
-    this->Residual(i) = -(U_next_pt->value(i) - U_pt->value(i) - (Time_step * dudt(i)));
+    this->Residual(i) = -(U_new_pt->value(i) - U_pt->value(i) - (Time_step * dudt(i)));
    }
   
  }
@@ -272,13 +272,13 @@ namespace chapchom
  // current Newton's iteration
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_U_next(CCData<Real> *u_next_pt)
+ void CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_U_new(CCData<Real> *u_new_pt)
  {
   // Set the storage of the data
-  U_next_pt = u_next_pt;
+  U_new_pt = u_new_pt;
   
-  // Indicate that the U_next vector has been set
-  U_next_has_been_set = true;
+  // Indicate that the U_new vector has been set
+  U_new_has_been_set = true;
   
  }
  

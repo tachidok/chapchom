@@ -83,12 +83,6 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Pass the data required to Newton's method
-  Newtons_method.set_ODEs(&odes);
-  Newtons_method.set_U(&u);
-  Newtons_method.set_time_step(h);
-  Newtons_method.set_current_time(t);
-  
   // -----------------------------------------------------------------
   // Compute initial guess
   // -----------------------------------------------------------------
@@ -96,15 +90,18 @@ namespace chapchom
   CCData<Real> u_guess(u);
   
   // Compute the initial guess for Newton's method
-  Time_stepper_initial_guess_pt->time_step(odes, h, t, u_guess);
+  Time_stepper_initial_guess_pt->time_step(odes, h, t, u_guess); 
   
-  // Create a temporary vector to store the extracted history values
-  Real *extracted_column_initial_guess_pt = new Real[n_odes];
+  // Create a vector with the initial guess from the second row (1)
+  // since values have not been shifted
+  VEC_TYPE u_0(u_guess.history_values_row_pt(1), n_odes);
   
-  u_guess.extract_history_values(extracted_column_initial_guess_pt);
-  
-  // Create a vector with the initial guess
-  VEC_TYPE u_0(extracted_column_initial_guess_pt, n_odes);
+  // Pass the data required for Newton's method
+  Newtons_method.set_ODEs(&odes);
+  Newtons_method.set_U(&u);
+  Newtons_method.set_U_new(&u_guess);
+  Newtons_method.set_time_step(h);
+  Newtons_method.set_current_time(t);
   
   // Solver using Newton's method
   Newtons_method.solve(u_0);
@@ -117,9 +114,6 @@ namespace chapchom
    {
     u(i,k+1) = u_0(i);
    }
-  
-  delete [] extracted_column_initial_guess_pt;
-  extracted_column_initial_guess_pt = 0;
   
  }
 

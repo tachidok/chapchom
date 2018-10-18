@@ -29,17 +29,16 @@ namespace chapchom
   // Empty destructor
   ~CCNewtonsMethodForBackwardEuler();
   
-  // Set the initial guess, we copy the initial guess to the 'U_next'
-  // structure, we could do this as well in the
-  // actions_before_initial_convergence_check() method
-  void set_initial_guess(VEC_TYPE &x);
-  
   // Set the ODEs
   void set_ODEs(ACODEs *odes_pt);
    
   // Set the U vector/matrix with the values of the function at the
   // current time
   void set_U(CCData<Real> *u_pt);
+  
+  // Set the U new vector/matrix storage for the new values of the
+  // function after Newton's iteration
+  void set_U_new(CCData<Real> *u_new_pt);
   
   // Sets the current time
   void set_current_time(const Real t);
@@ -73,7 +72,13 @@ namespace chapchom
    
   // A flag to indicate whether the U values have been set or not
   bool U_has_been_set;
-   
+  
+  // Stores the U new values of the function after each Newton's iteration
+  CCData<Real> *U_new_pt;
+  
+  // A flag to indicate whether the U new values have been set or not
+  bool U_new_has_been_set;
+  
   // The current time
   Real Current_time;
    
@@ -85,9 +90,6 @@ namespace chapchom
    
   // Flag to indicate whether the time step has been set
   bool Time_step_has_been_set;
-  
-  // The U next values of the function used for Newton's method
-  CCData<Real> *U_next_pt;
   
   private:
   

@@ -218,7 +218,7 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "You have not specified an initial guess.\n"
                   << "Set it first by calling the method\n\n"
-                  << "set_iniital_guess()\n\n"
+                  << "set_inital_guess()\n\n"
                   << "or call the newtons method with the initial\n"
                   << "guess as a parameter\n\n"
                   << "solve(x_0)"
