@@ -13,21 +13,13 @@ namespace chapchom
   // Sets the number of history values
   N_history_values = 1;
   
-  // Create the Jacobian and residual strategy for Backward Euler used
-  // for Newton's method
-  Jacobian_and_residual_for_backward_euler_pt =
-   new CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE>();
-  
   // Set Jacobian strategy for Newton's method
-  Newtons_method.set_jacobian_and_residual_strategy(Jacobian_and_residual_for_backward_euler_pt);
+  Newtons_method.set_jacobian_and_residual_strategy(&Jacobian_and_residual_for_backward_euler);
+  
+  //Newtons_method.set_newton_solver_tolerance(1.0e-3);
   
   // Disable output for Newton's method
-  Newtons_method.disable_output_messages();
-  
-  // Create an instance of an explicit method to compute the initial
-  // guess for Newton's method
-  Time_stepper_initial_guess_pt = new CCEulerMethod();
-  
+  Newtons_method.disable_output_messages(); 
  }
  
  // ===================================================================
@@ -35,12 +27,7 @@ namespace chapchom
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  CCBackwardEulerMethod<MAT_TYPE,VEC_TYPE>::~CCBackwardEulerMethod()
- {  
-  delete Jacobian_and_residual_for_backward_euler_pt;
-  Jacobian_and_residual_for_backward_euler_pt = 0;
-  
-  delete Time_stepper_initial_guess_pt;
-  Time_stepper_initial_guess_pt = NULL;
+ {
   
  }
  
@@ -80,7 +67,7 @@ namespace chapchom
   CCData<Real> u_guess(u);
   
   // Compute the initial guess for Newton's method
-  Time_stepper_initial_guess_pt->time_step(odes, h, t, u_guess); 
+  Time_stepper_initial_guess.time_step(odes, h, t, u_guess); 
   
   // Create a vector with the initial guess from the second row (1)
   // since values have not been shifted

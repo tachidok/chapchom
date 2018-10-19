@@ -53,7 +53,7 @@ namespace chapchom
   virtual void complete_problem_setup() = 0;
   
   // Document the solution
-  virtual void document_solution(std::ostringstream &output_filename) = 0;
+  virtual void document_solution(std::ostringstream &output_filename) { }
   
   // -------------------------------------------------------------------------
   // THESE METHODS MUST BE IMPLEMENTED IN THE CONCRETE PROBLEM CLASS [END]

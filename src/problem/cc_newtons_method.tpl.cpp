@@ -210,7 +210,7 @@ namespace chapchom
    }
   
  }
-
+ 
  // ===================================================================
  // Sets default configuration
  // ===================================================================
@@ -322,9 +322,9 @@ namespace chapchom
      {
       // Finish Newton iteration
       chapchom_output << "The initial residual is smaller than the newton's residual tolerance\n"
-                    << "Newton_solver_tolerance: " << Newton_solver_tolerance << "\n"
-                    << "Initial residual: " << initial_residual_norm << "\n"
-                    << std::endl;
+                      << "Newton_solver_tolerance: " << Newton_solver_tolerance << "\n"
+                      << "Initial residual: " << initial_residual_norm
+                      << std::endl;
      }
     
    }

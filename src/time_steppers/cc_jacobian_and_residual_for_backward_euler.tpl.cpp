@@ -131,7 +131,7 @@ namespace chapchom
      {
       if (i == j)
        {
-        this->Jacobian(i, j) = 1.0 -  (Time_step * Jacobian_FY(i, j));
+        this->Jacobian(i, j) = 1.0 - (Time_step * Jacobian_FY(i, j));
        }
       else
        {

@@ -58,10 +58,10 @@ namespace chapchom
   
   // A pointer for the strategy to compute the Jacobian and the
   // residual during time stepping call for Newton's method
-  CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE> *Jacobian_and_residual_for_backward_euler_pt;
+  CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE> Jacobian_and_residual_for_backward_euler;
   
   // The time stepper used to compute the initial guess
-  ACTimeStepper *Time_stepper_initial_guess_pt;
+  CCEulerMethod Time_stepper_initial_guess;
   
  };
  

@@ -18,5 +18,5 @@ set xlabel 'x'
 set ylabel 'f(x)'
 set tics scale 0.75
 
-plot 'deb.dat' using 1:2 title 'Original' w linespoints ls 1, \
-     'deb.dat' using 1:3 title 'Cubix approximation' w linespoints ls 2
+plot 'plot_data.dat' using 1:2 title 'Original' w linespoints ls 1, \
+     'plot_data.dat' using 1:3 title 'Cubix approximation' w linespoints ls 2
