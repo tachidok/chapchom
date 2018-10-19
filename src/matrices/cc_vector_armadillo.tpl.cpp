@@ -839,18 +839,47 @@ namespace chapchom
  }
 
  // ===================================================================
- // Computes the maximum value (infinite norm)
+ // Computes the infinite norm
+ // ===================================================================
+ template<class T>
+ T CCVectorArmadillo<T>::norm_inf()
+ {
+  // Infinite norm
+  Real norm;
+  // Check whether the vector has memory allocated
+  if (this->Is_own_memory_allocated)
+   {
+    // Compute the norm
+    norm = arma::norm((*Arma_vector_pt), "inf");
+   }
+  else
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "We can not compute the infinite norm of a vector with no memory allocated\n"
+                  << "this->Is_own_memory_allocated = "
+                  << this->Is_own_memory_allocated << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  return norm;
+ }
+ 
+ // ===================================================================
+ // Computes the maximum value
  // ===================================================================
  template<class T>
  T CCVectorArmadillo<T>::max()
  {
   // Maximum
-  Real max = 0.0;
+  Real max;
   // Check whether the vector has memory allocated
   if (this->Is_own_memory_allocated)
    {
-    // Compute the norm
-    max = arma::norm((*Arma_vector_pt), "inf");
+    // Compute the maximum
+    max = Arma_vector_pt->max();
    }
   else
    {
@@ -865,6 +894,35 @@ namespace chapchom
    }
   
   return max;
+ }
+
+ // ===================================================================
+ // Computes the minimum value
+ // ===================================================================
+ template<class T>
+ T CCVectorArmadillo<T>::min()
+ {
+  // Minimum
+  Real min;
+  // Check whether the vector has memory allocated
+  if (this->Is_own_memory_allocated)
+   {
+    // Compute the minimum
+    min = Arma_vector_pt->min();
+   }
+  else
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "We can not compute the minimum of a vector with no memory allocated\n"
+                  << "this->Is_own_memory_allocated = "
+                  << this->Is_own_memory_allocated << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  return min;
  }
 
  // ===================================================================

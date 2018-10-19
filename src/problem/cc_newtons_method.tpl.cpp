@@ -7,7 +7,7 @@ namespace chapchom
 {
 
  // ===================================================================
- // Empty constructor
+ // Constructor
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::CCNewtonsMethod()
@@ -17,19 +17,25 @@ namespace chapchom
     Initial_guess_has_been_set(false),
     Jacobian_and_residual_strategy_has_been_set(false),
     Linear_solver_has_been_set(false),
+    Free_memory_for_linear_solver(false),
     Reuse_jacobian(false),
     Jacobian_and_residual_strategy_pt(NULL),
     Linear_solver_pt(NULL),
-    X_pt(NULL)
- { }
+    X_pt(NULL),
+    Output_messages(true)
+ {
+  // Performs default configuration
+  default_configuration(); 
+ }
  
  // ===================================================================
- // Empty destructor
+ // Destructor
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::~CCNewtonsMethod()
  {
-  
+  // Performs clean up
+  clean_up();
  }
  
  // ===================================================================
@@ -53,11 +59,20 @@ namespace chapchom
  void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::
  set_linear_solver(ACLinearSolver<MAT_TYPE, VEC_TYPE> *linear_solver_pt)
  {
+  // Free memory for previous linear solver
+  clean_up();
+  
+  // Assign the new linear solver
   Linear_solver_pt = linear_solver_pt;
   
+  // Make sure to indicate that the new linear solver is set
   Linear_solver_has_been_set = true;
+  
+  // An external new linear solver has been set, then we no longer
+  // need to worry about freeing its allocated memory
+  Free_memory_for_linear_solver = false;
  }
-
+ 
  // ===================================================================
  // Gets access to the Jacobian and residual computation strategy
  // ===================================================================
@@ -102,9 +117,23 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
-  
+ 
  }
 
+ // ===================================================================
+ // Set the initial guess. You should override this method if you
+ // require to copy the initial guess to some other data structures
+ // ===================================================================
+ template<class MAT_TYPE, class VEC_TYPE>
+ void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::set_initial_guess(VEC_TYPE &x)
+ {
+  // Create a pointer to the initial guess vector
+  X_pt = &x;
+  
+  // Update flag to indicate initial guess has been set
+  Initial_guess_has_been_set = true;
+ }
+ 
  // ===================================================================
  // Gets access to the last stored solution vector
  // ===================================================================
@@ -159,17 +188,51 @@ namespace chapchom
  }
 
  // ===================================================================
- // Set the initial guess. You should override this method if you
- // require to copy the initial guess to some other data structures
+ // Clean up, free allocated memory
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::set_initial_guess(VEC_TYPE &x)
+ void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::clean_up()
  {
-  // Create a pointer to the initial guess vector
-  X_pt = &x;
+  // Check whether we should free the memory associated for the linear
+  // solver
+  if (Free_memory_for_linear_solver)
+   {
+    // Free memory
+    delete Linear_solver_pt;
+    Linear_solver_pt = 0;
+
+    // Indicate there are not linear solver established
+    Linear_solver_has_been_set = false;
+    
+    // Memory has been already free
+    Free_memory_for_linear_solver = false;
+    
+   }
   
-  // Update flag to indicate initial guess has been set
-  Initial_guess_has_been_set = true;
+ }
+
+ // ===================================================================
+ // Sets default configuration
+ // ===================================================================
+ template<class MAT_TYPE, class VEC_TYPE>
+ void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::default_configuration()
+ {
+  // Cleans up
+  clean_up();
+  
+  // Create the linear solver
+#ifdef CHAPCHOM_USES_ARMADILLO
+  Linear_solver_pt = new CCSolverArmadillo<Real>();
+#else
+  Linear_solver_pt = new CCLUSolverNumericalRecipes<Real>();
+#endif
+  
+  // Set linear solver for Newton's method
+  Linear_solver_has_been_set = true;
+  
+  // In charge of free the memory for linear solver
+  Free_memory_for_linear_solver = true;
+  
  }
  
  // ===================================================================
@@ -243,18 +306,27 @@ namespace chapchom
   VEC_TYPE residual = Jacobian_and_residual_strategy_pt->residual();
   
   // Compute the norm of the residual
-  const Real initial_residual_norm = residual.max();
-  
-  chapchom_output << "Initial residual norm: " << initial_residual_norm << std::endl;
+  const Real initial_residual_norm = residual.norm_inf();
+
+  // Is output message enabled?
+  if (Output_messages)
+   {
+    chapchom_output << "Initial residual norm: " << initial_residual_norm << std::endl;
+   }
   
   // Check for convergence
   if (initial_residual_norm < Newton_solver_tolerance)
    {
-    // Finish Newton iteration
-    chapchom_output << "The initial residual is smaller than the newton's residual tolerance\n"
+    // Is output message enabled?
+    if (Output_messages)
+     {
+      // Finish Newton iteration
+      chapchom_output << "The initial residual is smaller than the newton's residual tolerance\n"
                     << "Newton_solver_tolerance: " << Newton_solver_tolerance << "\n"
                     << "Initial residual: " << initial_residual_norm << "\n"
-                    << std::endl; 
+                    << std::endl;
+     }
+    
    }
   
   // Flag to indicate that the Jacobian has been computed by the first
@@ -316,9 +388,13 @@ namespace chapchom
     const double total_cpu_clock_time_for_jacobian =
      Timing::diff_cpu_clock_time(initial_clock_time_for_jacobian,
                                  final_clock_time_for_jacobian);
-     
-    chapchom_output << "CPU time for Jacobian in Newton solve: ["
-                    << total_cpu_clock_time_for_jacobian << "]" << std::endl; 
+    
+    // Is output message enabled?
+    if (Output_messages)
+     {
+      chapchom_output << "CPU time for Jacobian in Newton solve: ["
+                      << total_cpu_clock_time_for_jacobian << "]" << std::endl;
+     }
     
     // Get a pointer to the Jacobian
     MAT_TYPE Jacobian = Jacobian_and_residual_strategy_pt->jacobian();
@@ -340,8 +416,12 @@ namespace chapchom
      Timing::diff_cpu_clock_time(initial_clock_time_for_linear_solver,
                                  final_clock_time_for_linear_solver);
     
-    chapchom_output << "CPU time for linear solver in Newton solve: ["
-                    << total_cpu_clock_time_for_linear_solver << "]" << std::endl;
+    // Is output message enabled?
+    if (Output_messages)
+     {
+      chapchom_output << "CPU time for linear solver in Newton solve: ["
+                      << total_cpu_clock_time_for_linear_solver << "]" << std::endl;
+     }
     
     printf("dx after linear solver\n");
     dx.print();
@@ -365,10 +445,14 @@ namespace chapchom
     residual = Jacobian_and_residual_strategy_pt->residual();
     
     // Compute the norm of the residual
-    current_residual_norm = residual.max();
+    current_residual_norm = residual.norm_inf();
     
-    chapchom_output << "Newton iteration " << n_newton_iterations
+    // Is output message enabled?
+    if (Output_messages)
+     {
+      chapchom_output << "Newton iteration " << n_newton_iterations
                     << ": Residual norm " << current_residual_norm << std::endl;
+     }
     
     if (current_residual_norm > Maximum_allowed_residual)
      {
@@ -407,11 +491,15 @@ namespace chapchom
    Timing::diff_cpu_clock_time(initial_clock_time_for_newtons_method,
                                final_clock_time_for_newtons_method);
   
-  chapchom_output << "CPU time for Newton's method: ["
-                  << total_cpu_clock_time_for_newtons_method << "]" << std::endl;
+  // Is output message enabled?
+  if (Output_messages)
+   {
+    chapchom_output << "CPU time for Newton's method: ["
+                    << total_cpu_clock_time_for_newtons_method << "]" << std::endl;
+   }
   
   // Update flag to indicate initial guess has been used and Newton's
-                                          // method has finished
+  // method has finished
   Initial_guess_has_been_set = false;
   
  }

@@ -128,8 +128,14 @@ namespace chapchom
    // Computes the norm-2 of the vector
    virtual T norm_2() = 0;
    
-   // Computes the maximum value (infinite norm)
+   // Computes the infinite norm
+   virtual T norm_inf() = 0;
+   
+   // Computes the maximum value
    virtual T max() = 0;
+   
+   // Computes the minimum value
+   virtual T min() = 0;
    
   protected:
    

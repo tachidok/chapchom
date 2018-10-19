@@ -21,15 +21,8 @@ namespace chapchom
   // Set Jacobian strategy for Newton's method
   Newtons_method.set_jacobian_and_residual_strategy(Jacobian_and_residual_for_backward_euler_pt);
   
-  // Create the linear solver
-#ifdef CHAPCHOM_USES_ARMADILLO
-  Linear_solver_pt = new CCSolverArmadillo<Real>();
-#else
-  Linear_solver_pt = new CCLUSolverNumericalRecipes<Real>();
-#endif
-  
-  // Set linear solver for Newton's method
-  Newtons_method.set_linear_solver(Linear_solver_pt);
+  // Disable output for Newton's method
+  Newtons_method.disable_output_messages();
   
   // Create an instance of an explicit method to compute the initial
   // guess for Newton's method
@@ -46,9 +39,6 @@ namespace chapchom
   delete Jacobian_and_residual_for_backward_euler_pt;
   Jacobian_and_residual_for_backward_euler_pt = 0;
   
-  delete Linear_solver_pt;
-  Linear_solver_pt = 0;
-
   delete Time_stepper_initial_guess_pt;
   Time_stepper_initial_guess_pt = NULL;
   

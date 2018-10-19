@@ -131,9 +131,15 @@ namespace chapchom
    
    // Computes the norm-2 of the vector
    T norm_2();
+
+   // Computes the infinite norm
+   T norm_inf();
    
-   // Computes the maximum value (infinite norm)
+   // Computes the maximum value
    T max();
+   
+   // Computes the minimum value
+   T min();
    
   protected:
       

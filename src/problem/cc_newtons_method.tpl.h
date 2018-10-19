@@ -9,18 +9,21 @@
 #include "../general/utilities.h"
 
 #include "../matrices/cc_matrix.h"
+// Includes the abstract class for linear solvers
+#include "../linear_solvers/ac_linear_solver.h"
+#include "../linear_solvers/cc_lu_solver_numerical_recipes.h"
 
 #ifdef CHAPCHOM_USES_ARMADILLO
 // Include Armadillo type matrices since the templates may include
 // Armadillo type matrices
 #include "../matrices/cc_matrix_armadillo.h"
+// Linear solver using ARMADILLO matrices
+#include "../linear_solvers/cc_solver_armadillo.h"
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
 
 // Includes the abstract class for strategies to compute the Jacobian
 // and the residual
 #include "../equations/ac_jacobian_and_residual.h"
-// Includes the abstract class for linear solvers
-#include "../linear_solvers/ac_linear_solver.h"
 
 namespace chapchom
 {
@@ -37,10 +40,10 @@ namespace chapchom
    
   public:
    
-   // Empty constructor
+   // Constructor
    CCNewtonsMethod();
    
-   // Empty destructor
+   // Destructor
    ~CCNewtonsMethod();
    
    // Set the Jacobian and residual computation strategy
@@ -55,12 +58,33 @@ namespace chapchom
    // Gets access to the linear solver
    ACLinearSolver<MAT_TYPE, VEC_TYPE> *linear_solver_pt();
    
-   // Gets access to the last stored solution vector
-   const VEC_TYPE *x_pt();
-   
    // Set the initial guess. You should override this method if you
    // require to copy the initial guess to some other data structures
    virtual void set_initial_guess(VEC_TYPE &x);
+   
+   // Gets access to the last stored solution vector
+   const VEC_TYPE *x_pt();
+   
+   // Set Newton's solver tolerance
+   void set_newton_solver_tolerance(const Real new_newton_solver_tolerance);
+   
+   // Set the Maximun number of Newton's iterations
+   void set_maximum_newton_interations(const unsigned new_maximum_newton_iterations);
+   
+   // Set the Maximum allowed residual
+   void set_maximum_allowed_residual(const Real new_maximum_allowed_residual);
+
+   // Enables output messages for Newton's method
+   inline void enable_output_messages() {Output_messages=true;}
+   
+   // Disables output messages for Newton's method
+   inline void disable_output_messages() {Output_messages=false;}
+   
+   // Clean up, free allocated memory
+   void clean_up();
+   
+   // Sets default configuration
+   void default_configuration();
    
    // Applies Newton's method to solve the problem given by the
    // Jacobian and the residual computed by the estalished strategy.
@@ -74,15 +98,6 @@ namespace chapchom
    // The initial guess is set in the input/ouptut x vector where the
    // final solution (if any) is returned
    void solve(VEC_TYPE &x);
-   
-   // Set Newton's solver tolerance
-   void set_newton_solver_tolerance(const Real new_newton_solver_tolerance);
-   
-   // Set the Maximun number of Newton's iterations
-   void set_maximum_newton_interations(const unsigned new_maximum_newton_iterations);
-   
-   // Set the Maximum allowed residual
-   void set_maximum_allowed_residual(const Real new_maximum_allowed_residual);
    
   protected:
    
@@ -117,16 +132,21 @@ namespace chapchom
    // Flag to indicate whether a linear solver has been set or not
    bool Linear_solver_has_been_set;
    
-   // Flag to indicate whether to reuse the Jacobian matrix during Newton's method
+   // Flag to indicate whether to free the memory allocated to the
+   // linear solver
+   bool Free_memory_for_linear_solver;
+   
+   // Flag to indicate whether to reuse the Jacobian matrix during
+   // Newton's method
    bool Reuse_jacobian;
    
   private:
    
    // Copy constructor (we do not want this class to be copiable because
    // it contains dynamically allocated variables, A in this
-    // case). Check
-    // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
-    CCNewtonsMethod(const CCNewtonsMethod<MAT_TYPE, VEC_TYPE> &copy)
+   // case). Check
+   // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
+   CCNewtonsMethod(const CCNewtonsMethod<MAT_TYPE, VEC_TYPE> &copy)
     {
      BrokenCopy::broken_copy("CCNewtonsMethod");
     }
@@ -139,7 +159,7 @@ namespace chapchom
     {
      BrokenCopy::broken_assign("CCNewtonsMethod");
     }
-
+   
    // -----------------------------------------------------------------
    // There varibles are here to enforce use of access routines by
    // derived classes
@@ -154,6 +174,10 @@ namespace chapchom
    // A pointer to provide access to the current solution during
    // newton steps
    VEC_TYPE *X_pt;
+   
+   // Flag to indicate whether output messages are enabled or disabled
+   // (enabled by default)
+   bool Output_messages;
    
   };
  

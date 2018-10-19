@@ -216,21 +216,25 @@ namespace chapchom
  void CCData<T>::shift_history_values(const unsigned n_shift_positions)
  {
 #ifdef CHAPCHOM_RANGE_CHECK
-  if (n_shift_positions > N_history_values)
+  if (n_shift_positions > N_history_values - 1)
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "The requested number of shift positions is greater\n"
-                  << "than the number of history values\n"
+    error_message << "The requested number of shift positions is out of the scope\n"
+                  << "of the number of history values\n"
                   << "Number of shift positions: " << n_shift_positions << std::endl
-                  << "Number of history values: " << N_history_values << std::endl;
+                  << "Number of history values: " << N_history_values << std::endl
+                  << "If you are asking to shift the same number of history values\n"
+                  << "then you will get a 0-vector since you are asking to get rid\n"
+                  << "of ALL the history values\n"
+                  << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                             CHAPCHOM_EXCEPTION_LOCATION);
    }
 #endif // #ifdef CHAPCHOM_RANGE_CHECK
   
-  const unsigned upper_limit = (N_history_values-1) + n_shift_positions;
+  const unsigned upper_limit = ((N_history_values-1) + n_shift_positions) - 1;
   // Loop over the history values
   for (unsigned i = 0; i < upper_limit; i++)
    {

@@ -18,5 +18,6 @@ set xlabel 'Time (t)'
 set ylabel '# of individuals'
 set tics scale 0.75
 
+#plot 'RESLT/soln0.dat' using 2:3 w linespoints ls 1
 plot 'RESLT/soln0.dat' using 1:2 title 'Prey' w linespoints ls 1, \
      'RESLT/soln0.dat' using 1:3 title 'Predator' w linespoints ls 2

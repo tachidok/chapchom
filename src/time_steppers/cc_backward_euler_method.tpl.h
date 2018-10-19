@@ -2,13 +2,6 @@
 #define CCBACKWARDEULERMETHOD_TPL_H
 
 #include "ac_time_stepper.h"
-#include "../linear_solvers/ac_linear_solver.h"
-#include "../linear_solvers/cc_lu_solver_numerical_recipes.h"
-
-#ifdef CHAPCHOM_USES_ARMADILLO
-// Linear solver using ARMADILLO matrices
-#include "../linear_solvers/cc_solver_armadillo.h"
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
 
 // Newton's method
 #include "cc_newtons_method_for_backward_euler.h"
@@ -62,9 +55,6 @@ namespace chapchom
   
   // Newton's method for backward Euler
   CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE> Newtons_method;
-  
-  // A linear solver for Newton's method
-  ACLinearSolver<MAT_TYPE, VEC_TYPE> *Linear_solver_pt;
   
   // A pointer for the strategy to compute the Jacobian and the
   // residual during time stepping call for Newton's method

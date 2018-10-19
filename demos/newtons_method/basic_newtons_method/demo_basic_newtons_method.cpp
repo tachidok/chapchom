@@ -11,15 +11,10 @@
 
 #include "../../../src/matrices/cc_matrix.h"
 
-#include "../../../src/linear_solvers/ac_linear_solver.h"
-#include "../../../src/linear_solvers/cc_lu_solver_numerical_recipes.h"
-
 #ifdef CHAPCHOM_USES_ARMADILLO
 // Include Armadillo type matrices since the templates may include
 // Armadillo type matrices
 #include "../../../src/matrices/cc_matrix_armadillo.h"
-// Linear solver using ARMADILLO matrices
-#include "../../../src/linear_solvers/cc_solver_armadillo.h"
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
 
 #include "../../../src/equations/ac_jacobian_and_residual.h"
@@ -112,51 +107,37 @@ int main(int argc, char *argv[])
    
  // Create an instance of Newton's method
 #ifdef CHAPCHOM_USES_ARMADILLO
- CCNewtonsMethod<CCMatrixArmadillo<double>, CCVectorArmadillo<double> > newtons_method;
+ CCNewtonsMethod<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > newtons_method;
 #else
- CCNewtonsMethod<CCMatrix<double>, CCVector<double> > newtons_method;
+ CCNewtonsMethod<CCMatrix<Real>, CCVector<Real> > newtons_method;
 #endif
 
  // Create the Jacobian and residual strategy for the problem to solve
 #ifdef CHAPCHOM_USES_ARMADILLO
- CCJacobianAndResidualBasic<CCMatrixArmadillo<double>, CCVectorArmadillo<double> > *jacobian_and_residual_pt =
-  new CCJacobianAndResidualBasic<CCMatrixArmadillo<double>, CCVectorArmadillo<double> >();
+ CCJacobianAndResidualBasic<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > jacobian_and_residual;
 #else
- CCJacobianAndResidualBasic<CCMatrix<double>, CCVector<double> > *jacobian_and_residual_pt =
-  new CCJacobianAndResidualBasic<CCMatrix<double>, CCVector<double> >();
+ CCJacobianAndResidualBasic<CCMatrix<Real>, CCVector<Real> > jacobian_and_residual;
 #endif
  
  // Set Jacobian strategy for Newton's method
- newtons_method.set_jacobian_and_residual_strategy(jacobian_and_residual_pt);
-   
- // Create a linear solver
-#ifdef CHAPCHOM_USES_ARMADILLO
- ACLinearSolver<CCMatrixArmadillo<double>, CCVectorArmadillo<double> > *linear_solver_pt =
-  new CCSolverArmadillo<Real>();
-#else
- ACLinearSolver<CCMatrix<double>, CCVector<double> > *linear_solver_pt =
-  new CCLUSolverNumericalRecipes<Real>();
-#endif
-   
- // Set linear solver for Newton's method
- newtons_method.set_linear_solver(linear_solver_pt);
-   
+ newtons_method.set_jacobian_and_residual_strategy(&jacobian_and_residual);
+ 
  // Number of dofs
  const unsigned n_dof = 1;
  // Initial guess
- const double initial_guess = 5.0;
+ const Real initial_guess = 5.0;
  
  // Create a vector with the initial guess
 #ifdef CHAPCHOM_USES_ARMADILLO
- CCVectorArmadillo<double> x(n_dof);
+ CCVectorArmadillo<Real> x(n_dof);
 #else 
- CCVector<double> x(n_dof);
+ CCVector<Real> x(n_dof);
 #endif
  x.allocate_memory();
  x(0) = initial_guess;
  
  // Set initial dofs in Jacobian and residual strategy
- jacobian_and_residual_pt->set_x_pt(&x);
+ jacobian_and_residual.set_x_pt(&x);
  
  // Change maximum allowed residual
  newtons_method.set_maximum_allowed_residual(100.0);
@@ -170,15 +151,9 @@ int main(int argc, char *argv[])
  
  // Close the output for test
  output_test.close();
-   
+ 
  std::cout << "[FINISHING UP] ... " << std::endl;
-   
- delete jacobian_and_residual_pt;
- jacobian_and_residual_pt = 0;
-   
- delete linear_solver_pt;
- linear_solver_pt = 0;
-   
+ 
  // Finalise chapcom
  finalise_chapchom();
  

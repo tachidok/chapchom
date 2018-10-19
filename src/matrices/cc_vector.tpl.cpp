@@ -730,7 +730,7 @@ namespace chapchom
     // Compute the norm
     for (unsigned long i = 0; i < this->NValues; i++)
      {
-      sum+= Vector_pt[i];
+      sum+= std::fabs(Vector_pt[i]);
      }
    }
   else
@@ -783,7 +783,43 @@ namespace chapchom
  }
 
  // ===================================================================
- // Computes the maximum value (infinite norm)
+ // Computes the infinite norm
+ // ===================================================================
+ template<class T>
+ T CCVector<T>::norm_inf()
+ {
+  // Maximum
+  T norm = 0.0;
+  // Check whether the vector has memory allocated
+  if (this->Is_own_memory_allocated)
+   {
+    // Initialise the maximum with the first value
+    norm = std::fabs(Vector_pt[0]);
+    // Compute the norm
+    for (unsigned long i = 1; i < this->NValues; i++)
+     {
+      if (std::fabs(Vector_pt[i]) > norm)
+       norm = std::fabs(Vector_pt[i]);
+     }
+   }
+  else
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "We can not compute the infinite norm of a vector with no memory allocated\n"
+                  << "this->Is_own_memory_allocated = "
+                  << this->Is_own_memory_allocated << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  return norm;
+  
+ }
+ 
+ // ===================================================================
+ // Computes the maximum value
  // ===================================================================
  template<class T>
  T CCVector<T>::max()
@@ -795,7 +831,7 @@ namespace chapchom
    {
     // Initialise the maximum with the first value
     max = Vector_pt[0];
-    // Compute the norm
+    // Compute the maximum
     for (unsigned long i = 1; i < this->NValues; i++)
      {
       if (Vector_pt[i] > max)
@@ -815,6 +851,42 @@ namespace chapchom
    }
   
   return max;
+  
+ }
+ 
+ // ===================================================================
+ // Computes the minimum value
+ // ===================================================================
+ template<class T>
+ T CCVector<T>::min()
+ {
+  // Minimum
+  T min = 0.0;
+  // Check whether the vector has memory allocated
+  if (this->Is_own_memory_allocated)
+   {
+    // Initialise the minimum with the first value
+    min = Vector_pt[0];
+    // Compute the minimum
+    for (unsigned long i = 1; i < this->NValues; i++)
+     {
+      if (Vector_pt[i] < min)
+       min = Vector_pt[i];
+     }
+   }
+  else
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "We can not compute the minimum of a vector with no memory allocated\n"
+                  << "this->Is_own_memory_allocated = "
+                  << this->Is_own_memory_allocated << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  return min;
   
  }
  
