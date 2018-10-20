@@ -22,8 +22,8 @@ set xlabel 'Time (t)'
 set ylabel '# of individuals'
 set tics scale 0.75
 
-plot 'euler_soln0.dat' using 1:2 title 'Prey' w linespoints ls 1, \
-     'euler_soln0.dat' using 1:3 title 'Predator' w linespoints ls 2
+plot 'euler.dat' using 1:2 title 'Prey' w linespoints ls 1, \
+     'euler.dat' using 1:3 title 'Predator' w linespoints ls 2
 
 set terminal wxt 1 size 640,480 enhanced font 'Verdana,10' persist
 #set terminal pngcairo size 640,480 enhanced font 'Verdana,10'
@@ -35,7 +35,7 @@ set xlabel 'Time (t)'
 set ylabel '# of individuals'
 set tics scale 0.75
 
-plot 'euler_soln0.dat' using 2:3 w linespoints ls 1
+plot 'euler.dat' using 2:3 w linespoints ls 1
 
 set terminal wxt 2 size 640,480 enhanced font 'Verdana,10' persist
 #set terminal pngcairo size 640,480 enhanced font 'Verdana,10'
@@ -47,8 +47,8 @@ set xlabel 'Time (t)'
 set ylabel '# of individuals'
 set tics scale 0.75
 
-plot 'rk4_soln0.dat' using 1:2 title 'Prey' w linespoints ls 1, \
-     'rk4_soln0.dat' using 1:3 title 'Predator' w linespoints ls 2
+plot 'rk4.dat' using 1:2 title 'Prey' w linespoints ls 1, \
+     'rk4.dat' using 1:3 title 'Predator' w linespoints ls 2
 
 set terminal wxt 3 size 640,480 enhanced font 'Verdana,10' persist
 #set terminal pngcairo size 640,480 enhanced font 'Verdana,10'
@@ -60,7 +60,7 @@ set xlabel 'Time (t)'
 set ylabel '# of individuals'
 set tics scale 0.75
 
-plot 'rk4_soln0.dat' using 2:3 w linespoints ls 1
+plot 'rk4.dat' using 2:3 w linespoints ls 1
 
 set terminal wxt 4 size 640,480 enhanced font 'Verdana,10' persist
 #set terminal pngcairo size 640,480 enhanced font 'Verdana,10'
@@ -72,8 +72,8 @@ set xlabel 'Time (t)'
 set ylabel '# of individuals'
 set tics scale 0.75
 
-plot 'bdf1_soln0.dat' using 1:2 title 'Prey' w linespoints ls 1, \
-     'bdf1_soln0.dat' using 1:3 title 'Predator' w linespoints ls 2
+plot 'bdf1.dat' using 1:2 title 'Prey' w linespoints ls 1, \
+     'bdf1.dat' using 1:3 title 'Predator' w linespoints ls 2
 
 set terminal wxt 5 size 640,480 enhanced font 'Verdana,10' persist
 #set terminal pngcairo size 640,480 enhanced font 'Verdana,10'
@@ -85,5 +85,5 @@ set xlabel 'Time (t)'
 set ylabel '# of individuals'
 set tics scale 0.75
 
-plot 'bdf1_soln0.dat' using 2:3 w linespoints ls 1
+plot 'bdf1.dat' using 2:3 w linespoints ls 1
 
