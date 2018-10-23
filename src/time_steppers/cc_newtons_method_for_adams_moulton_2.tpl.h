@@ -1,16 +1,16 @@
 // IN THIS FILE: The definition of the concrete class
-// CCNewtonsMethodForBackwardEuler to apply Newton's methods for
-// Backward Euler method
+// CCNewtonsMethodForAdamsMoulton2 to apply Newton's methods for
+// Adams-Moulton 2 or Trapezoidal Rule method
 
 // Check whether the class has been already defined
-#ifndef CCNEWTONSMETHODFORBACKWARDEULER_TPL_H
-#define CCNEWTONSMETHODFORBACKWARDEULER_TPL_H
+#ifndef CCNEWTONSMETHODFORADAMSMOULTON2_TPL_H
+#define CCNEWTONSMETHODFORADAMSMOULTON2_TPL_H
 
 #include "../general/common_includes.h"
 #include "../general/utilities.h"
 
 #include "../problem/cc_newtons_method.h"
-#include "cc_jacobian_and_residual_for_backward_euler.h"
+#include "cc_jacobian_and_residual_for_adams_moulton_2.h"
 
 namespace chapchom
 {
@@ -18,16 +18,16 @@ namespace chapchom
  // A concrete class that implements Newton's method for time stepping
  // methods
  template<class MAT_TYPE, class VEC_TYPE>
-  class CCNewtonsMethodForBackwardEuler : public virtual CCNewtonsMethod<MAT_TYPE, VEC_TYPE>
+  class CCNewtonsMethodForAdamsMoulton2 : public virtual CCNewtonsMethod<MAT_TYPE, VEC_TYPE>
   {
   
  public:
   
   // Empty constructor
-  CCNewtonsMethodForBackwardEuler();
+  CCNewtonsMethodForAdamsMoulton2();
   
   // Empty destructor
-  ~CCNewtonsMethodForBackwardEuler();
+  ~CCNewtonsMethodForAdamsMoulton2();
   
   // Set the ODEs
   void set_ODEs(ACODEs *odes_pt);
@@ -53,7 +53,7 @@ namespace chapchom
   
   // Performs actions before Newton's method step
   void actions_before_newton_step();
-   
+  
   // Performs actions after Newton's method step
   void actions_after_newton_step();
   
@@ -93,27 +93,27 @@ namespace chapchom
   // it contains dynamically allocated variables, A in this
   // case). Check
   // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
-  CCNewtonsMethodForBackwardEuler(const CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE> &copy)
+  CCNewtonsMethodForAdamsMoulton2(const CCNewtonsMethodForAdamsMoulton2<MAT_TYPE, VEC_TYPE> &copy)
    {
-    BrokenCopy::broken_copy("CCNewtonsMethodForBackwardEuler");
+    BrokenCopy::broken_copy("CCNewtonsMethodForAdamsMoulton2");
    }
    
   // Copy constructor (we do not want this class to be copiable because
   // it contains dynamically allocated variables, A in this
   // case). Check
   // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
-   void operator=(const CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE> &copy)
+   void operator=(const CCNewtonsMethodForAdamsMoulton2<MAT_TYPE, VEC_TYPE> &copy)
     {
-     BrokenCopy::broken_assign("CCNewtonsMethodForBackwardEuler");
+     BrokenCopy::broken_assign("CCNewtonsMethodForAdamsMoulton2");
     }
    
-   // The Jacobiand and residual computation strategy that implements
-   // Backward-Euler method
-   CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE> Jacobian_and_residual_for_backward_euler;
+   // The Jacobian and Residual computation strategy that implements
+   // Adams-Moulton or Trapezoidal rule method
+   CCJacobianAndResidualForAdamsMoulton2<MAT_TYPE, VEC_TYPE> Jacobian_and_residual_for_adams_moulton_2;
    
   };
  
 }
 
-#endif // #ifndef CCNEWTONSMETHODFORBACKWARDEULER_TPL_H
+#endif // #ifndef CCNEWTONSMETHODFORADAMSMOULTON2_TPL_H
 

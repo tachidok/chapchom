@@ -27,8 +27,12 @@
 
 namespace chapchom
 {
- 
+
+#ifdef TYPEDEF_REAL_IS_DOUBLE
 #define DEFAULT_NEWTON_SOLVER_TOLERANCE 1.0e-8
+#else
+#define DEFAULT_NEWTON_SOLVER_TOLERANCE 1.0e-6
+#endif // #ifdef TYPEDEF_REAL_IS_DOUBLE
 #define DEFAULT_MAXIMUM_NEWTON_ITERATIONS 10
 #define DEFAULT_MAXIMUM_ALLOWED_RESIDUAL 10.0
  
@@ -69,7 +73,7 @@ namespace chapchom
    void set_newton_solver_tolerance(const Real new_newton_solver_tolerance);
    
    // Set the Maximun number of Newton's iterations
-   void set_maximum_newton_interations(const unsigned new_maximum_newton_iterations);
+   void set_maximum_newton_iterations(const unsigned new_maximum_newton_iterations);
    
    // Set the Maximum allowed residual
    void set_maximum_allowed_residual(const Real new_maximum_allowed_residual);

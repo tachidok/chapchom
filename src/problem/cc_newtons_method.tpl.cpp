@@ -172,7 +172,7 @@ namespace chapchom
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::
- set_maximum_newton_interations(const unsigned new_maximum_newton_iterations)
+ set_maximum_newton_iterations(const unsigned new_maximum_newton_iterations)
  {
   Maximum_newton_iterations = new_maximum_newton_iterations;
  }

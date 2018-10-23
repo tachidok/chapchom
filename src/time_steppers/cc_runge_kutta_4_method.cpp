@@ -1,4 +1,4 @@
-#include "cc_RK4_method.h"
+#include "cc_runge_kutta_4_method.h"
 
 namespace chapchom
 {

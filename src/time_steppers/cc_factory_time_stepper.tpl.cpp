@@ -50,6 +50,11 @@ namespace chapchom
    {
     return new CCBackwardEulerMethod<MAT_TYPE,VEC_TYPE>();
    }
+  // Adams-Moulton 2 or Trapezoidal Rule method
+  else if (time_stepper_name.compare("am2")==0)
+   {
+    return new CCAdamsMoulton2Method<MAT_TYPE,VEC_TYPE>();
+   }
   else
    {
     std::ostringstream error_message;
@@ -59,7 +64,8 @@ namespace chapchom
                   << "Availables ones\n"
                   << "- Euler (euler)\n"
                   << "- Runge-Kutta 4 (rk4)\n"
-                  << "- Backward Euler (bdf1)\n"
+                  << "- Backward Euler - Fully Implicit (bdf1)\n"
+                  << "- Adams-Moulton 2 - Fully Implicit (am2)\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,

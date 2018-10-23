@@ -6,9 +6,6 @@
 // Newton's method
 #include "cc_newtons_method_for_backward_euler.h"
 
-// The Jacobian strategy used for Newton's method for Backward Euler
-#include "cc_jacobian_and_residual_for_backward_euler.h"
-
 // Time stepper to compute the initial guess for Newton's method
 #include "cc_euler_method.h"
 
@@ -55,10 +52,6 @@ namespace chapchom
   
   // Newton's method for backward Euler
   CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE> Newtons_method;
-  
-  // A pointer for the strategy to compute the Jacobian and the
-  // residual during time stepping call for Newton's method
-  CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE> Jacobian_and_residual_for_backward_euler;
   
   // The time stepper used to compute the initial guess
   CCEulerMethod Time_stepper_initial_guess;

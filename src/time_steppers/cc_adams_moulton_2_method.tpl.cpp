@@ -1,4 +1,4 @@
-#include "cc_backward_euler_method.tpl.h"
+#include "cc_adams_moulton_2_method.tpl.h"
 
 namespace chapchom
 {
@@ -7,24 +7,23 @@ namespace chapchom
  // Constructor
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- CCBackwardEulerMethod<MAT_TYPE,VEC_TYPE>::CCBackwardEulerMethod()
+ CCAdamsMoulton2Method<MAT_TYPE,VEC_TYPE>::CCAdamsMoulton2Method()
   : ACTimeStepper()
  {  
   // Sets the number of history values
   N_history_values = 1;
   
   //Newtons_method.set_newton_solver_tolerance(1.0e-3);
-  //Newtons_method.set_maximum_newton_iterations(100);
   
   // Disable output for Newton's method
-  //Newtons_method.disable_output_messages();
+  Newtons_method.disable_output_messages();
  }
  
  // ===================================================================
  // Empty destructor
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- CCBackwardEulerMethod<MAT_TYPE,VEC_TYPE>::~CCBackwardEulerMethod()
+ CCAdamsMoulton2Method<MAT_TYPE,VEC_TYPE>::~CCAdamsMoulton2Method()
  {
   
  }
@@ -34,7 +33,7 @@ namespace chapchom
  // to the time "t+h"
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCBackwardEulerMethod<MAT_TYPE,VEC_TYPE>::time_step(ACODEs &odes, const Real h,
+ void CCAdamsMoulton2Method<MAT_TYPE,VEC_TYPE>::time_step(ACODEs &odes, const Real h,
                                                           const Real t,
                                                           CCData<Real> &u)
  {
@@ -48,7 +47,7 @@ namespace chapchom
     // Error message
     std::ostringstream error_message;
     error_message << "The number of history values is less than\n"
-                  << "the required by Backward Euler's method" << std::endl;
+                  << "the required by Adams-Moulton 2 method" << std::endl;
     std::cout << "Required number of history values: "
               << N_history_values << std::endl;
     std::cout << "Number of history values: "

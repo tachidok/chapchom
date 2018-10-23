@@ -4,8 +4,9 @@
 // Include the integration methods (time steppers)
 #include "ac_time_stepper.h"
 #include "cc_euler_method.h"
-#include "cc_RK4_method.h"
+#include "cc_runge_kutta_4_method.h"
 #include "cc_backward_euler_method.h"
+#include "cc_adams_moulton_2_method.h"
 
 namespace chapchom
 {
