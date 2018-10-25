@@ -43,7 +43,7 @@ library.
 * Matrices operations
 * Newton's method
 * Solution of ODE's
-  * Lotka-Volterre solved with different time steppers
+  * Lotka-Volterra solved with different time steppers
 
 ### License
 
@@ -53,10 +53,10 @@ Mmm ... that is something we need to carefully think about.
 
 Once we have something intereseting to share with you we will  make the
 project public. Please check continuously for updates or contact the
-developers :construction: :envelope: (tachidok.at.gmail.com).
+developers :construction: :envelope: (tachidok.at.gmail.com) :envelope: :construction:
 
 #### Notes for contributors
-Please check the documentation :construction: for anything you need to
+Please check the documentation (in construction :construction: ) for anything you need to
 set-up your account, get a copy of the latest development and start
 submitting your contributions ....
 
@@ -72,8 +72,7 @@ At Thursday, 25 October 2018 there is one and only one developer, me :no_mouth:
 This project was initially uploaded to GitHub on Friday, 11 March 2016
 :smile:
 
-#### Here is a list (in wikipedia) of other software packages that
-     implement the FEM
+#### Here is a list (in wikipedia) of other software packages that implement the FEM
 
 https://en.wikipedia.org/wiki/List_of_finite_element_software_packages
 
