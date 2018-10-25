@@ -45,6 +45,11 @@ namespace chapchom
    {
     return new CCRK4Method();
    }
+  // Adams-Moulton 2 as Predictor-Corrector method
+  else if (time_stepper_name.compare("am2pc")==0)
+   {
+    return new CCAdamsMoulton2PCMethod();
+   }
   // Backward Euler method
   else if (time_stepper_name.compare("bdf1")==0)
    {
@@ -64,6 +69,7 @@ namespace chapchom
                   << "Availables ones\n"
                   << "- Euler (euler)\n"
                   << "- Runge-Kutta 4 (rk4)\n"
+                  << "- Adams-Moulton 2 - Predictor-Corrector (am2pc)\n"
                   << "- Backward Euler - Fully Implicit (bdf1)\n"
                   << "- Adams-Moulton 2 - Fully Implicit (am2)\n"
                   << std::endl;

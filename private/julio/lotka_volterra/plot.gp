@@ -72,8 +72,8 @@ set xlabel 'Time (t)'
 set ylabel '# of individuals'
 set tics scale 0.75
 
-plot 'bdf1.dat' using 1:2 title 'Prey' w linespoints ls 1, \
-     'bdf1.dat' using 1:3 title 'Predator' w linespoints ls 2
+plot 'am2pc.dat' using 1:2 title 'Prey' w linespoints ls 1, \
+     'am2pc.dat' using 1:3 title 'Predator' w linespoints ls 2
 
 set terminal wxt 5 size 640,480 enhanced font 'Verdana,10' persist
 #set terminal pngcairo size 640,480 enhanced font 'Verdana,10'
@@ -85,9 +85,34 @@ set xlabel 'Time (t)'
 set ylabel '# of individuals'
 set tics scale 0.75
 
-plot 'bdf1.dat' using 2:3 w linespoints ls 1
+plot 'am2pc.dat' using 2:3 w linespoints ls 1
 
 set terminal wxt 6 size 640,480 enhanced font 'Verdana,10' persist
+#set terminal pngcairo size 640,480 enhanced font 'Verdana,10'
+#set output 'deb.png'
+
+#set xrange [0:500]
+#set yrange [0:40]
+set xlabel 'Time (t)'
+set ylabel '# of individuals'
+set tics scale 0.75
+
+plot 'bdf1.dat' using 1:2 title 'Prey' w linespoints ls 1, \
+     'bdf1.dat' using 1:3 title 'Predator' w linespoints ls 2
+
+set terminal wxt 7 size 640,480 enhanced font 'Verdana,10' persist
+#set terminal pngcairo size 640,480 enhanced font 'Verdana,10'
+#set output 'deb.png'
+
+#set xrange [0:500]
+#set yrange [0:40]
+set xlabel 'Time (t)'
+set ylabel '# of individuals'
+set tics scale 0.75
+
+plot 'bdf1.dat' using 2:3 w linespoints ls 1
+
+set terminal wxt 8 size 640,480 enhanced font 'Verdana,10' persist
 #set terminal pngcairo size 640,480 enhanced font 'Verdana,10'
 #set output 'deb.png'
 
@@ -100,7 +125,7 @@ set tics scale 0.75
 plot 'am2.dat' using 1:2 title 'Prey' w linespoints ls 1, \
      'am2.dat' using 1:3 title 'Predator' w linespoints ls 2
 
-set terminal wxt 7 size 640,480 enhanced font 'Verdana,10' persist
+set terminal wxt 9 size 640,480 enhanced font 'Verdana,10' persist
 #set terminal pngcairo size 640,480 enhanced font 'Verdana,10'
 #set output 'deb.png'
 

@@ -41,11 +41,11 @@ namespace chapchom
     // Error message
     std::ostringstream error_message;
     error_message << "The number of history values is less than\n"
-                  << "the required by RK4 methods" << std::endl;
-    std::cout << "Required number of history values: "
-              << N_history_values << std::endl;
-    std::cout << "Number of history values: "
-              << n_history_values << std::endl;
+                  << "the required by RK4 methods" << std::endl
+                  << "Required number of history values: "
+                  << N_history_values << std::endl
+                  << "Number of history values: "
+                  << n_history_values << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);

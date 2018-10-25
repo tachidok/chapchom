@@ -68,7 +68,6 @@ namespace chapchom
   for (unsigned long i = 0; i < n_data; i++)
    {
     U_new_pt->value(i)=this->x_pt()->value(i);
-    printf("U_new_pt: %f\n", U_new_pt->value(i));
    }
   
  }

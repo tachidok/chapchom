@@ -26,8 +26,8 @@ namespace chapchom
   /// Empty destructor
   virtual ~CCBackwardEulerMethod();
   
-  /// Applies Backward Eulers method to the given odes from the
-  /// current time "t" to the time "t+h".
+  /// Applies Backward Euler method to the given odes from the current
+  /// time "t" to the time "t+h".
   void time_step(ACODEs &odes, const Real h, const Real t,
                  CCData<Real> &u);
   

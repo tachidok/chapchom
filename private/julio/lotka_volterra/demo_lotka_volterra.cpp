@@ -13,6 +13,7 @@
 // Integration methods
 #include "../../../src/time_steppers/cc_euler_method.h"
 #include "../../../src/time_steppers/cc_runge_kutta_4_method.h"
+#include "../../../src/time_steppers/cc_adams_moulton_2_predictor_corrector_method.h"
 #include "../../../src/time_steppers/cc_backward_euler_method.h"
 #include "../../../src/time_steppers/cc_adams_moulton_2_method.h"
 
@@ -103,8 +104,11 @@ int main(int argc, char *argv[])
 {
  
  // Create the factory for the time steppers (integration methods)
- //CCFactoryTimeStepper<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > factory_time_stepper;
+#ifdef CHAPCHOM_USES_ARMADILLO
+ CCFactoryTimeStepper<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > factory_time_stepper;
+#else 
  CCFactoryTimeStepper<CCMatrix<Real>, CCVector<Real> > factory_time_stepper;
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
  
  // Euler method test
  {
@@ -253,82 +257,9 @@ int main(int argc, char *argv[])
   time_stepper_pt = 0;
   
  }
- 
- {
-  std::cout << "BDF 1 test" << std::endl;
-  // -----------------------------------------------------------------
-  // Instantiation of the ODEs
-  // -----------------------------------------------------------------
-  CCLotkaVolterraODEs odes(1.2, 0.6, 0.8, 0.3);
-  //CCLotkaVolterraODEs odes(2.0/3.0, 4.0/3.0, 1.0, 1.0);
-  
-  // ----------------------------------------------------------------
-  // Time stepper
-  // ----------------------------------------------------------------
-  ACTimeStepper *time_stepper_pt =
-   factory_time_stepper.create_time_stepper("BDF1");
-  
-  // ----------------------------------------------------------------
-  // Prepare the output file name
-  // ----------------------------------------------------------------
-  std::ostringstream output_filename;
-  output_filename << "bdf1.dat";
-  output_filename.precision(8);
-  
-  // Create an instance of the problem
-  CCLotkaVolterraProblem lotka_volterra_problem(&odes,
-                                                time_stepper_pt,
-                                                output_filename);
-  
-  // Prepare time integration data
-  const Real initial_time = 0.0;
-  const Real final_time = 40.0;
-  const Real time_step = 0.01;
-  
-  // ----------------------------------------------------------------
-  // Configure problem
-  // ----------------------------------------------------------------
-  // Initial time
-  lotka_volterra_problem.time() = initial_time;
-  
-  // Initial time step
-  lotka_volterra_problem.time_step() = time_step;
-  
-  // Set initial conditions
-  lotka_volterra_problem.set_initial_conditions();
-  
-  // Flag to indicate whether to continue processing
-  bool LOOP = true;
-  
-  // Main LOOP (loop until reaching final time)
-  while(LOOP)
-   {
-    // Performs an unsteady solve
-    lotka_volterra_problem.unsteady_solve();
-    
-    // Update time of the problem
-    lotka_volterra_problem.time()+=lotka_volterra_problem.time_step();
-    
-    // Check whether we have reached the final time
-    if (lotka_volterra_problem.time() >= final_time)
-     {
-      LOOP = false;
-     }
-    
-    lotka_volterra_problem.document_solution();
-    
-   } // while(LOOP)
-  
-  std::cout << "[FINISHING UP] ... " << std::endl;
-  
-  // Free memory
-  delete time_stepper_pt;
-  time_stepper_pt = 0;
 
- }
- 
  {
-  std::cout << "Adams-Moulton 2 test" << std::endl;
+  std::cout << "Adams-Moulton 2 - Predictor-Corrector test" << std::endl;
   // -----------------------------------------------------------------
   // Instantiation of the ODEs
   // -----------------------------------------------------------------
@@ -339,13 +270,13 @@ int main(int argc, char *argv[])
   // Time stepper
   // ----------------------------------------------------------------
   ACTimeStepper *time_stepper_pt =
-   factory_time_stepper.create_time_stepper("AM2");
+   factory_time_stepper.create_time_stepper("AM2PC");
   
   // ----------------------------------------------------------------
   // Prepare the output file name
   // ----------------------------------------------------------------
   std::ostringstream output_filename;
-  output_filename << "am2.dat";
+  output_filename << "am2pc.dat";
   output_filename.precision(8);
   
   // Create an instance of the problem
@@ -397,9 +328,155 @@ int main(int argc, char *argv[])
   // Free memory
   delete time_stepper_pt;
   time_stepper_pt = 0;
-
+  
  }
  
- return 0;
+ {
+  std::cout << "BDF 1 test" << std::endl;
+  // -----------------------------------------------------------------
+  // Instantiation of the ODEs
+   // -----------------------------------------------------------------
+   CCLotkaVolterraODEs odes(1.2, 0.6, 0.8, 0.3);
+   //CCLotkaVolterraODEs odes(2.0/3.0, 4.0/3.0, 1.0, 1.0);
+  
+   // ----------------------------------------------------------------
+   // Time stepper
+   // ----------------------------------------------------------------
+   ACTimeStepper *time_stepper_pt =
+    factory_time_stepper.create_time_stepper("BDF1");
+  
+   // ----------------------------------------------------------------
+   // Prepare the output file name
+   // ----------------------------------------------------------------
+   std::ostringstream output_filename;
+   output_filename << "bdf1.dat";
+   output_filename.precision(8);
+  
+   // Create an instance of the problem
+   CCLotkaVolterraProblem lotka_volterra_problem(&odes,
+                                                 time_stepper_pt,
+                                                 output_filename);
+  
+   // Prepare time integration data
+   const Real initial_time = 0.0;
+   const Real final_time = 40.0;
+   const Real time_step = 0.0625;
+  
+   // ----------------------------------------------------------------
+   // Configure problem
+   // ----------------------------------------------------------------
+   // Initial time
+   lotka_volterra_problem.time() = initial_time;
+  
+   // Initial time step
+   lotka_volterra_problem.time_step() = time_step;
+  
+   // Set initial conditions
+   lotka_volterra_problem.set_initial_conditions();
+  
+   // Flag to indicate whether to continue processing
+   bool LOOP = true;
+  
+   // Main LOOP (loop until reaching final time)
+   while(LOOP)
+    {
+     // Performs an unsteady solve
+     lotka_volterra_problem.unsteady_solve();
+    
+     // Update time of the problem
+     lotka_volterra_problem.time()+=lotka_volterra_problem.time_step();
+    
+     // Check whether we have reached the final time
+     if (lotka_volterra_problem.time() >= final_time)
+      {
+       LOOP = false;
+      }
+    
+     lotka_volterra_problem.document_solution();
+    
+    } // while(LOOP)
+  
+   std::cout << "[FINISHING UP] ... " << std::endl;
+  
+   // Free memory
+   delete time_stepper_pt;
+   time_stepper_pt = 0;
+
+  }
+ 
+  {
+   std::cout << "Adams-Moulton 2 test" << std::endl;
+   // -----------------------------------------------------------------
+   // Instantiation of the ODEs
+   // -----------------------------------------------------------------
+   CCLotkaVolterraODEs odes(1.2, 0.6, 0.8, 0.3);
+   //CCLotkaVolterraODEs odes(2.0/3.0, 4.0/3.0, 1.0, 1.0);
+  
+   // ----------------------------------------------------------------
+   // Time stepper
+   // ----------------------------------------------------------------
+   ACTimeStepper *time_stepper_pt =
+    factory_time_stepper.create_time_stepper("AM2");
+  
+   // ----------------------------------------------------------------
+   // Prepare the output file name
+   // ----------------------------------------------------------------
+   std::ostringstream output_filename;
+   output_filename << "am2.dat";
+   output_filename.precision(8);
+  
+   // Create an instance of the problem
+   CCLotkaVolterraProblem lotka_volterra_problem(&odes,
+                                                 time_stepper_pt,
+                                                 output_filename);
+  
+   // Prepare time integration data
+   const Real initial_time = 0.0;
+   const Real final_time = 40.0;
+   const Real time_step = 0.1;
+  
+   // ----------------------------------------------------------------
+   // Configure problem
+   // ----------------------------------------------------------------
+   // Initial time
+   lotka_volterra_problem.time() = initial_time;
+  
+   // Initial time step
+   lotka_volterra_problem.time_step() = time_step;
+  
+   // Set initial conditions
+   lotka_volterra_problem.set_initial_conditions();
+  
+   // Flag to indicate whether to continue processing
+   bool LOOP = true;
+  
+   // Main LOOP (loop until reaching final time)
+   while(LOOP)
+    {
+     // Performs an unsteady solve
+     lotka_volterra_problem.unsteady_solve();
+    
+     // Update time of the problem
+     lotka_volterra_problem.time()+=lotka_volterra_problem.time_step();
+    
+     // Check whether we have reached the final time
+     if (lotka_volterra_problem.time() >= final_time)
+      {
+       LOOP = false;
+      }
+    
+     lotka_volterra_problem.document_solution();
+    
+    } // while(LOOP)
+  
+   std::cout << "[FINISHING UP] ... " << std::endl;
+  
+   // Free memory
+   delete time_stepper_pt;
+   time_stepper_pt = 0;
+
+  }
+ 
+  return 0;
  
 }

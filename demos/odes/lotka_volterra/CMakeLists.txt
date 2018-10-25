@@ -46,6 +46,10 @@ SET (VALIDATE_FILENAME_demo_lotka_volterra_rk4 "validate_rk4.dat")
 ADD_TEST(NAME TEST_demo_lotka_volterra_rk4_check_output
          COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_lotka_volterra_rk4} ${CMAKE_CURRENT_BINARY_DIR}/rk4.dat)
 # Validate output
+SET (VALIDATE_FILENAME_demo_lotka_volterra_am2pc "validate_am2pc.dat")
+ADD_TEST(NAME TEST_demo_lotka_volterra_am2pc_check_output
+         COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_lotka_volterra_am2pc} ${CMAKE_CURRENT_BINARY_DIR}/am2pc.dat)
+# Validate output
 SET (VALIDATE_FILENAME_demo_lotka_volterra_bdf1 "validate_bdf1.dat")
 ADD_TEST(NAME TEST_demo_lotka_volterra_bdf1_check_output
          COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_lotka_volterra_bdf1} ${CMAKE_CURRENT_BINARY_DIR}/bdf1.dat)

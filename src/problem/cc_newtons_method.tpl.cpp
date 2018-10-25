@@ -291,9 +291,6 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  printf("Initial guess in newton's method\n");
-  X_pt->print();
-  
   // ----------------------------------------------------------------
   // Initial residual convergence check
   // ----------------------------------------------------------------
@@ -422,9 +419,6 @@ namespace chapchom
       chapchom_output << "CPU time for linear solver in Newton solve: ["
                       << total_cpu_clock_time_for_linear_solver << "]" << std::endl;
      }
-    
-    printf("dx after linear solver\n");
-    dx.print();
     
     // Update initial guess
     for (unsigned i_dof = 0; i_dof < n_dof; i_dof++)

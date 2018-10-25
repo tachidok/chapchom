@@ -17,7 +17,7 @@ namespace chapchom
   //Newtons_method.set_maximum_newton_iterations(100);
   
   // Disable output for Newton's method
-  //Newtons_method.disable_output_messages();
+  Newtons_method.disable_output_messages();
  }
  
  // ===================================================================
@@ -30,8 +30,8 @@ namespace chapchom
  }
  
  // ===================================================================
- // Applies Eulers method to the given odes from the current time "t"
- // to the time "t+h"
+ // Applies Backward Euler method to the given odes from the current
+ // time "t" to the time "t+h"
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  void CCBackwardEulerMethod<MAT_TYPE,VEC_TYPE>::time_step(ACODEs &odes, const Real h,
@@ -48,11 +48,11 @@ namespace chapchom
     // Error message
     std::ostringstream error_message;
     error_message << "The number of history values is less than\n"
-                  << "the required by Backward Euler's method" << std::endl;
-    std::cout << "Required number of history values: "
-              << N_history_values << std::endl;
-    std::cout << "Number of history values: "
-              << n_history_values << std::endl;
+                  << "the required by Backward Euler's method" << std::endl
+                  << "Required number of history values: "
+                  << N_history_values << std::endl
+                  << "Number of history values: "
+                  << n_history_values << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
