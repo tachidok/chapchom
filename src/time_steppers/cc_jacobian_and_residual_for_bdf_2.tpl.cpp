@@ -1,4 +1,4 @@
-#include "cc_jacobian_and_residual_for_adams_moulton_2.tpl.h"
+#include "cc_jacobian_and_residual_for_bdf_2.tpl.h"
 
 namespace chapchom
 {
@@ -6,7 +6,7 @@ namespace chapchom
  // Constructor
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- CCJacobianAndResidualForAdamsMoulton2<MAT_TYPE, VEC_TYPE>::CCJacobianAndResidualForAdamsMoulton2()
+ CCJacobianAndResidualForBDF2<MAT_TYPE, VEC_TYPE>::CCJacobianAndResidualForBDF2()
   : ACJacobianAndResidual<MAT_TYPE, VEC_TYPE>(),
   ODEs_pt(NULL),
   ODEs_has_been_set(false), 
@@ -15,9 +15,7 @@ namespace chapchom
   U_new_pt(NULL),
   U_new_has_been_set(false),
   Current_time_has_been_set(false),
-  Time_step_has_been_set(false),
-  DUDT(NULL),
-  Evaluate_ODEs_with_U_values(false)
+  Time_step_has_been_set(false)
  {
   
  }
@@ -26,7 +24,7 @@ namespace chapchom
  // Destructor
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- CCJacobianAndResidualForAdamsMoulton2<MAT_TYPE, VEC_TYPE>::~CCJacobianAndResidualForAdamsMoulton2()
+ CCJacobianAndResidualForBDF2<MAT_TYPE, VEC_TYPE>::~CCJacobianAndResidualForBDF2()
  {
   
  }
@@ -36,7 +34,7 @@ namespace chapchom
  // (virtual function implementation)
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianAndResidualForAdamsMoulton2<MAT_TYPE, VEC_TYPE>::compute_jacobian()
+ void CCJacobianAndResidualForBDF2<MAT_TYPE, VEC_TYPE>::compute_jacobian()
  {
   // Check whether the ODEs have been set
   if (!ODEs_has_been_set || ODEs_pt == NULL)
@@ -117,17 +115,17 @@ namespace chapchom
   // Set the data required to compute the Jacobian of F(Y)
   Jacobian_FY_strategy.set_ODEs(ODEs_pt);
   Jacobian_FY_strategy.set_U(U_new_pt);
-  Jacobian_FY_strategy.set_current_time(Current_time+Time_step);
+  Jacobian_FY_strategy.set_current_time(Current_time+Time_step+Time_step);
   
   // Compute Jacobian
   Jacobian_FY_strategy.compute_jacobian();
   
-  // Store the Jacobian for FY, used in the computation of the
-  // Adams-Moulton 2 Jacobian $J = I - \frac{1}{2}h J_{FY}$
+  // Store the Jacobian for FY, used in the computation of the BDF2
+  // Jacobian $J = I - \frac{2}{3}h J_{FY}$
   MAT_TYPE Jacobian_FY = Jacobian_FY_strategy.jacobian();
-  
-  // Half time step
-  const Real half_time_step = Time_step * 0.5;
+
+  // Two thirds of the time step
+  const Real two_thirds_time_step = (2.0/3.0) * Time_step;
   
   // Compute the approximated Jacobian (I - h * Jacobian_FY(i, j))
   for (unsigned i = 0; i < n_dof; i++)
@@ -136,11 +134,11 @@ namespace chapchom
      {
       if (i == j)
        {
-        this->Jacobian(i, j) = 1.0 - (half_time_step * Jacobian_FY(i, j));
+        this->Jacobian(i, j) = 1.0 - (two_thirds_time_step * Jacobian_FY(i, j));
        }
       else
        {
-        this->Jacobian(i, j) = 0.0 - (half_time_step * Jacobian_FY(i, j));
+        this->Jacobian(i, j) = 0.0 - (two_thirds_time_step * Jacobian_FY(i, j));
        }
      }
    }
@@ -151,7 +149,7 @@ namespace chapchom
  // In charge of computing the residual
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianAndResidualForAdamsMoulton2<MAT_TYPE, VEC_TYPE>::compute_residual()
+ void CCJacobianAndResidualForBDF2<MAT_TYPE, VEC_TYPE>::compute_residual()
  {
   // Check whether the ODEs have been set
   if (!ODEs_has_been_set || ODEs_pt == NULL)
@@ -225,67 +223,28 @@ namespace chapchom
   
   // Get the number of ODEs
   const unsigned n_dof = ODEs_pt->n_odes();
-
-  // Is this the first time we called this method with the U_pt
-  // values, if that is the case then
-  if (Evaluate_ODEs_with_U_values)
-   {
-    // Free memory if there is something in there
-    if (DUDT!= NULL)
-     {
-      delete DUDT;
-      DUDT = NULL;
-     }
-    
-    // Temporary vector to store the evaluation of the odes with U_pt
-    // (constant values)
-    DUDT = new CCData<Real>(n_dof);
-    
-    // Evaluate the ODE at time "t" using the "u" values of U_pt,
-    // constant during Newton's iteration
-    ODEs_pt->evaluate(Current_time, (*U_pt), (*DUDT));
-
-    // Avoid evaluation of the same function during following Newton's
-    // iterations
-    Evaluate_ODEs_with_U_values = false;
-    
-   }
-  
-  // Check whether we have previously evaluated the derivative with
-  // U_pt values
-  if (DUDT==NULL)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "You have not evaluated the odes with the values of U_pt\n"
-                  << "These values are required to compute the residual\n"
-                  << "Call the method\n"
-                  << "enable_odes_evaluation_with_u_values()\n"
-                  << "ONLY before the FIRST computation of the residual\n"
-                  << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
   
   // Temporary vector to store the evaluation of the odes with
   // U_new_pt (current Newton's iteration)
   CCData<Real> dudt_new(n_dof);
   
-  // Evaluate the ODE at time "t+h" using the "u" values of the current
+  // Time step weights
+  const Real two_thirds_time_step = (2.0/3.0) * Time_step;
+  // Previous Y value weights
+  const Real one_third = 1.0/3.0;
+  const Real four_thirds = 4.0/3.0;
+  
+  // Evaluate the ODE at time "t+2" using the "u" values of the current
   // Newton's iteration
-  ODEs_pt->evaluate(Current_time+Time_step, (*U_new_pt), dudt_new);
+  ODEs_pt->evaluate(Current_time+Time_step+Time_step, (*U_new_pt), dudt_new);
   
   // Allocate memory for the Residual (delete previous data)
-  this->Residual.allocate_memory(n_dof);
-
-  // Half time step
-  const Real half_time_step = Time_step * 0.5;
+ this->Residual.allocate_memory(n_dof);
   
-  for (unsigned i = 0; i < n_dof; i++)
+ for (unsigned i = 0; i < n_dof; i++)
    {
     this->Residual(i) =
-     -(U_new_pt->value(i) - U_pt->value(i) - (half_time_step * (dudt_new(i) + DUDT->value(i))));
+     -(U_new_pt->value(i) - (four_thirds * U_pt->value(i,1)) + (one_third * U_pt->value(i,0)) - (two_thirds_time_step * dudt_new(i)));
    }
   
  }
@@ -294,7 +253,7 @@ namespace chapchom
  // Set the ODEs
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianAndResidualForAdamsMoulton2<MAT_TYPE, VEC_TYPE>::set_ODEs(ACODEs *odes_pt)
+ void CCJacobianAndResidualForBDF2<MAT_TYPE, VEC_TYPE>::set_ODEs(ACODEs *odes_pt)
  {
   // Set the odes
   ODEs_pt = odes_pt;
@@ -309,7 +268,7 @@ namespace chapchom
  // current time
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianAndResidualForAdamsMoulton2<MAT_TYPE, VEC_TYPE>::set_U(CCData<Real> *u_pt)
+ void CCJacobianAndResidualForBDF2<MAT_TYPE, VEC_TYPE>::set_U(CCData<Real> *u_pt)
  {
   // Set the storage of the data
   U_pt = u_pt;
@@ -324,7 +283,7 @@ namespace chapchom
  // current Newton's iteration
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianAndResidualForAdamsMoulton2<MAT_TYPE, VEC_TYPE>::set_U_new(CCData<Real> *u_new_pt)
+ void CCJacobianAndResidualForBDF2<MAT_TYPE, VEC_TYPE>::set_U_new(CCData<Real> *u_new_pt)
  {
   // Set the storage of the data
   U_new_pt = u_new_pt;
@@ -338,7 +297,7 @@ namespace chapchom
  // Sets the current time
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianAndResidualForAdamsMoulton2<MAT_TYPE, VEC_TYPE>::set_current_time(const Real t)
+ void CCJacobianAndResidualForBDF2<MAT_TYPE, VEC_TYPE>::set_current_time(const Real t)
  {
   // Set the constant time
   Current_time = t;
@@ -351,7 +310,7 @@ namespace chapchom
  // Sets the time step
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianAndResidualForAdamsMoulton2<MAT_TYPE, VEC_TYPE>::set_time_step(const Real h)
+ void CCJacobianAndResidualForBDF2<MAT_TYPE, VEC_TYPE>::set_time_step(const Real h)
  {
   // Set the time step 
   Time_step = h;

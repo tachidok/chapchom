@@ -60,6 +60,11 @@ namespace chapchom
    {
     return new CCAdamsMoulton2Method<MAT_TYPE,VEC_TYPE>();
    }
+  // BDF 2 method
+  else if (time_stepper_name.compare("bdf2")==0)
+   {
+    return new CCBDF2Method<MAT_TYPE,VEC_TYPE>();
+   }
   else
    {
     std::ostringstream error_message;
@@ -72,6 +77,7 @@ namespace chapchom
                   << "- Adams-Moulton 2 - Predictor-Corrector (am2pc)\n"
                   << "- Backward Euler - Fully Implicit (bdf1)\n"
                   << "- Adams-Moulton 2 - Fully Implicit (am2)\n"
+                  << "- Backward Differentiation Formula 2 - Fully Implicit (bdf2)\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,

@@ -8,6 +8,7 @@
 #include "cc_adams_moulton_2_predictor_corrector_method.h"
 #include "cc_backward_euler_method.h"
 #include "cc_adams_moulton_2_method.h"
+#include "cc_bdf_2_method.h"
 
 namespace chapchom
 {
