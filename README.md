@@ -3,7 +3,7 @@
 ### What the project is?
 We intend to develop a **Object-Oriented-Parallel numerical
 library** with aims to solve PDE's by the Finite Element Method and
-Mesh Free Methods.
+Mesh Free Methods, in particular, particle methods.
 
 ### How to configure it?
 Run the script _autogen.sh_ in the main folder and follow the instructions
@@ -20,6 +20,12 @@ on screen to configure the library.
 * Doxygen - to build classes diagrams and useful documentation from
   the code.
 
+#### Recommended but not compulsory external libraries
+* OpenBLAS
+* SuperLU (requires OpenBLAS)
+* Armadillo (requires SuperLU)
+* VTK
+
 ### Examples and test cases
 
 Demos, examples or test cases can be found in the "demos" directory
@@ -30,6 +36,14 @@ broken.
 A large number of examples is expected to live in the "demos"
 directory so you can check there for any feature available in the
 library.
+
+#### Current demos for specific functionalities
+* Interpolation
+* Linear solvers
+* Matrices operations
+* Newton's method
+* Solution of ODE's
+  * Lotka-Volterre solved with different time steppers
 
 ### License
 
@@ -50,7 +64,7 @@ submitting your contributions ....
 
 #### How many developers are currently working on the library
 
-At Thursdat, 09 November 2017 there is one and only one developer :no_mouth:
+At Thursday, 25 October 2018 there is one and only one developer, me :no_mouth:
 
 :construction: :construction: :construction: :construction: :construction:
 
