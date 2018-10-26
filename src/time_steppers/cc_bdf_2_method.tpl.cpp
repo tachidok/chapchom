@@ -8,16 +8,16 @@ namespace chapchom
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  CCBDF2Method<MAT_TYPE,VEC_TYPE>::CCBDF2Method()
-  : ACTimeStepper()
- {  
+  : ACTimeStepper(),
+    Compute_u_plus_h(true)
+ {
   // Sets the number of history values
   N_history_values = 2;
   
   //Newtons_method.set_newton_solver_tolerance(1.0e-3);
-  //Newtons_method.set_maximum_newton_iterations(100);
   
   // Disable output for Newton's method
-  //Newtons_method.disable_output_messages();
+  Newtons_method.disable_output_messages();
  }
  
  // ===================================================================
@@ -57,17 +57,25 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
+
+  // -----------------------------------------------------------------
+  // Compute the value of u_{i+h} if this is the very first time the
+  // method is called and store the result in u_{i+h}
+  if (Compute_u_plus_h)
+   {
+    // Compute the values for u(i,1) using the same time stepper used
+    // to compute the initial guess for Newton's method
+    Time_stepper_initial_guess.time_step(odes, h, t, u);
+    
+    // This should be performed only once
+    Compute_u_plus_h = false;
+   }
   
-  // HERE we need to check whether we should compute the value of
-  // u_{i+h} if this is the very first time the method is called and
-  // store the result in u_{i+h}
-  asdfafadadad
-  
-   // -----------------------------------------------------------------
-   // Compute initial guess
-   // -----------------------------------------------------------------
-   // Temporary storage for Newton's method
-   CCData<Real> u_guess(u);
+  // -----------------------------------------------------------------
+  // Compute initial guess
+  // -----------------------------------------------------------------
+  // Temporary storage for Newton's method
+  CCData<Real> u_guess(u);
   
   // Shift the values to compute the value of u_{i+2h} based on the
   // values of u_{i+h}
@@ -79,7 +87,10 @@ namespace chapchom
   // Create a vector with the initial guess from the second row (1)
   // since values have not been shifted
   VEC_TYPE u_0(u_guess.history_values_row_pt(1), n_odes);
-  
+
+  // -----------------------------------------------------------------
+  // Apply Newton's method
+  // -----------------------------------------------------------------
   // Pass the data required for Newton's method
   Newtons_method.set_ODEs(&odes);
   Newtons_method.set_U(&u);
@@ -100,6 +111,6 @@ namespace chapchom
    }
   
  }
-
+ 
 }
 

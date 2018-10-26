@@ -123,11 +123,11 @@ namespace chapchom
   // Store the Jacobian for FY, used in the computation of the BDF2
   // Jacobian $J = I - \frac{2}{3}h J_{FY}$
   MAT_TYPE Jacobian_FY = Jacobian_FY_strategy.jacobian();
-
+  
   // Two thirds of the time step
   const Real two_thirds_time_step = (2.0/3.0) * Time_step;
   
-  // Compute the approximated Jacobian (I - h * Jacobian_FY(i, j))
+  // Compute the approximated Jacobian (I - \frac{2}{3}h * Jacobian_FY(i, j))
   for (unsigned i = 0; i < n_dof; i++)
    {
     for (unsigned j = 0; j < n_dof; j++)

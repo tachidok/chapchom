@@ -4,7 +4,7 @@
 #include "ac_time_stepper.h"
 
 // Newton's method
-#include "cc_newtons_method_for_bdf2.h"
+#include "cc_newtons_method_for_bdf_2.h"
 
 // Time stepper to compute the initial guess for Newton's method
 #include "cc_euler_method.h"
@@ -31,6 +31,9 @@ namespace chapchom
   void time_step(ACODEs &odes, const Real h, const Real t,
                  CCData<Real> &u);
   
+  // Enables the computation of u_{i+h}
+  inline void enable_u_plus_h_computation() {Compute_u_plus_h = true;}
+  
  protected:
   
   /// Copy constructor (we do not want this class to be
@@ -55,6 +58,12 @@ namespace chapchom
   
   // The time stepper used to compute the initial guess
   CCEulerMethod Time_stepper_initial_guess;
+  
+ private:
+  
+  // Flag to enable the computation of u_plus_h, it should be enabled
+  // ONLY the first time a time_step() is performed
+  bool Compute_u_plus_h;
   
  };
  
