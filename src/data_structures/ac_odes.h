@@ -23,7 +23,7 @@ namespace chapchom
   
   /// Empty destructor
   virtual ~ACODEs();
-   
+  
   /// Gets the number of odes
   unsigned n_odes() const
   {return N_odes;}
@@ -35,12 +35,13 @@ namespace chapchom
   /// Gets the number of calls to an specific ode
   unsigned ncalls_ode(const unsigned i) const
   {return N_calls_ode[i];}
-   
-  /// Evaluates the system of odes at time "t". The values of the
-  /// i-th function at previous times are accessible via u(i,1),
-  /// u(i,2) and so on. The evaluation produces results in the vector
-  /// dudt.
-  virtual void evaluate(const Real t, CCData<Real> &u, CCData<Real> &dudt) = 0;
+  
+  /// Evaluates the system of odes at time 't'. The index k states the
+  /// history values that are being evaluated (default current values,
+  /// k=0). The evaluation produces results in the vector dudt(i). The
+  /// values of the i-th function at previous times are accessible via
+  /// u(i,1), u(i,2) and so on.
+  virtual void evaluate(const Real t, CCData<Real> &u, CCData<Real> &dudt, const unsigned k = 0) = 0;
   
  protected:
    

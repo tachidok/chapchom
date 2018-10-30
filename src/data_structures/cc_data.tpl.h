@@ -70,7 +70,8 @@ namespace chapchom
   // Free allocated memory
   void free_memory_of_values();
   
-  // Shift history values (mostly used for time integration)
+  // Shift history values (mostly used for time integration). Move the
+  // values at index 0 to the indicated number of positions
   void shift_history_values(const unsigned n_shift_positions = 1);
   
   // Get a pointer to the t-th history values

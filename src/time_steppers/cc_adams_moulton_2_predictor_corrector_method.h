@@ -24,9 +24,10 @@ namespace chapchom
   
   /// Applies Adams-Moulton 2 method implemented as
   /// Predictor-Corrector to the given odes from the current time "t"
-  /// to the time "t+h".
+  /// to the time "t+h".  The values of u at time t+h will be stored
+  /// at index k (default k = 0).
   void time_step(ACODEs &odes, const Real h, const Real t,
-                 CCData<Real> &u);
+                 CCData<Real> &u, const unsigned k = 0);
   
  protected:
  

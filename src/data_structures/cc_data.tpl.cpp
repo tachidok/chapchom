@@ -210,7 +210,8 @@ namespace chapchom
  }
  
  // ===================================================================
- // Shift history values (mostly used for time integration)
+ // Shift history values (mostly used for time integration). Move the
+ // values at index 0 to the indicated number of positions
  // ===================================================================
  template<class T>
  void CCData<T>::shift_history_values(const unsigned n_shift_positions)
@@ -238,15 +239,15 @@ namespace chapchom
   // Loop over the history values
   for (unsigned i = 0; i < upper_limit; i++)
    {
-    // Get the i-th row and the i-th row to shift with
-    T *i_row_pt = history_values_row_pt(i);
-    T *i_shift_row_pt = history_values_row_pt(i+n_shift_positions);
+    // Get the i-th source row and the i-th destination row
+    T *i_src_row_pt = history_values_row_pt(i);
+    T *i_dst_row_pt = history_values_row_pt(i+n_shift_positions);
     
-    std::memcpy(i_row_pt, i_shift_row_pt, N_values*sizeof(T));
+    std::memcpy(i_dst_row_pt, i_src_row_pt, N_values*sizeof(T));
    }
   
  }
-
+ 
  // ===================================================================
  // Get a pointer to the t-th history values
  // ===================================================================

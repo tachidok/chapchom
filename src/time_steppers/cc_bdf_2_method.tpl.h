@@ -27,12 +27,13 @@ namespace chapchom
   virtual ~CCBDF2Method();
   
   /// Applies BDF2 method to the given odes from the current time "t"
-  /// to the time "t+h".
+  /// to the time "t+h". The values of u at time t+h will be stored at
+  /// index k (default k = 0).
   void time_step(ACODEs &odes, const Real h, const Real t,
-                 CCData<Real> &u);
+                 CCData<Real> &u, const unsigned k = 0);
   
-  // Enables the computation of u_{i+h}
-  inline void enable_u_plus_h_computation() {Compute_u_plus_h = true;}
+  // Enables the computation of u_{t+h}
+  inline void enable_computation_of_u_at_t_plus_h() {Compute_u_at_time_t_plus_h = true;}
   
  protected:
   
@@ -61,9 +62,9 @@ namespace chapchom
   
  private:
   
-  // Flag to enable the computation of u_plus_h, it should be enabled
-  // ONLY the first time a time_step() is performed
-  bool Compute_u_plus_h;
+  // Flag to enable the computation of u at time 't+h', it should be
+  // enabled ONLY the first time a time_step() is performed
+  bool Compute_u_at_time_t_plus_h;
   
  };
  

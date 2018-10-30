@@ -25,14 +25,14 @@ namespace chapchom
  
  // ===================================================================
  // Applies Runge-Kutta 4 method to the given odes from the current
- // time "t" to the time "t+h"
+ // time "t" to the time "t+h". The values of u at time t+h will be
+ // stored at index k (default k = 0).
  // ===================================================================
  void CCRK4Method::time_step(ACODEs &odes, const Real h,
                              const Real t,
-                             CCData<Real> &u)
+                             CCData<Real> &u,
+                             const unsigned k)
  {
-  // Get the number of odes
-  const unsigned n_odes = odes.n_odes();
   // Check if the ode has the correct number of history values to
   // apply Runge-Kutta 4 method
   const unsigned n_history_values = u.n_history_values();
@@ -51,14 +51,14 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Temporary vector to store the evaluation of the odes
+  // Get the number of odes
+  const unsigned n_odes = odes.n_odes();
+  
+  // Temporary vector to store the evaluation of the odes.
   CCData<Real> dudt(n_odes);
   
   // Evaluate the ODE at time "t" using the current values of "u"
-  odes.evaluate(t, u, dudt);
-  
-  // Index for history values
-  const unsigned k = 0;
+  odes.evaluate(t, u, dudt, k);
   
   // Temporary vector to store the K_i evaluations proper of
   // Runge-Kutta methods
@@ -67,42 +67,45 @@ namespace chapchom
   CCData<Real> K3(n_odes);
   CCData<Real> K4(n_odes);
   
-  // Create a copy of the y vector
-  CCData<Real> u_temp(u);
+  // Create a copy of the u vector
+  CCData<Real> u_copy(u);
   
   // --------------------------------------------------------------------
   // Evaluate the ODE at time "t" using the current values of "u"
-  odes.evaluate(t, u, K1);
+  odes.evaluate(t, u, K1, k);
   // --------------------------------------------------------------------
   // Evaluate the ODE at time "t+(h/2)" and with "u+(h/2)K1"
   const Real h_half = h*0.5;
   for (unsigned i = 0; i < n_odes; i++)
    {
-    u_temp(i,k) = u(i,k)+h_half*K1(i);
+    u_copy(i,k) = u(i,k)+h_half*K1(i);
    }
-  odes.evaluate(t+h_half, u_temp, K2);
+  odes.evaluate(t+h_half, u_copy, K2, k);
   
   // --------------------------------------------------------------------
   // Evaluate the ODE at time "t+(h/2)" and with "u+(h/2)K2"
   for (unsigned i = 0; i < n_odes; i++)
    {
-    u_temp(i,k) = u(i,k)+h_half*K2(i);
+    u_copy(i,k) = u(i,k)+h_half*K2(i);
    }
-  odes.evaluate(t+h_half, u_temp, K3);
+  odes.evaluate(t+h_half, u_copy, K3, k);
   
   // -------------------------------------------------------------------- 
   // Evaluate the ODE at time "t+h" and with "u+hK3"
   for (unsigned i = 0; i < n_odes; i++)
    {
-    u_temp(i,k) = u(i,k)+h*K3(i);
+    u_copy(i,k) = u(i,k)+h*K3(i);
    }
-  odes.evaluate(t+h, u_temp, K4);
+  odes.evaluate(t+h, u_copy, K4);
+  
+  // Shift values to the right to provide storage for the new values
+  u.shift_history_values();
   
   // Once the derivatives have been obtained compute the new "u" as
   // the weighted sum of the K's
   for (unsigned i = 0; i < n_odes; i++)
    {
-    u(i,k+1) = u(i,k) + (h/6.0)*(K1(i) + 2.0*K2(i) + 2.0*K3(i) + K4(i));
+    u(i,k) = u(i,k+1) + (h/6.0)*(K1(i) + 2.0*K2(i) + 2.0*K3(i) + K4(i));
    }
  
  }

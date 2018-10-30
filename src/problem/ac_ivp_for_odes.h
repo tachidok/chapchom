@@ -63,7 +63,7 @@ namespace chapchom
   void steady_solve() { }
   
   // Problem unsteady solve
-  void unsteady_solve(bool shift_history_values = true);
+  void unsteady_solve();
   
  protected:
   

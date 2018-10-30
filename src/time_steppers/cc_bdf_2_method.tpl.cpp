@@ -9,7 +9,7 @@ namespace chapchom
  template<class MAT_TYPE, class VEC_TYPE>
  CCBDF2Method<MAT_TYPE,VEC_TYPE>::CCBDF2Method()
   : ACTimeStepper(),
-    Compute_u_plus_h(true)
+    Compute_u_at_time_t_plus_h(true)
  {
   // Sets the number of history values
   N_history_values = 2;
@@ -31,24 +31,24 @@ namespace chapchom
  
  // ===================================================================
  // Applies BDF2 method to the given odes from the current time "t" to
- // the time "t+h"
+ // the time "t+h". The values of u at time t+h will be stored at
+ // index k (default k = 0).
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  void CCBDF2Method<MAT_TYPE,VEC_TYPE>::time_step(ACODEs &odes, const Real h,
                                                  const Real t,
-                                                 CCData<Real> &u)
+                                                 CCData<Real> &u,
+                                                 const unsigned k)
  {
-  // Get the number of odes
-  const unsigned n_odes = odes.n_odes();
   // Check if the ode has the correct number of history values to
-  // apply BDF2 method
+  // apply Backward-Euler's method
   const unsigned n_history_values = u.n_history_values();
   if (n_history_values < N_history_values)
    {
     // Error message
     std::ostringstream error_message;
     error_message << "The number of history values is less than\n"
-                  << "the required by BDF2 method" << std::endl
+                  << "the required by Backward Euler's method" << std::endl
                   << "Required number of history values: "
                   << N_history_values << std::endl
                   << "Number of history values: "
@@ -57,58 +57,54 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
-
+  
   // -----------------------------------------------------------------
-  // Compute the value of u_{i+h} if this is the very first time the
-  // method is called and store the result in u_{i+h}
-  if (Compute_u_plus_h)
+  // Compute the value of u_{t+h} if this is the first time
+  if (Compute_u_at_time_t_plus_h)
    {
-    // Compute the values for u(i,1) using the same time stepper used
-    // to compute the initial guess for Newton's method
-    Time_stepper_initial_guess.time_step(odes, h, t, u);
+    // Compute the values for u(i,1) using the same time stepper to
+    // compute the initial guess for Newton's method
+    Time_stepper_initial_guess.time_step(odes, h, t, u, k);
     
     // This should be performed only once
-    Compute_u_plus_h = false;
+    Compute_u_at_time_t_plus_h = false;
+    
+    // Only one value is computed at time
+    return;
    }
-  
+
   // -----------------------------------------------------------------
   // Compute initial guess
   // -----------------------------------------------------------------
-  // Temporary storage for Newton's method
-  CCData<Real> u_guess(u);
+  // Perform a copy of u
+  CCData<Real> u_copy(u);
   
-  // Shift the values to compute the value of u_{i+2h} based on the
-  // values of u_{i+h}
-  u_guess.shift_history_values();
+  // Compute the initial guess for Newton's method using the values of
+  // u at time 't', the values of u at time 't+h' are automatically
+  // shifted at index k
+  Time_stepper_initial_guess.time_step(odes, h, t, u_copy, k);
   
-  // Compute the initial guess for Newton's method
-  Time_stepper_initial_guess.time_step(odes, h, t+h, u_guess);
+  // ---------------------------------------------------
+  // Transform the initial guess into a vector
+  // ---------------------------------------------------
+  // Get the number of odes
+  const unsigned n_odes = odes.n_odes();
   
-  // Create a vector with the initial guess from the second row (1)
-  // since values have not been shifted
-  VEC_TYPE u_0(u_guess.history_values_row_pt(1), n_odes);
-
-  // -----------------------------------------------------------------
-  // Apply Newton's method
-  // -----------------------------------------------------------------
-  // Pass the data required for Newton's method
-  Newtons_method.set_ODEs(&odes);
-  Newtons_method.set_U(&u);
-  Newtons_method.set_U_new(&u_guess);
-  Newtons_method.set_time_step(h);
-  Newtons_method.set_current_time(t);
+  // Create a vector with the initial guess from the first row (0)
+  // since the values have been shift
+  VEC_TYPE u_initial_guess(u_copy.history_values_row_pt(0), n_odes);
   
-  // Solver using Newton's method
-  Newtons_method.solve(u_0);
+  // Shift values to the right to provide storage for the new values
+  u.shift_history_values();
   
-  // Index for history values
-  const unsigned k = 0;
+  // Pass the required data to Newton's method. The solution is stored
+  // in u at index k, therefore the values of u at time 't' are stored
+  // at index k+1
+  Newtons_method.set_data_for_jacobian_and_residual(&odes, h, t, &u, k);
   
-  // Copy solution into output vector
-  for (unsigned i = 0; i < n_odes; i++)
-   {
-    u(i,k+2) = u_0(i);
-   }
+  // Solve using Newton's method, the solution is automatically copied
+  // back at the u data structure
+  Newtons_method.solve(u_initial_guess);
   
  }
  

@@ -24,17 +24,18 @@ namespace chapchom
  }
  
  // ===================================================================
- // Applies Eulers method to the given odes from the current time "t"
- // to the time "t+h"
+ // Applies Adams-Moulton 2 method implemented as Predictor-Corrector
+ // to the given odes from the current time "t" to the time "t+h".
+ // The values of u at time t+h will be stored at index k (default k =
+ // 0).
  // ===================================================================
  void CCAdamsMoulton2PCMethod::time_step(ACODEs &odes, const Real h,
                                          const Real t,
-                                         CCData<Real> &u)
+                                         CCData<Real> &u,
+                                         const unsigned k)
  {
-  // Get the number of odes
-  const unsigned n_odes = odes.n_odes();
   // Check if the ode has the correct number of history values to
-  // apply Euler's method
+  // apply Adams-Moulton 2 method
   const unsigned n_history_values = u.n_history_values();
   if (n_history_values < N_history_values)
    {
@@ -50,44 +51,50 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
-
-  // -------------------------------------------------------
-  // -- Prediction phase
-  // -------------------------------------------------------
-  // Temporary vector to store the evaluation of the odes
+  
+  // Get the number of odes
+  const unsigned n_odes = odes.n_odes();
+  
+  // -----------------------------------------------------------------
+  // -- Prediction phase --
+  // -----------------------------------------------------------------
+  // Temporary vector to store the evaluation of the odes.
   CCData<Real> dudt(n_odes);
   
   // Evaluate the ODE at time "t" using the current values of "u"
-  odes.evaluate(t, u, dudt);
+  // stored in index k
+  odes.evaluate(t, u, dudt, k);
   
-  // Index for history values
-  const unsigned k = 0;
-  
-  // Once the derivatives have been obtained do one step of Euler's
-  // method and store the result in the predicted u
-  CCData<Real> u_p(n_odes, 0); // We do not require history values
+  // Once the derivatives have been obtained perform one step of
+  // Euler's method and store the result in the predicted u_p. No
+  // history values required since it only stored the predicted u for
+  // time t+h
+  CCData<Real> u_p(n_odes);
   for (unsigned i = 0; i < n_odes; i++)
    {
-    u_p(i,k) = u(i,k) + (h * dudt(i));
+    u_p(i,0) = u(i,k) + (h * dudt(i));
    }
   
-  // -------------------------------------------------------
+  // -----------------------------------------------------------------
   // -- Correction phase
-  // -- -----------------------------------------------------
+  // -----------------------------------------------------------------
   // -- Temporary vector to store the evaluation of the odes with the
-  // -- predicted values
+  // -- predicted values.
   CCData<Real> dudt_p(n_odes);
   
   // Evaluate the ODE at time "t+h" using the predicted values of
-  // "u_p"
-  odes.evaluate(t+h, u_p, dudt_p);
-
+  // "u_p" stored at index k=0 because u_p has not history values
+  odes.evaluate(t+h, u_p, dudt_p, 0);
+  
+  // Shift values to the right to provide storage for the new values
+  u.shift_history_values();
+  
   // -------------------------------------------------------
   // Perform the correction phase
-  const Real half_h = h *0.5;
+  const Real half_h = h * 0.5;
   for (unsigned i = 0; i < n_odes; i++)
    {
-    u(i,k+1) = u(i,k) + (half_h * (dudt_p(i) + dudt(i)));
+    u(i,k) = u(i,k+1) + (half_h * (dudt_p(i) + dudt(i)));
    }
   
  }
