@@ -30,7 +30,7 @@ namespace chapchom
   virtual void steady_solve() = 0;
   
   // Problem unsteady solve
-  virtual void unsteady_solve(bool shift_history_values = true) = 0;
+  virtual void unsteady_solve() = 0;
   
   // Write access to the current time
   inline Real &time() {return Time;}

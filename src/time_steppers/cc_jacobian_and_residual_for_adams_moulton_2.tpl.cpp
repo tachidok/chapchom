@@ -43,7 +43,7 @@ namespace chapchom
   
   // Check whether the data for the computation of the jacobian has
   // been set
-  if (this->data_for_jacobian_and_residual_has_been_set() || odes_pt == NULL || u_pt == NULL)
+  if (!this->data_for_jacobian_and_residual_has_been_set() || odes_pt == NULL || u_pt == NULL)
    {
     // Error message
     std::ostringstream error_message;
@@ -117,7 +117,7 @@ namespace chapchom
   
   // Check whether the data for the computation of the jacobian has
   // been set
-  if (this->data_for_jacobian_and_residual_has_been_set() || odes_pt == NULL || u_pt == NULL)
+  if (!this->data_for_jacobian_and_residual_has_been_set() || odes_pt == NULL || u_pt == NULL)
    {
     // Error message
     std::ostringstream error_message;

@@ -41,7 +41,7 @@ namespace chapchom
   
   // Check whether the data for the computation of the jacobian has
   // been set
-  if (this->data_for_jacobian_and_residual_has_been_set() || odes_pt == NULL || u_pt == NULL)
+  if (!this->data_for_jacobian_and_residual_has_been_set() || odes_pt == NULL || u_pt == NULL)
    {
     // Error message
     std::ostringstream error_message;
@@ -115,7 +115,7 @@ namespace chapchom
   
   // Check whether the data for the computation of the jacobian has
   // been set
-  if (this->data_for_jacobian_and_residual_has_been_set() || odes_pt == NULL || u_pt == NULL)
+  if (!this->data_for_jacobian_and_residual_has_been_set() || odes_pt == NULL || u_pt == NULL)
    {
     // Error message
     std::ostringstream error_message;
@@ -138,23 +138,20 @@ namespace chapchom
   
   // Time step weights
   const Real h_two_thirds = (2.0/3.0) * h;
-  // Previous u value weights
-  const Real one_third = 1.0/3.0;
-  const Real four_thirds = 4.0/3.0;
   
   // Evaluate the odes at time "t+h". Current Newton's iteration
   odes_pt->evaluate(t+h, (*u_pt), dudt, k);
   
   // Allocate memory for the Residual (delete previous data)
- this->Residual.allocate_memory(n_dof);
-
- // F(Y) - (u_{t+h} - \frac{4}{3} u_{t} + \frac{1}{3} u_{t-h})
- for (unsigned i = 0; i < n_dof; i++)
-  {
-   this->Residual(i) =
-    -(u_pt->value(i,k) - (four_thirds * u_pt->value(i,k+1)) + (one_third * u_pt->value(i,k+2)) - (h_two_thirds * dudt(i)));
-  }
- 
+  this->Residual.allocate_memory(n_dof);
+  
+  // F(Y) - (u_{t+h} - \frac{4}{3} u_{t} + \frac{1}{3} u_{t-h} - \frac{2}{3} h f(t+h,u_{t+h}))
+  for (unsigned i = 0; i < n_dof; i++)
+   {
+    this->Residual(i) =
+     -(u_pt->value(i,k) - ((4.0/3.0) * u_pt->value(i,k+1)) + ((1.0/3.0) * u_pt->value(i,k+2)) - (h_two_thirds * dudt(i)));
+   }
+  
  }
  
 }

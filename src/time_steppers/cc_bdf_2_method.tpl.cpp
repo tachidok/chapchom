@@ -72,7 +72,7 @@ namespace chapchom
     // Only one value is computed at time
     return;
    }
-
+  
   // -----------------------------------------------------------------
   // Compute initial guess
   // -----------------------------------------------------------------
