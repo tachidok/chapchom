@@ -67,7 +67,8 @@ namespace chapchom
   // Compute the initial guess for Newton's method using the values of
   // u at time 't', the values of u at time 't+h' are automatically
   // shifted at index k
-  Time_stepper_initial_guess.time_step(odes, h, t, u_copy, k);
+  //Time_stepper_initial_guess.time_step(odes, h, t, u_copy, k);
+  Time_stepper_initial_guess.time_step(odes, h, t, u, k);
   
   // ---------------------------------------------------
   // Transform the initial guess into a vector
@@ -77,10 +78,11 @@ namespace chapchom
   
   // Create a vector with the initial guess from the first row (0)
   // since the values have been shift
-  VEC_TYPE u_initial_guess(u_copy.history_values_row_pt(0), n_odes);
+  // VEC_TYPE u_initial_guess(u_copy.history_values_row_pt(0), n_odes);
+  VEC_TYPE u_initial_guess(u.history_values_row_pt(0), n_odes);
   
   // Shift values to the right to provide storage for the new values
-  u.shift_history_values();
+  //u.shift_history_values();
   
   // Pass the required data to Newton's method. The solution is stored
   // in u at index k, therefore the values of u at time 't' are stored

@@ -26,43 +26,107 @@
 #include "../../../src/matrices/cc_matrix_armadillo.h"
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
 
+// The class used to store the values of u and dudt
+#include "../../../src/data_structures/cc_data.h"
+// The class implementing the interfaces for the ODEs
+#include "../../../src/data_structures/ac_odes.h"
+
 // Base class for the concrete problem
 #include "../../../src/problem/ac_ivp_for_odes.h"
-// Odes for Lotka-Volkaterra problem
-#include "cc_lotka_volterra_odes.h"
 
 using namespace chapchom;
-
-/// This class implements inherits from the ACIVPForODEs class, we
-/// implement specific functions to solve the Lotka-Volterra equations
-class CCLotkaVolterraProblem : public virtual ACIVPForODEs
+// =================================================================
+// =================================================================
+// =================================================================
+/// This class implements the system of ODEs to be solved
+///
+/// \frac{du}{dt} = -u^{2}, with initial values u(0) = 1
+// =================================================================
+// =================================================================
+// =================================================================
+class CCBasicODEs : public virtual ACODEs
 {
-  
+ 
 public:
  
  /// Constructor
- CCLotkaVolterraProblem(ACODEs *odes_pt,
-                        ACTimeStepper *time_stepper_pt,
-                        std::ostringstream &output_filename)
+ CCBasicODEs()
+  :ACODEs(1) // The number of equations
+ {
+  
+ }
+ 
+ /// Empty destructor
+ virtual ~CCBasicODEs()
+ {
+  
+ }
+ 
+ /// Evaluates the system of odes at time 't', using the history
+ /// values of u at index k
+ void evaluate(const Real t, CCData<Real> &u, CCData<Real> &dudt, const unsigned k = 0)
+ {
+  // \frac{du}{dt} = -u^{2}
+  dudt(0) = -(u(0,k)*u(0,k));
+ }
+ 
+protected:
+ 
+ /// Copy constructor (we do not want this class to be
+ /// copiable). Check
+ /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
+ CCBasicODEs(const CCBasicODEs &copy)
+  : ACODEs(copy)
+ {
+  BrokenCopy::broken_copy("CCBasicODEs");
+ }
+ 
+ /// Assignment operator (we do not want this class to be
+ /// copiable. Check
+ /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
+ void operator=(const CCBasicODEs &copy)
+ {
+  BrokenCopy::broken_assign("CCBasicODEs");
+ }
+ 
+};
+
+// =================================================================
+// =================================================================
+// =================================================================
+// This class inherits from the ACIVPForODEs class and solves the
+// system of ODEs from above
+// =================================================================
+// =================================================================
+// =================================================================
+class CCBasicODEsProblem : public virtual ACIVPForODEs
+{
+ 
+public:
+ 
+ /// Constructor
+ CCBasicODEsProblem(ACODEs *odes_pt,
+                    ACTimeStepper *time_stepper_pt,
+                    std::ostringstream &output_filename,
+                    std::ostringstream &output_filename_error)
   : ACIVPForODEs(odes_pt, time_stepper_pt)
  {
   Output_file.open((output_filename.str()).c_str());
+  Output_error_file.open((output_filename_error.str()).c_str());
  }
  
  /// Destructor
- ~CCLotkaVolterraProblem()
+ ~CCBasicODEsProblem()
  {
   Output_file.close();
+  Output_error_file.close();
  }
  
  // Set initial conditions
  void set_initial_conditions()
  {
   // Initial conditions
-  u(0) = 2.0; // Initial number of prey
-  u(1) = 1.0; // Initial number of predators
-  //u(0) = 0.9; // Initial number of prey
-  //u(1) = 0.9; // Initial number of predators
+  u(0) = 1.0;
   
   // Document initial state
   complete_problem_setup();
@@ -71,28 +135,42 @@ public:
  // Set boundary conditions
  void set_boundary_conditions() { }
  
- // A helper function to complete the problem setup (calls
- // set_boundary_conditions() and document the initial problem
+ // A helper function to complete the problem
+ // setup (calls set_boundary_conditions() and document the initial problem
  // configuration)
  void complete_problem_setup()
  {
   // Initial problem configuration
-  Output_file << Time << "\t" << u(0) << "\t" << u(1) << std::endl;
+  Output_file << Time << "\t" << u(0) << std::endl;
+  output_error();
  }
  
  // Document the solution
  void document_solution()
  {
   // Initial problem configuration
-  Output_file << Time << "\t" << u(0) << "\t" << u(1) << std::endl;
+  Output_file << Time << "\t" << u(0) << std::endl;
+  output_error();
+ }
+
+ // Output error
+ void output_error()
+ {
+  // Compute the error 
+  const Real t = this->time();
+  const Real u_analytical = 1.0/(1.0+t);
+  const Real error = std::fabs(u(0)-u_analytical);
+  Output_error_file << Time << "\t" << error << std::endl;
  }
  
 protected:
-
+ 
  // The output file
  std::ofstream Output_file;
+ // The error output file
+ std::ofstream Output_error_file;
  
-}; // class CCLotkaVolterraProblem
+}; // class CCBasicODEsProblem
 
 // ==================================================================
 // ==================================================================
@@ -116,8 +194,7 @@ int main(int argc, char *argv[])
   // -----------------------------------------------------------------
   // Instantiation of the ODEs
   // -----------------------------------------------------------------
-  CCLotkaVolterraODEs odes(1.2, 0.6, 0.8, 0.3);
-  //CCLotkaVolterraODEs odes(2.0/3.0, 4.0/3.0, 1.0, 1.0);
+  CCBasicODEs odes;
   
   // ----------------------------------------------------------------
   // Time stepper
@@ -129,69 +206,76 @@ int main(int argc, char *argv[])
   // ----------------------------------------------------------------
   // Prepare the output file name
   // ----------------------------------------------------------------
-   std::ostringstream output_filename;
-   output_filename << "euler.dat";
-   output_filename.precision(8);
+  std::ostringstream output_filename;
+  output_filename << "euler.dat";
+  output_filename.precision(8);
   
-   // Create an instance of the problem
-   CCLotkaVolterraProblem lotka_volterra_problem(&odes,
-                                                 time_stepper_pt,
-                                                 output_filename);
+  // ----------------------------------------------------------------
+  // Prepare the output error file name
+  // ----------------------------------------------------------------
+  std::ostringstream output_error_filename;
+  output_error_filename << "euler_error.dat";
+  output_error_filename.precision(8);
   
-   // Prepare time integration data
-   const Real initial_time = 0.0;
-   const Real final_time = 40.0;
-   const Real time_step = 0.0625;
+  // Create an instance of the problem
+  CCBasicODEsProblem basic_ode_problem(&odes,
+                                       time_stepper_pt,
+                                       output_filename,
+                                       output_error_filename);
   
-   // ----------------------------------------------------------------
-   // Configure problem
-   // ----------------------------------------------------------------
-   // Initial time
-   lotka_volterra_problem.time() = initial_time;
+  // Prepare time integration data
+  const Real initial_time = 0.0;
+  const Real final_time = 2.0;
+  const Real time_step = 0.1;
   
-   // Initial time step
-   lotka_volterra_problem.time_step() = time_step;
+  // ----------------------------------------------------------------
+  // Configure problem
+  // ----------------------------------------------------------------
+  // Initial time
+  basic_ode_problem.time() = initial_time;
   
-   // Set initial conditions
-   lotka_volterra_problem.set_initial_conditions();
+  // Initial time step
+  basic_ode_problem.time_step() = time_step;
   
-   // Flag to indicate whether to continue processing
-   bool LOOP = true;
- 
-   // Main LOOP (loop until reaching final time)
-   while(LOOP)
-    {
-     // Performs an unsteady solve
-     lotka_volterra_problem.unsteady_solve();
+  // Set initial conditions
+  basic_ode_problem.set_initial_conditions();
+  
+  // Flag to indicate whether to continue processing
+  bool LOOP = true;
+  
+  // Main LOOP (loop until reaching final time)
+  while(LOOP)
+   {
+    // Performs an unsteady solve
+    basic_ode_problem.unsteady_solve();
     
-     // Update time of the problem
-     lotka_volterra_problem.time()+=lotka_volterra_problem.time_step();
+    // Update time of the problem
+    basic_ode_problem.time()+=basic_ode_problem.time_step();
     
-     // Check whether we have reached the final time
-     if (lotka_volterra_problem.time() >= final_time)
-      {
-       LOOP = false;
-      }
+    // Check whether we have reached the final time
+    if (basic_ode_problem.time() >= final_time)
+     {
+      LOOP = false;
+     }
     
-     lotka_volterra_problem.document_solution();
+    basic_ode_problem.document_solution();
     
-    } // while(LOOP)
+   } // while(LOOP)
   
-   std::cout << "[FINISHING UP] ... " << std::endl;
+  std::cout << "[FINISHING UP] ... " << std::endl;
   
-   // Free memory
-   delete time_stepper_pt;
-   time_stepper_pt = 0;
+  // Free memory
+  delete time_stepper_pt;
+  time_stepper_pt = 0;
   
-  }
+ }
  
  {
   std::cout << "Runge-Kutta 4 test" << std::endl;
   // -----------------------------------------------------------------
   // Instantiation of the ODEs
   // -----------------------------------------------------------------
-  CCLotkaVolterraODEs odes(1.2, 0.6, 0.8, 0.3);
-  //CCLotkaVolterraODEs odes(2.0/3.0, 4.0/3.0, 1.0, 1.0);
+  CCBasicODEs odes;
   
   // ----------------------------------------------------------------
   // Time stepper
@@ -205,28 +289,36 @@ int main(int argc, char *argv[])
   std::ostringstream output_filename;
   output_filename << "rk4.dat";
   output_filename.precision(8);
+
+  // ----------------------------------------------------------------
+  // Prepare the output error file name
+  // ----------------------------------------------------------------
+  std::ostringstream output_error_filename;
+  output_error_filename << "rk4_error.dat";
+  output_error_filename.precision(8);
   
   // Create an instance of the problem
-  CCLotkaVolterraProblem lotka_volterra_problem(&odes,
-                                                time_stepper_pt,
-                                                output_filename);
+  CCBasicODEsProblem basic_ode_problem(&odes,
+                                       time_stepper_pt,
+                                       output_filename,
+                                       output_error_filename);
   
   // Prepare time integration data
   const Real initial_time = 0.0;
-  const Real final_time = 40.0;
-  const Real time_step = 0.0625;
+  const Real final_time = 2.0;
+  const Real time_step = 0.1;
   
   // ----------------------------------------------------------------
   // Configure problem
   // ----------------------------------------------------------------
   // Initial time
-  lotka_volterra_problem.time() = initial_time;
+  basic_ode_problem.time() = initial_time;
   
   // Initial time step
-  lotka_volterra_problem.time_step() = time_step;
+  basic_ode_problem.time_step() = time_step;
   
   // Set initial conditions
-  lotka_volterra_problem.set_initial_conditions();
+  basic_ode_problem.set_initial_conditions();
   
   // Flag to indicate whether to continue processing
   bool LOOP = true;
@@ -235,18 +327,18 @@ int main(int argc, char *argv[])
   while(LOOP)
    {
     // Performs an unsteady solve
-    lotka_volterra_problem.unsteady_solve();
+    basic_ode_problem.unsteady_solve();
     
     // Update time of the problem
-    lotka_volterra_problem.time()+=lotka_volterra_problem.time_step();
+    basic_ode_problem.time()+=basic_ode_problem.time_step();
     
     // Check whether we have reached the final time
-    if (lotka_volterra_problem.time() >= final_time)
+    if (basic_ode_problem.time() >= final_time)
      {
       LOOP = false;
      }
     
-    lotka_volterra_problem.document_solution();
+    basic_ode_problem.document_solution();
     
    } // while(LOOP)
   
@@ -263,8 +355,7 @@ int main(int argc, char *argv[])
   // -----------------------------------------------------------------
   // Instantiation of the ODEs
   // -----------------------------------------------------------------
-  CCLotkaVolterraODEs odes(1.2, 0.6, 0.8, 0.3);
-  //CCLotkaVolterraODEs odes(2.0/3.0, 4.0/3.0, 1.0, 1.0);
+  CCBasicODEs odes;
   
   // ----------------------------------------------------------------
   // Time stepper
@@ -278,28 +369,36 @@ int main(int argc, char *argv[])
   std::ostringstream output_filename;
   output_filename << "am2pc.dat";
   output_filename.precision(8);
+
+  // ----------------------------------------------------------------
+  // Prepare the output error file name
+  // ----------------------------------------------------------------
+  std::ostringstream output_error_filename;
+  output_error_filename << "am2pc_error.dat";
+  output_error_filename.precision(8);
   
   // Create an instance of the problem
-  CCLotkaVolterraProblem lotka_volterra_problem(&odes,
-                                                time_stepper_pt,
-                                                output_filename);
+  CCBasicODEsProblem basic_ode_problem(&odes,
+                                       time_stepper_pt,
+                                       output_filename,
+                                       output_error_filename);
   
   // Prepare time integration data
   const Real initial_time = 0.0;
-  const Real final_time = 40.0;
+  const Real final_time = 2.0;
   const Real time_step = 0.1;
   
   // ----------------------------------------------------------------
   // Configure problem
   // ----------------------------------------------------------------
   // Initial time
-  lotka_volterra_problem.time() = initial_time;
+  basic_ode_problem.time() = initial_time;
   
   // Initial time step
-  lotka_volterra_problem.time_step() = time_step;
+  basic_ode_problem.time_step() = time_step;
   
   // Set initial conditions
-  lotka_volterra_problem.set_initial_conditions();
+  basic_ode_problem.set_initial_conditions();
   
   // Flag to indicate whether to continue processing
   bool LOOP = true;
@@ -308,18 +407,18 @@ int main(int argc, char *argv[])
   while(LOOP)
    {
     // Performs an unsteady solve
-    lotka_volterra_problem.unsteady_solve();
+    basic_ode_problem.unsteady_solve();
     
     // Update time of the problem
-    lotka_volterra_problem.time()+=lotka_volterra_problem.time_step();
+    basic_ode_problem.time()+=basic_ode_problem.time_step();
     
     // Check whether we have reached the final time
-    if (lotka_volterra_problem.time() >= final_time)
+    if (basic_ode_problem.time() >= final_time)
      {
       LOOP = false;
      }
     
-    lotka_volterra_problem.document_solution();
+    basic_ode_problem.document_solution();
     
    } // while(LOOP)
   
@@ -336,8 +435,7 @@ int main(int argc, char *argv[])
   // -----------------------------------------------------------------
   // Instantiation of the ODEs
   // -----------------------------------------------------------------
-  CCLotkaVolterraODEs odes(1.2, 0.6, 0.8, 0.3);
-  //CCLotkaVolterraODEs odes(2.0/3.0, 4.0/3.0, 1.0, 1.0);
+  CCBasicODEs odes;
   
   // ----------------------------------------------------------------
   // Time stepper
@@ -351,28 +449,36 @@ int main(int argc, char *argv[])
   std::ostringstream output_filename;
   output_filename << "bdf1.dat";
   output_filename.precision(8);
+
+  // ----------------------------------------------------------------
+  // Prepare the output error file name
+  // ----------------------------------------------------------------
+  std::ostringstream output_error_filename;
+  output_error_filename << "bdf1_error.dat";
+  output_error_filename.precision(8);
   
   // Create an instance of the problem
-  CCLotkaVolterraProblem lotka_volterra_problem(&odes,
-                                                time_stepper_pt,
-                                                output_filename);
+  CCBasicODEsProblem basic_ode_problem(&odes,
+                                       time_stepper_pt,
+                                       output_filename,
+                                       output_error_filename);
   
   // Prepare time integration data
   const Real initial_time = 0.0;
-  const Real final_time = 40.0;
+  const Real final_time = 2.0;
   const Real time_step = 0.1;
   
   // ----------------------------------------------------------------
   // Configure problem
   // ----------------------------------------------------------------
   // Initial time
-  lotka_volterra_problem.time() = initial_time;
+  basic_ode_problem.time() = initial_time;
   
   // Initial time step
-  lotka_volterra_problem.time_step() = time_step;
+  basic_ode_problem.time_step() = time_step;
   
   // Set initial conditions
-  lotka_volterra_problem.set_initial_conditions();
+  basic_ode_problem.set_initial_conditions();
   
   // Flag to indicate whether to continue processing
   bool LOOP = true;
@@ -381,18 +487,18 @@ int main(int argc, char *argv[])
   while(LOOP)
    {
     // Performs an unsteady solve
-    lotka_volterra_problem.unsteady_solve();
+    basic_ode_problem.unsteady_solve();
     
     // Update time of the problem
-    lotka_volterra_problem.time()+=lotka_volterra_problem.time_step();
+    basic_ode_problem.time()+=basic_ode_problem.time_step();
     
     // Check whether we have reached the final time
-    if (lotka_volterra_problem.time() >= final_time)
+    if (basic_ode_problem.time() >= final_time)
      {
       LOOP = false;
      }
     
-    lotka_volterra_problem.document_solution();
+    basic_ode_problem.document_solution();
     
    } // while(LOOP)
   
@@ -401,7 +507,7 @@ int main(int argc, char *argv[])
   // Free memory
   delete time_stepper_pt;
   time_stepper_pt = 0;
-
+  
  }
  
  {
@@ -409,8 +515,7 @@ int main(int argc, char *argv[])
   // -----------------------------------------------------------------
   // Instantiation of the ODEs
   // -----------------------------------------------------------------
-  CCLotkaVolterraODEs odes(1.2, 0.6, 0.8, 0.3);
-  //CCLotkaVolterraODEs odes(2.0/3.0, 4.0/3.0, 1.0, 1.0);
+  CCBasicODEs odes;
   
   // ----------------------------------------------------------------
   // Time stepper
@@ -424,28 +529,36 @@ int main(int argc, char *argv[])
   std::ostringstream output_filename;
   output_filename << "am2.dat";
   output_filename.precision(8);
+
+  // ----------------------------------------------------------------
+  // Prepare the output error file name
+  // ----------------------------------------------------------------
+  std::ostringstream output_error_filename;
+  output_error_filename << "am2_error.dat";
+  output_error_filename.precision(8);
   
   // Create an instance of the problem
-  CCLotkaVolterraProblem lotka_volterra_problem(&odes,
-                                                time_stepper_pt,
-                                                output_filename);
+  CCBasicODEsProblem basic_ode_problem(&odes,
+                                       time_stepper_pt,
+                                       output_filename,
+                                       output_error_filename);
   
   // Prepare time integration data
   const Real initial_time = 0.0;
-  const Real final_time = 40.0;
+  const Real final_time = 2.0;
   const Real time_step = 0.1;
   
   // ----------------------------------------------------------------
   // Configure problem
   // ----------------------------------------------------------------
   // Initial time
-  lotka_volterra_problem.time() = initial_time;
+  basic_ode_problem.time() = initial_time;
   
   // Initial time step
-  lotka_volterra_problem.time_step() = time_step;
+  basic_ode_problem.time_step() = time_step;
   
   // Set initial conditions
-  lotka_volterra_problem.set_initial_conditions();
+  basic_ode_problem.set_initial_conditions();
   
   // Flag to indicate whether to continue processing
   bool LOOP = true;
@@ -454,18 +567,18 @@ int main(int argc, char *argv[])
   while(LOOP)
    {
     // Performs an unsteady solve
-    lotka_volterra_problem.unsteady_solve();
+    basic_ode_problem.unsteady_solve();
     
     // Update time of the problem
-    lotka_volterra_problem.time()+=lotka_volterra_problem.time_step();
+    basic_ode_problem.time()+=basic_ode_problem.time_step();
     
     // Check whether we have reached the final time
-    if (lotka_volterra_problem.time() >= final_time)
+    if (basic_ode_problem.time() >= final_time)
      {
       LOOP = false;
      }
     
-    lotka_volterra_problem.document_solution();
+    basic_ode_problem.document_solution();
     
    } // while(LOOP)
   
@@ -474,7 +587,7 @@ int main(int argc, char *argv[])
   // Free memory
   delete time_stepper_pt;
   time_stepper_pt = 0;
-
+  
  }
  
  {
@@ -482,8 +595,7 @@ int main(int argc, char *argv[])
   // -----------------------------------------------------------------
   // Instantiation of the ODEs
   // -----------------------------------------------------------------
-  CCLotkaVolterraODEs odes(1.2, 0.6, 0.8, 0.3);
-  //CCLotkaVolterraODEs odes(2.0/3.0, 4.0/3.0, 1.0, 1.0);
+  CCBasicODEs odes;
   
   // ----------------------------------------------------------------
   // Time stepper
@@ -497,28 +609,36 @@ int main(int argc, char *argv[])
   std::ostringstream output_filename;
   output_filename << "bdf2.dat";
   output_filename.precision(8);
+
+  // ----------------------------------------------------------------
+  // Prepare the output error file name
+  // ----------------------------------------------------------------
+  std::ostringstream output_error_filename;
+  output_error_filename << "bdf2_error.dat";
+  output_error_filename.precision(8);
   
   // Create an instance of the problem
-  CCLotkaVolterraProblem lotka_volterra_problem(&odes,
-                                                time_stepper_pt,
-                                                output_filename);
+  CCBasicODEsProblem basic_ode_problem(&odes,
+                                       time_stepper_pt,
+                                       output_filename,
+                                       output_error_filename);
   
   // Prepare time integration data
   const Real initial_time = 0.0;
-  const Real final_time = 40.0;
+  const Real final_time = 2.0;
   const Real time_step = 0.1;
   
   // ----------------------------------------------------------------
   // Configure problem
   // ----------------------------------------------------------------
   // Initial time
-  lotka_volterra_problem.time() = initial_time;
+  basic_ode_problem.time() = initial_time;
   
   // Initial time step
-  lotka_volterra_problem.time_step() = time_step;
+  basic_ode_problem.time_step() = time_step;
   
   // Set initial conditions
-  lotka_volterra_problem.set_initial_conditions();
+  basic_ode_problem.set_initial_conditions();
   
   // Flag to indicate whether to continue processing
   bool LOOP = true;
@@ -527,18 +647,18 @@ int main(int argc, char *argv[])
   while(LOOP)
    {
     // Performs an unsteady solve
-    lotka_volterra_problem.unsteady_solve();
+    basic_ode_problem.unsteady_solve();
     
     // Update time of the problem
-    lotka_volterra_problem.time()+=lotka_volterra_problem.time_step();
+    basic_ode_problem.time()+=basic_ode_problem.time_step();
     
     // Check whether we have reached the final time
-    if (lotka_volterra_problem.time() >= final_time)
+    if (basic_ode_problem.time() >= final_time)
      {
       LOOP = false;
      }
     
-    lotka_volterra_problem.document_solution();
+    basic_ode_problem.document_solution();
     
    } // while(LOOP)
   
@@ -547,7 +667,7 @@ int main(int argc, char *argv[])
   // Free memory
   delete time_stepper_pt;
   time_stepper_pt = 0;
-
+  
  }
  
  return 0;
