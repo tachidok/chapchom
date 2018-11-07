@@ -51,6 +51,10 @@ namespace chapchom
     U_pt->value(i,k)=this->x_pt()->value(i);
    }
   
+  std::cerr << "actions_after_newton_step: after updating" << std::endl;
+  std::cerr << "k: " << k << std::endl;
+  U_pt->output(true);
+  
  }
  
  // ===================================================================

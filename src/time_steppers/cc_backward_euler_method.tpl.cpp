@@ -13,11 +13,12 @@ namespace chapchom
   // Sets the number of history values
   N_history_values = 1;
   
-  //Newtons_method.set_newton_solver_tolerance(1.0e-3);
+  //Newtons_method.set_newton_absolute_solver_tolerance(1.0e-3);
   //Newtons_method.set_maximum_newton_iterations(100);
   
   // Disable output for Newton's method
-  Newtons_method.disable_output_messages();
+  //Newtons_method.disable_output_messages();
+  Newtons_method.disable_newton_relative_solver_tolerance();
  }
  
  // ===================================================================
@@ -60,14 +61,17 @@ namespace chapchom
   
   // -----------------------------------------------------------------
   // Compute initial guess
-  // -----------------------------------------------------------------
-  // Perform a copy of u
-  CCData<Real> u_copy(u);
-  
+  // -----------------------------------------------------------------  
   // Compute the initial guess for Newton's method using the values of
   // u at time 't', the values of u at time 't+h' are automatically
   // shifted at index k
-  //Time_stepper_initial_guess.time_step(odes, h, t, u_copy, k);
+  
+  std::cerr << "Before initial guess" << std::endl;
+  std::cerr << "t: " << t << std::endl;
+  std::cerr << "h: " << h << std::endl;
+  std::cerr << "k: " << k << std::endl;
+  u.output(true);
+  
   Time_stepper_initial_guess.time_step(odes, h, t, u, k);
   
   // ---------------------------------------------------
@@ -78,22 +82,28 @@ namespace chapchom
   
   // Create a vector with the initial guess from the first row (0)
   // since the values have been shift
-  // VEC_TYPE u_initial_guess(u_copy.history_values_row_pt(0), n_odes);
   VEC_TYPE u_initial_guess(u.history_values_row_pt(0), n_odes);
   
-  // Shift values to the right to provide storage for the new values
-  //u.shift_history_values();
+  // It is not required to shift the values to the right to provide
+  // storage for the new values since they were shift when computing
+  // the initial guess
   
   // Pass the required data to Newton's method. The solution is stored
   // in u at index k, therefore the values of u at time 't' are stored
   // at index k+1
   Newtons_method.set_data_for_jacobian_and_residual(&odes, h, t, &u, k);
   
+  std::cerr << "Before Newton's method" << std::endl;
+  std::cerr << "t: " << t << std::endl;
+  std::cerr << "h: " << h << std::endl;
+  std::cerr << "k: " << k << std::endl;
+  u.output(true);
+  
   // Solve using Newton's method, the solution is automatically copied
   // back at the u data structure
   Newtons_method.solve(u_initial_guess);
   
  }
-
+ 
 }
 
