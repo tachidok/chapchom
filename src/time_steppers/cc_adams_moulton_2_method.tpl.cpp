@@ -11,12 +11,13 @@ namespace chapchom
   : ACTimeStepper()
  {  
   // Sets the number of history values
-  N_history_values = 1;
+  N_history_values = 2;
   
   //Newtons_method.set_newton_solver_tolerance(1.0e-3);
   
   // Disable output for Newton's method
-  Newtons_method.disable_output_messages();
+  //Newtons_method.disable_output_messages();
+  Newtons_method.disable_newton_relative_solver_tolerance();
  }
  
  // ===================================================================
@@ -63,6 +64,13 @@ namespace chapchom
   // Compute the initial guess for Newton's method using the values of
   // u at time 't', the values of u at time 't+h' are automatically
   // shifted at index k
+  
+  std::cerr << "ADAMS Before initial guess" << std::endl;
+  std::cerr << "t: " << t << std::endl;
+  std::cerr << "h: " << h << std::endl;
+  std::cerr << "k: " << k << std::endl;
+  u.output(true);
+  
   Time_stepper_initial_guess.time_step(odes, h, t, u, k);
   
   // ---------------------------------------------------
@@ -83,6 +91,12 @@ namespace chapchom
   // in u at index k, therefore the values of u at time 't' are stored
   // at index k+1
   Newtons_method.set_data_for_jacobian_and_residual(&odes, h, t, &u, k);
+
+  std::cerr << "ADAMS Before Newton's method" << std::endl;
+  std::cerr << "t: " << t << std::endl;
+  std::cerr << "h: " << h << std::endl;
+  std::cerr << "k: " << k << std::endl;
+  u.output(true);
   
   // Solve using Newton's method, the solution is automatically copied
   // back at the u data structure

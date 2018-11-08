@@ -14,8 +14,19 @@ namespace chapchom
  CCData<T>::CCData(const unsigned n_values,
                    const unsigned n_history_values)
   : Is_values_empty(true), Is_status_empty(true), Delete_values_storage(true),
-    N_values(n_values), N_history_values(n_history_values+1)
+    N_values(n_values), N_history_values(n_history_values)
  {
+  if (N_history_values == 0)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The number of history values can not be zero\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
   // Delete any data in memory
   clean_up();
   
@@ -33,8 +44,19 @@ namespace chapchom
                    const unsigned n_values,
                    const unsigned n_history_values)
   : Is_values_empty(true), Is_status_empty(true), Delete_values_storage(true),
-    N_values(n_values), N_history_values(n_history_values+1)
+    N_values(n_values), N_history_values(n_history_values)
  {
+  if (N_history_values == 0)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The number of history values can not be zero\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
   // Delete any data in memory
   clean_up();
   // Copy the data from the input vector to the values_pt vector
@@ -46,7 +68,7 @@ namespace chapchom
    {
     Status_pt[i] = UNPINNED;
    }
-
+  
   // Mark status as having something
   Is_status_empty=false;
   
@@ -58,8 +80,19 @@ namespace chapchom
  template<class T>
  CCData<T>::CCData(const CCData<T> &copy)
   : Is_values_empty(true), Is_status_empty(true), Delete_values_storage(true),
-    N_values(copy.n_values()), N_history_values(copy.n_history_values()+1)
+    N_values(copy.n_values()), N_history_values(copy.n_history_values())
  {
+  if (N_history_values == 0)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The number of history values can not be zero\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
   // Copy the data from the copy object to the Values_pt vector
   set_values(copy.values_pt());
   
@@ -104,14 +137,14 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  if (N_history_values != source_values.n_history_values()+1)
+  if (N_history_values != source_values.n_history_values())
    {
     // Error message
     std::ostringstream error_message;
     error_message << "The number of history values from the source and the destination\n"
                   << "CCData object are not the same\n"
                   << "N_history_values: " << N_history_values << "\n"
-                  << "source_values.n_history_values()+1: " << source_values.n_history_values()+1 << "\n"
+                  << "source_values.n_history_values(): " << source_values.n_history_values() << "\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
@@ -211,13 +244,13 @@ namespace chapchom
  
  // ===================================================================
  // Shift history values (mostly used for time integration). Move the
- // values at index 0 to the indicated number of positions
+ // values from index 0 the indicated number of positions to the right
  // ===================================================================
  template<class T>
  void CCData<T>::shift_history_values(const unsigned n_shift_positions)
  {
 #ifdef CHAPCHOM_RANGE_CHECK
-  if (n_shift_positions > N_history_values - 1)
+  if (n_shift_positions > N_history_values)
    {
     // Error message
     std::ostringstream error_message;
@@ -226,22 +259,20 @@ namespace chapchom
                   << "Number of shift positions: " << n_shift_positions << std::endl
                   << "Number of history values: " << N_history_values << std::endl
                   << "If you are asking to shift the same number of history values\n"
-                  << "then you will get a 0-vector since you are asking to get rid\n"
-                  << "of ALL the history values\n"
-                  << std::endl;
+                  << "then you will get a 0-vector since you would get rid of ALL\n"
+                  << "the history values\n" << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
-                            CHAPCHOM_EXCEPTION_LOCATION);
+                           CHAPCHOM_EXCEPTION_LOCATION);
    }
 #endif // #ifdef CHAPCHOM_RANGE_CHECK
   
-  const unsigned upper_limit = ((N_history_values-1) + n_shift_positions) - 1;
   // Loop over the history values
-  for (unsigned i = 0; i < upper_limit; i++)
+  for (int i = N_history_values-1; i >= static_cast<int>(n_shift_positions); i--)
    {
     // Get the i-th source row and the i-th destination row
-    T *i_src_row_pt = history_values_row_pt(i);
-    T *i_dst_row_pt = history_values_row_pt(i+n_shift_positions);
+    T *i_dst_row_pt = history_values_row_pt(i);
+    T *i_src_row_pt = history_values_row_pt(i-n_shift_positions);
     
     std::memcpy(i_dst_row_pt, i_src_row_pt, N_values*sizeof(T));
    }
@@ -255,13 +286,13 @@ namespace chapchom
  T *CCData<T>::history_values_row_pt(const unsigned t)
  {
 #ifdef CHAPCHOM_RANGE_CHECK
-  if (t + 1 > N_history_values)
+  if (t > N_history_values)
    {
     // Error message
     std::ostringstream error_message;
     error_message << "The history values row you are trying to access is out of range\n"
                   << "Number of history values: " << N_history_values << std::endl
-                  << "Requested entry: " << t + 1 << std::endl;
+                  << "Requested entry: " << t << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -295,17 +326,17 @@ namespace chapchom
                   << "Number of values: " << N_values << std::endl
                   << "Requested entry: " << i << std::endl;
     throw ChapchomLibError(error_message.str(),
-                            CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  if ((t + 1) > N_history_values)
+  if (t > N_history_values)
    {
     // Error message
     std::ostringstream error_message;
     error_message << "The history value you are trying to access is out of range\n"
                   << "Number of history values: " << N_history_values << std::endl
-                  << "Requested entry: " << t + 1 << std::endl;
+                  << "Requested entry: " << t << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -343,13 +374,13 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  if ((t + 1) > N_history_values)
+  if (t > N_history_values)
    {
     // Error message
     std::ostringstream error_message;
     error_message << "The history value you are trying to access is out of range\n"
                   << "Number of history values: " << N_history_values << std::endl
-                  << "Requested entry: " << t + 1 << std::endl;
+                  << "Requested entry: " << t << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
@@ -395,7 +426,7 @@ namespace chapchom
  // ===================================================================
  template<class T>
  void CCData<T>::output(std::ofstream &outfile,
-                          bool output_indexes) const
+                        bool output_indexes) const
  {
   // Check whether we should output the indexes
   if (output_indexes)

@@ -31,7 +31,7 @@ using namespace chapchom;
 template<class MAT_TYPE, class VEC_TYPE>
 class CCJacobianAndResidualBasic : virtual public ACJacobianAndResidual<MAT_TYPE,VEC_TYPE>
 {
-   
+ 
 public:
  
  // Constructor (empty)

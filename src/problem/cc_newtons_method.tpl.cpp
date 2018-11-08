@@ -441,6 +441,7 @@ namespace chapchom
     for (unsigned i_dof = 0; i_dof < n_dof; i_dof++)
      {
       X_pt->value(i_dof)+=dx(i_dof);
+      std::cerr << "dx(i_dof): " << dx(i_dof) << std::endl;
      }
     
     // Perform actions after Newton's step
@@ -462,7 +463,7 @@ namespace chapchom
     if (Output_messages)
      {
       chapchom_output << "Newton iteration " << n_newton_iterations
-                      << ": Residual norm (termination tolerance) " << current_residual_norm << "(" << termination_tolerance << ")"<< std::endl;
+                      << ": Residual norm (termination tolerance) " << current_residual_norm << " (" << termination_tolerance << ")"<< std::endl;
      }
     
     if (current_residual_norm > Maximum_allowed_residual)

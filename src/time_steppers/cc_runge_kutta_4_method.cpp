@@ -11,7 +11,7 @@ namespace chapchom
  {
  
   // Sets the number of history values
-  N_history_values = 1;
+  N_history_values = 2;
  
  }
  

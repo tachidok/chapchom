@@ -11,7 +11,7 @@ namespace chapchom
   : ACTimeStepper()
  {  
   // Sets the number of history values
-  N_history_values = 1;
+  N_history_values = 2;
   
   //Newtons_method.set_newton_absolute_solver_tolerance(1.0e-3);
   //Newtons_method.set_maximum_newton_iterations(100);
@@ -66,7 +66,7 @@ namespace chapchom
   // u at time 't', the values of u at time 't+h' are automatically
   // shifted at index k
   
-  std::cerr << "Before initial guess" << std::endl;
+  std::cerr << "BDF 1 Before initial guess" << std::endl;
   std::cerr << "t: " << t << std::endl;
   std::cerr << "h: " << h << std::endl;
   std::cerr << "k: " << k << std::endl;
@@ -93,7 +93,7 @@ namespace chapchom
   // at index k+1
   Newtons_method.set_data_for_jacobian_and_residual(&odes, h, t, &u, k);
   
-  std::cerr << "Before Newton's method" << std::endl;
+  std::cerr << "BDF 1 Before Newton's method" << std::endl;
   std::cerr << "t: " << t << std::endl;
   std::cerr << "h: " << h << std::endl;
   std::cerr << "k: " << k << std::endl;

@@ -431,7 +431,7 @@ int main(int argc, char *argv[])
  }
  
  {
-  std::cout << "Backward Differentiation Formula 1 - Fully Implicit test" << std::endl;
+  std::cout << "Adams-Moulton 2 or Trapezoidal Rule - Fully Implicit test" << std::endl;
   // -----------------------------------------------------------------
   // Instantiation of the ODEs
   // -----------------------------------------------------------------
@@ -441,20 +441,20 @@ int main(int argc, char *argv[])
   // Time stepper
   // ----------------------------------------------------------------
   ACTimeStepper *time_stepper_pt =
-   factory_time_stepper.create_time_stepper("BDF1");
+   factory_time_stepper.create_time_stepper("AM2");
   
   // ----------------------------------------------------------------
   // Prepare the output file name
   // ----------------------------------------------------------------
   std::ostringstream output_filename;
-  output_filename << "bdf1.dat";
+  output_filename << "am2.dat";
   output_filename.precision(8);
 
   // ----------------------------------------------------------------
   // Prepare the output error file name
   // ----------------------------------------------------------------
   std::ostringstream output_error_filename;
-  output_error_filename << "bdf1_error.dat";
+  output_error_filename << "am2_error.dat";
   output_error_filename.precision(8);
   
   // Create an instance of the problem
@@ -509,9 +509,9 @@ int main(int argc, char *argv[])
   time_stepper_pt = 0;
   
  }
- 
+
  {
-  std::cout << "Adams-Moulton 2 or Trapezoidal Rule - Fully Implicit test" << std::endl;
+  std::cout << "Backward Differentiation Formula 1 - Fully Implicit test" << std::endl;
   // -----------------------------------------------------------------
   // Instantiation of the ODEs
   // -----------------------------------------------------------------
@@ -521,20 +521,20 @@ int main(int argc, char *argv[])
   // Time stepper
   // ----------------------------------------------------------------
   ACTimeStepper *time_stepper_pt =
-   factory_time_stepper.create_time_stepper("AM2");
+   factory_time_stepper.create_time_stepper("BDF1");
   
   // ----------------------------------------------------------------
   // Prepare the output file name
   // ----------------------------------------------------------------
   std::ostringstream output_filename;
-  output_filename << "am2.dat";
+  output_filename << "bdf1.dat";
   output_filename.precision(8);
 
   // ----------------------------------------------------------------
   // Prepare the output error file name
   // ----------------------------------------------------------------
   std::ostringstream output_error_filename;
-  output_error_filename << "am2_error.dat";
+  output_error_filename << "bdf1_error.dat";
   output_error_filename.precision(8);
   
   // Create an instance of the problem

@@ -72,7 +72,7 @@ namespace chapchom
   std::cerr << "t: " << t << std::endl;
   std::cerr << "h: " << h << std::endl;
   std::cerr << "k: " << k << std::endl;
-  std::cerr << "Jacobian FY" << std::endl; 
+  std::cerr << "Jacobian FY BDF 1" << std::endl; 
   Jacobian_FY.output(true);
   
   // Get the number of ODEs
@@ -147,7 +147,7 @@ namespace chapchom
   std::cerr << "t: " << t << std::endl;
   std::cerr << "h: " << h << std::endl;
   std::cerr << "k: " << k << std::endl;
-  std::cerr << "Residual" << std::endl;
+  std::cerr << "Residual BDF 1" << std::endl;
   u_pt->output(true);
   
   // F(Y) = -(u_{t+h} - u_{t} - h f(t+h, u_{t+h}))
