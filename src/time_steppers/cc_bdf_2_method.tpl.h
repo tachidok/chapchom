@@ -8,7 +8,6 @@
 
 // Time stepper to compute the initial guess for Newton's method
 #include "cc_euler_method.h"
-#include "cc_runge_kutta_4_method.h"
 
 namespace chapchom
 {
@@ -59,8 +58,7 @@ namespace chapchom
   CCNewtonsMethodForBDF2<MAT_TYPE, VEC_TYPE> Newtons_method;
   
   // The time stepper used to compute the initial guess
-  //CCEulerMethod Time_stepper_initial_guess;
-  CCRK4Method Time_stepper_initial_guess;
+  CCEulerMethod Time_stepper_initial_guess;
   
  private:
   
