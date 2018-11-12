@@ -20,7 +20,7 @@ namespace chapchom
    // Empty constructor
    ACJacobianAndResidualForImplicitTimeStepper();
    
-   // Empty destructor
+   // Destructor
    ~ACJacobianAndResidualForImplicitTimeStepper();
    
    // In charge of computing the Jacobian
@@ -34,6 +34,9 @@ namespace chapchom
    // index where the values of 'u' at time 't' are stored
    void set_data_for_jacobian_and_residual(ACODEs *odes_pt, const Real h, const Real t,
                                            CCData<Real> *u_pt, const unsigned k);
+   
+   // Set the strategy to compute the ODE's Jacobian
+   void set_strategy_for_odes_jacobian(ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE> *jacobian_strategy_for_odes_pt);
    
   protected:
    
@@ -56,6 +59,9 @@ namespace chapchom
    // has been set
    inline bool data_for_jacobian_and_residual_has_been_set()
    {return Data_for_jacobian_and_residual_has_been_set;}
+   
+   // Get access to the strategy to compute the Jacobian of the ODEs
+   ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE> *jacobian_FY_strategy_pt();
    
   private:
    
@@ -95,6 +101,9 @@ namespace chapchom
    // A flag to indicate whether the data for the Jacobian and residual
    // computation has been set
    bool Data_for_jacobian_and_residual_has_been_set;
+   
+   // A pointer to the strategy to compute the Jacobian of the ODEs
+   ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE> *Jacobian_FY_strategy_pt;
    
   };
  

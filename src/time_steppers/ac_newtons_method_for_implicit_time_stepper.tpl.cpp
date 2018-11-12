@@ -89,5 +89,31 @@ namespace chapchom
   
  }
  
+ // ===================================================================
+ // Set the strategy to compute the ODE's Jacobian
+ // ===================================================================
+ template<class MAT_TYPE, class VEC_TYPE>
+ void ACNewtonsMethodForImplicitTimeStepper<MAT_TYPE, VEC_TYPE>::set_strategy_for_odes_jacobian(ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE> *jacobian_strategy_for_odes_pt)
+ {
+  ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE> *cache_jacobian_strategy_pt = dynamic_cast<ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE> *>(this->jacobian_and_residual_strategy_pt());
+  if (cache_jacobian_strategy_pt != NULL)
+   {
+    cache_jacobian_strategy_pt->set_strategy_for_odes_jacobian(jacobian_strategy_for_odes_pt);
+   }
+  else
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The dynamic cast was not succesful\n"
+                  << "From [ACJacobianAndResidual<MAT_TYPE,VEC_TYPE> *]\n"
+                  << "To [ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE> *]\n" 
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+ }
+ 
 }
 

@@ -17,7 +17,7 @@ namespace chapchom
    
   public:
    
-   // Empty constructor
+   // Constructor
    CCJacobianAndResidualForBackwardEuler();
    
    // Empty destructor
@@ -53,7 +53,7 @@ namespace chapchom
    // A strategy to compute the Jacobian $\frac{\partial
    // \mathbf{F}(\mathbf{Y})}{\partial \mathbf{Y}}$, where $\mathbf{Y}
    // = \mathbf{y}_{k+1}$.
-   CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE> Jacobian_FY_strategy;
+   CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE> Jacobian_by_FD_strategy;
    
   };
  

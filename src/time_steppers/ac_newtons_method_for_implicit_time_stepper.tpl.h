@@ -12,6 +12,7 @@
 #include "../data_structures/ac_odes.h"
 #include "../data_structures/cc_data.h"
 #include "../problem/cc_newtons_method.h"
+#include "ac_jacobian_and_residual_for_implicit_time_stepper.h"
 
 namespace chapchom
 {
@@ -36,6 +37,9 @@ namespace chapchom
    void set_data_for_jacobian_and_residual(ACODEs *odes_pt, const Real h, const Real t,
                                            CCData<Real> *u_pt, const unsigned k);
    
+   // Set the strategy to compute the ODE's Jacobian
+   void set_strategy_for_odes_jacobian(ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE> *jacobian_strategy_for_odes_pt);
+   
   protected:
    
    // Performs actions before initial converngence check
@@ -53,7 +57,7 @@ namespace chapchom
    // Gets access to the time step
    inline Real time_step() const {return Time_step;}
    
-    // Gets access to the current time
+   // Gets access to the current time
    inline Real current_time() const {return Current_time;}
    
    // Gets access to the u values

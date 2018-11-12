@@ -9,6 +9,10 @@
 // Time stepper to compute the initial guess for Newton's method
 #include "cc_euler_method.h"
 
+// To allow the setting of the strategy for the computation of the
+// Jacobian of the ODEs
+#include "ac_jacobian_and_residual_for_implicit_time_stepper.h"
+
 namespace chapchom
 {
  
@@ -32,6 +36,10 @@ namespace chapchom
   void time_step(ACODEs &odes, const Real h, const Real t,
                  CCData<Real> &u, const unsigned k = 0);
   
+  /// Set the strategy for the computation of the Jacobian of the ODEs (if known)
+  inline void set_strategy_for_odes_jacobian(ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE> *jacobian_strategy_for_odes_pt)
+  {Newtons_method.set_strategy_for_odes_jacobian(jacobian_strategy_for_odes_pt);}
+  
  protected:
   
   /// Copy constructor (we do not want this class to be
@@ -42,7 +50,7 @@ namespace chapchom
    {
     BrokenCopy::broken_copy("CCBackwardEulerMethod");
    }
- 
+  
   /// Assignment operator (we do not want this class to be
   /// copiable. Check
   /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/

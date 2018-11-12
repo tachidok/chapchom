@@ -3,13 +3,15 @@
 namespace chapchom
 {
  // ===================================================================
- // Empty constructor
+ // Constructor
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  CCJacobianAndResidualForBackwardEuler<MAT_TYPE, VEC_TYPE>::CCJacobianAndResidualForBackwardEuler()
   : ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE>()
  {
-  
+  // Assign the default strategy (the Finite Differences strategy) for
+  // computation of the Jacobian of the ODEs
+  this->set_strategy_for_odes_jacobian(&Jacobian_by_FD_strategy);
  }
  
  // ===================================================================
@@ -58,17 +60,20 @@ namespace chapchom
   // -------------------------------------------
   // Compute the Jacobian of F(Y) at time t+h
   // -------------------------------------------
+  // Get a pointer to the strategy to compute the Jacobian of the ODEs
+  ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE> *jacobian_strategy_odes_pt =
+   this->jacobian_FY_strategy_pt();
   
   // Set the data for the computation of the jacobian and the residual
-  Jacobian_FY_strategy.set_data_for_jacobian_and_residual(odes_pt, h, t, u_pt, k);
+  jacobian_strategy_odes_pt->set_data_for_jacobian_and_residual(odes_pt, h, t, u_pt, k);
   
   // Compute Jacobian
-  Jacobian_FY_strategy.compute_jacobian();
+  jacobian_strategy_odes_pt->compute_jacobian();
   
   // Store the Jacobian for FY, used in the computation of the
   // backward Euler Jacobian $J = I - (h * Jacobian_{FY})$
-  MAT_TYPE Jacobian_FY = Jacobian_FY_strategy.jacobian();
-
+  MAT_TYPE Jacobian_FY = jacobian_strategy_odes_pt->jacobian();
+  
   std::cerr << "t: " << t << std::endl;
   std::cerr << "h: " << h << std::endl;
   std::cerr << "k: " << k << std::endl;

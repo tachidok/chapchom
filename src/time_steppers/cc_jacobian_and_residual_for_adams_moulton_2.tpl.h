@@ -21,7 +21,7 @@ namespace chapchom
    // Constructor
    CCJacobianAndResidualForAdamsMoulton2();
    
-   // Destructor
+   // Empty destructor
    ~CCJacobianAndResidualForAdamsMoulton2();
    
    // In charge of computing the Jacobian
@@ -55,11 +55,6 @@ namespace chapchom
      BrokenCopy::broken_assign("CCJacobianAndResidualForAdamsMoulton2");
     }
    
-   // A strategy to compute the Jacobian $\frac{\partial
-   // \mathbf{F}(\mathbf{Y})}{\partial \mathbf{Y}}$, where $\mathbf{Y}
-   // = \mathbf{y}_{k+1}$.
-   CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE> Jacobian_FY_strategy;
-   
    // Temporary vector to store the evaluation of the odes with the
    // values of u at time 't'. These are kept constant during Newton's
    // iterations
@@ -69,6 +64,11 @@ namespace chapchom
    // of u at time 't'. These values are kept constant during Newton's
    // iterations
    bool Evaluate_odes_with_u_old_values;
+   
+   // A strategy to compute the Jacobian $\frac{\partial
+   // \mathbf{F}(\mathbf{Y})}{\partial \mathbf{Y}}$, where $\mathbf{Y}
+   // = \mathbf{y}_{k+1}$.
+   CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE> Jacobian_by_FD_strategy;
    
   };
  

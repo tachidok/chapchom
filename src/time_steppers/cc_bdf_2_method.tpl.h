@@ -9,6 +9,10 @@
 // Time stepper to compute the initial guess for Newton's method
 #include "cc_euler_method.h"
 
+// To allow the setting of the strategy for the computation of the
+// Jacobian of the ODEs
+#include "ac_jacobian_and_residual_for_implicit_time_stepper.h"
+
 namespace chapchom
 {
  
@@ -34,6 +38,10 @@ namespace chapchom
   
   // Enables the computation of u_{t+h}
   inline void enable_computation_of_u_at_t_plus_h() {Compute_u_at_time_t_plus_h = true;}
+  
+  /// Set the strategy for the computation of the Jacobian of the ODEs (if known)
+  inline void set_strategy_for_odes_jacobian(ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE> *jacobian_strategy_for_odes_pt)
+  {Newtons_method.set_strategy_for_odes_jacobian(jacobian_strategy_for_odes_pt);}
   
  protected:
   
