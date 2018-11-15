@@ -441,7 +441,6 @@ namespace chapchom
     for (unsigned i_dof = 0; i_dof < n_dof; i_dof++)
      {
       X_pt->value(i_dof)+=dx(i_dof);
-      std::cerr << "dx(i_dof): " << dx(i_dof) << std::endl;
      }
     
     // Perform actions after Newton's step

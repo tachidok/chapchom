@@ -77,12 +77,6 @@ namespace chapchom
   // backward Euler Jacobian $J = I - (h * Jacobian_{FY})$
   MAT_TYPE Jacobian_FY = jacobian_strategy_odes_pt->jacobian();
   
-  std::cerr << "t: " << t << std::endl;
-  std::cerr << "h: " << h << std::endl;
-  std::cerr << "k: " << k << std::endl;
-  std::cerr << "Jacobian FY ADAMS" << std::endl; 
-  Jacobian_FY.output(true);
-  
   // Get the number of ODEs
   const unsigned n_dof = odes_pt->n_odes();
   
@@ -196,12 +190,6 @@ namespace chapchom
   
   // Allocate memory for the Residual (delete previous data)
   this->Residual.allocate_memory(n_dof);
-
-  std::cerr << "t: " << t << std::endl;
-  std::cerr << "h: " << h << std::endl;
-  std::cerr << "k: " << k << std::endl;
-  std::cerr << "Residual ADAMS" << std::endl;
-  u_pt->output(true);
   
   // Half time step
   const Real h_half = h * 0.5;

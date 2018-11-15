@@ -75,12 +75,6 @@ namespace chapchom
   // backward Euler Jacobian $J = I - (h * Jacobian_{FY})$
   MAT_TYPE Jacobian_FY = jacobian_strategy_odes_pt->jacobian();
   
-  std::cerr << "t: " << t << std::endl;
-  std::cerr << "h: " << h << std::endl;
-  std::cerr << "k: " << k << std::endl;
-  std::cerr << "Jacobian FY BDF 2" << std::endl; 
-  Jacobian_FY.output(true);
-  
   // Get the number of ODEs
   const unsigned n_dof = odes_pt->n_odes();
   
@@ -156,12 +150,6 @@ namespace chapchom
   
   // Allocate memory for the Residual (delete previous data)
   this->Residual.allocate_memory(n_dof);
-  
-  std::cerr << "t: " << t << std::endl;
-  std::cerr << "h: " << h << std::endl;
-  std::cerr << "k: " << k << std::endl;
-  std::cerr << "Residual BDF 2" << std::endl;
-  u_pt->output(true);
   
   // F(Y) - (u_{t+h} - \frac{4}{3} u_{t} + \frac{1}{3} u_{t-h} - \frac{2}{3} h f(t+h,u_{t+h}))
   for (unsigned i = 0; i < n_dof; i++)
