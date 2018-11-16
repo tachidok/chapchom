@@ -96,11 +96,14 @@ protected:
 
 // =================================================================
 // =================================================================
-// ================================================================= /
+// =================================================================
 // This class implements the strategy for the computation of the
-// Jacobian of the system of ODEs to be solved
-///
-/// \frac{dF}{du} = -2u
+// Jacobian of the system of ODEs to be solved (it is optional to
+// implement it for your specific problem, but if you know the
+// Jacobian the specification of this class may reduce the
+// computational cost)
+//
+// \frac{dF}{du} = -2u
 // =================================================================
 // =================================================================
 // =================================================================
@@ -299,7 +302,7 @@ private:
 #else 
   CCFactoryTimeStepper<CCMatrix<Real>, CCVector<Real> > factory_time_stepper;
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
- 
+  
   // Euler method test
   {
    std::cout << "Euler test" << std::endl;
@@ -307,21 +310,21 @@ private:
    // Instantiation of the ODEs
    // -----------------------------------------------------------------
    CCBasicODEs odes;
-  
+   
    // ----------------------------------------------------------------
    // Time stepper
    // ----------------------------------------------------------------
    // Create an instance of the integration method
    ACTimeStepper *time_stepper_pt =
     factory_time_stepper.create_time_stepper("Euler");
-  
+   
    // ----------------------------------------------------------------
    // Prepare the output file name
    // ----------------------------------------------------------------
    std::ostringstream output_filename;
    output_filename << "euler.dat";
    output_filename.precision(8);
-  
+   
    // ----------------------------------------------------------------
    // Prepare the output error file name
    // ----------------------------------------------------------------
@@ -339,22 +342,22 @@ private:
    const Real initial_time = 0.0;
    const Real final_time = 2.0;
    const Real time_step = 0.1;
-  
+   
    // ----------------------------------------------------------------
    // Configure problem
    // ----------------------------------------------------------------
    // Initial time
    basic_ode_problem.time() = initial_time;
-  
+   
    // Initial time step
    basic_ode_problem.time_step() = time_step;
-  
+   
    // Set initial conditions
    basic_ode_problem.set_initial_conditions();
-  
+   
    // Flag to indicate whether to continue processing
    bool LOOP = true;
-  
+   
    // Main LOOP (loop until reaching final time)
    while(LOOP)
     {
@@ -381,7 +384,7 @@ private:
    time_stepper_pt = 0;
   
   }
- 
+  
   {
    std::cout << "Runge-Kutta 4 test" << std::endl;
    // -----------------------------------------------------------------
@@ -543,6 +546,105 @@ private:
   }
   
   {
+   std::cout << "Backward Differentiation Formula 1 - Fully Implicit test" << std::endl;
+   // -----------------------------------------------------------------
+   // Instantiation of the ODEs
+   // -----------------------------------------------------------------
+   CCBasicODEs odes;
+   
+   // ----------------------------------------------------------------
+   // Time stepper
+   // ----------------------------------------------------------------
+   ACTimeStepper *time_stepper_pt =
+    factory_time_stepper.create_time_stepper("BDF1");
+   
+   // Create an instance of the strategy to compute the Jacobian
+#ifdef CHAPCHOM_USES_ARMADILLO
+   CCJacobianStrategyForMyODEs<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > my_jacobian_strategy;
+#else
+   CCJacobianStrategyForMyODEs<CCMatrix<Real>, CCVector<Real> > my_jacobian_strategy;
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+   
+   // Get a pointer to the specific time stepper
+#ifdef CHAPCHOM_USES_ARMADILLO
+   CCBackwardEulerMethod<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > *backward_euler_time_stepper_pt =
+    dynamic_cast<CCBackwardEulerMethod<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > *>(time_stepper_pt);
+#else
+   CCBackwardEulerMethod<CCMatrix<Real>, CCVector<Real> > *backward_euler_time_stepper_pt =
+    dynamic_cast<CCBackwardEulerMethod<CCMatrix<Real>, CCVector<Real> > *>(time_stepper_pt);
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+   
+   // Set the Jacobian strategy for the time stepper
+   backward_euler_time_stepper_pt->set_strategy_for_odes_jacobian(&my_jacobian_strategy);
+   
+   // ----------------------------------------------------------------
+   // Prepare the output file name
+   // ----------------------------------------------------------------
+   std::ostringstream output_filename;
+   output_filename << "bdf1.dat";
+   output_filename.precision(8);
+
+   // ----------------------------------------------------------------
+   // Prepare the output error file name
+   // ----------------------------------------------------------------
+   std::ostringstream output_error_filename;
+   output_error_filename << "bdf1_error.dat";
+   output_error_filename.precision(8);
+  
+   // Create an instance of the problem
+   CCBasicODEsProblem basic_ode_problem(&odes,
+                                        time_stepper_pt,
+                                        output_filename,
+                                        output_error_filename);
+  
+   // Prepare time integration data
+   const Real initial_time = 0.0;
+   const Real final_time = 2.0;
+   const Real time_step = 0.1;
+  
+   // ----------------------------------------------------------------
+   // Configure problem
+   // ----------------------------------------------------------------
+   // Initial time
+   basic_ode_problem.time() = initial_time;
+  
+   // Initial time step
+   basic_ode_problem.time_step() = time_step;
+  
+   // Set initial conditions
+   basic_ode_problem.set_initial_conditions();
+  
+   // Flag to indicate whether to continue processing
+   bool LOOP = true;
+  
+   // Main LOOP (loop until reaching final time)
+   while(LOOP)
+    {
+     // Performs an unsteady solve
+     basic_ode_problem.unsteady_solve();
+    
+     // Update time of the problem
+     basic_ode_problem.time()+=basic_ode_problem.time_step();
+    
+     // Check whether we have reached the final time
+     if (basic_ode_problem.time() >= final_time)
+      {
+       LOOP = false;
+      }
+    
+     basic_ode_problem.document_solution();
+    
+    } // while(LOOP)
+  
+   std::cout << "[FINISHING UP] ... " << std::endl;
+  
+   // Free memory
+   delete time_stepper_pt;
+   time_stepper_pt = 0;
+  
+  }
+  
+  {
    std::cout << "Adams-Moulton 2 or Trapezoidal Rule - Fully Implicit test" << std::endl;
    // -----------------------------------------------------------------
    // Instantiation of the ODEs
@@ -555,19 +657,24 @@ private:
    ACTimeStepper *time_stepper_pt =
     factory_time_stepper.create_time_stepper("AM2");
    
-   // Set the Jacobian strategy for the time stepper
    // Create an instance of the strategy to compute the Jacobian 
 #ifdef CHAPCHOM_USES_ARMADILLO
    CCJacobianStrategyForMyODEs<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > my_jacobian_strategy;
+#else
+   CCJacobianStrategyForMyODEs<CCMatrix<Real>, CCVector<Real> > my_jacobian_strategy;
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+   
+   // Get a pointer to the specific time stepper   
+#ifdef CHAPCHOM_USES_ARMADILLO
    CCAdamsMoulton2Method<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > *amd2_time_stepper_pt =
     dynamic_cast<CCAdamsMoulton2Method<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > *>(time_stepper_pt);
 #else
-   CCJacobianStrategyForMyODEs<CCMatrix<Real>, CCVector<Real> > my_jacobian_strategy;
    CCAdamsMoulton2Method<CCMatrix<Real>, CCVector<Real> > *amd2_time_stepper_pt =
     dynamic_cast<CCAdamsMoulton2Method<CCMatrix<Real>, CCVector<Real> > *>(time_stepper_pt);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
    
-   //amd2_time_stepper_pt->set_strategy_for_odes_jacobian(&my_jacobian_strategy);
+   // Set the Jacobian strategy for the time stepper
+   amd2_time_stepper_pt->set_strategy_for_odes_jacobian(&my_jacobian_strategy);
    
    // ----------------------------------------------------------------
    // Prepare the output file name
@@ -611,219 +718,130 @@ private:
   
    // Main LOOP (loop until reaching final time)
    while(LOOP)
-   {
-    // Performs an unsteady solve
-    basic_ode_problem.unsteady_solve();
+    {
+     // Performs an unsteady solve
+     basic_ode_problem.unsteady_solve();
     
-    // Update time of the problem
-    basic_ode_problem.time()+=basic_ode_problem.time_step();
+     // Update time of the problem
+     basic_ode_problem.time()+=basic_ode_problem.time_step();
     
-    // Check whether we have reached the final time
-    if (basic_ode_problem.time() >= final_time)
-     {
-      LOOP = false;
-     }
+     // Check whether we have reached the final time
+     if (basic_ode_problem.time() >= final_time)
+      {
+       LOOP = false;
+      }
     
-    basic_ode_problem.document_solution();
+     basic_ode_problem.document_solution();
     
-   } // while(LOOP)
+    } // while(LOOP)
   
-  std::cout << "[FINISHING UP] ... " << std::endl;
+   std::cout << "[FINISHING UP] ... " << std::endl;
   
-  // Free memory
-  delete time_stepper_pt;
-  time_stepper_pt = 0;
+   // Free memory
+   delete time_stepper_pt;
+   time_stepper_pt = 0;
   
- }
-
- {
-  std::cout << "Backward Differentiation Formula 1 - Fully Implicit test" << std::endl;
-  // -----------------------------------------------------------------
-  // Instantiation of the ODEs
-  // -----------------------------------------------------------------
-  CCBasicODEs odes;
+  }
   
-  // ----------------------------------------------------------------
-  // Time stepper
-  // ----------------------------------------------------------------
-  ACTimeStepper *time_stepper_pt =
-   factory_time_stepper.create_time_stepper("BDF1");
+  {
+   std::cout << "Backward Differentiation Formula 2 - Fully Implicit test" << std::endl;
+   // -----------------------------------------------------------------
+   // Instantiation of the ODEs
+   // -----------------------------------------------------------------
+   CCBasicODEs odes;
   
-  // Set the Jacobian strategy for the time stepper
-  // Create an instance of the strategy to compute the Jacobian 
+   // ----------------------------------------------------------------
+   // Time stepper
+   // ----------------------------------------------------------------
+   ACTimeStepper *time_stepper_pt =
+    factory_time_stepper.create_time_stepper("BDF2");
+   
+   // Create an instance of the strategy to compute the Jacobian 
 #ifdef CHAPCHOM_USES_ARMADILLO
-  CCJacobianStrategyForMyODEs<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > my_jacobian_strategy;
-  CCBackwardEulerMethod<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > *backward_euler_time_stepper_pt =
-   dynamic_cast<CCBackwardEulerMethod<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > *>(time_stepper_pt);
+   CCJacobianStrategyForMyODEs<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > my_jacobian_strategy;
 #else
-  CCJacobianStrategyForMyODEs<CCMatrix<Real>, CCVector<Real> > my_jacobian_strategy;
-  CCBackwardEulerMethod<CCMatrix<Real>, CCVector<Real> > *backward_euler_time_stepper_pt =
-   dynamic_cast<CCBackwardEulerMethod<CCMatrix<Real>, CCVector<Real> > *>(time_stepper_pt);
+   CCJacobianStrategyForMyODEs<CCMatrix<Real>, CCVector<Real> > my_jacobian_strategy;
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
-  
-  //backward_euler_time_stepper_pt->set_strategy_for_odes_jacobian(&my_jacobian_strategy);
-  
-  // ----------------------------------------------------------------
-  // Prepare the output file name
-  // ----------------------------------------------------------------
-  std::ostringstream output_filename;
-  output_filename << "bdf1.dat";
-  output_filename.precision(8);
-
-  // ----------------------------------------------------------------
-  // Prepare the output error file name
-  // ----------------------------------------------------------------
-  std::ostringstream output_error_filename;
-  output_error_filename << "bdf1_error.dat";
-  output_error_filename.precision(8);
-  
-  // Create an instance of the problem
-  CCBasicODEsProblem basic_ode_problem(&odes,
-                                       time_stepper_pt,
-                                       output_filename,
-                                       output_error_filename);
-  
-  // Prepare time integration data
-  const Real initial_time = 0.0;
-  const Real final_time = 2.0;
-  const Real time_step = 0.1;
-  
-  // ----------------------------------------------------------------
-  // Configure problem
-  // ----------------------------------------------------------------
-  // Initial time
-  basic_ode_problem.time() = initial_time;
-  
-  // Initial time step
-  basic_ode_problem.time_step() = time_step;
-  
-  // Set initial conditions
-  basic_ode_problem.set_initial_conditions();
-  
-  // Flag to indicate whether to continue processing
-  bool LOOP = true;
-  
-  // Main LOOP (loop until reaching final time)
-  while(LOOP)
-   {
-    // Performs an unsteady solve
-    basic_ode_problem.unsteady_solve();
-    
-    // Update time of the problem
-    basic_ode_problem.time()+=basic_ode_problem.time_step();
-    
-    // Check whether we have reached the final time
-    if (basic_ode_problem.time() >= final_time)
-     {
-      LOOP = false;
-     }
-    
-    basic_ode_problem.document_solution();
-    
-   } // while(LOOP)
-  
-  std::cout << "[FINISHING UP] ... " << std::endl;
-  
-  // Free memory
-  delete time_stepper_pt;
-  time_stepper_pt = 0;
-  
- }
- 
- {
-  std::cout << "Backward Differentiation Formula 2 - Fully Implicit test" << std::endl;
-  // -----------------------------------------------------------------
-  // Instantiation of the ODEs
-  // -----------------------------------------------------------------
-  CCBasicODEs odes;
-  
-  // ----------------------------------------------------------------
-  // Time stepper
-  // ----------------------------------------------------------------
-  ACTimeStepper *time_stepper_pt =
-   factory_time_stepper.create_time_stepper("BDF2");
-  
-  // Set the Jacobian strategy for the time stepper
-  // Create an instance of the strategy to compute the Jacobian 
+   
+   // Get a pointer to the specific time stepper
 #ifdef CHAPCHOM_USES_ARMADILLO
-  CCJacobianStrategyForMyODEs<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > my_jacobian_strategy;
-  CCBDF2Method<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > *bdf2_time_stepper_pt =
-   dynamic_cast<CCBDF2Method<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > *>(time_stepper_pt);
+   CCBDF2Method<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > *bdf2_time_stepper_pt =
+    dynamic_cast<CCBDF2Method<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > *>(time_stepper_pt);
 #else
-  CCJacobianStrategyForMyODEs<CCMatrix<Real>, CCVector<Real> > my_jacobian_strategy;
-  CCBDF2Method<CCMatrix<Real>, CCVector<Real> > *bdf2_time_stepper_pt =
-   dynamic_cast<CCBDF2Method<CCMatrix<Real>, CCVector<Real> > *>(time_stepper_pt);
+   CCBDF2Method<CCMatrix<Real>, CCVector<Real> > *bdf2_time_stepper_pt =
+    dynamic_cast<CCBDF2Method<CCMatrix<Real>, CCVector<Real> > *>(time_stepper_pt);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
-  
-  //bdf2_time_stepper_pt->set_strategy_for_odes_jacobian(&my_jacobian_strategy);
-  
-  // ----------------------------------------------------------------
-  // Prepare the output file name
-  // ----------------------------------------------------------------
-  std::ostringstream output_filename;
-  output_filename << "bdf2.dat";
-  output_filename.precision(8);
+   
+   // Set the Jacobian strategy for the time stepper
+   bdf2_time_stepper_pt->set_strategy_for_odes_jacobian(&my_jacobian_strategy);
+   
+   // ----------------------------------------------------------------
+   // Prepare the output file name
+   // ----------------------------------------------------------------
+   std::ostringstream output_filename;
+   output_filename << "bdf2.dat";
+   output_filename.precision(8);
 
-  // ----------------------------------------------------------------
-  // Prepare the output error file name
-  // ----------------------------------------------------------------
-  std::ostringstream output_error_filename;
-  output_error_filename << "bdf2_error.dat";
-  output_error_filename.precision(8);
+   // ----------------------------------------------------------------
+   // Prepare the output error file name
+   // ----------------------------------------------------------------
+   std::ostringstream output_error_filename;
+   output_error_filename << "bdf2_error.dat";
+   output_error_filename.precision(8);
   
-  // Create an instance of the problem
-  CCBasicODEsProblem basic_ode_problem(&odes,
-                                       time_stepper_pt,
-                                       output_filename,
-                                       output_error_filename);
+   // Create an instance of the problem
+   CCBasicODEsProblem basic_ode_problem(&odes,
+                                        time_stepper_pt,
+                                        output_filename,
+                                        output_error_filename);
   
-  // Prepare time integration data
-  const Real initial_time = 0.0;
-  const Real final_time = 2.0;
-  const Real time_step = 0.1;
+   // Prepare time integration data
+   const Real initial_time = 0.0;
+   const Real final_time = 2.0;
+   const Real time_step = 0.1;
   
-  // ----------------------------------------------------------------
-  // Configure problem
-  // ----------------------------------------------------------------
-  // Initial time
-  basic_ode_problem.time() = initial_time;
+   // ----------------------------------------------------------------
+   // Configure problem
+   // ----------------------------------------------------------------
+   // Initial time
+   basic_ode_problem.time() = initial_time;
   
-  // Initial time step
-  basic_ode_problem.time_step() = time_step;
+   // Initial time step
+   basic_ode_problem.time_step() = time_step;
   
-  // Set initial conditions
-  basic_ode_problem.set_initial_conditions();
+   // Set initial conditions
+   basic_ode_problem.set_initial_conditions();
   
-  // Flag to indicate whether to continue processing
-  bool LOOP = true;
+   // Flag to indicate whether to continue processing
+   bool LOOP = true;
   
-  // Main LOOP (loop until reaching final time)
-  while(LOOP)
-   {
-    // Performs an unsteady solve
-    basic_ode_problem.unsteady_solve();
+   // Main LOOP (loop until reaching final time)
+   while(LOOP)
+    {
+     // Performs an unsteady solve
+     basic_ode_problem.unsteady_solve();
     
-    // Update time of the problem
-    basic_ode_problem.time()+=basic_ode_problem.time_step();
+     // Update time of the problem
+     basic_ode_problem.time()+=basic_ode_problem.time_step();
     
-    // Check whether we have reached the final time
-    if (basic_ode_problem.time() >= final_time)
-     {
-      LOOP = false;
-     }
+     // Check whether we have reached the final time
+     if (basic_ode_problem.time() >= final_time)
+      {
+       LOOP = false;
+      }
     
-    basic_ode_problem.document_solution();
+     basic_ode_problem.document_solution();
     
-   } // while(LOOP)
+    } // while(LOOP)
   
-  std::cout << "[FINISHING UP] ... " << std::endl;
+   std::cout << "[FINISHING UP] ... " << std::endl;
   
-  // Free memory
-  delete time_stepper_pt;
-  time_stepper_pt = 0;
+   // Free memory
+   delete time_stepper_pt;
+   time_stepper_pt = 0;
   
- }
+  }
  
- return 0;
+  return 0;
  
 }
