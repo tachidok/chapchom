@@ -9,16 +9,25 @@
 
 // Matrices
 #include "../../../src/matrices/cc_matrix.h"
-#include "../../../src/nodes/cc_node.h"
+#include "../../../src/data_structures/cc_node.h"
 
 // The class to solve linear systems using numerical recipes
 #include "../../../src/linear_solvers/cc_lu_solver_numerical_recipes.h"
 
+#ifdef CHAPCHOM_USES_ARMADILLO
+// Include Armadillo type matrices since the templates may include
+// Armadillo type matrices
+#include "../../../src/matrices/cc_matrix_armadillo.h"
+
+// The class to solve linear systems using Armadillo's type matrices
+#include "../../../src/linear_solvers/cc_solver_armadillo.h"
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+
 using namespace chapchom;
 
-const double test_function(CCVector<double> &x, const unsigned s)
+const Real test_function(CCVector<Real> &x, const unsigned s)
 {
- double prod=1.0;
+ Real prod=1.0;
  for (unsigned i = 0; i < s; i++)
   {
    prod*=x(i)*(1.0-x(i));
@@ -27,21 +36,35 @@ const double test_function(CCVector<double> &x, const unsigned s)
 }
 
 template<class T>
-void compute_distance_matrix(CCVector<T> &data_sites, CCVector<T> &centers,
+void compute_distance_matrix(CCMatrix<T> &data_sites, CCMatrix<T> &centers,
                              CCMatrix<T> &distance_matrix)
 {
- const unsigned n_rows = data_sites.size();
- const unsigned n_columns = centers.size();
- for (unsigned i = 0; i < n_rows; i++)
+ // Get the number of "vector points" on "data_sites"
+ // Get the number of "vector points" on "centers"
+ const unsigned n_vector_points_data_sites = data_sites.n_columns();
+ const unsigned n_vector_points_centers = centers.n_columns();
+
+ // The dimension MUST be the same for both input data, otherwise
+ // there is an error
+ const unsigned dimension = data_sites.n_rows();
+ 
+ // Loop over all the data points in the first matrix
+ for (unsigned m = 0; m < n_vector_points_data_sites; m++)
   {
-   for (unsigned j = 0; j < n_columns; j++)
+   // Loop over all the data points in the second matrix
+   for (unsigned n = 0; n < n_vector_points_centers; n++)
     {
-     const T dsi = data_sites(i);
-     const T cj = centers(j);
-     const T distance = dsi - ci; 
-     distance_matrix(i,j)=distance.norm_2();
+     CCVector<T> distance(dimension);
+     distance.allocate_memory();
+     // Loop over the elements of both vectors
+     for (unsigned k = 0; k < dimension; k++)
+      {
+       distance(k) = data_sites(k, m) - centers(k, n);
+      }
+     distance_matrix(m,n)=distance.norm_2();
     }
   }
+ 
 }
 
 // ==================================================================
@@ -63,34 +86,44 @@ int main(int argc, char *argv[])
  
  // Dimension of the problem
  const unsigned dim = 1;
- // Specify the domain
- std::vector<double> domain(dim);
- for (unsigned i = 0; i < dim; i++)
-  {
-   domain[i]=1.0;
-  }
+ 
+ // Specify the lenght of the domain
+ const unsigned L = 1.0;
  
  // --------------------------------------------------------------
  // Create and give position to nodes
  // --------------------------------------------------------------
+ // Nodes per dimension
+ const unsigned n_nodes_per_dim = 10;
  // The number of nodes
- const unsigned n_nodes = 100;
+ const unsigned n_nodes = pow(n_nodes_per_dim, dim);
  // A vector of nodes
- std::vector<CCNode<double> *> nodes_pt(n_nodes);
+ std::vector<CCNode<Real> *> nodes_pt(n_nodes);
  
  // Number of variables stored in the node
  const unsigned n_variables = 1;
  // Number of history values
  const unsigned n_history_values = 1;
  
- // Create the nodes and assign position
+ const Real h = L / (Real)(n_nodes_per_dim - 1);
+ std::vector<Real> x(dim, 0.0);
+ // Create the nodes
  for (unsigned i = 0; i < n_nodes; i++)
   {
-   nodes_pt[i] = new CCNode<double>(dim, n_variables, n_history_values);
-   for (unsigned k = 0; k < dim; k++)
+   nodes_pt[i] = new CCNode<Real>(dim, n_variables, n_history_values);
+  }
+ 
+ // Assign position
+ for (unsigned k = 0; k < dim; k++)
+  {
+   for (unsigned i = 0; i < n_nodes; i++)
     {
-     const double position = static_cast<double>(rand() / RAND_MAX);
+     nodes_pt[i] = new CCNode<Real>(dim, n_variables, n_history_values);
+     //const Real r = rand();
+     //const Real position = static_cast<Real>(r / RAND_MAX);
+     const Real position = x[k];
      nodes_pt[i]->set_position(position, k);
+     x[k]+=h;
     }
   }
  
@@ -101,7 +134,7 @@ int main(int argc, char *argv[])
   {
    for (unsigned j = 0; j < n_variables; j++)
     {
-     const double u = 0.0;
+     const Real u = 0.0;
      nodes_pt[i]->set_variable(u, j);
     }
   }
@@ -113,7 +146,7 @@ int main(int argc, char *argv[])
  // Move the first and the last node to the boundary of the domain
  nodes_pt[0]->set_position(0.0, 0);
  nodes_pt[0]->set_variable(0.0, 0);
- nodes_pt[n_nodes-1]->set_position(0.0, 0);
+ nodes_pt[n_nodes-1]->set_position(1.0, 0);
  nodes_pt[n_nodes-1]->set_variable(1.0, 0);
  
  // --------------------------------------------------------------
@@ -126,42 +159,90 @@ int main(int argc, char *argv[])
  
  // Loop over the nodes and extract their position and store them in a
  // matrix
- CCMatrix<double, double> nodes_position(dim, n_nodes);
+#ifdef CHAPCHOM_USES_ARMADILLO
+ CCArmadilloMatrix<Real> nodes_position(dim, n_nodes);
+#else
+ CCMatrix<Real> nodes_position(dim, n_nodes);
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
  nodes_position.allocate_memory();
- for (unsigned i = 0; i < dim; i++)
+ for (unsigned i = 0; i < n_nodes; i++)
   {
-   for (unsigned j = 0; j < n_nodes; j++)
+   for (unsigned j = 0; j < dim; j++)
     {
-     nodes_position(i, j) = nodes_pt[i]->get_position(j);
+     nodes_position(j, i) = nodes_pt[i]->get_position(j);
     }
   }
  
  // Store the distance matrix
- CCMatrix<double> distance_matrix(n_nodes, n_nodes);
+#ifdef CHAPCHOM_USES_ARMADILLO
+ CCArmadilloMatrix<Real> distance_matrix(n_nodes, n_nodes);
+#else
+ CCMatrix<Real> distance_matrix(n_nodes, n_nodes);
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+ 
  distance_matrix.allocate_memory();
  compute_distance_matrix(nodes_position, nodes_position, distance_matrix);
  
  // Set right-hand side
- CCVector<double> b(n_nodes);
- b.allocate_memory();
- 
- // Evaluate the KNOWN function at the centers
+#ifdef CHAPCHOM_USES_ARMADILLO
+ CCArmadilloVectror<Real> rhs(n_nodes);
+#else 
+ CCVector<Real> rhs(n_nodes);
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+ rhs.allocate_memory();
+ for (unsigned i = 0; i < n_nodes; i++)
+  {
+#ifdef CHAPCHOM_USES_ARMADILLO
+   CCArmadilloVector<Real> tmp_v(dim);
+#else
+   CCVector<Real> tmp_v(dim);
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+   tmp_v.allocate_memory();
+   for (unsigned j = 0; j < dim; j++)
+    {
+     tmp_v(j) = nodes_pt[i]->get_position(j);
+    }
+   // Evaluate the KNOWN function at the centers 
+   rhs(i) = test_function(tmp_v, dim);
+  }
  
  // The solution vector (with the respective number of rows)
- CCVector<double> sol(n_nodes);
+#ifdef CHAPCHOM_USES_ARMADILLO
+ CCArmadilloVector<Real> sol(n_nodes);
+#else
+ CCVector<Real> sol(n_nodes);
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
  
  // --------------------------------------------------------------
  // Solve
  // --------------------------------------------------------------
+#ifdef CHAPCHOM_USES_ARMADILLO
+  // Create an Armadillo linear solver
+  CCSolverArmadillo<Real> linear_solver;
+#else
  // Create a linear solver
- CCLUSolverNumericalRecipes<double> linear_solver;
+ CCLUSolverNumericalRecipes<Real> linear_solver;
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+
+ std::cerr << "Distance matrix" << std::endl;
+ distance_matrix.print();
  
  // Solve the system of equations
- linear_solver.solve(distance_matrix, b, sol);
+ linear_solver.solve(distance_matrix, rhs, sol);
+ sol.print();
  
  // Evaluate (compute error RMSE)
  
  // Show results
+ for (unsigned i = 0; i < n_nodes; i++)
+  {
+   std::cerr << "["<< i<< "]:";
+   for (unsigned j = 0; j < dim; j++)
+    {
+     std::cerr << " " << nodes_pt[i]->get_position(j);
+    }
+   std::cerr << std::endl;
+  }
  
  // Delete nodes storage
  for (unsigned i = 0; i < n_nodes; i++)
@@ -175,3 +256,4 @@ int main(int argc, char *argv[])
  return 0;
  
 }
+
