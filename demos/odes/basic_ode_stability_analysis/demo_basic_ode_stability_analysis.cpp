@@ -154,7 +154,7 @@ public:
  {
   // Open files
   prepare_files_for_output();
-   
+  
   // Reset initial conditions
   set_initial_conditions();
    

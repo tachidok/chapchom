@@ -38,7 +38,8 @@ void compute_distance_matrix(CCVector<T> &data_sites, CCVector<T> &centers,
     {
      const T dsi = data_sites(i);
      const T cj = centers(j);
-     distance_matrix(i,j)=(dsi-cj)*(dsi-cj);
+     const T distance = dsi - ci; 
+     distance_matrix(i,j)=distance.norm_2();
     }
   }
 }
@@ -123,28 +124,28 @@ int main(int argc, char *argv[])
  // TODO: The distance matrix may be formed while we loop over the
  // nodes to extract their position
  
- // Loop over the nodes and extract their position
- // Store the position of the nodes
- CCVector<double> nodes_position(n_nodes);
- nodes_position.create_zero_vector();
- for (unsigned i = 0; i < n_nodes; i++)
+ // Loop over the nodes and extract their position and store them in a
+ // matrix
+ CCMatrix<double, double> nodes_position(dim, n_nodes);
+ nodes_position.allocate_memory();
+ for (unsigned i = 0; i < dim; i++)
   {
-   for (unsigned k = 0; k < dim; k++)
+   for (unsigned j = 0; j < n_nodes; j++)
     {
-     nodes_position(i)=nodes_pt[i]->get_position(k);
+     nodes_position(i, j) = nodes_pt[i]->get_position(j);
     }
   }
  
  // Store the distance matrix
  CCMatrix<double> distance_matrix(n_nodes, n_nodes);
- distance_matrix.create_zero_matrix();
+ distance_matrix.allocate_memory();
  compute_distance_matrix(nodes_position, nodes_position, distance_matrix);
  
  // Set right-hand side
  CCVector<double> b(n_nodes);
- b.create_zero_vector();
+ b.allocate_memory();
  
- // Take the position of the centers
+ // Evaluate the KNOWN function at the centers
  
  // The solution vector (with the respective number of rows)
  CCVector<double> sol(n_nodes);
