@@ -113,12 +113,12 @@ int main(int argc, char *argv[])
    nodes_pt[i] = new CCNode<Real>(dim, n_variables, n_history_values);
   }
  
- // Assign position
- for (unsigned k = 0; k < dim; k++)
+ // Assign positions
+ for (unsigned i = 0; i < n_nodes; i++)
   {
-   for (unsigned i = 0; i < n_nodes; i++)
+   nodes_pt[i] = new CCNode<Real>(dim, n_variables, n_history_values);
+   for (unsigned k = 0; k < dim; k++)
     {
-     nodes_pt[i] = new CCNode<Real>(dim, n_variables, n_history_values);
      //const Real r = rand();
      //const Real position = static_cast<Real>(r / RAND_MAX);
      const Real position = x[k];
@@ -232,6 +232,20 @@ int main(int argc, char *argv[])
  sol.print();
  
  // Evaluate (compute error RMSE)
+#ifdef CHAPCHOM_USES_ARMADILLO
+ CCArmadilloMatrix<Real> test_position(dim, n_nodes * n_nodes);
+#else
+ CCMatrix<Real> test_position(dim, n_nodes * n_nodes);
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+ for (unsigned i = 0; i < n_nodes * n_nodes; i++)
+  {
+   const Real r = rand();
+   const Real position = static_cast<Real>(r / RAND_MAX);
+   test_position(0, i) = position; 
+  }
+ 
+ // Evaluation at test position
+ 
  
  // Show results
  for (unsigned i = 0; i < n_nodes; i++)
