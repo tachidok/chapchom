@@ -50,20 +50,20 @@ void compute_distance_matrix(CCMatrix<T> &data_sites, CCMatrix<T> &centers,
  
  // Loop over all the data points in the first matrix
  for (unsigned m = 0; m < n_vector_points_data_sites; m++)
-  {
-   // Loop over all the data points in the second matrix
-   for (unsigned n = 0; n < n_vector_points_centers; n++)
-    {
-     CCVector<T> distance(dimension);
-     distance.allocate_memory();
-     // Loop over the elements of both vectors
-     for (unsigned k = 0; k < dimension; k++)
-      {
-       distance(k) = data_sites(k, m) - centers(k, n);
-      }
-     distance_matrix(m,n)=distance.norm_2();
-    }
-  }
+   {
+    // Loop over all the data points in the second matrix
+    for (unsigned n = 0; n < n_vector_points_centers; n++)
+     {
+      CCVector<T> distance(dimension);
+      distance.allocate_memory();
+      // Loop over the elements of both vectors
+      for (unsigned k = 0; k < dimension; k++)
+       {
+        distance(k) = data_sites(k, m) - centers(k, n);
+       }
+      distance_matrix(m,n)=distance.norm_2();
+     }
+   }
  
 }
 
