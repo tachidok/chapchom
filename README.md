@@ -53,7 +53,7 @@ Mmm ... that is something we need to carefully think about.
 
 Once we have something intereseting to share with you we will  make the
 project public. Please check continuously for updates or contact the
-developers :construction: :envelope: (tachidok.at.gmail.com) :envelope: :construction:
+developers :construction: :envelope: (jcp.sansalvador.at.inaoep.mx) :envelope: :construction:
 
 #### Notes for contributors
 Please check the documentation (in construction :construction: ) for anything you need to
@@ -64,7 +64,7 @@ submitting your contributions ....
 
 #### How many developers are currently working on the library
 
-At Thursday, 25 October 2018 there is one and only one developer, me :no_mouth:
+At Thursday, 11 April 2019 there is one and only one developer, me :no_mouth:
 
 :construction: :construction: :construction: :construction: :construction:
 
