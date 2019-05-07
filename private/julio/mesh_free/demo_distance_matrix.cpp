@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
  // TODO: Create a DOMAIN (mesh?) type class
  
  // Dimension of the problem
- const unsigned dim = 1;
+ const unsigned dim = 2;
  // Interpolant degree
  const unsigned degree = 3;
  
@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
  const unsigned n_variables = 1;
  // Number of history values
  const unsigned n_history_values = 1;
-
+ 
  // Distance between a pair of nodes
  const Real h = L / (Real)(n_nodes_per_dim - 1);
  std::vector<Real> x(dim, 0.0);
@@ -136,12 +136,12 @@ int main(int argc, char *argv[])
   {
    for (unsigned k = 0; k < dim; k++)
     {
-     //const Real r = rand();
-     //const Real position = static_cast<Real>(r / RAND_MAX) * L;
+     const Real r = rand();
+     const Real position = static_cast<Real>(r / RAND_MAX) * L;
      // Generate position and assign it
-     const Real position = x[k];
-     nodes_pt[i]->set_position(position, k);
-     x[k]+=h;
+     //const Real position = x[k];
+     nodes_pt[i]->set_position(position, k); 
+     //x[k]+=h;
     }
   }
  
@@ -162,10 +162,10 @@ int main(int argc, char *argv[])
  // --------------------------------------------------------------
  
  // Move the first and the last node to the boundary of the domain
- nodes_pt[0]->set_position(0.0, 0);
- nodes_pt[0]->set_variable(0.0, 0);
- nodes_pt[n_nodes-1]->set_position(1.0, 0);
- nodes_pt[n_nodes-1]->set_variable(1.0, 0);
+ //nodes_pt[0]->set_position(0.0, 0);
+ //nodes_pt[0]->set_variable(0.0, 0);
+ //nodes_pt[n_nodes-1]->set_position(1.0, 0);
+ //nodes_pt[n_nodes-1]->set_variable(1.0, 0);
  
  // --------------------------------------------------------------
  // Set the problem and solve it
@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
  // Each column stores the vector position of a node
  nodes_position.allocate_memory();
- for (unsigned i = 0; i < n_nodes; i++)
+  for (unsigned i = 0; i < n_nodes; i++)
   {
    for (unsigned j = 0; j < dim; j++)
     {
@@ -301,12 +301,12 @@ int main(int argc, char *argv[])
   {
    for (unsigned k = 0; k < dim; k++)
     {
-     //const Real r = rand();
-     //const Real position = static_cast<Real>(r / RAND_MAX) * L;
+     const Real r = rand();
+     const Real position = static_cast<Real>(r / RAND_MAX) * L;
      // Generate position and assign it
-     const Real position = x_eval[k];
+     //const Real position = x_eval[k];
      approx_solution_position(k, i) = position;
-     x_eval[k]+=h_test;
+     //x_eval[k]+=h_test;
     }
   }
  
