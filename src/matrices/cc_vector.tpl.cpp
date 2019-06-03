@@ -569,7 +569,7 @@ namespace chapchom
   transposed_vector = (*this);
   // Get the current "column vector" status of the vector and set the
   // transposed status of the new vector
-  transposed_vector.set_as_column_vector(~(this->Is_column_vector));
+  transposed_vector.set_as_column_vector(!(this->Is_column_vector));
  }
  
  // ===================================================================
