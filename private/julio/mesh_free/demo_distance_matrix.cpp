@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
  // TODO: Create a DOMAIN (mesh?) type class
  
  // Dimension of the problem
- const unsigned dim = 2;
+ const unsigned dim = 1;
  // Interpolant degree
  const unsigned degree = 3;
  

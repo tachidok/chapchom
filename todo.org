@@ -1,0 +1,20 @@
+#+STARTUP: showall
+#+TITLE: TODO list for CHAPCHOM
+#+AUTHOR: Julio César Pérez Sansalvador
+* Work on Mesh Free Methods
+- Working on Distance Matrix taken from book Mesh Free Approximation
+  Methods with MATLAB
+- Working on problem of chapter 1
+ - 1D
+  - Left to review the position of nodes given by an /h/ value, such
+   that the distance between nodes is /h/.
+  - Then continue with a random generation of nodes' positions
+ - 2D
+  - Create methods to generate nodes positions
+  - Distance between nodes given by an /h/ parameter
+  - Random nodes position
+- Then move to Chapter 2 of the book and implement the same stuff as
+  above
+* Work on Documentation
+- How to git with CHAPCHOM
+
