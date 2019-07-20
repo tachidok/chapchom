@@ -3,8 +3,10 @@
 #+AUTHOR: Julio C.
 
 This guide is to allow [[https://github.com/tachidok/chapchom][chapchom]] to work with =Armadillo 8.300.3= in
-=Ubuntu 16.04 LTS 64 bits=. If you find any problem or something in
-this guide makes no sense please contact the author.
+ - =Ubuntu 16.04 LTS 64 bits=,
+ - =Ubuntu 18.04.2 LTS 64 bits.
+If you find any problem or something in this guide makes no sense
+please contact the author.
 
 Please also refer to the [[http://arma.sourceforge.net/][original documentation]] in case you are having
 troubles with the installation.
@@ -17,15 +19,25 @@ system. If that is the case then proceed to uninstall it.
 Once you ensure that Armadillo is not already installed in your system
 then proceed to check that you have the following packages installed
 in your system.
-- cmake (tested with =cmake 3.5.1-1ubuntu3=)
+ * In =Ubuntu 16.04 LTS 64 bits=
+  - =cmake 3.5.1-1ubuntu3=
+ * In =Ubuntu 18.04.2 LTS 64 bits=
+  - =cmake 3.10.2=
 
 The following set of packages are optional, however we highly
 recommend you to install them to improve performance.
 
 + +libopenblas-dev+
-+ libblas-dev (tested with =libblas-common=, =libblas-dev 3.6.0-2ubuntu2=)
-+ liblapack-dev (tested with =liblapack-dev 3.6.0-2ubuntu2=)
-+ libarpack-dev (tested with =libarpack2=, =libarpack2-dev 3.3.0-1build2=)
+
+ * =Ubuntu 16.04 LTS 64 bits=
+   - libblas-dev (tested with =libblas-common=, =libblas-dev 3.6.0-2ubuntu2=)
+   - liblapack (=liblapack-dev 3.6.0-2ubuntu2=)
+   - libarpack (=libarpack2=, =libarpack2-dev 3.3.0-1build2=)
+ * =Ubuntu 18.04.2 LTS 64 bits=
+   - liblas3 (=libblas3 3.7.1-4ubuntu1=, =libblas-dev 3.7.1-4ubuntu1=)
+   - liblapack (=liblapack3 3.7.1-4ubuntu1=, =liblapack-dev 3.7.1-4ubuntu1=)
+   - libarpack (=libarpack2 3.5.0+real-2=, =libarpack2-dev 3.5.0+real-2=)
+
 + SuperLU (tested with =SuperLU_5.2.0=). For this one check [[file:installing_superlu.html][the
   installation instructions]] in the doc folder.
 
@@ -49,12 +61,22 @@ documentation).
 - Go to the folder where you extracted the files and type
 
 #+BEGIN_SRC bash
-mkdir lib
+mkdir installation
 cmake . \
 -DCMAKE_INSTALL_PREFIX=lib \
 -DSuperLU_INCLUDE_DIR=path_to_SuperLU_include_directory \
 -DSuperLU_LIBRARY=path_to_SuperLU_library \
 -Dopenblas_LIBRARY=path_to_openBLAS_library
+#+END_SRC
+
+The following is an example of my configuration:
+#+BEGIN_SRC bash
+mkdir installation
+cmake . \
+-DCMAKE_INSTALL_PREFIX=installation \
+-DSuperLU_INCLUDE_DIR=../SuperLU_5.2.0/installation/include \
+-DSuperLU_LIBRARY=../SuperLU_5.2.0/installation/lib/libsuperlu.a \
+-Dopenblas_LIBRARY=../OpenBLAS-0.2.20/installation/lib/libopenblas.a
 #+END_SRC
 
 NOTE: If you now to use cmake-gui then you can configure the above
@@ -92,13 +114,13 @@ and relogin.
 
 This is the specific command for the installation in my computer
 #+BEGIN_SRC bash
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/tachidok/local/working/my_stuff/armadillo-8.300.3/lib/lib/
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/tachidok/local/working/my_stuff/armadillo-8.300.3/installation/lib/
 #+END_SRC
 
 and the specific line I added to my =~/.profile= file
 
 #+BEGIN_SRC bash
-export LD_LIBRARY_PATH=/home/tachidok/local/working/my_stuff/armadillo-8.300.3/lib/lib/
+export LD_LIBRARY_PATH=/home/tachidok/local/working/my_stuff/armadillo-8.300.3/installation/lib/
 #+END_SRC
 
 NOTE: You may (or not) need to add this path everytime you restart

@@ -22,6 +22,9 @@ then proceed to install the following packages.
  * In =Ubuntu 16.04 LTS 64 bits=
   + libblas-dev (tested with =libblas-common=, =libblas-dev
     3.6.0-2ubuntu2=)
+ * In =Ubuntu 18.04.2 LTS 64 bits=
+  + libblas-dev (tested with =libblas3 3.7.1-4ubuntu1=, =libblas-dev
+    3.7.1-4ubuntu1=)
 
 The following set of packages are optional, however we highly
 recommend you to install them to improve performance.
@@ -33,10 +36,14 @@ recommend you to install them to improve performance.
   + SuperLU (tested with =SuperLU_5.2.0=). For this one check the
     [[file:installing_superlu.html][installation file]] in the doc folder.
  * In =Ubuntu 18.04.2 LTS 64 bits=
-  + liblapack (=liblapack3 3.7.1-4ubuntu1=)
-  + libarpack (=libarpack2 3.5.0+real-2=)
+  + liblapack (tested with =liblapack3 3.7.1-4ubuntu1=, =liblapack-dev
+    3.7.1-4ubuntu1=)
+  + libarpack (=libarpack2 3.5.0+real-2=, =libarpack2-dev
+    3.5.0+real-2=)
   + SuperLU (tested with =SuperLU_5.2.0=). For this one check the
     [[file:installing_superlu.html][installation file]] in the doc folder.
+
+Make sure to install the =dev= versions of the libraries.
   
 * Installation
 
@@ -60,11 +67,11 @@ processors at compilation time.
 
 - Once compilation is finished you are able to install it using the
   following command (we recommend you to create a folder where to
-  install the library, ex. =/lib/=)
+  install the library, ex. =/installation/=)
 
 #+BEGIN_SRC bash
-mkdir lib
-#make PREFIX=./lib install
+mkdir installation
+make PREFIX=./installation install
 #+END_SRC
 
 or you can use =make PREFIX=/path/to/your/installation install=.

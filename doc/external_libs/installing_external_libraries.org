@@ -26,8 +26,10 @@ to install =synaptic= package manager to install them.]
    - libarpack (=libarpack2=, =libarpack2-dev 3.3.0-1build2=)
  * =Ubuntu 18.04.2 LTS 64 bits=
    - =cmake 3.10.2=
-   - liblapack (=liblapack3 3.7.1-4ubuntu1=)
-   - libarpack (=libarpack2 3.5.0+real-2=)
+   - liblapack (=liblapack3 3.7.1-4ubuntu1=, =liblapack-dev
+     3.7.1-4ubuntu1=)
+   - libarpack (=libarpack2 3.5.0+real-2=, =libarpack2-dev
+     3.5.0+real-2=)
 
  * +libblas-dev (tested with =libblas-common=, =libblas-dev 3.6.0-2ubuntu2=)+
 
