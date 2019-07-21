@@ -67,7 +67,7 @@ public:
  
  /// Evaluates the system of odes at time 't', using the history
  /// values of u at index k
- void evaluate(const Real t, CCData<Real> &u, CCData<Real> &dudt, const unsigned k = 0)
+ void evaluate_derivatives(const Real t, CCData<Real> &u, CCData<Real> &dudt, const unsigned k = 0)
  {
   // \frac{du}{dt} = -u^{2}
   dudt(0) = -(u(0,k)*u(0,k));
@@ -155,12 +155,15 @@ public:
   // Open files
   prepare_files_for_output();
   
-  // Reset initial conditions
-  set_initial_conditions();
-   
   // Reset problem current time
   this->time() = 0.0;
-   
+  
+  // Reset initial conditions
+  set_initial_conditions();
+  
+  // Document initial solution
+  this->document_solution();
+     
   // Flag to indicate whether to continue processing
   bool LOOP = true;
    
@@ -189,24 +192,11 @@ public:
  void set_initial_conditions()
  {
   // Initial conditions
-  u(0) = 1.0;
-  
-  // Document initial state
-  complete_problem_setup();
+  u(0) = 1.0; 
  }
  
  // Set boundary conditions
  void set_boundary_conditions() { }
- 
- // A helper function to complete the problem
- // setup (calls set_boundary_conditions() and document the initial problem
- // configuration)
- void complete_problem_setup()
- {
-  // Initial problem configuration
-  Output_file << Time << "\t" << u(0) << std::endl;
-  output_error();
- }
  
  // Document the solution
  void document_solution()
@@ -268,7 +258,7 @@ int main(int argc, char *argv[])
   // Instantiation of the ODEs
   // -----------------------------------------------------------------
   CCBasicODEs odes;
-   
+  
   // ----------------------------------------------------------------
   // Time stepper
   // ----------------------------------------------------------------
@@ -280,14 +270,14 @@ int main(int argc, char *argv[])
   // Prepare the output file name prefix
   // ----------------------------------------------------------------
   std::ostringstream output_filename_prefix;
-  output_filename_prefix << "euler";
+  output_filename_prefix << "RESLT/euler";
   output_filename_prefix.precision(8);
    
   // ----------------------------------------------------------------
   // Prepare the output error file name
   // ----------------------------------------------------------------
   std::ostringstream output_error_filename_prefix;
-  output_error_filename_prefix << "euler_error";
+  output_error_filename_prefix << "RESLT/euler_error";
   output_error_filename_prefix.precision(8);
 
   // Time interval for solving
@@ -346,14 +336,14 @@ int main(int argc, char *argv[])
   // Prepare the output file name prefix
   // ----------------------------------------------------------------
   std::ostringstream output_filename_prefix;
-  output_filename_prefix << "rk4";
+  output_filename_prefix << "RESLT/rk4";
   output_filename_prefix.precision(8);
    
   // ----------------------------------------------------------------
   // Prepare the output error file name
   // ----------------------------------------------------------------
   std::ostringstream output_error_filename_prefix;
-  output_error_filename_prefix << "rk4_error";
+  output_error_filename_prefix << "RESLT/rk4_error";
   output_error_filename_prefix.precision(8);
 
   // Time interval for solving
@@ -412,14 +402,14 @@ int main(int argc, char *argv[])
   // Prepare the output file name prefix
   // ----------------------------------------------------------------
   std::ostringstream output_filename_prefix;
-  output_filename_prefix << "am2pc";
+  output_filename_prefix << "RESLT/am2pc";
   output_filename_prefix.precision(8);
    
   // ----------------------------------------------------------------
   // Prepare the output error file name
   // ----------------------------------------------------------------
   std::ostringstream output_error_filename_prefix;
-  output_error_filename_prefix << "am2pc_error";
+  output_error_filename_prefix << "RESLT/am2pc_error";
   output_error_filename_prefix.precision(8);
   
   // Time interval for solving
@@ -478,14 +468,14 @@ int main(int argc, char *argv[])
   // Prepare the output file name prefix
   // ----------------------------------------------------------------
   std::ostringstream output_filename_prefix;
-  output_filename_prefix << "bdf1";
+  output_filename_prefix << "RESLT/bdf1";
   output_filename_prefix.precision(8);
   
   // ----------------------------------------------------------------
   // Prepare the output error file name
   // ----------------------------------------------------------------
   std::ostringstream output_error_filename_prefix;
-  output_error_filename_prefix << "bdf1_error";
+  output_error_filename_prefix << "RESLT/bdf1_error";
   output_error_filename_prefix.precision(8);
   
   // Time interval for solving
@@ -544,14 +534,14 @@ int main(int argc, char *argv[])
   // Prepare the output file name prefix
   // ----------------------------------------------------------------
   std::ostringstream output_filename_prefix;
-  output_filename_prefix << "am2";
+  output_filename_prefix << "RESLT/am2";
   output_filename_prefix.precision(8);
   
   // ----------------------------------------------------------------
   // Prepare the output error file name
   // ----------------------------------------------------------------
   std::ostringstream output_error_filename_prefix;
-  output_error_filename_prefix << "am2_error";
+  output_error_filename_prefix << "RESLT/am2_error";
   output_error_filename_prefix.precision(8);
   
   // Time interval for solving
@@ -610,14 +600,14 @@ int main(int argc, char *argv[])
   // Prepare the output file name prefix
   // ----------------------------------------------------------------
   std::ostringstream output_filename_prefix;
-  output_filename_prefix << "bdf2";
+  output_filename_prefix << "RESLT/bdf2";
   output_filename_prefix.precision(8);
   
   // ----------------------------------------------------------------
   // Prepare the output error file name
   // ----------------------------------------------------------------
   std::ostringstream output_error_filename_prefix;
-  output_error_filename_prefix << "bdf2_error";
+  output_error_filename_prefix << "RESLT/bdf2_error";
   output_error_filename_prefix.precision(8);
   
   // Time interval for solving

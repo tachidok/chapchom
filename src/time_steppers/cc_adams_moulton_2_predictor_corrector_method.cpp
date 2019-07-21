@@ -63,7 +63,7 @@ namespace chapchom
   
   // Evaluate the ODE at time "t" using the current values of "u"
   // stored in index k
-  odes.evaluate(t, u, dudt, k);
+  odes.evaluate_derivatives(t, u, dudt, k);
   
   // Once the derivatives have been obtained perform one step of
   // Euler's method and store the result in the predicted u_p. No
@@ -84,7 +84,7 @@ namespace chapchom
   
   // Evaluate the ODE at time "t+h" using the predicted values of
   // "u_p" stored at index k=0 because u_p has not history values
-  odes.evaluate(t+h, u_p, dudt_p, 0);
+  odes.evaluate_derivatives(t+h, u_p, dudt_p, 0);
   
   // Shift values to the right to provide storage for the new values
   u.shift_history_values();

@@ -58,7 +58,7 @@ namespace chapchom
   CCData<Real> dudt(n_odes);
   
   // Evaluate the ODE at time "t" using the current values of "u"
-  odes.evaluate(t, u, dudt, k);
+  odes.evaluate_derivatives(t, u, dudt, k);
   
   // Temporary vector to store the K_i evaluations proper of
   // Runge-Kutta methods
@@ -72,7 +72,7 @@ namespace chapchom
   
   // --------------------------------------------------------------------
   // Evaluate the ODE at time "t" using the current values of "u"
-  odes.evaluate(t, u, K1, k);
+  odes.evaluate_derivatives(t, u, K1, k);
   // --------------------------------------------------------------------
   // Evaluate the ODE at time "t+(h/2)" and with "u+(h/2)K1"
   const Real h_half = h*0.5;
@@ -80,7 +80,7 @@ namespace chapchom
    {
     u_copy(i,k) = u(i,k)+h_half*K1(i);
    }
-  odes.evaluate(t+h_half, u_copy, K2, k);
+  odes.evaluate_derivatives(t+h_half, u_copy, K2, k);
   
   // --------------------------------------------------------------------
   // Evaluate the ODE at time "t+(h/2)" and with "u+(h/2)K2"
@@ -88,7 +88,7 @@ namespace chapchom
    {
     u_copy(i,k) = u(i,k)+h_half*K2(i);
    }
-  odes.evaluate(t+h_half, u_copy, K3, k);
+  odes.evaluate_derivatives(t+h_half, u_copy, K3, k);
   
   // -------------------------------------------------------------------- 
   // Evaluate the ODE at time "t+h" and with "u+hK3"
@@ -96,7 +96,7 @@ namespace chapchom
    {
     u_copy(i,k) = u(i,k)+h*K3(i);
    }
-  odes.evaluate(t+h, u_copy, K4);
+  odes.evaluate_derivatives(t+h, u_copy, K4);
   
   // Shift values to the right to provide storage for the new values
   u.shift_history_values();

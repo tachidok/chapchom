@@ -28,10 +28,10 @@ namespace chapchom
  // Evaluates the system of odes at time "t", using the history values
  // of u at index k
  // ===================================================================
- void CCLotkaVolterraODEs::evaluate(const Real t,
-                                    CCData<Real> &u,
-                                    CCData<Real> &dudt,
-                                    const unsigned k)
+ void CCLotkaVolterraODEs::evaluate_derivatives(const Real t,
+                                                CCData<Real> &u,
+                                                CCData<Real> &dudt,
+                                                const unsigned k)
  {
   // -----------------
   // u(0,k) Number of prey at history index k

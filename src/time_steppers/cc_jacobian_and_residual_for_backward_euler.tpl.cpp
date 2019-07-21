@@ -138,7 +138,7 @@ namespace chapchom
   CCData<Real> dudt_new(n_dof);
   
   // Evaluate the ODE at time 't+h', stored at index k
-  odes_pt->evaluate(t+h, (*u_pt), dudt_new, k);
+  odes_pt->evaluate_derivatives(t+h, (*u_pt), dudt_new, k);
   
   // Allocate memory for the Residual (delete previous data)
   this->Residual.allocate_memory(n_dof);

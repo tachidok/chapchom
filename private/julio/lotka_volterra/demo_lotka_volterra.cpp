@@ -62,23 +62,11 @@ public:
   u(0) = 2.0; // Initial number of prey
   u(1) = 1.0; // Initial number of predators
   //u(0) = 0.9; // Initial number of prey
-  //u(1) = 0.9; // Initial number of predators
-  
-  // Document initial state
-  complete_problem_setup();
+  //u(1) = 0.9; // Initial number of predators 
  }
  
  // Set boundary conditions
  void set_boundary_conditions() { }
- 
- // A helper function to complete the problem setup (call
- // set_initial_conditions(), set_boundary_conditions() and document
- // the initial problem configuration)
- void complete_problem_setup()
- {
-  // Initial problem configuration
-  Output_file << Time << "\t" << u(0) << "\t" << u(1) << std::endl;
- }
  
  // Document the solution
  void document_solution()
@@ -156,6 +144,9 @@ int main(int argc, char *argv[])
   // Set initial conditions
   lotka_volterra_problem.set_initial_conditions();
   
+  // Document intiial configuration
+  lotka_volterra_problem.document_solution();
+  
   // Flag to indicate whether to continue processing
   bool LOOP = true;
  
@@ -228,6 +219,9 @@ int main(int argc, char *argv[])
   
   // Set initial conditions
   lotka_volterra_problem.set_initial_conditions();
+
+  // Document intiial configuration
+  lotka_volterra_problem.document_solution();
   
   // Flag to indicate whether to continue processing
   bool LOOP = true;
@@ -301,6 +295,9 @@ int main(int argc, char *argv[])
   
   // Set initial conditions
   lotka_volterra_problem.set_initial_conditions();
+
+  // Document intiial configuration
+  lotka_volterra_problem.document_solution();
   
   // Flag to indicate whether to continue processing
   bool LOOP = true;
@@ -374,7 +371,10 @@ int main(int argc, char *argv[])
   
    // Set initial conditions
    lotka_volterra_problem.set_initial_conditions();
-  
+   
+   // Document intiial configuration
+   lotka_volterra_problem.document_solution();
+   
    // Flag to indicate whether to continue processing
    bool LOOP = true;
   
@@ -447,7 +447,10 @@ int main(int argc, char *argv[])
   
    // Set initial conditions
    lotka_volterra_problem.set_initial_conditions();
-  
+   
+   // Document intiial configuration
+   lotka_volterra_problem.document_solution();
+   
    // Flag to indicate whether to continue processing
    bool LOOP = true;
   
@@ -520,7 +523,10 @@ int main(int argc, char *argv[])
   
    // Set initial conditions
    lotka_volterra_problem.set_initial_conditions();
-  
+   
+   // Document intiial configuration
+   lotka_volterra_problem.document_solution();
+   
    // Flag to indicate whether to continue processing
    bool LOOP = true;
   

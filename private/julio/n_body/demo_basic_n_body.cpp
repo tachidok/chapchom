@@ -10,11 +10,12 @@
 // The required classes to solve Initial Value Problems (IVP)
 // The factory to create the time stepper (integration method)
 #include "../../../src/time_steppers/cc_factory_time_stepper.h"
-// Integration methods
+// Time-stepper methods
 #include "../../../src/time_steppers/cc_euler_method.h"
 #include "../../../src/time_steppers/cc_RK4_method.h"
 #include "../../../src/time_steppers/cc_backward_euler_method.h"
 
+// Matrices representations
 #include "../../../src/matrices/cc_matrix.h"
 
 #ifdef CHAPCHOM_USES_ARMADILLO
@@ -236,23 +237,16 @@ public:
   u(21,0) = 1.25; // y-velocity
   u(22,0) = 0.0; // z-position
   u(23,0) = 0.0; // z-velocity 
-#endif // #if 1
-  
-  // Document initial state
-  complete_problem_setup();
+#endif // #if 1 
  }
  
  // Set boundary conditions
  void set_boundary_conditions() { }
  
- // A helper function to complete the problem setup (call
- // set_initial_conditions(), set_boundary_conditions() and document
- // the initial problem configuration)
+ // A helper function to complete the problem setup
  void complete_problem_setup()
  {
-  std::ostringstream output_filename;
-  output_filename << "./RESLT/soln" << "_" << std::setfill('0') << std::setw(5) << Output_file_index++;
-  output_particles(Time, (*U_pt), output_filename);
+  
  }
  
  // Document the solution
@@ -320,6 +314,12 @@ int main(int argc, char *argv[])
  // Set initial conditions
  n_body_problem.set_initial_conditions();
  
+ // Complete setup
+ n_body_problem.complete_problem_setup();
+ 
+ // Document initial configuration
+ n_body_problem.document_solution(ioutput_filename);
+ 
  // Flag to indicate whether to continue processing
  bool LOOP = true;
  
@@ -339,11 +339,11 @@ int main(int argc, char *argv[])
     }
    
    // Output to file
-   std::ostringstream output_filename;
+   std::ostringstream ioutput_filename;
    output_filename
     << "./RESLT/soln" << "_" << std::setfill('0') << std::setw(5) << n_body_problem.output_file_index()++;
    
-   n_body_problem.document_solution(output_filename);
+   n_body_problem.document_solution(ioutput_filename);
    
   } // while(LOOP)
  

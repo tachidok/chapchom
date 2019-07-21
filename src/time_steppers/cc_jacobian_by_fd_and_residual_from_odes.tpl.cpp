@@ -71,7 +71,7 @@ namespace chapchom
   
   // Evaluate the ODEs using the history values of u at time t+h'
   // indicated in the index k
-  odes_pt->evaluate(t+h, (*u_pt), dudt, k);
+  odes_pt->evaluate_derivatives(t+h, (*u_pt), dudt, k);
   
   // Compute the approximated Jacobian
   for (unsigned i = 0; i < n_dof; i++)
@@ -89,7 +89,7 @@ namespace chapchom
     CCData<Real> dudt_plus(n_dof);
     // Evaluate the ODEs using the history values indicated in the
     // index K
-    odes_pt->evaluate(t+h, u_plus, dudt_plus, k);
+    odes_pt->evaluate_derivatives(t+h, u_plus, dudt_plus, k);
     // Compute the values for the Jacobian matrix, add entries for the
     // current i-column only (all functions with an slight
     // perturbation in the i-th dof)

@@ -58,7 +58,7 @@ namespace chapchom
   CCData<Real> dudt(n_odes);
   
   // Evaluate the ODE at time "t" using the values of "u" at index k
-  odes.evaluate(t, u, dudt, k);
+  odes.evaluate_derivatives(t, u, dudt, k);
   
   // Shift values to the right to provide storage for the new values
   u.shift_history_values();

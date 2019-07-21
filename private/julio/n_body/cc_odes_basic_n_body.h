@@ -40,7 +40,7 @@ namespace chapchom
   /// Evaluates the system of odes at time "t". The values of the i-th
   /// function at previous times are accessible via u(i,1), u(i,2) and
   /// so on. The evaluation produces results in the vector dudt.
-  void evaluate(const Real t, CCData<Real> &u, CCData<Real> &dudt);
+  void evaluate_derivatives(const Real t, CCData<Real> &u, CCData<Real> &dudt);
   
   // Set parameters for odes
   void set_odes_parameters();

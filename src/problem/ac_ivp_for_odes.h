@@ -46,18 +46,15 @@ namespace chapchom
   
   // Set boundary conditions
   virtual void set_boundary_conditions() = 0;
-  
-  // A helper function to complete the problem setup (call
-  // set_initial_conditions(), set_boundary_conditions() and document
-  // the initial problem configuration)
-  virtual void complete_problem_setup() = 0;
-  
+    
   // Document the solution
-  virtual void document_solution(std::ostringstream &output_filename) { }
-  
+  virtual void document_solution(std::ostringstream &output_filename) { } 
   // -------------------------------------------------------------------------
   // THESE METHODS MUST BE IMPLEMENTED IN THE CONCRETE PROBLEM CLASS [END]
   // -------------------------------------------------------------------------
+  
+  // A helper function to complete the problem setup
+  void complete_problem_setup() { }
   
   // Problem steady solve (empty)
   void steady_solve() { }
@@ -68,8 +65,8 @@ namespace chapchom
  protected:
   
   /// Copy constructor (we do not want this class to be
-  /// copiable). Check
-  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
+   /// copiable). Check
+   /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
  ACIVPForODEs(const ACIVPForODEs &copy)
   : ACProblem()
    {

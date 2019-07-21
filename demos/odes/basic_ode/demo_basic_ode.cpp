@@ -67,7 +67,7 @@ public:
  
  /// Evaluates the system of odes at time 't', using the history
  /// values of u at index k
- void evaluate(const Real t, CCData<Real> &u, CCData<Real> &dudt, const unsigned k = 0)
+ void evaluate_derivatives(const Real t, CCData<Real> &u, CCData<Real> &dudt, const unsigned k = 0)
  {
   // \frac{du}{dt} = -u^{2}
   dudt(0) = -(u(0,k)*u(0,k));
@@ -241,25 +241,12 @@ private:
   void set_initial_conditions()
   {
    // Initial conditions
-   u(0) = 1.0;
-  
-   // Document initial state
-   complete_problem_setup();
+   u(0) = 1.0; 
   }
  
   // Set boundary conditions
   void set_boundary_conditions() { }
- 
-  // A helper function to complete the problem
-  // setup (calls set_boundary_conditions() and document the initial problem
-  // configuration)
-  void complete_problem_setup()
-  {
-   // Initial problem configuration
-   Output_file << Time << "\t" << u(0) << std::endl;
-   output_error();
-  }
- 
+  
   // Document the solution
   void document_solution()
   {
@@ -267,7 +254,7 @@ private:
    Output_file << Time << "\t" << u(0) << std::endl;
    output_error();
   }
-
+  
   // Output error
   void output_error()
   {
@@ -355,6 +342,9 @@ private:
    // Set initial conditions
    basic_ode_problem.set_initial_conditions();
    
+   // Document initial configuration
+   basic_ode_problem.document_solution();
+   
    // Flag to indicate whether to continue processing
    bool LOOP = true;
    
@@ -434,7 +424,10 @@ private:
   
    // Set initial conditions
    basic_ode_problem.set_initial_conditions();
-  
+
+   // Document initial configuration
+   basic_ode_problem.document_solution();
+   
    // Flag to indicate whether to continue processing
    bool LOOP = true;
   
@@ -514,7 +507,10 @@ private:
   
    // Set initial conditions
    basic_ode_problem.set_initial_conditions();
-  
+
+   // Document initial configuration
+   basic_ode_problem.document_solution();
+   
    // Flag to indicate whether to continue processing
    bool LOOP = true;
   
@@ -613,7 +609,10 @@ private:
   
    // Set initial conditions
    basic_ode_problem.set_initial_conditions();
-  
+
+   // Document initial configuration
+   basic_ode_problem.document_solution();
+   
    // Flag to indicate whether to continue processing
    bool LOOP = true;
   
@@ -712,7 +711,10 @@ private:
   
    // Set initial conditions
    basic_ode_problem.set_initial_conditions();
-  
+
+   // Document initial configuration
+   basic_ode_problem.document_solution();
+   
    // Flag to indicate whether to continue processing
    bool LOOP = true;
   
@@ -811,7 +813,10 @@ private:
   
    // Set initial conditions
    basic_ode_problem.set_initial_conditions();
-  
+
+   // Document initial configuration
+   basic_ode_problem.document_solution();
+   
    // Flag to indicate whether to continue processing
    bool LOOP = true;
   

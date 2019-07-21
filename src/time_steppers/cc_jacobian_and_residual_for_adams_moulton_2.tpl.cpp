@@ -156,7 +156,7 @@ namespace chapchom
     
     // Evaluate the ODEs with the values of u at time "t". Constant
     // during Newton's iteration
-    odes_pt->evaluate(t, (*u_pt), (*DUDT_old), k+1);
+    odes_pt->evaluate_derivatives(t, (*u_pt), (*DUDT_old), k+1);
     
     // Avoid evaluation of the same function during following Newton's
     // iterations
@@ -186,7 +186,7 @@ namespace chapchom
   CCData<Real> dudt(n_dof);
   
   // Evaluate the ODE at time "t+h"
-  odes_pt->evaluate(t+h, (*u_pt), dudt, k);
+  odes_pt->evaluate_derivatives(t+h, (*u_pt), dudt, k);
   
   // Allocate memory for the Residual (delete previous data)
   this->Residual.allocate_memory(n_dof);

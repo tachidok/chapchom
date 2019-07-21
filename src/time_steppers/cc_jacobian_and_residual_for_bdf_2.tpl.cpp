@@ -146,7 +146,7 @@ namespace chapchom
   const Real h_two_thirds = (2.0/3.0) * h;
   
   // Evaluate the odes at time "t+h". Current Newton's iteration
-  odes_pt->evaluate(t+h, (*u_pt), dudt, k);
+  odes_pt->evaluate_derivatives(t+h, (*u_pt), dudt, k);
   
   // Allocate memory for the Residual (delete previous data)
   this->Residual.allocate_memory(n_dof);

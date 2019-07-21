@@ -31,9 +31,9 @@ namespace chapchom
  /// function at previous times are accessible via u(i,1), u(i,2) and
  /// so on. The evaluation produces results in the vector dudt.
  // ===================================================================
- void CCODEsBasicNBody::evaluate(const Real t,
-                                 CCData<Real> &u,
-                                 CCData<Real> &dudt)
+ void CCODEsBasicNBody::evaluate_derivatives(const Real t,
+                                             CCData<Real> &u,
+                                             CCData<Real> &dudt)
  {
   // -----------------
   // u(0,0) Current x-position of the 1st body
