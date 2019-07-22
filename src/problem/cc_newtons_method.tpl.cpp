@@ -470,7 +470,7 @@ namespace chapchom
       // Error message
       std::ostringstream error_message;
       error_message << "Newton's method MAXIMUM ALLOWED RESIDUAL error\n"
-                    << "If you consider you require more iterations you can\n"
+                    << "If you consider you require a larger allowed residual you can\n"
                     << "set your own by calling the method\n\n"
                     << "set_maximum_allowed_residual()\n"
                     << std::endl;

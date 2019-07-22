@@ -26,15 +26,14 @@ set terminal wxt 0 size 640,480 enhanced font 'Verdana,10' persist
 #set yrange [0:40]
 set title 'Euler error'
 set xlabel 'x'
-set ylabel 'f(x)'
+set ylabel 'e(x)'
 set tics scale 0.75
 set logscale y
 
-plot 'RESLT/euler_error_h_0.1.dat' using 1:2 title 'h = 1.0e-1' w linespoints ls 1, \
-     'RESLT/euler_error_h_0.01.dat' using 1:2 title 'h = 1.0e-2' w linespoints ls 2, \
-     'RESLT/euler_error_h_0.001.dat' using 1:2 title 'h = 1.0e-3' w linespoints ls 3, \
-     'RESLT/euler_error_h_0.0001.dat' using 1:2 title 'h = 1.0e-4' w linespoints ls 4, \
-     'RESLT/euler_error_h_1e-05.dat' using 1:2 title 'h = 1.0e-5' w linespoints ls 5
+plot 'RESLT/euler_error_h_1.dat' using 1:2 title 'h = 1.0' w linespoints ls 1, \
+     'RESLT/euler_error_h_0.1.dat' using 1:2 title 'h = 1.0e-1' w linespoints ls 2, \
+     'RESLT/euler_error_h_0.01.dat' using 1:2 title 'h = 1.0e-2' w linespoints ls 3, \
+     'RESLT/euler_error_h_0.001.dat' using 1:2 title 'h = 1.0e-3' w linespoints ls 4
 
 set terminal wxt 1 size 640,480 enhanced font 'Verdana,10' persist
 #set terminal pngcairo size 640,480 enhanced font 'Verdana,10'
@@ -45,15 +44,14 @@ set key top right
 #set yrange [0:40]
 set title 'Runge-Kutta 4 error'
 set xlabel 'x'
-set ylabel 'f(x)'
+set ylabel 'e(x)'
 set tics scale 0.75
 set logscale y
 
-plot 'RESLT/rk4_error_h_0.1.dat' using 1:2 title 'h = 1.0e-1' w linespoints ls 1, \
-     'RESLT/rk4_error_h_0.01.dat' using 1:2 title 'h = 1.0e-2' w linespoints ls 2, \
-     'RESLT/rk4_error_h_0.001.dat' using 1:2 title 'h = 1.0e-3' w linespoints ls 3, \
-     'RESLT/rk4_error_h_0.0001.dat' using 1:2 title 'h = 1.0e-4' w linespoints ls 4, \
-     'RESLT/rk4_error_h_1e-05.dat' using 1:2 title 'h = 1.0e-5' w linespoints ls 5
+plot 'RESLT/rk4_error_h_1.dat' using 1:2 title 'h = 1.0' w linespoints ls 1, \
+     'RESLT/rk4_error_h_0.1.dat' using 1:2 title 'h = 1.0e-1' w linespoints ls 2, \
+     'RESLT/rk4_error_h_0.01.dat' using 1:2 title 'h = 1.0e-2' w linespoints ls 3, \
+     'RESLT/rk4_error_h_0.001.dat' using 1:2 title 'h = 1.0e-3' w linespoints ls 4
 
 set terminal wxt 2 size 640,480 enhanced font 'Verdana,10' persist
 #set terminal pngcairo size 640,480 enhanced font 'Verdana,10'
@@ -64,15 +62,14 @@ set key top right
 #set yrange [0:40]
 set title 'Adams-Moulton 2 - Predictor-Corrector error'
 set xlabel 'x'
-set ylabel 'f(x)'
+set ylabel 'e(x)'
 set tics scale 0.75
 set logscale y
 
-plot 'RESLT/am2pc_error_h_0.1.dat' using 1:2 title 'h = 1.0e-1' w linespoints ls 1, \
-     'RESLT/am2pc_error_h_0.01.dat' using 1:2 title 'h = 1.0e-2' w linespoints ls 2, \
-     'RESLT/am2pc_error_h_0.001.dat' using 1:2 title 'h = 1.0e-3' w linespoints ls 3, \
-     'RESLT/am2pc_error_h_0.0001.dat' using 1:2 title 'h = 1.0e-4' w linespoints ls 4, \
-     'RESLT/am2pc_error_h_1e-05.dat' using 1:2 title 'h = 1.0e-5' w linespoints ls 5
+plot 'RESLT/am2pc_error_h_1.dat' using 1:2 title 'h = 1.0' w linespoints ls 1, \
+     'RESLT/am2pc_error_h_0.1.dat' using 1:2 title 'h = 1.0e-1' w linespoints ls 2, \
+     'RESLT/am2pc_error_h_0.01.dat' using 1:2 title 'h = 1.0e-2' w linespoints ls 3, \
+     'RESLT/am2pc_error_h_0.001.dat' using 1:2 title 'h = 1.0e-3' w linespoints ls 4
 
 set terminal wxt 3 size 640,480 enhanced font 'Verdana,10' persist
 #set terminal pngcairo size 640,480 enhanced font 'Verdana,10'
@@ -82,15 +79,14 @@ set terminal wxt 3 size 640,480 enhanced font 'Verdana,10' persist
 #set yrange [0:40]
 set title 'BDF1 error'
 set xlabel 'x'
-set ylabel 'f(x)'
+set ylabel 'e(x)'
 set tics scale 0.75
 set logscale y
 
-plot 'RESLT/bdf1_error_h_0.1.dat' using 1:2 title 'h = 1.0e-1' w linespoints ls 1, \
-     'RESLT/bdf1_error_h_0.01.dat' using 1:2 title 'h = 1.0e-2' w linespoints ls 2, \
-     'RESLT/bdf1_error_h_0.001.dat' using 1:2 title 'h = 1.0e-3' w linespoints ls 3, \
-     'RESLT/bdf1_error_h_0.0001.dat' using 1:2 title 'h = 1.0e-4' w linespoints ls 4, \
-     'RESLT/bdf1_error_h_1e-05.dat' using 1:2 title 'h = 1.0e-5' w linespoints ls 5
+plot 'RESLT/bdf1_error_h_1.dat' using 1:2 title 'h = 1.0' w linespoints ls 1, \
+     'RESLT/bdf1_error_h_0.1.dat' using 1:2 title 'h = 1.0e-1' w linespoints ls 2, \
+     'RESLT/bdf1_error_h_0.01.dat' using 1:2 title 'h = 1.0e-2' w linespoints ls 3, \
+     'RESLT/bdf1_error_h_0.001.dat' using 1:2 title 'h = 1.0e-3' w linespoints ls 4
 
 set terminal wxt 4 size 640,480 enhanced font 'Verdana,10' persist
 #set terminal pngcairo size 640,480 enhanced font 'Verdana,10'
@@ -100,15 +96,14 @@ set terminal wxt 4 size 640,480 enhanced font 'Verdana,10' persist
 #set yrange [0:40]
 set title 'Adams-Moulton 2 error'
 set xlabel 'x'
-set ylabel 'f(x)'
+set ylabel 'e(x)'
 set tics scale 0.75
 set logscale y
 
-plot 'RESLT/am2_error_h_0.1.dat' using 1:2 title 'h = 1.0e-1' w linespoints ls 1, \
-     'RESLT/am2_error_h_0.01.dat' using 1:2 title 'h = 1.0e-2' w linespoints ls 2, \
-     'RESLT/am2_error_h_0.001.dat' using 1:2 title 'h = 1.0e-3' w linespoints ls 3, \
-     'RESLT/am2_error_h_0.0001.dat' using 1:2 title 'h = 1.0e-4' w linespoints ls 4, \
-     'RESLT/am2_error_h_1e-05.dat' using 1:2 title 'h = 1.0e-5' w linespoints ls 5
+plot 'RESLT/am2_error_h_1.dat' using 1:2 title 'h = 1.0' w linespoints ls 1, \
+     'RESLT/am2_error_h_0.1.dat' using 1:2 title 'h = 1.0e-1' w linespoints ls 2, \
+     'RESLT/am2_error_h_0.01.dat' using 1:2 title 'h = 1.0e-2' w linespoints ls 3, \
+     'RESLT/am2_error_h_0.001.dat' using 1:2 title 'h = 1.0e-3' w linespoints ls 4
 
 set terminal wxt 5 size 640,480 enhanced font 'Verdana,10' persist
 #set terminal pngcairo size 640,480 enhanced font 'Verdana,10'
@@ -118,12 +113,11 @@ set terminal wxt 5 size 640,480 enhanced font 'Verdana,10' persist
 #set yrange [0:40]
 set title 'BDF2 error'
 set xlabel 'x'
-set ylabel 'f(x)'
+set ylabel 'e(x)'
 set tics scale 0.75
 set logscale y
 
-plot 'RESLT/bdf2_error_h_0.1.dat' using 1:2 title 'h = 1.0e-1' w linespoints ls 1, \
-     'RESLT/bdf2_error_h_0.01.dat' using 1:2 title 'h = 1.0e-2' w linespoints ls 2, \
-     'RESLT/bdf2_error_h_0.001.dat' using 1:2 title 'h = 1.0e-3' w linespoints ls 3, \
-     'RESLT/bdf2_error_h_0.0001.dat' using 1:2 title 'h = 1.0e-4' w linespoints ls 4, \
-     'RESLT/bdf2_error_h_1e-05.dat' using 1:2 title 'h = 1.0e-5' w linespoints ls 5
+plot 'RESLT/bdf2_error_h_1.dat' using 1:2 title 'h = 1.0' w linespoints ls 1, \
+     'RESLT/bdf2_error_h_0.1.dat' using 1:2 title 'h = 1.0e-1' w linespoints ls 2, \
+     'RESLT/bdf2_error_h_0.01.dat' using 1:2 title 'h = 1.0e-2' w linespoints ls 3, \
+     'RESLT/bdf2_error_h_0.001.dat' using 1:2 title 'h = 1.0e-3' w linespoints ls 4

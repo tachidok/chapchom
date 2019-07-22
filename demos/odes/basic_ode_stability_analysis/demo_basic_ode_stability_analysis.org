@@ -1,0 +1,24 @@
+* Stability
+* The equation
+We test the stability of the methods using the following differential
+equation as a test case
+\begin{equation}
+\label{eq:dudt}
+ \frac{d}{dt}u(t) = - u(t)^2
+\end{equation}
+with initial conditions
+\begin{equation}
+\label{eq:initial_conditions}
+ u(0) = 1
+\end{equation}
+
+** The analytical solution
+The equation \eqref{eq:dudt} has the following anaylitical solution
+\begin{equation}
+\label{eq:dudt}
+ u(t) = \frac{1}{1+t}
+\end{equation}
+
+* The methods
+* The results
+* 
