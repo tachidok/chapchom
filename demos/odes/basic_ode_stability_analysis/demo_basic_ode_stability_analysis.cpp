@@ -271,18 +271,18 @@ int main(int argc, char *argv[])
   // ----------------------------------------------------------------
   std::ostringstream output_filename_prefix;
   output_filename_prefix << "RESLT/euler";
-  output_filename_prefix.precision(8);
-   
+  //output_filename_prefix.precision(10);
+  
   // ----------------------------------------------------------------
   // Prepare the output error file name
   // ----------------------------------------------------------------
   std::ostringstream output_error_filename_prefix;
   output_error_filename_prefix << "RESLT/euler_error";
-  output_error_filename_prefix.precision(8);
-
+  //output_error_filename_prefix.precision(10);
+  
   // Time interval for solving
   const Real initial_time = 0.0;
-  const Real final_time = 2.0;
+  const Real final_time = 10.0;
   
   // Create an instance of the problem
   CCStabilityAnalysisProblem stability_analysis_problem(&odes,
@@ -307,6 +307,16 @@ int main(int argc, char *argv[])
   stability_analysis_problem.solve();
   
   time_step = 0.001;
+  stability_analysis_problem.time_step() = time_step;
+  // Solve
+  stability_analysis_problem.solve();
+  
+  time_step = 0.0001;
+  stability_analysis_problem.time_step() = time_step;
+  // Solve
+  stability_analysis_problem.solve();
+  
+  time_step = 0.00001;
   stability_analysis_problem.time_step() = time_step;
   // Solve
   stability_analysis_problem.solve();
@@ -348,7 +358,7 @@ int main(int argc, char *argv[])
 
   // Time interval for solving
   const Real initial_time = 0.0;
-  const Real final_time = 2.0;
+  const Real final_time = 10.0;
   
   // Create an instance of the problem
   CCStabilityAnalysisProblem stability_analysis_problem(&odes,
@@ -373,6 +383,16 @@ int main(int argc, char *argv[])
   stability_analysis_problem.solve();
   
   time_step = 0.001;
+  stability_analysis_problem.time_step() = time_step;
+  // Solve
+  stability_analysis_problem.solve();
+  
+  time_step = 0.0001;
+  stability_analysis_problem.time_step() = time_step;
+  // Solve
+  stability_analysis_problem.solve();
+  
+  time_step = 0.00001;
   stability_analysis_problem.time_step() = time_step;
   // Solve
   stability_analysis_problem.solve();
@@ -414,7 +434,7 @@ int main(int argc, char *argv[])
   
   // Time interval for solving
   const Real initial_time = 0.0;
-  const Real final_time = 2.0;
+  const Real final_time = 10.0;
   
   // Create an instance of the problem
   CCStabilityAnalysisProblem stability_analysis_problem(&odes,
@@ -439,6 +459,16 @@ int main(int argc, char *argv[])
   stability_analysis_problem.solve();
   
   time_step = 0.001;
+  stability_analysis_problem.time_step() = time_step;
+  // Solve
+  stability_analysis_problem.solve();
+  
+  time_step = 0.0001;
+  stability_analysis_problem.time_step() = time_step;
+  // Solve
+  stability_analysis_problem.solve();
+  
+  time_step = 0.00001;
   stability_analysis_problem.time_step() = time_step;
   // Solve
   stability_analysis_problem.solve();
@@ -480,7 +510,7 @@ int main(int argc, char *argv[])
   
   // Time interval for solving
   const Real initial_time = 0.0;
-  const Real final_time = 2.0;
+  const Real final_time = 10.0;
   
   // Create an instance of the problem
   CCStabilityAnalysisProblem stability_analysis_problem(&odes,
@@ -505,6 +535,16 @@ int main(int argc, char *argv[])
   stability_analysis_problem.solve();
   
   time_step = 0.001;
+  stability_analysis_problem.time_step() = time_step;
+  // Solve
+  stability_analysis_problem.solve();
+  
+  time_step = 0.0001;
+  stability_analysis_problem.time_step() = time_step;
+  // Solve
+  stability_analysis_problem.solve();
+  
+  time_step = 0.00001;
   stability_analysis_problem.time_step() = time_step;
   // Solve
   stability_analysis_problem.solve();
@@ -546,7 +586,7 @@ int main(int argc, char *argv[])
   
   // Time interval for solving
   const Real initial_time = 0.0;
-  const Real final_time = 2.0;
+  const Real final_time = 10.0;
   
   // Create an instance of the problem
   CCStabilityAnalysisProblem stability_analysis_problem(&odes,
@@ -571,6 +611,16 @@ int main(int argc, char *argv[])
   stability_analysis_problem.solve();
   
   time_step = 0.001;
+  stability_analysis_problem.time_step() = time_step;
+  // Solve
+  stability_analysis_problem.solve();
+  
+  time_step = 0.0001;
+  stability_analysis_problem.time_step() = time_step;
+  // Solve
+  stability_analysis_problem.solve();
+  
+  time_step = 0.00001;
   stability_analysis_problem.time_step() = time_step;
   // Solve
   stability_analysis_problem.solve();
@@ -612,7 +662,7 @@ int main(int argc, char *argv[])
   
   // Time interval for solving
   const Real initial_time = 0.0;
-  const Real final_time = 2.0;
+  const Real final_time = 10.0;
   
   // Create an instance of the problem
   CCStabilityAnalysisProblem stability_analysis_problem(&odes,
@@ -637,6 +687,16 @@ int main(int argc, char *argv[])
   stability_analysis_problem.solve();
   
   time_step = 0.001;
+  stability_analysis_problem.time_step() = time_step;
+  // Solve
+  stability_analysis_problem.solve();
+  
+  time_step = 0.0001;
+  stability_analysis_problem.time_step() = time_step;
+  // Solve
+  stability_analysis_problem.solve();
+  
+  time_step = 0.00001;
   stability_analysis_problem.time_step() = time_step;
   // Solve
   stability_analysis_problem.solve();
