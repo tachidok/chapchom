@@ -14,7 +14,8 @@ namespace chapchom
   // Sets the number of history values
   N_history_values = 3;
   
-  //Newtons_method.set_newton_solver_tolerance(1.0e-3);
+  //Newtons_method.set_newton_absolute_solver_tolerance(1.0e-3);
+  //Newtons_method.set_maximum_allowed_residual(1.0e-1);
   
   // Disable output for Newton's method and relative tolerance
   Newtons_method.disable_output_messages();

@@ -7,7 +7,8 @@
 #include "cc_newtons_method_for_bdf_2.h"
 
 // Time stepper to compute the initial guess for Newton's method
-#include "cc_euler_method.h"
+//#include "cc_euler_method.h"
+#include "cc_runge_kutta_4_method.h"
 
 // To allow the setting of the strategy for the computation of the
 // Jacobian of the ODEs
@@ -36,8 +37,12 @@ namespace chapchom
   void time_step(ACODEs &odes, const Real h, const Real t,
                  CCData<Real> &u, const unsigned k = 0);
   
-  // Enables the computation of u_{t+h}
-  inline void enable_computation_of_u_at_t_plus_h() {Compute_u_at_time_t_plus_h = true;}
+  /// Resets the time stepper to its initial state. For the BDF 2
+  /// method we require to re-enable the computation of the initial
+  /// guess for the value (t+2h) only the first time that the methods
+  /// is called
+  void reset()
+  {enable_computation_of_u_at_t_plus_h();}
   
   /// Set the strategy for the computation of the Jacobian of the ODEs (if known)
   inline void set_strategy_for_odes_jacobian(ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE> *jacobian_strategy_for_odes_pt)
@@ -65,8 +70,17 @@ namespace chapchom
   // Newton's method for BDF2
   CCNewtonsMethodForBDF2<MAT_TYPE, VEC_TYPE> Newtons_method;
   
+  // Enables the computation of u_{t+h}
+  inline void enable_computation_of_u_at_t_plus_h() {Compute_u_at_time_t_plus_h = true;}
+  
   // The time stepper used to compute the initial guess
-  CCEulerMethod Time_stepper_initial_guess;
+  //CCEulerMethod Time_stepper_initial_guess;
+  
+  // NOTE: We decided to use a RK4 method as the initial guess method
+  // to reduce accuracy errors given by Euler's methods
+  
+  // The time stepper used to compute the initial guess
+  CCRK4Method Time_stepper_initial_guess;
   
  private:
   

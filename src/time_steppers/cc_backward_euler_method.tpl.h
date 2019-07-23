@@ -7,7 +7,8 @@
 #include "cc_newtons_method_for_backward_euler.h"
 
 // Time stepper to compute the initial guess for Newton's method
-#include "cc_euler_method.h"
+//#include "cc_euler_method.h"
+#include "cc_runge_kutta_4_method.h"
 
 // To allow the setting of the strategy for the computation of the
 // Jacobian of the ODEs
@@ -63,7 +64,13 @@ namespace chapchom
   CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE> Newtons_method;
   
   // The time stepper used to compute the initial guess
-  CCEulerMethod Time_stepper_initial_guess;
+  //CCEulerMethod Time_stepper_initial_guess;
+  
+  // NOTE: We decided to use a RK4 method as the initial guess method
+  // to reduce accuracy errors given by Euler's methods
+  
+  // The time stepper used to compute the initial guess
+  CCRK4Method Time_stepper_initial_guess;
   
  };
  

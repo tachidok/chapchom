@@ -25,43 +25,46 @@ IF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bin)
   FILE(MAKE_DIRECTORY "${bin}")
 ENDIF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
+# Check if the output/RESLT directory exists
+IF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/RESLT)
+  # Then create the directory
+  FILE(MAKE_DIRECTORY "${RESLT}")
+ENDIF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/RESLT)
+
 # Set directory where to create the executables
 set_target_properties( demo_basic_ode_stability_analysis
   PROPERTIES
-  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin"
+#  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin"
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
   )
 
 # ===========================================
 # Tests section
 # ===========================================
-
-#TODO: Left to create the output files from one run of the demo driver
-#and store them in the corresponding directory
-
 # Run the application to check it works
 ADD_TEST(NAME TEST_demo_basic_ode_stability_analysis_run
-  COMMAND demo_basic_ode_stability_analysis)
+  COMMAND ./bin/demo_basic_ode_stability_analysis)
 # Validate output
 SET (VALIDATE_FILENAME_demo_basic_ode_stability_analysis_euler "validate_stability_analysis_euler.dat")
 ADD_TEST(NAME TEST_demo_basic_ode_stability_analysis_euler_check_output
-  COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_basic_ode_stability_analysis_euler} ${CMAKE_CURRENT_BINARY_DIR}/euler.dat)
+  COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_basic_ode_stability_analysis_euler} ${CMAKE_CURRENT_SOURCE_DIR}/RESLT/euler_stability.dat)
 # Validate output
 SET (VALIDATE_FILENAME_demo_basic_ode_stability_analysis_rk4 "validate_stability_analysis_rk4.dat")
 ADD_TEST(NAME TEST_demo_basic_ode_stability_analysis_rk4_check_output
-  COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_basic_ode_stability_analysis_rk4} ${CMAKE_CURRENT_BINARY_DIR}/rk4.dat)
+  COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_basic_ode_stability_analysis_rk4} ${CMAKE_CURRENT_SOURCE_DIR}/RESLT/rk4_stability.dat)
 # Validate output
 SET (VALIDATE_FILENAME_demo_basic_ode_stability_analysis_am2pc "validate_stability_analysis_am2pc.dat")
 ADD_TEST(NAME TEST_demo_basic_ode_stability_analysis_am2pc_check_output
-  COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_basic_ode_stability_analysis_am2pc} ${CMAKE_CURRENT_BINARY_DIR}/am2pc.dat)
+  COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_basic_ode_stability_analysis_am2pc} ${CMAKE_CURRENT_SOURCE_DIR}/RESLT/am2pc_stability.dat)
 # Validate output
 SET (VALIDATE_FILENAME_demo_basic_ode_stability_analysis_bdf1 "validate_stability_analysis_bdf1.dat")
 ADD_TEST(NAME TEST_demo_basic_ode_stability_analysis_bdf1_check_output
-  COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_basic_ode_stability_analysis_bdf1} ${CMAKE_CURRENT_BINARY_DIR}/bdf1.dat)
+  COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_basic_ode_stability_analysis_bdf1} ${CMAKE_CURRENT_SOURCE_DIR}/RESLT/bdf1_stability.dat)
 # Validate output
 SET (VALIDATE_FILENAME_demo_basic_ode_stability_analysis_am2 "validate_stability_analysis_am2.dat")
 ADD_TEST(NAME TEST_demo_basic_ode_stability_analysis_am2_check_output
-  COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_basic_ode_stability_analysis_am2} ${CMAKE_CURRENT_BINARY_DIR}/am2.dat)
+  COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_basic_ode_stability_analysis_am2} ${CMAKE_CURRENT_SOURCE_DIR}/RESLT/am2_stability.dat)
 # Validate output
 SET (VALIDATE_FILENAME_demo_basic_ode_stability_analysis_bdf2 "validate_stability_analysis_bdf2.dat")
 ADD_TEST(NAME TEST_demo_basic_ode_stability_analysis_bdf2_check_output
-  COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_basic_ode_stability_analysis_bdf2} ${CMAKE_CURRENT_BINARY_DIR}/bdf2.dat)
+  COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_basic_ode_stability_analysis_bdf2} ${CMAKE_CURRENT_SOURCE_DIR}/RESLT/bdf2_stability.dat)

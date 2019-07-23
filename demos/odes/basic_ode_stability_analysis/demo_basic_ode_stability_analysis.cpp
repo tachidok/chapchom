@@ -191,8 +191,9 @@ public:
      
    } // while(LOOP)
 
-  // Document value of u at $u = final_time$
-  Output_stability_file << this->time_step() << "\t" << fabs(u(0)- (1.0/(1.0+Final_time))) << std::endl;
+  // Document error at $u = Final_time$
+  const Real u_analytical = 1.0/(1.0+Final_time);
+  Output_stability_file << this->time_step() << "\t" << fabs(u(0)- u_analytical) << std::endl;
   
  }
  
@@ -648,8 +649,8 @@ int main(int argc, char *argv[])
   delete time_stepper_pt;
   time_stepper_pt = 0;
   
- }
- 
+ } 
+
  {
   std::cout << "--------------------------" << std::endl;
   std::cout << "Backward Differentiation Formula 2 - Fully Implicit - Stability analysis" << std::endl;
@@ -663,7 +664,7 @@ int main(int argc, char *argv[])
   // ----------------------------------------------------------------
   ACTimeStepper *time_stepper_pt =
    factory_time_stepper.create_time_stepper("BDF2");
-
+  
   // ----------------------------------------------------------------
   // Prepare the output file name prefix
   // ----------------------------------------------------------------
@@ -700,21 +701,29 @@ int main(int argc, char *argv[])
   // stability analisys
   // ----------------------------------------------------------------
   Real time_step = 1.0;
+  // Resets time stepper
+  //time_stepper_pt->reset();
   stability_analysis_problem.time_step() = time_step;
   // Solve
   stability_analysis_problem.solve();
   
   time_step = 0.1;
+  // Resets time stepper
+  time_stepper_pt->reset();
   stability_analysis_problem.time_step() = time_step;
   // Solve
   stability_analysis_problem.solve();
   
   time_step = 0.01;
+  // Resets time stepper
+  time_stepper_pt->reset();
   stability_analysis_problem.time_step() = time_step;
   // Solve
   stability_analysis_problem.solve();
   
   time_step = 0.001;
+    // Resets time stepper
+  time_stepper_pt->reset();
   stability_analysis_problem.time_step() = time_step;
   // Solve
   stability_analysis_problem.solve();

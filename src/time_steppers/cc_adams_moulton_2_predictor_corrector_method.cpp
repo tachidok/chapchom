@@ -60,20 +60,16 @@ namespace chapchom
   // -----------------------------------------------------------------
   // Temporary vector to store the evaluation of the odes.
   CCData<Real> dudt(n_odes);
-  
   // Evaluate the ODE at time "t" using the current values of "u"
   // stored in index k
   odes.evaluate_derivatives(t, u, dudt, k);
   
-  // Once the derivatives have been obtained perform one step of
-  // Euler's method and store the result in the predicted u_p. No
-  // history values required since it only stored the predicted u for
-  // time t+h
-  CCData<Real> u_p(n_odes);
-  for (unsigned i = 0; i < n_odes; i++)
-   {
-    u_p(i,0) = u(i,k) + (h * dudt(i));
-   }
+  // Store the predicted value by the external time stepper. Copy the
+  // initial values from u
+  CCData<Real> u_p(u);
+  // Perfomed one prediction step and store the result in the
+  // predicted u_p
+  Time_stepper_initial_guess.time_step(odes, h, t, u_p, k);
   
   // -----------------------------------------------------------------
   // -- Correction phase

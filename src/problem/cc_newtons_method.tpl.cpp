@@ -159,46 +159,6 @@ namespace chapchom
  }
  
  // ===================================================================
- // Set Newton's absolute solver tolerance
- // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::
- set_newton_absolute_solver_tolerance(const Real new_newton_absolute_solver_tolerance)
- {
-  Newton_absolute_solver_tolerance = new_newton_absolute_solver_tolerance;
- }
- 
- // ===================================================================
- // Set Newton's relative solver tolerance
- // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::
- set_newton_relative_solver_tolerance(const Real new_newton_relative_solver_tolerance)
- {
-  Newton_relative_solver_tolerance = new_newton_relative_solver_tolerance;
- }
- 
- // ===================================================================
- // Set the Maximun number of Newton's iterations
- // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::
- set_maximum_newton_iterations(const unsigned new_maximum_newton_iterations)
- {
-  Maximum_newton_iterations = new_maximum_newton_iterations;
- }
- 
- // ===================================================================
- // Set the Maximum allowed residual
- // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::
- set_maximum_allowed_residual(const Real new_maximum_allowed_residual)
- {
-  Maximum_allowed_residual = new_maximum_allowed_residual;
- }
-
- // ===================================================================
  // Clean up, free allocated memory
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
@@ -469,7 +429,7 @@ namespace chapchom
      {
       // Error message
       std::ostringstream error_message;
-      error_message << "Newton's method MAXIMUM ALLOWED RESIDUAL error\n"
+      error_message << "Newton's method MAXIMUM ALLOWED RESIDUAL error ["<<Maximum_allowed_residual<<"]\n"
                     << "If you consider you require a larger allowed residual you can\n"
                     << "set your own by calling the method\n\n"
                     << "set_maximum_allowed_residual()\n"
@@ -483,7 +443,7 @@ namespace chapchom
      {
       // Error message
       std::ostringstream error_message;
-      error_message << "Newton's method MAXIMUM NUMBER OF ITERATIONS reached\n"
+      error_message << "Newton's method MAXIMUM NUMBER OF ITERATIONS reached ["<<Maximum_newton_iterations<<"]\n"
                     << "If you consider you require more iterations you can\n"
                     << "set your own by calling the method\n\n"
                     << "set_maximum_newton_interations()\n"

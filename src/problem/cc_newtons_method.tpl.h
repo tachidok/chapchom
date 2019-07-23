@@ -88,16 +88,20 @@ namespace chapchom
    {Newton_relative_solver_tolerance = 0.0;}
    
    // Set Newton's absolute solver tolerance
-   void set_newton_absolute_solver_tolerance(const Real new_newton_absolute_solver_tolerance);
+   inline void set_newton_absolute_solver_tolerance(const Real new_newton_absolute_solver_tolerance)
+   {Newton_absolute_solver_tolerance = new_newton_absolute_solver_tolerance;}
    
    // Set Newton's relative solver tolerance
-   void set_newton_relative_solver_tolerance(const Real new_newton_relative_solver_tolerance);
+   inline void set_newton_relative_solver_tolerance(const Real new_newton_relative_solver_tolerance)
+   {Newton_relative_solver_tolerance = new_newton_relative_solver_tolerance;}
    
    // Set the Maximun number of Newton's iterations
-   void set_maximum_newton_iterations(const unsigned new_maximum_newton_iterations);
+   inline void set_maximum_newton_iterations(const unsigned new_maximum_newton_iterations)
+   {Maximum_newton_iterations = new_maximum_newton_iterations;}
    
    // Set the Maximum allowed residual
-   void set_maximum_allowed_residual(const Real new_maximum_allowed_residual);
+   inline void set_maximum_allowed_residual(const Real new_maximum_allowed_residual)
+   {Maximum_allowed_residual = new_maximum_allowed_residual;}
    
    // Enables output messages for Newton's method
    inline void enable_output_messages() {Output_messages=true;}

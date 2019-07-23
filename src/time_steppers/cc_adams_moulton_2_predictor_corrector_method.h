@@ -2,6 +2,8 @@
 #define CCADAMSMOULTON2PREDICTORCORRECTORMETHOD_H
 
 #include "ac_time_stepper.h"
+// Time stepper to compute the initial guess for Newton's method
+#include "cc_runge_kutta_4_method.h"
 
 namespace chapchom
 {
@@ -48,6 +50,9 @@ namespace chapchom
     BrokenCopy::broken_assign("CCAdamsMoulton2PCMethod");
    }
 
+  // The time stepper used to compute the initial guess
+  CCRK4Method Time_stepper_initial_guess; 
+    
  };
 
 }
