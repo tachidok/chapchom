@@ -42,9 +42,13 @@ lib_type=*
 lib_version=*
 # Indicates whether to build/compile demos
 build_demos=TRUE
+# Indicates the number of processors to build the demos
+number_of_processors_to_run_demos=1
+# Indicates the number of processors to build the library
+number_of_processors_to_build_library=1
 # Indicates the configuration file with variables for paths for
 # external libraries
-configuration_file=./configs/default
+configuration_file=./configs/current
 
 #====================================================================
 # The building script
@@ -117,14 +121,31 @@ echo "============================================================= "
 echo ""
 
 #====================================================================
+# Number of processors to build library
+#====================================================================
+echo "How many processor to use to build $lib_name?"
+OptionPrompt "[1] [2] [4] [default: 1]"
+number_of_processors_to_build_library=`OptionRead`
+if test "$number_of_processors_to_build_library" != 1 -a "$number_of_processors_to_build_library" != 2 -a "$number_of_processors_to_build_library" != 4; then
+    number_of_processors_to_build_library=1
+    echo "Setting the number of processors to build library to [1]" 
+    echo "We do not currently support the number of processors you"
+    echo "specified!"
+fi
+
+echo ""
+echo "============================================================= "
+echo ""
+
+#====================================================================
 # Configuration file for extra configuration
 #====================================================================
 
 echo "Specify the path config file with extra configuration flags:"
-OptionPrompt "[default: ./configs/default]"
+OptionPrompt "[default: ./configs/current]"
 extra_config_file=`OptionRead`
 if test "$extra_config_file" = "" -o "$extra_config_file" = "" ; then 
-    configuration_file=./configs/default
+    configuration_file=./configs/current
 else
     configuration_file=${extra_config_file}
 fi
@@ -144,12 +165,33 @@ if test "$build_and_run_demos" = "b" -o "$build_and_run_demos" = "B" ; then
     build_demos=FALSE
 else
     build_demos=TRUE
+    echo "How many processor use to run tests?"
+    OptionPrompt "[1] [2] [4] [default: 1]"
+    number_of_processors_to_run_demos=`OptionRead`
+    if test "$number_of_processors_to_run_demos" != 1 -a "$number_of_processors_to_run_demos" != 2 -a "$number_of_processors_to_run_demos" != 4; then
+        number_of_processors_to_run_demos=1
+        echo "Setting the number of processors to run tests to [1]" 
+        echo "We do not currently support the number of processors you"
+        echo "specified!"
+    fi
 fi
 
 echo ""
 echo "============================================================= "
-echo "Building the " $lib_type "/" $lib_version " version of the library "
-echo "with BUILD_DEMOS="$build_demos
+echo ""
+
+echo ""
+echo "============================================================= "
+echo "************************************************************* "
+echo "============================================================= "
+echo "Building the " $lib_type "/" $lib_version " version of the library"
+echo "Using ["$number_of_processors_to_build_library"] processor(s) to build library"
+echo "BUILD_DEMOS="$build_demos
+if test "$build_demos" = "TRUE" ; then
+    echo "Using ["$number_of_processors_to_run_demos"] processor(s) to run tests"
+fi
+echo "============================================================= "
+echo "************************************************************* "
 echo "============================================================= "
 echo ""
 
@@ -184,7 +226,17 @@ echo "============================================================= "
 echo "Make"
 echo "============================================================= "
 echo ""
-make -k
+if test "$number_of_processors_to_build_library" != 1; then
+    echo "Make with ["$number_of_processors_to_build_library"] processors"
+    echo ""
+    # The -k option allows make to continue compiling even a compilation
+    # error is found
+    make -k -j"$number_of_processors_to_build_library"
+else
+    # The -k option allows make to continue compiling even a compilation
+    # error is found
+    make -k
+fi
 
 #====================================================================
 # Finishing up !!!
@@ -198,11 +250,14 @@ echo "============================================================= "
 echo ""
 echo "Finishing library built process ... (cmake and make have"
 echo "finished!)"
-echo "If you can't spot any error messages above this, the" 
+echo "If you can not spot any error messages above this, the" 
 echo $lib_name" library should now be ready to use... " 
 echo " "
 echo "If you want to run the test type 'make test' and hit enter in"
 echo "the build folder=$build_dir"
+echo "If you want to use more than one processor, then type"
+echo "'make test ARGS=-j#', where # represents the number of"
+echo "processors you want to use to run the tests"
 echo ""
 echo "Please contact the developers if you encountered any"
 echo "building problem!"
@@ -221,12 +276,17 @@ if test "$build_demos" = "TRUE" ; then
     echo "============================================================= "
     echo ""
     echo "I am going to run the tests as you requested."
+    echo "Using ["$number_of_processors_to_run_demos"] processor(s)"
     echo ""
     echo "============================================================= "
     echo ""
     echo ""
+    # Go into the build folder to run tests
     cd $build_dir
-    make test
+    # Call the make test function instead of ctest (make test enables
+    # testing and then calls ctest)
+    # Use four processors to run tests in parallel
+    make test ARGS=-j"$number_of_processors_to_run_demos"
     cd ..
     # Once all test have been run, copy the file with the results of
     # the test to the root directoy

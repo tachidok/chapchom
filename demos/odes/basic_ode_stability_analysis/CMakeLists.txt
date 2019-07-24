@@ -22,28 +22,28 @@ TARGET_LINK_LIBRARIES(demo_basic_ode_stability_analysis ${LIB_demo_basic_ode_sta
 # Check if the output/bin directory exists
 IF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bin)
   # Then create the directory
-  FILE(MAKE_DIRECTORY "${bin}")
+  FILE(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
 ENDIF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
 # Check if the output/RESLT directory exists
 IF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/RESLT)
   # Then create the directory
-  FILE(MAKE_DIRECTORY "${RESLT}")
+  FILE(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/RESLT")
 ENDIF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/RESLT)
 
 # Set directory where to create the executables
 set_target_properties( demo_basic_ode_stability_analysis
   PROPERTIES
-#  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin"
-  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin"
   )
 
 # ===========================================
 # Tests section
 # ===========================================
 # Run the application to check it works
+SET (VALIDATE_TEST_FOLDER_demo_basic_ode_stability_analysis "${CMAKE_CURRENT_SOURCE_DIR}/bin/")
 ADD_TEST(NAME TEST_demo_basic_ode_stability_analysis_run
-  COMMAND ./bin/demo_basic_ode_stability_analysis)
+  COMMAND ${VALIDATE_TEST_FOLDER_demo_basic_ode_stability_analysis}demo_basic_ode_stability_analysis)
 # Validate output
 SET (VALIDATE_FILENAME_demo_basic_ode_stability_analysis_euler "validate_stability_analysis_euler.dat")
 ADD_TEST(NAME TEST_demo_basic_ode_stability_analysis_euler_check_output

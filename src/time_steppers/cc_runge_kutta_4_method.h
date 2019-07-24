@@ -6,7 +6,7 @@
 namespace chapchom
 {
 
- /// @class CCRK4Method cc_RK4_method.h
+ /// @class CCRK4Method cc_runge_kutta_4_method.h
  /// This class implements Runge-Kutta 4 method to integrate ODE's
  class CCRK4Method : public virtual ACTimeStepper
  {
