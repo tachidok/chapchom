@@ -309,14 +309,14 @@ private:
    // Prepare the output file name
    // ----------------------------------------------------------------
    std::ostringstream output_filename;
-   output_filename << "euler.dat";
+   output_filename << "RESLT/euler.dat";
    output_filename.precision(8);
    
    // ----------------------------------------------------------------
    // Prepare the output error file name
    // ----------------------------------------------------------------
    std::ostringstream output_error_filename;
-   output_error_filename << "euler_error.dat";
+   output_error_filename << "RESLT/euler_error.dat";
    output_error_filename.precision(8);
    
    // Create an instance of the problem
@@ -392,14 +392,14 @@ private:
    // Prepare the output file name
    // ----------------------------------------------------------------
    std::ostringstream output_filename;
-   output_filename << "rk4.dat";
+   output_filename << "RESLT/rk4.dat";
    output_filename.precision(8);
 
    // ----------------------------------------------------------------
    // Prepare the output error file name
    // ----------------------------------------------------------------
    std::ostringstream output_error_filename;
-   output_error_filename << "rk4_error.dat";
+   output_error_filename << "RESLT/rk4_error.dat";
    output_error_filename.precision(8);
   
    // Create an instance of the problem
@@ -475,14 +475,14 @@ private:
    // Prepare the output file name
    // ----------------------------------------------------------------
    std::ostringstream output_filename;
-   output_filename << "am2pc.dat";
+   output_filename << "RESLT/am2pc.dat";
    output_filename.precision(8);
 
    // ----------------------------------------------------------------
    // Prepare the output error file name
    // ----------------------------------------------------------------
    std::ostringstream output_error_filename;
-   output_error_filename << "am2pc_error.dat";
+   output_error_filename << "RESLT/am2pc_error.dat";
    output_error_filename.precision(8);
   
    // Create an instance of the problem
@@ -577,14 +577,14 @@ private:
    // Prepare the output file name
    // ----------------------------------------------------------------
    std::ostringstream output_filename;
-   output_filename << "bdf1.dat";
+   output_filename << "RESLT/bdf1.dat";
    output_filename.precision(8);
 
    // ----------------------------------------------------------------
    // Prepare the output error file name
    // ----------------------------------------------------------------
    std::ostringstream output_error_filename;
-   output_error_filename << "bdf1_error.dat";
+   output_error_filename << "RESLT/bdf1_error.dat";
    output_error_filename.precision(8);
   
    // Create an instance of the problem
@@ -679,14 +679,14 @@ private:
    // Prepare the output file name
    // ----------------------------------------------------------------
    std::ostringstream output_filename;
-   output_filename << "am2.dat";
+   output_filename << "RESLT/am2.dat";
    output_filename.precision(8);
 
    // ----------------------------------------------------------------
    // Prepare the output error file name
    // ----------------------------------------------------------------
    std::ostringstream output_error_filename;
-   output_error_filename << "am2_error.dat";
+   output_error_filename << "RESLT/am2_error.dat";
    output_error_filename.precision(8);
   
    // Create an instance of the problem
@@ -781,14 +781,14 @@ private:
    // Prepare the output file name
    // ----------------------------------------------------------------
    std::ostringstream output_filename;
-   output_filename << "bdf2.dat";
+   output_filename << "RESLT/bdf2.dat";
    output_filename.precision(8);
 
    // ----------------------------------------------------------------
    // Prepare the output error file name
    // ----------------------------------------------------------------
    std::ostringstream output_error_filename;
-   output_error_filename << "bdf2_error.dat";
+   output_error_filename << "RESLT/bdf2_error.dat";
    output_error_filename.precision(8);
   
    // Create an instance of the problem

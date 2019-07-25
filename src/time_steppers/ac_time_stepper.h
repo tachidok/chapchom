@@ -36,10 +36,15 @@ namespace chapchom
                          CCData<Real> &u,
                          unsigned k = 0) = 0;
   
-  /// Resets the time stepper to its initial state. For the BDF 2
-  /// method we require to re-enable the computation of the initial
-  /// guess for the value (t+2h) only the first time that the methods
-  /// is called
+  /// Resets the time stepper to its initial state.
+  
+  /// For the BDF 2 method we require to re-enable the computation of
+  /// the initial guess for the value (t+2h) only the first time that
+  /// the methods is called.
+  
+  /// For ADAPTIVE time steppers we need to indicate no previous "time
+  /// step (h)" has been computed. Thus the given time step should be
+  /// considered as the initial time step
   virtual void reset() { }
   
   /// Get the associated number of history values (each method is in

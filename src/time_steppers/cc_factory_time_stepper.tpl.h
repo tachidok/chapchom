@@ -9,6 +9,8 @@
 #include "cc_backward_euler_method.h"
 #include "cc_adams_moulton_2_method.h"
 #include "cc_bdf_2_method.h"
+#include "cc_adaptive_runge_kutta_45F_method.h"
+#include "cc_adaptive_runge_kutta_45DP_method.h"
 
 namespace chapchom
 {

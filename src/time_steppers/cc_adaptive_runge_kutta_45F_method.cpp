@@ -7,7 +7,12 @@ namespace chapchom
  // Constructor
  // ===================================================================
  CCAdaptiveRK45FMethod::CCAdaptiveRK45FMethod()
-  : ACTimeStepper()
+  : ACTimeStepper(),
+    Maximum_iterations(DEFAULT_RK45F_MAXIMUM_ITERATIONS),
+    Maximum_step_size(DEFAULT_RK45F_MAXIMUM_STEP_SIZE),
+    Minimum_step_size(DEFAULT_RK45F_MINIMUM_STEP_SIZE),
+    Maximum_tolerance(DEFAULT_RK45F_MAXIMUM_TOLERANCE),
+    Minimum_tolerance(DEFAULT_RK45F_MINIMUM_TOLERANCE)
  {
   
   // Sets the number of history values
@@ -15,9 +20,9 @@ namespace chapchom
   
  }
  
- // ===================================================================
- // Empty destructor
- // ===================================================================
+// ===================================================================
+// Empty destructor
+// ===================================================================
  CCAdaptiveRK45FMethod::~CCAdaptiveRK45FMethod()
  {
   
@@ -30,8 +35,8 @@ namespace chapchom
  // ===================================================================
  void CCAdaptiveRK45FMethod::time_step(ACODEs &odes, const Real h,
                                        const Real t,
-                                      CCData<Real> &u,
-                                      const unsigned k)
+                                       CCData<Real> &u,
+                                       const unsigned k)
  {
   // Check if the ode has the correct number of history values to
   // apply Runge-Kutta 4(5) Fehlberg method
@@ -71,6 +76,11 @@ namespace chapchom
   
   // Create a copy of the u vector
   CCData<Real> u_copy(u);
+
+  // Counter for iterations
+  unsigned n_iterations = 0;
+  // Sum up the error
+  Real total_error = 0.0;
   
   // --------------------------------------------------------------------
   // Runge-Kutta 4(5) Fehlberg method
@@ -97,48 +107,131 @@ namespace chapchom
   // 1             | \frac{439}{216}     -8                  \frac{3680}{513}     -\frac{845}{4104}
   // \frac{1}{2}   | -\frac{8}{27}       2                  -\frac{3544}{2565}     \frac{1859}{4104}   -\frac{11}{40}
   // --------------------------------------------------------------
-  //               | [\frac{25}{216}      0                   \frac{1408}{2565}     \frac{2197}{4104}   -\frac{1}{5}]    0             \frac{1}{8}h
-  //               | [\frac{16}{135}      0                   \frac{6656}{12825}    \frac{28561}{56430}  -\frac{9}{50}   \frac{2}{55}] \frac{1}{8}h
-  
-  // --------------------------------------------------------------------
-  // Evaluate the ODE at time "t" using the current values of "u"
-  odes.evaluate_derivatives(t, u, K1, k);
-  // --------------------------------------------------------------------
-  // Evaluate the ODE at time "t+(h/4)" and with "u+(h/4)K1"
-  for (unsigned i = 0; i < n_odes; i++)
+   //               | \frac{25}{216}      0                   \frac{1408}{2565}     \frac{2197}{4104}   -\frac{1}{5}     0
+   //               | \frac{16}{135}      0                   \frac{6656}{12825}    \frac{28561}{56430} -\frac{9}{50}   \frac{2}{55}
+
+   // Perform at least one computation
+   do
    {
-    u_copy(i,k) = u(i,k)+(0.25*h*K1(i));
-   }
-  odes.evaluate_derivatives(t+(0.25*h), u_copy, K2, k);
+    // If new step size has been computed then take it as the initial
+    // step size
+    Real hh = h;
+    if (Next_step_size_computed)
+     {
+      hh = Next_step_size;
+     }
+    
+    // --------------------------------------------------------------------
+    // Evaluate the ODE at time "t" using the current values of "u"
+    // K1
+    odes.evaluate_derivatives(t, u, K1, k);
+    // --------------------------------------------------------------------
+    // Evaluate the ODE at time "t+(hh/4)" and with "u+(hh/4)K1"
+    for (unsigned i = 0; i < n_odes; i++)
+       {
+        u_copy(i,k) = u(i,k)+(hh*(0.25*K1(i)));
+       }
+      // K2
+    odes.evaluate_derivatives(t+(0.25*hh), u_copy, K2, k);
   
-  // --------------------------------------------------------------------
-  // Evaluate the ODE at time "t+(3h/8)" and with "u+(3h/32)K1 + 9h/32K2"
-  for (unsigned i = 0; i < n_odes; i++)
-   {
-    u_copy(i,k) = u(i,k)+(3.0/32.0)*h*K1(i)+(9.0/32.0)*h*K2(i);
-   }
-  odes.evaluate_derivatives(t+((3.0/8.0)*h), u_copy, K3, k);
+    // --------------------------------------------------------------------
+    // Evaluate the ODE at time "t+(3hh/8)" and with "u+(3hh/32)K1 + 9hh/32K2"
+    for (unsigned i = 0; i < n_odes; i++)
+     {
+      u_copy(i,k) = u(i,k)+hh*((3.0/32.0)*K1(i)+(9.0/32.0)*K2(i));
+     }
+    // K3
+    odes.evaluate_derivatives(t+((3.0/8.0)*hh), u_copy, K3, k);
+    
+    // --------------------------------------------------------------------
+    // Evaluate the ODE at time "t+(12hh/13)" and with "u+(1932hh/2197)K1 - (7200hh/2197)K2 + (7296hh/2197)K3"
+    for (unsigned i = 0; i < n_odes; i++)
+     {
+      u_copy(i,k) = u(i,k)+hh*((1932.0/2197.0)*K1(i)-(7200.0/2197.0)*K2(i)+(7296.0/2197.0)*K3(i));
+     }
+    // K4
+    odes.evaluate_derivatives(t+((12.0/13.0)*hh), u_copy, K4);
+    
+    // --------------------------------------------------------------------
+    // Evaluate the ODE at time "t+hh" and with "u+(439hh/216)K1 - 8hhK2 + (3680hh/513)K3 - (845hh/4104)K4"
+    for (unsigned i = 0; i < n_odes; i++)
+     {
+      u_copy(i,k) = u(i,k)+hh*((439.0/216.0)*K1(i)-8*K2(i)+(3680.0/513.0)*K3(i)-(845.0/4104.0)*K4(i));
+     }
+    // K5
+    odes.evaluate_derivatives(t+hh, u_copy, K5);
+    // --------------------------------------------------------------------
+    // Evaluate the ODE at time "t+(1hh/2)" and with "u+(-8hh/27)K1 + 2hhK2 - (3544hh/2565)K3 + (1859hh/4104)K4 - (11hh/40)K5"
+    for (unsigned i = 0; i < n_odes; i++)
+     {
+      u_copy(i,k) = u(i,k)+hh*((-8.0/27.0)*K1(i)+2*K2(i)-(3544.0/2565.0)*K3(i)+(1859.0/4104.0)*K4(i)-(11.0/40.0)*K5(i));
+     }
+    // K6
+    odes.evaluate_derivatives(t+(0.5*hh), u_copy, K6);
+
+#if 0
+    // Create temporary storages for u, these temporary approximations
+    // will be used at the error and time step computation stages.
+    CCData<Real> u_hat(n_odes);
+    CCData<Real> u_tilde(n_odes);
+    // Compute the hat and tilde u's
+    for (unsigned i = 0; i < n_odes; i++)
+     {
+      u_hat(i) = u(i,k) + ((25.0/216.0)*K1(i) + (1408.0/2565.0)*K3(i) + (2197.0/4104.0)*K4(i) - (1.0/5.0)*K5(i));
+      u_tilde(i) = u(i,k) + ((16.0/135.0)*K1(i) + (6656.0/12825.0)*K3(i) + (28561.0/56430.0)*K4(i) - (9.0/50.0)*K5(i) + (2.0/55.0)*K6(i));
+     }
+#endif // #if 0
+    
+    // A storage for the error
+    CCData<Real> error(n_odes);
+    // Reset the error
+    total_error = 0.0;
+    for (unsigned i = 0; i < n_odes; i++)
+     {
+      error(i) = hh*((1.0/360.0)*K1(i) - (128.0/4275.0)*K3(i) - (2197.0/75240.0)*K4(i) + (1.0/50.0)*K5(i) + (2.0/55.0)*K6(i));
+      total_error+=error(i); 
+     }
+    
+    // Check whether the total was too much (the step size was too big)
+    if (total_error > Maximum_tolerance)
+     {
+      // Step was too big
+      Next_step_size = hh *0.5;
+      //Real new_h = safety_coefficient * h * (total_error/Maximum_tolerance, goodPower);
+     }
+    else
+     {
+      // Step was good
+      Next_step_size = hh *2.0;
+     }
+    
+    // A new step size has been computed
+    Next_step_size_computed = true;
+    
+    // Increase the number of iterations
+    n_iterations++;
+    
+    if (n_iterations >= Maximum_iterations)
+     {
+      chapchom_output << "Runge-Kutta 4(5) Fehlberg MAXIMUM NUMBER OF ITERATIONS reached ["<<Maximum_iterations<<"]\n"
+                      << "If you consider you require more iterations you can\n"
+                      << "set your own by calling the method\n\n"
+                      << "set_maximum_interations()\n"
+                      << std::endl;
+     }
+    
+   }while(!(Minimum_tolerance <= total_error && total_error <= Maximum_tolerance) && n_iterations < Maximum_iterations);
+   
+   // Shift values to the right to provide storage for the new values
+   u.shift_history_values();
   
-  // --------------------------------------------------------------------
-  // Evaluate the ODE at time "t+(12h/13)" and with "u+(1932h/2197)K1 - (7200h/2197)K2 + (7296h/2197)K3"
-  for (unsigned i = 0; i < n_odes; i++)
-   {
-    // HERE HERE HERE HERE HERE HERE HERE HERE HERE
-    jygutyftgyukg
-     u_copy(i,k) = u(i,k)+h*K3(i);
-   }
-  odes.evaluate_derivatives(t+((12.0/13.0)*h), u_copy, K4);
-                            
-  // Shift values to the right to provide storage for the new values
-  u.shift_history_values();
+   // Once the derivatives have been obtained compute the new "u" as
+   // the weighted sum of the K's
+   for (unsigned i = 0; i < n_odes; i++)
+           {
+            u(i,k) = u(i,k+1) + ((16.0/135.0)*K1(i) + (6656.0/12825.0)*K3(i) + (28561.0/56430.0)*K4(i) - (9.0/50.0)*K5(i) + (2.0/55.0)*K6(i));
+           }
   
-  // Once the derivatives have been obtained compute the new "u" as
-  // the weighted sum of the K's
-  for (unsigned i = 0; i < n_odes; i++)
-   {
-    u(i,k) = u(i,k+1) + (h/6.0)*(K1(i) + 2.0*K2(i) + 2.0*K3(i) + K4(i));
-   }
- 
  }
 
 }

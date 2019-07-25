@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
   // Prepare the output file name
   // ----------------------------------------------------------------
    std::ostringstream output_filename;
-   output_filename << "euler.dat";
+   output_filename << "RESLT/euler.dat";
    output_filename.precision(8);
   
    // Create an instance of the problem
@@ -194,7 +194,7 @@ int main(int argc, char *argv[])
   // Prepare the output file name
   // ----------------------------------------------------------------
   std::ostringstream output_filename;
-  output_filename << "rk4.dat";
+  output_filename << "RESLT/rk4.dat";
   output_filename.precision(8);
   
   // Create an instance of the problem
@@ -270,7 +270,7 @@ int main(int argc, char *argv[])
   // Prepare the output file name
   // ----------------------------------------------------------------
   std::ostringstream output_filename;
-  output_filename << "am2pc.dat";
+  output_filename << "RESLT/am2pc.dat";
   output_filename.precision(8);
   
   // Create an instance of the problem
@@ -346,7 +346,7 @@ int main(int argc, char *argv[])
   // Prepare the output file name
   // ----------------------------------------------------------------
   std::ostringstream output_filename;
-  output_filename << "bdf1.dat";
+  output_filename << "RESLT/bdf1.dat";
   output_filename.precision(8);
   
   // Create an instance of the problem
@@ -422,7 +422,7 @@ int main(int argc, char *argv[])
   // Prepare the output file name
   // ----------------------------------------------------------------
   std::ostringstream output_filename;
-  output_filename << "am2.dat";
+  output_filename << "RESLT/am2.dat";
   output_filename.precision(8);
   
   // Create an instance of the problem
@@ -498,7 +498,7 @@ int main(int argc, char *argv[])
   // Prepare the output file name
   // ----------------------------------------------------------------
   std::ostringstream output_filename;
-  output_filename << "bdf2.dat";
+  output_filename << "RESLT/bdf2.dat";
   output_filename.precision(8);
   
   // Create an instance of the problem
