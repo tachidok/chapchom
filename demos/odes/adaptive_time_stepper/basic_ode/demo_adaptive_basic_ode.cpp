@@ -11,6 +11,7 @@
 // The factory to create the time stepper (integration method)
 #include "../../../../src/time_steppers/cc_factory_time_stepper.h"
 // Integration methods
+#include "../../../../src/time_steppers/ac_adaptive_time_stepper.h"
 #include "../../../../src/time_steppers/cc_adaptive_runge_kutta_45F_method.h"
 #include "../../../../src/time_steppers/cc_adaptive_runge_kutta_45DP_method.h"
 
@@ -91,28 +92,44 @@ protected:
 // =================================================================
 // =================================================================
 // This class inherits from the ACIVPForODEs class and solves the
-// system of ODEs from above
+// system of ODEs from above. It implements additional processing for
+// the adaptive time step method
 // =================================================================
 // =================================================================
 // =================================================================
-class CCBasicODEsProblem : public virtual ACIVPForODEs
+class CCAdaptiveBasicODEsProblem : public virtual ACIVPForODEs
 {
  
 public:
  
  /// Constructor
- CCBasicODEsProblem(ACODEs *odes_pt,
-                    ACTimeStepper *time_stepper_pt,
-                    std::ostringstream &output_filename,
-                    std::ostringstream &output_filename_error)
+ CCAdaptiveBasicODEsProblem(ACODEs *odes_pt,
+                            ACTimeStepper *time_stepper_pt,
+                            std::ostringstream &output_filename,
+                            std::ostringstream &output_filename_error)
   : ACIVPForODEs(odes_pt, time_stepper_pt)
  {
   Output_file.open((output_filename.str()).c_str());
   Output_error_file.open((output_filename_error.str()).c_str());
+
+  // Cast the time stepper to get a pointer to the adaptive version of
+  // the time stepper
+  Adaptive_time_stepper_pt = dynamic_cast<ACAdaptiveTimeStepper*>(time_stepper_pt);
+  if (Adaptive_time_stepper_pt == NULL)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The time stepper is not adaptive or of type ACAdaptiveTimeStepper*\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
  }
  
  /// Destructor
- ~CCBasicODEsProblem()
+ ~CCAdaptiveBasicODEsProblem()
  {
   Output_file.close();
   Output_error_file.close();
@@ -128,18 +145,25 @@ public:
  // Set boundary conditions
  void set_boundary_conditions() { }
  
+ // The set of actions to be performed after a time stepping
+ void actions_after_time_stepping()
+ {
+  // Update the time step as that really used for the time step method
+  this->time_step() = Adaptive_time_stepper_pt->current_auto_step_size();
+ }
+ 
  // Document the solution
  void document_solution()
  {
   // Initial problem configuration
   Output_file << Time << "\t" << u(0) << std::endl;
-  //  output_error();
+  output_error();
  }
  
  // Output error
  void output_error()
  {
-  // Compute the error 
+  // Compute the error
   const Real t = this->time();
   const Real u_analytical = 1.0/(1.0+t);
   const Real error = std::fabs(u(0)-u_analytical);
@@ -153,7 +177,10 @@ protected:
  // The error output file
  std::ofstream Output_error_file;
  
-}; // class CCBasicODEsProblem
+ // Keep track of the adaptive version of the time stepper
+ ACAdaptiveTimeStepper *Adaptive_time_stepper_pt;
+ 
+}; // class CCAdaptiveBasicODEsProblem
 
 // ==================================================================
 // ==================================================================
@@ -177,7 +204,7 @@ int main(int argc, char *argv[])
   // Instantiation of the ODEs
   // -----------------------------------------------------------------
   CCBasicODEs odes;
-   
+  
   // ----------------------------------------------------------------
   // Time stepper
   // ----------------------------------------------------------------
@@ -197,16 +224,16 @@ int main(int argc, char *argv[])
   output_error_filename << "RESLT/rk45f_error.dat";
    
   // Create an instance of the problem
-  CCBasicODEsProblem basic_ode_problem(&odes,
-                                       time_stepper_pt,
-                                       output_filename,
-                                       output_error_filename);
+  CCAdaptiveBasicODEsProblem basic_ode_problem(&odes,
+                                               time_stepper_pt,
+                                               output_filename,
+                                               output_error_filename);
    
   // Prepare time integration data
   const Real initial_time = 0.0;
-  const Real final_time = 2.0;
+  const Real final_time = 20.0;
   const Real time_step = 0.1;
-   
+  
   // ----------------------------------------------------------------
   // Configure problem
   // ----------------------------------------------------------------
@@ -230,10 +257,12 @@ int main(int argc, char *argv[])
    {
     // Performs an unsteady solve
     basic_ode_problem.unsteady_solve();
-     
+    
     // Update time of the problem
     basic_ode_problem.time()+=basic_ode_problem.time_step();
-     
+    
+    std::cerr << "t: " << basic_ode_problem.time() << " h: " << basic_ode_problem.time_step() << std::endl;
+    
     // Check whether we have reached the final time
     if (basic_ode_problem.time() >= final_time)
      {

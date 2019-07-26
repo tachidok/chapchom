@@ -39,4 +39,4 @@ set xlabel 'Time (t)'
 set ylabel 'error'
 set tics scale 0.75
 
-plot 'RESLT/rk45f.dat' using 1:2 title 'RK45F' w linespoints ls 1
+plot 'RESLT/rk45f_error.dat' using 1:2 title 'RK45F' w linespoints ls 1

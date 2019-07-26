@@ -7,12 +7,7 @@ namespace chapchom
  // Constructor
  // ===================================================================
  CCAdaptiveRK45FMethod::CCAdaptiveRK45FMethod()
-  : ACTimeStepper(),
-    Maximum_iterations(DEFAULT_RK45F_MAXIMUM_ITERATIONS),
-    Maximum_step_size(DEFAULT_RK45F_MAXIMUM_STEP_SIZE),
-    Minimum_step_size(DEFAULT_RK45F_MINIMUM_STEP_SIZE),
-    Maximum_tolerance(DEFAULT_RK45F_MAXIMUM_TOLERANCE),
-    Minimum_tolerance(DEFAULT_RK45F_MINIMUM_TOLERANCE)
+  : ACAdaptiveTimeStepper()
  {
   
   // Sets the number of history values
@@ -76,11 +71,11 @@ namespace chapchom
   
   // Create a copy of the u vector
   CCData<Real> u_copy(u);
-
+  
   // Counter for iterations
   unsigned n_iterations = 0;
   // Sum up the error
-  Real total_error = 0.0;
+  Real local_error = 0.0;
   
   // --------------------------------------------------------------------
   // Runge-Kutta 4(5) Fehlberg method
@@ -107,19 +102,35 @@ namespace chapchom
   // 1             | \frac{439}{216}     -8                  \frac{3680}{513}     -\frac{845}{4104}
   // \frac{1}{2}   | -\frac{8}{27}       2                  -\frac{3544}{2565}     \frac{1859}{4104}   -\frac{11}{40}
   // --------------------------------------------------------------
-   //               | \frac{25}{216}      0                   \frac{1408}{2565}     \frac{2197}{4104}   -\frac{1}{5}     0
-   //               | \frac{16}{135}      0                   \frac{6656}{12825}    \frac{28561}{56430} -\frac{9}{50}   \frac{2}{55}
+  //               | \frac{25}{216}      0                   \frac{1408}{2565}     \frac{2197}{4104}   -\frac{1}{5}     0
+  //               | \frac{16}{135}      0                   \frac{6656}{12825}    \frac{28561}{56430} -\frac{9}{50}   \frac{2}{55}
 
-   // Perform at least one computation
-   do
+  // Break loop if step size bounds have been reached
+  bool break_loop = false;
+  // Perform at least one computation
+  do
    {
     // If new step size has been computed then take it as the initial
     // step size
     Real hh = h;
-    if (Next_step_size_computed)
+    if (this->Next_auto_step_size_computed)
      {
-      hh = Next_step_size;
+      hh = this->Next_auto_step_size;
      }
+    else // First time to compute a time step (check user given step size)
+     {
+      // Check step size bounds
+      if (hh > this->Maximum_step_size)
+       {
+        hh = this->Maximum_step_size;
+       }
+      else if (hh < this->Minimum_step_size)
+       {
+        hh = this->Minimum_step_size;
+       }
+     }
+    
+    this->Current_auto_step_size = hh;
     
     // --------------------------------------------------------------------
     // Evaluate the ODE at time "t" using the current values of "u"
@@ -133,7 +144,7 @@ namespace chapchom
        }
       // K2
     odes.evaluate_derivatives(t+(0.25*hh), u_copy, K2, k);
-  
+    
     // --------------------------------------------------------------------
     // Evaluate the ODE at time "t+(3hh/8)" and with "u+(3hh/32)K1 + 9hh/32K2"
     for (unsigned i = 0; i < n_odes; i++)
@@ -168,7 +179,7 @@ namespace chapchom
      }
     // K6
     odes.evaluate_derivatives(t+(0.5*hh), u_copy, K6);
-
+    
 #if 0
     // Create temporary storages for u, these temporary approximations
     // will be used at the error and time step computation stages.
@@ -177,61 +188,78 @@ namespace chapchom
     // Compute the hat and tilde u's
     for (unsigned i = 0; i < n_odes; i++)
      {
-      u_hat(i) = u(i,k) + ((25.0/216.0)*K1(i) + (1408.0/2565.0)*K3(i) + (2197.0/4104.0)*K4(i) - (1.0/5.0)*K5(i));
-      u_tilde(i) = u(i,k) + ((16.0/135.0)*K1(i) + (6656.0/12825.0)*K3(i) + (28561.0/56430.0)*K4(i) - (9.0/50.0)*K5(i) + (2.0/55.0)*K6(i));
+      u_hat(i) = u(i,k) + hh*((25.0/216.0)*K1(i) + (1408.0/2565.0)*K3(i) + (2197.0/4104.0)*K4(i) - (1.0/5.0)*K5(i));
+      u_tilde(i) = u(i,k) + hh*((16.0/135.0)*K1(i) + (6656.0/12825.0)*K3(i) + (28561.0/56430.0)*K4(i) - (9.0/50.0)*K5(i) + (2.0/55.0)*K6(i));
      }
 #endif // #if 0
     
     // A storage for the error
     CCData<Real> error(n_odes);
     // Reset the error
-    total_error = 0.0;
+    local_error = 0.0;
     for (unsigned i = 0; i < n_odes; i++)
      {
       error(i) = hh*((1.0/360.0)*K1(i) - (128.0/4275.0)*K3(i) - (2197.0/75240.0)*K4(i) + (1.0/50.0)*K5(i) + (2.0/55.0)*K6(i));
-      total_error+=error(i); 
+      local_error+=error(i); 
      }
     
-    // Check whether the total was too much (the step size was too big)
-    if (total_error > Maximum_tolerance)
+    // Check whether the local error was too much (the step size was
+    // too big)
+    if (local_error > this->Maximum_tolerance)
      {
       // Step was too big
-      Next_step_size = hh *0.5;
-      //Real new_h = safety_coefficient * h * (total_error/Maximum_tolerance, goodPower);
+      hh = hh *0.5;
+      //Real new_h = safety_coefficient * h * (local_error/Maximum_tolerance, goodPower);
      }
     else
      {
       // Step was good
-      Next_step_size = hh *2.0;
+      hh = hh *2.0;
      }
     
-    // A new step size has been computed
-    Next_step_size_computed = true;
+    // Check step size bounds and store it for the next iteration
+    if (hh > this->Maximum_step_size)
+     {
+      hh = this->Maximum_step_size;
+      break_loop = true;
+     }
+    else if (hh < this->Minimum_step_size)
+     {
+      hh = this->Minimum_step_size;
+      break_loop = true;
+     }
+    
+    this->Next_auto_step_size = hh;
+    // Automatically computed step size
+    this->Next_auto_step_size_computed = true;
     
     // Increase the number of iterations
     n_iterations++;
     
     if (n_iterations >= Maximum_iterations)
      {
-      chapchom_output << "Runge-Kutta 4(5) Fehlberg MAXIMUM NUMBER OF ITERATIONS reached ["<<Maximum_iterations<<"]\n"
+      chapchom_output << "Runge-Kutta 4(5) Fehlberg MAXIMUM NUMBER OF ITERATIONS reached ["<<this->Maximum_iterations<<"]\n"
                       << "If you consider you require more iterations you can\n"
                       << "set your own by calling the method\n\n"
                       << "set_maximum_interations()\n"
                       << std::endl;
      }
     
-   }while(!(Minimum_tolerance <= total_error && total_error <= Maximum_tolerance) && n_iterations < Maximum_iterations);
+   }while(!(this->Minimum_tolerance <= local_error && local_error <= this->Maximum_tolerance) &&
+          n_iterations < this->Maximum_iterations &&
+          !break_loop);
+  
+  // Shift values to the right to provide storage for the new values
+  u.shift_history_values();
    
-   // Shift values to the right to provide storage for the new values
-   u.shift_history_values();
-  
-   // Once the derivatives have been obtained compute the new "u" as
-   // the weighted sum of the K's
-   for (unsigned i = 0; i < n_odes; i++)
-           {
-            u(i,k) = u(i,k+1) + ((16.0/135.0)*K1(i) + (6656.0/12825.0)*K3(i) + (28561.0/56430.0)*K4(i) - (9.0/50.0)*K5(i) + (2.0/55.0)*K6(i));
-           }
-  
+  // Once the derivatives have been obtained compute the new "u" as
+  // the weighted sum of the K's
+  Real hh = this->current_auto_step_size();
+  for (unsigned i = 0; i < n_odes; i++)
+    {
+     u(i,k) = u(i,k+1) + hh*((16.0/135.0)*K1(i) + (6656.0/12825.0)*K3(i) + (28561.0/56430.0)*K4(i) - (9.0/50.0)*K5(i) + (2.0/55.0)*K6(i));
+    }
+   
  }
-
+ 
 }
