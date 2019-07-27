@@ -26,7 +26,7 @@ namespace chapchom
     Output_messages(true)
  {
   // Performs default configuration
-  default_configuration(); 
+  set_default_configuration(); 
  }
  
  // ===================================================================
@@ -186,7 +186,7 @@ namespace chapchom
  // Sets default configuration
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::default_configuration()
+ void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::set_default_configuration()
  {
   // Cleans up
   clean_up();

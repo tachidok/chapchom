@@ -149,7 +149,7 @@ public:
  void actions_after_time_stepping()
  {
   // Update the time step as that really used for the time step method
-  this->time_step() = Adaptive_time_stepper_pt->current_auto_step_size();
+  this->time_step() = Adaptive_time_stepper_pt->taken_auto_step_size();
  }
  
  // Document the solution

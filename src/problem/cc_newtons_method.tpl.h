@@ -113,7 +113,7 @@ namespace chapchom
    void clean_up();
    
    // Sets default configuration
-   void default_configuration();
+   void set_default_configuration();
    
    // Applies Newton's method to solve the problem given by the
    // Jacobian and the residual computed by the estalished strategy.

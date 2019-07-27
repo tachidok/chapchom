@@ -130,7 +130,7 @@ namespace chapchom
        }
      }
     
-    this->Current_auto_step_size = hh;
+    this->Taken_auto_step_size = hh;
     
     // --------------------------------------------------------------------
     // Evaluate the ODE at time "t" using the current values of "u"
@@ -139,10 +139,10 @@ namespace chapchom
     // --------------------------------------------------------------------
     // Evaluate the ODE at time "t+(hh/4)" and with "u+(hh/4)K1"
     for (unsigned i = 0; i < n_odes; i++)
-       {
-        u_copy(i,k) = u(i,k)+(hh*(0.25*K1(i)));
-       }
-      // K2
+     {
+      u_copy(i,k) = u(i,k)+(hh*(0.25*K1(i)));
+     }
+    // K2
     odes.evaluate_derivatives(t+(0.25*hh), u_copy, K2, k);
     
     // --------------------------------------------------------------------
@@ -203,30 +203,37 @@ namespace chapchom
       local_error+=error(i); 
      }
     
-    // Check whether the local error was too much (the step size was
-    // too big)
-    if (local_error > this->Maximum_tolerance)
-     {
-      // Step was too big
-      hh = hh *0.5;
-      //Real new_h = safety_coefficient * h * (local_error/Maximum_tolerance, goodPower);
-     }
-    else
-     {
-      // Step was good
-      hh = hh *2.0;
-     }
+    // Compute the new step size based on the established strategy
+    hh = New_time_step_strategy_pt->new_step_size(local_error, hh);
+    
+    //Real new_h = safety_coefficient * h * (local_error/Maximum_tolerance, goodPower);
     
     // Check step size bounds and store it for the next iteration
     if (hh > this->Maximum_step_size)
      {
       hh = this->Maximum_step_size;
       break_loop = true;
+      if (Output_messages)
+       {
+        chapchom_output << "Runge-Kutta 4(5) Fehlberg MAXIMUM STEP SIZE reached ["<<this->Maximum_step_size<<"]\n"
+                        << "If you consider you require a larger step size you can\n"
+                        << "set your own by calling the method\n\n"
+                        << "set_maximum_step_size()\n"
+                        << std::endl;
+       }
      }
     else if (hh < this->Minimum_step_size)
      {
       hh = this->Minimum_step_size;
       break_loop = true;
+      if (Output_messages)
+       {
+        chapchom_output << "Runge-Kutta 4(5) Fehlberg MINIMUM STEP SIZE reached ["<<this->Minimum_step_size<<"]\n"
+                        << "If you consider you require an smaller step size you can\n"
+                        << "set your own by calling the method\n\n"
+                        << "set_minimum_step_size()\n"
+                        << std::endl;
+       }
      }
     
     this->Next_auto_step_size = hh;
@@ -238,11 +245,14 @@ namespace chapchom
     
     if (n_iterations >= Maximum_iterations)
      {
-      chapchom_output << "Runge-Kutta 4(5) Fehlberg MAXIMUM NUMBER OF ITERATIONS reached ["<<this->Maximum_iterations<<"]\n"
-                      << "If you consider you require more iterations you can\n"
-                      << "set your own by calling the method\n\n"
-                      << "set_maximum_interations()\n"
-                      << std::endl;
+      if (Output_messages)
+       {
+        chapchom_output << "Runge-Kutta 4(5) Fehlberg MAXIMUM NUMBER OF ITERATIONS reached ["<<this->Maximum_iterations<<"]\n"
+                        << "If you consider you require more iterations you can\n"
+                        << "set your own by calling the method\n\n"
+                        << "set_maximum_interations()\n"
+                        << std::endl;
+       }
      }
     
    }while(!(this->Minimum_tolerance <= local_error && local_error <= this->Maximum_tolerance) &&
@@ -251,15 +261,15 @@ namespace chapchom
   
   // Shift values to the right to provide storage for the new values
   u.shift_history_values();
-   
+  
   // Once the derivatives have been obtained compute the new "u" as
   // the weighted sum of the K's
-  Real hh = this->current_auto_step_size();
+  Real hh = this->taken_auto_step_size();
   for (unsigned i = 0; i < n_odes; i++)
     {
      u(i,k) = u(i,k+1) + hh*((16.0/135.0)*K1(i) + (6656.0/12825.0)*K3(i) + (28561.0/56430.0)*K4(i) - (9.0/50.0)*K5(i) + (2.0/55.0)*K6(i));
     }
-   
+  
  }
  
 }

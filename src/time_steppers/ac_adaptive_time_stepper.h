@@ -19,9 +19,126 @@ namespace chapchom
 #define DEFAULT_ADAPTIVE_TIME_STEPPER_MINIMUM_TOLERANCE 1.0e-6
 #endif // #ifdef TYPEDEF_REAL_IS_DOUBLE
  
+ // ==============================================================
+ /// @class ACAdaptiveNewStepSizeStrategy This class implements the
+ /// interface for the strategies to compute the new step size in
+ /// adaptive time stepping methods
+ // ==============================================================
+ class ACAdaptiveNewStepSizeStrategy
+ {
+ public:
+  // Constructor
+  ACAdaptiveNewStepSizeStrategy()
+   {
+    
+   }
+  
+  // Destructor
+  virtual ~ACAdaptiveNewStepSizeStrategy()
+   {
+    
+   }
+  
+  // Set default maximum error tolerance
+  inline void set_default_maximum_tolerance()
+  {Maximum_tolerance = DEFAULT_ADAPTIVE_TIME_STEPPER_MAXIMUM_TOLERANCE;}
+  
+  // Set default minimum error tolerance
+  inline void set_default_minimum_tolerance()
+  {Minimum_tolerance = DEFAULT_ADAPTIVE_TIME_STEPPER_MINIMUM_TOLERANCE;}
+  
+  // Set new maximum error tolerance
+  inline void set_new_maximum_tolerance(const Real new_maximum_tolerance)
+  {Maximum_tolerance = new_maximum_tolerance;}
+  
+  // Set new minimum error tolerance
+  inline void set_new_minimum_tolerance(const Real new_minimum_tolerance)
+  {Minimum_tolerance = new_minimum_tolerance;}
+  
+  // Read-only maximum error tolerance
+  inline const Real maximum_tolerance() const {return Maximum_tolerance;}
+  
+  // Read-only minimum error tolerance
+  inline const Real minimum_tolerance() const {return Minimum_tolerance;}
+   
+  // The strategy to compute the new step size
+  virtual Real new_step_size(const Real local_error, const Real h) = 0;
+  
+ private:
+  
+  /// Copy constructor (we do not want this class to be
+  /// copiable). Check
+  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
+  ACAdaptiveNewStepSizeStrategy(const ACAdaptiveNewStepSizeStrategy &copy)
+   {
+    BrokenCopy::broken_copy("ACAdaptiveNewStepSizeStrategy");
+   }
+  
+  /// Assignment operator (we do not want this class to be
+  /// copiable. Check
+  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
+  void operator=(const ACAdaptiveNewStepSizeStrategy &copy)
+   {
+    BrokenCopy::broken_assign("ACAdaptiveNewStepSizeStrategy");
+   }
+  
+  // Maximum error tolerance
+  Real Maximum_tolerance;
+  
+  // Minimum error tolerance
+  Real Minimum_tolerance;
+  
+ };
+ 
+ // ==============================================================
+ // @class CCAdaptiveNewStepSizeHalfDouble This class implements a
+ // concrete strategy to compute the new step size in adaptive time
+ // stepping methods
+ // ==============================================================
+ class CCAdaptiveNewStepSizeHalfDouble : public virtual ACAdaptiveNewStepSizeStrategy
+ {
+ public:
+  // Constructor
+ CCAdaptiveNewStepSizeHalfDouble()
+  : ACAdaptiveNewStepSizeStrategy()
+   {
+    
+   }
+  
+  // Destructor
+  virtual ~CCAdaptiveNewStepSizeHalfDouble()
+   {
+    
+   }
+  
+  // The strategy to compute the new step size
+  Real new_step_size(const Real local_error, const Real h);
+  
+ private:
+  
+  /// Copy constructor (we do not want this class to be
+  /// copiable). Check
+  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
+  CCAdaptiveNewStepSizeHalfDouble(const CCAdaptiveNewStepSizeHalfDouble &copy)
+   {
+    BrokenCopy::broken_copy("CCAdaptiveNewStepSizeHalfDouble");
+   }
+  
+  /// Assignment operator (we do not want this class to be
+  /// copiable. Check
+  /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
+  void operator=(const CCAdaptiveNewStepSizeHalfDouble &copy)
+   {
+    BrokenCopy::broken_assign("CCAdaptiveNewStepSizeHalfDouble");
+   }
+  
+ };
+ 
+ // ==============================================================
  /// @class ACAdaptiveTimeStepper ac_adaptive_time_stepper.h This
  /// class implements the interface for the adaptive time stepper
  /// methods to integrate ODE's
+ // ==============================================================
  class ACAdaptiveTimeStepper : public virtual ACTimeStepper
  {
   
@@ -43,9 +160,21 @@ namespace chapchom
   /// automatically computed step size and use that given by the user
   void reset() 
   {
-   Next_auto_step_size_computed = false;
-   enable_fixed_output();
+   Next_auto_step_size_computed = false; 
   }
+  
+  // In charge of free memory (if any given to the strategy to compute
+  // the new step size)
+  void clean_up();
+  
+  // Set the default configuration
+  void set_default_configuration();
+  
+  // Set the default to compute the new time step
+  void set_default_new_step_size_strategy();
+  
+  // Set the strategy to compute the new time step
+  void set_new_step_size_strategy(ACAdaptiveNewStepSizeStrategy *new_time_step_strategy_pt);
   
   // Set default maximum number of iterations
   inline void set_default_maximum_iterations() 
@@ -61,11 +190,17 @@ namespace chapchom
 
   // Set default maximum error tolerance
   inline void set_default_maximum_tolerance()
-  {Maximum_tolerance = DEFAULT_ADAPTIVE_TIME_STEPPER_MAXIMUM_TOLERANCE;}
+  {
+   Maximum_tolerance = DEFAULT_ADAPTIVE_TIME_STEPPER_MAXIMUM_TOLERANCE;
+   New_time_step_strategy_pt->set_default_maximum_tolerance();
+  }
   
   // Set default minimum error tolerance
   inline void set_default_minimum_tolerance()
-  {Minimum_tolerance = DEFAULT_ADAPTIVE_TIME_STEPPER_MINIMUM_TOLERANCE;}
+  {
+   Minimum_tolerance = DEFAULT_ADAPTIVE_TIME_STEPPER_MINIMUM_TOLERANCE;
+   New_time_step_strategy_pt->set_default_minimum_tolerance();
+  }
   
   // Set new maximum number of iterations
   inline void set_maximum_iterations(const Real new_maximum_iterations)
@@ -81,30 +216,31 @@ namespace chapchom
 
   // Set new maximum error tolerance
   inline void set_new_maximum_tolerance(const Real new_maximum_tolerance)
-  {Maximum_tolerance = new_maximum_tolerance;}
+  {
+   Maximum_tolerance = new_maximum_tolerance;
+   New_time_step_strategy_pt->set_new_maximum_tolerance(new_maximum_tolerance);
+  }
 
   // Set new minimum error tolerance
   inline void set_new_minimum_tolerance(const Real new_minimum_tolerance)
-  {Minimum_tolerance = new_minimum_tolerance;}
-
-  // Enables fixed output, that means, an approximation is computed at
-  // the given user step size independently of the adaptive step size
-  inline void enable_fixed_output()
-  {Fixed_output = true;}
-  
-  // Disables fixed output, that means, an approximation is computed
-  // only at the automatically computed step sizes. The user given
-  // step size is only used as an initial step size
-  inline void disable_fixed_output()
-  {Fixed_output = false;}
+  {
+   Minimum_tolerance = new_minimum_tolerance;
+   New_time_step_strategy_pt->set_new_minimum_tolerance(new_minimum_tolerance);
+  }
   
   // Read only access to the automatically computed step size that was
   // used for the current time step
-  const Real current_auto_step_size() const {return Current_auto_step_size;}
+  const Real taken_auto_step_size() const {return Taken_auto_step_size;}
   
   // Read only access to the next automatically computed step size
   // that may be used for the next time step
   const Real next_auto_step_size() const {return Next_auto_step_size;}
+  
+  // Enables output messages for adaptive step size method
+  inline void enable_output_messages() {Output_messages=true;}
+  
+  // Disables output messages for adaptive step size method
+  inline void disable_output_messages() {Output_messages=false;}
   
  protected:
   
@@ -112,7 +248,7 @@ namespace chapchom
   /// copiable). Check
   /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
  ACAdaptiveTimeStepper(const ACAdaptiveTimeStepper &copy)
-    : ACTimeStepper()
+  : ACTimeStepper()
    {
     BrokenCopy::broken_copy("ACAdaptiveTimeStepper");
    }
@@ -124,6 +260,16 @@ namespace chapchom
    {
     BrokenCopy::broken_assign("ACAdaptiveTimeStepper");
    }
+  
+  // A pointer to the strategy to compute the new time step
+  ACAdaptiveNewStepSizeStrategy *New_time_step_strategy_pt;
+  
+  // Indicates whether the class is in charge of free the memory
+  // associated with the strategy to compute the new step size
+  bool Free_memory_for_new_time_step_strategy;
+  
+  // Indicates whether the strategy for new step size has been set
+  bool New_time_step_strategy_has_been_set;
   
   // Maximum number of iterations before accepting a step size
   unsigned Maximum_iterations;
@@ -142,7 +288,7 @@ namespace chapchom
   
   // Store the step size automatically computed that was used for the
   // time step method()
-  Real Current_auto_step_size;
+  Real Taken_auto_step_size;
   
   // Store the step size automatically computed that will be used for
   // the next time step
@@ -152,12 +298,11 @@ namespace chapchom
   // step size has been automatically computed
   bool Next_auto_step_size_computed;
   
-  // Indicated whether the adaptive method should output an
-  // approximation at the user step size or should be only used as an
-  // initial step size
-  bool Fixed_output;
+  // Flag to indicate whether output messages are enabled or disabled
+  // (enabled by default)
+  bool Output_messages;
  };
  
 }
- 
+
 #endif // #ifndef CCADAPTIVETIMESTEPPER_H
