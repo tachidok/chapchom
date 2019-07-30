@@ -197,7 +197,7 @@ int main(int argc, char *argv[])
 #else 
  CCFactoryTimeStepper<CCMatrix<Real>, CCVector<Real> > factory_time_stepper;
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
-  
+ 
  {
   std::cout << "Adaptive Runge-Kutta 4(5) Fehlberg test" << std::endl;
   // -----------------------------------------------------------------
@@ -229,6 +229,89 @@ int main(int argc, char *argv[])
                                                output_filename,
                                                output_error_filename);
    
+  // Prepare time integration data
+  const Real initial_time = 0.0;
+  const Real final_time = 20.0;
+  const Real time_step = 0.1;
+  
+  // ----------------------------------------------------------------
+  // Configure problem
+  // ----------------------------------------------------------------
+  // Initial time
+  basic_ode_problem.time() = initial_time;
+   
+  // Initial time step
+  basic_ode_problem.time_step() = time_step;
+   
+  // Set initial conditions
+  basic_ode_problem.set_initial_conditions();
+
+  // Document initial configuration
+  basic_ode_problem.document_solution();
+   
+  // Flag to indicate whether to continue processing
+  bool LOOP = true;
+   
+  // Main LOOP (loop until reaching final time)
+  while(LOOP)
+   {
+    // Performs an unsteady solve
+    basic_ode_problem.unsteady_solve();
+    
+    // Update time of the problem
+    basic_ode_problem.time()+=basic_ode_problem.time_step();
+    
+    std::cerr << "t: " << basic_ode_problem.time() << " h: " << basic_ode_problem.time_step() << std::endl;
+    
+    // Check whether we have reached the final time
+    if (basic_ode_problem.time() >= final_time)
+     {
+      LOOP = false;
+     }
+     
+    basic_ode_problem.document_solution();
+     
+   } // while(LOOP)
+  
+  std::cout << "[FINISHING UP] ... " << std::endl;
+  
+  // Free memory
+  delete time_stepper_pt;
+  time_stepper_pt = 0;
+   
+ }
+ 
+ {
+  std::cout << "Adaptive Runge-Kutta 4(5) Dormand-Prince test" << std::endl;
+  // -----------------------------------------------------------------
+  // Instantiation of the ODEs
+  // -----------------------------------------------------------------
+  CCBasicODEs odes;
+  
+  // ----------------------------------------------------------------
+  // Time stepper
+  // ----------------------------------------------------------------
+  ACTimeStepper *time_stepper_pt =
+   factory_time_stepper.create_time_stepper("RK45DP");
+  
+  // ----------------------------------------------------------------
+  // Prepare the output file name
+  // ----------------------------------------------------------------
+  std::ostringstream output_filename;
+  output_filename << "RESLT/rk45dp.dat";
+   
+  // ----------------------------------------------------------------
+  // Prepare the output error file name
+  // ----------------------------------------------------------------
+  std::ostringstream output_error_filename;
+  output_error_filename << "RESLT/rk45dp_error.dat";
+  
+  // Create an instance of the problem
+  CCAdaptiveBasicODEsProblem basic_ode_problem(&odes,
+                                               time_stepper_pt,
+                                               output_filename,
+                                               output_error_filename);
+  
   // Prepare time integration data
   const Real initial_time = 0.0;
   const Real final_time = 20.0;
