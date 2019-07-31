@@ -6,8 +6,7 @@
 #include "../../../src/general/utilities.h"
 #include "../../../src/general/initialise.h"
 
-// The class to solve linear systems using numerical recipes
-// implementation
+// The interpolator
 #include "../../../src/problem/cc_newton_interpolator.h"
 
 using namespace chapchom;
