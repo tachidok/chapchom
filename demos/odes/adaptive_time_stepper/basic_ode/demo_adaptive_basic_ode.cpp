@@ -200,68 +200,73 @@ public:
    }
   else
    {
-    // Check how many data do we have to perform interpolation 
-    if (T_values_for_interpolator.size() == 0)
+    document_solution_at_fixed_output();
+   } // else if (!Fixed_output)
+  
+ }
+ 
+ void document_solution_at_fixed_output()
+ {
+  // Check how many data do we have to perform interpolation 
+  if (T_values_for_interpolator.size() == 0)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "There are no data to perform interpolation\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  else if (T_values_for_interpolator.size() == 1)
+   {
+    // Output the current values of u
+    Output_file << T_values_for_interpolator[0] << "\t" << U_values_for_interpolator[0] << std::endl;
+    output_error(T_values_for_interpolator[0], U_values_for_interpolator[0]);
+    Previous_fixed_output_time = T_values_for_interpolator[0];
+   }
+  else if (T_values_for_interpolator.size() == 2)
+   {
+    const unsigned interpolation_order = 1;
+    const Real fixed_output_time = Previous_fixed_output_time + Fixed_output_step;
+    // Check whether the current values of U allow to compute a
+    // value for the fixed output time
+    if (T_values_for_interpolator[1] >= fixed_output_time)
      {
-      // Error message
-      std::ostringstream error_message;
-      error_message << "There are no data to perform interpolation\n"
-                    << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
-     }
-    else if (T_values_for_interpolator.size() == 1)
-     {
+      const Real U_interpolated = Interpolator.interpolate_1D(T_values_for_interpolator, U_values_for_interpolator, fixed_output_time, interpolation_order);
       // Output the current values of u
-      Output_file << T_values_for_interpolator[0] << "\t" << U_values_for_interpolator[0] << std::endl;
-      output_error(T_values_for_interpolator[0], U_values_for_interpolator[0]);
-      Previous_fixed_output_time = T_values_for_interpolator[0];
+      Output_file << fixed_output_time << "\t" << U_interpolated << std::endl;
+      output_error(fixed_output_time, U_interpolated);
+      // Update the last fixed output
+      Previous_fixed_output_time+=Fixed_output_step;
      }
-    else if (T_values_for_interpolator.size() == 2)
+   }
+  else
+   {
+    const unsigned interpolation_order = 2;
+    // Output as many data as able using the approximations of U
+    bool LOOP = true;
+    while(LOOP)
      {
-      const unsigned interpolation_order = 1;
-      const Real fixed_output_time = Previous_fixed_output_time + Fixed_output_step;
+      Real fixed_output_time = Previous_fixed_output_time + Fixed_output_step;
       // Check whether the current values of U allow to compute a
       // value for the fixed output time
-      if (T_values_for_interpolator[1] >= fixed_output_time)
+      if (!(T_values_for_interpolator[2] > fixed_output_time))
        {
-        const Real U_interpolated = Interpolator.interpolate_1D(T_values_for_interpolator, U_values_for_interpolator, fixed_output_time, interpolation_order);
-        // Output the current values of u
-        Output_file << fixed_output_time << "\t" << U_interpolated << std::endl;
-        output_error(fixed_output_time, U_interpolated);
-        // Update the last fixed output
-        Previous_fixed_output_time+=Fixed_output_step;
+        // Set loop to false but break the loop
+        LOOP = false;
+        break;
        }
-     }
-    else
-     {
-      const unsigned interpolation_order = 2;
-      // Output as many data as able using the approximations of U
-      bool LOOP = true;
-      while(LOOP)
-       {
-        Real fixed_output_time = Previous_fixed_output_time + Fixed_output_step;
-        // Check whether the current values of U allow to compute a
-        // value for the fixed output time
-        if (!(T_values_for_interpolator[2] > fixed_output_time))
-         {
-          // Set loop to false but break the loop
-          LOOP = false;
-          break;
-         }
-        // Interpolate
-        const Real U_interpolated = Interpolator.interpolate_1D(T_values_for_interpolator, U_values_for_interpolator, fixed_output_time, interpolation_order);
-        // Output the current values of u
-        Output_file << fixed_output_time << "\t" << U_interpolated << std::endl;
-        output_error(fixed_output_time, U_interpolated);
-        // Update the last fixed output
-        Previous_fixed_output_time+=Fixed_output_step;
-       } // while(LOOP);
+      // Interpolate
+      const Real U_interpolated = Interpolator.interpolate_1D(T_values_for_interpolator, U_values_for_interpolator, fixed_output_time, interpolation_order);
+      // Output the current values of u
+      Output_file << fixed_output_time << "\t" << U_interpolated << std::endl;
+      output_error(fixed_output_time, U_interpolated);
+      // Update the last fixed output
+      Previous_fixed_output_time+=Fixed_output_step;
+     } // while(LOOP);
       
-     }
-    
-   } // else if (!Fixed_output)
+   }
   
  }
  

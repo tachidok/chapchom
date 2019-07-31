@@ -12,7 +12,7 @@
 #include "../../../src/time_steppers/cc_factory_time_stepper.h"
 // Time-stepper methods
 #include "../../../src/time_steppers/cc_euler_method.h"
-#include "../../../src/time_steppers/cc_runge_kutta_4_method.h"
+#include "../../../src/time_steppers/cc_RK4_method.h"
 #include "../../../src/time_steppers/cc_backward_euler_method.h"
 
 // Matrices representations
@@ -147,7 +147,9 @@ void output_particles(Real time,
   vtkSmartPointer<vtkPoints>::New();
  
  // Get the total number of particles
- const int n_points = particles_data.n_values()/6;
+ const int n_points = particles_data.n_values()/6; // Each particle
+                                                   // has 6 data
+                                                   // asociated
  data_points->SetNumberOfPoints(n_points);
  
  // Add time
@@ -170,21 +172,21 @@ void output_particles(Real time,
 }
 
 /// This class implements inherits from the ACIVPForODEs class, we
-/// implement specific functions to solve the n body problem
-class CCNBodyProblem : public virtual ACIVPForODEs
+/// implement specific functions to solve the 3 body problem
+class CC3BodyProblem : public virtual ACIVPForODEs
 {
   
 public:
  
  /// Constructor
- CCNBodyProblem(ACODEs *odes_pt, ACTimeStepper *time_stepper_pt)
+ CC3BodyProblem(ACODEs *odes_pt, ACTimeStepper *time_stepper_pt)
   : ACIVPForODEs(odes_pt, time_stepper_pt)
  {
   
  }
  
  /// Destructor
- ~CCNBodyProblem()
+ ~CC3BodyProblem()
  {
   
  }
@@ -243,12 +245,6 @@ public:
  // Set boundary conditions
  void set_boundary_conditions() { }
  
- // A helper function to complete the problem setup
- void complete_problem_setup()
- {
-  
- }
- 
  // Document the solution
  void document_solution(std::ostringstream &output_filename)
  {
@@ -261,7 +257,7 @@ public:
   
  }
  
-}; // class CCNBodyProblem
+}; // class CC3BodyProblem
 
 // ==================================================================
 // ==================================================================
@@ -276,7 +272,7 @@ int main(int argc, char *argv[])
  // -----------------------------------------------------------------
  // Instantiation of the problem
  // -----------------------------------------------------------------
- CCODEsBasicNBody odes(4);
+ CCODEsBasicNBody odes(3);
  
  odes.set_odes_parameters();
  
@@ -290,12 +286,12 @@ int main(int argc, char *argv[])
  //ACTimeStepper *time_stepper_pt =
  //  factory_time_stepper.create_time_stepper("Euler");
  ACTimeStepper *time_stepper_pt =
-  factory_time_stepper.create_time_stepper("RK4"); 
+  factory_time_stepper.create_time_stepper("RK4");
  //ACTimeStepper *time_stepper_pt =
  //factory_time_stepper.create_time_stepper("BDF1");
  
  // Create an instance of the problem
- CCNBodyProblem n_body_problem(&odes, time_stepper_pt);
+ CC3BodyProblem three_body_problem(&odes, time_stepper_pt);
  
  // Prepare time integration data
  const Real initial_time = 0.0; // years
@@ -306,19 +302,19 @@ int main(int argc, char *argv[])
  // Configure problem
  // ----------------------------------------------------------------
  // Initial time
- n_body_problem.time() = initial_time;
+ three_body_problem.time() = initial_time;
  
  // Initial time step
- n_body_problem.time_step() = (final_time - initial_time) / n_time_steps; // years
+ three_body_problem.time_step() = (final_time - initial_time) / n_time_steps; // years
  
  // Set initial conditions
- n_body_problem.set_initial_conditions();
+ three_body_problem.set_initial_conditions();
  
  // Complete setup
- n_body_problem.complete_problem_setup();
+ three_body_problem.complete_problem_setup();
  
  // Document initial configuration
- n_body_problem.document_solution(ioutput_filename);
+ three_body_problem.document_solution(ioutput_filename);
  
  // Flag to indicate whether to continue processing
  bool LOOP = true;
@@ -327,13 +323,13 @@ int main(int argc, char *argv[])
  while(LOOP)
   {
    // Performs an unsteady solve
-   n_body_problem.unsteady_solve();
+   three_body_problem.unsteady_solve();
    
    // Update time of the problem
-   n_body_problem.time()+=n_body_problem.time_step();
+   three_body_problem.time()+=three_body_problem.time_step();
    
    // Check whether we have reached the final time
-   if (n_body_problem.time() >= final_time)
+   if (three_body_problem.time() >= final_time)
     {
      LOOP = false;
     }
@@ -341,9 +337,9 @@ int main(int argc, char *argv[])
    // Output to file
    std::ostringstream ioutput_filename;
    output_filename
-    << "./RESLT/soln" << "_" << std::setfill('0') << std::setw(5) << n_body_problem.output_file_index()++;
+    << "./RESLT/soln" << "_" << std::setfill('0') << std::setw(5) << three_body_problem.output_file_index()++;
    
-   n_body_problem.document_solution(ioutput_filename);
+   three_body_problem.document_solution(ioutput_filename);
    
   } // while(LOOP)
  
