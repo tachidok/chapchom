@@ -5,7 +5,7 @@
 namespace chapchom
 {
  // ===================================================================
- // Constructor, sets the number of odes. We currently have 10 odes
+ // Constructor, sets the number of odes. We currently have 18 odes
  // ===================================================================
  CCODEsBasic3Body::CCODEsBasic3Body(const unsigned n_bodies)
   : ACODEs(n_bodies*DIM*2), // The times 2 is because we are storing
@@ -33,7 +33,8 @@ namespace chapchom
  // ===================================================================
  void CCODEsBasic3Body::evaluate_derivatives(const Real t,
                                              CCData<Real> &u,
-                                             CCData<Real> &dudt)
+                                             CCData<Real> &dudt,
+                                             const unsigned k)
  {
   // -----------------
   // u(0,0) Current x-position of the 1st body
@@ -94,63 +95,45 @@ namespace chapchom
   // Store the sum of the difference between bodies positions
   // multiplied by the masses of each body and the gravitational
   // constant
-  // \sum_{j=1}^N, with i!=j G m_{j} (x_i-x_j) / |x_i-x_j|^3
-
-  std::vector<std::vector<Real> > sum(N_bodies);
+  // \sum_{j=1}^N, with i!=j G m_{j} (x_i-x_j) / ||x_i-x_j||^3
+  
+  std::vector<std::vector<Real> > norm_cubed(N_bodies);
   for (unsigned i = 0; i < N_bodies; i++)
    {
-    // Resize and initialise sum to zero
-    sum[i].resize(DIM, 0);
+    // Resize and initialise norm to zero
+    norm_cubed[i].resize(N_bodies, 0);
     for (unsigned j = 0; j < N_bodies; j++)
      {
       if (i != j)
        {
-        for (unsigned k = 0; k < DIM; k++)
-         { 
-          sum[i][k]+=diff_positions[i][j][k]*M[j];
-         } // for (k < DIM)
+        for (unsigned d = 0; d < DIM; d++)
+         {
+          norm_cubed[i][j]+=(diff_positions[i][j][d]*diff_positions[i][j][d]);
+         } // for (d < DIM)
+        norm_cubed[i][j] = sqrt(norm_cubed[i][j]);
+        norm_cubed[i][j] = norm_cubed[i][j] * norm_cubed[i][j] * norm_cubed[i][j];
        } // if (i != j)
      } // for (j < N_bodies)
    } // for (i < N_bodies) 
-  
-  dudt(0) = u(1,0);
-  dudt(1) = sum[0][0]*g(0);
-  dudt(2) = u(3,0);
-  dudt(3) = sum[0][1]*g(0);
-  dudt(4) = u(5,0);
-  dudt(5) = sum[0][2]*g(0);
-  dudt(6) = u(7,0);
-  dudt(7) = sum[1][0]*g(1);
-  dudt(8) = u(9,0);
-  dudt(9) = sum[1][1]*g(1);
-  dudt(10) = u(11,0);
-  dudt(11) = sum[1][2]*g(1);
-  dudt(12) = u(13,0);
-  dudt(13) = sum[2][0]*g(2);
-  dudt(14) = u(15,0);
-  dudt(15) = sum[2][1]*g(2);
-  dudt(16) = u(17,0);
-  dudt(17) = sum[2][2]*g(2);
-  
- }
 
- // ===================================================================
- // Set parameters for odes
- // ===================================================================
- void CCODEsBasic3Body::set_odes_parameters()
- {
-  // Set the masses of the objects
-  m(0) = 100.0;
-  //odes.m(1) = 0.001;
-  //odes.m(2) = 0.0;
-  //odes.m(3) = 0.0;
-  m(1) = 100.0;
-  m(2) = 100.0;
-  
-  g(0) = GRAVITY;
-  g(1) = GRAVITY;
-  g(2) = GRAVITY;
-  g(3) = GRAVITY;
+  dudt(0) = u(1,0);
+  dudt(1) = (((m(1) * diff_positions[0][1][0]) / norm_cubed[0][1]) + ((m(2) * diff_positions[0][2][0]) / norm_cubed[0][2])) * g(0);
+  dudt(2) = u(3,0);
+  dudt(3) = (((m(1) * diff_positions[0][1][1]) / norm_cubed[0][1]) + ((m(2) * diff_positions[0][2][1]) / norm_cubed[0][2])) * g(0);
+  dudt(4) = u(5,0);
+  dudt(5) = (((m(1) * diff_positions[0][1][2]) / norm_cubed[0][1]) + ((m(2) * diff_positions[0][2][2]) / norm_cubed[0][2])) * g(0);
+  dudt(6) = u(7,0);
+  dudt(7) = (((m(0) * diff_positions[1][0][0]) / norm_cubed[1][0]) + ((m(2) * diff_positions[1][2][0]) / norm_cubed[1][2])) * g(1);
+  dudt(8) = u(9,0);
+  dudt(9) = (((m(0) * diff_positions[1][0][1]) / norm_cubed[1][0]) + ((m(2) * diff_positions[1][2][1]) / norm_cubed[1][2])) * g(1);
+  dudt(10) = u(11,0);
+  dudt(11) = (((m(0) * diff_positions[1][0][2]) / norm_cubed[1][0]) + ((m(2) * diff_positions[1][2][2]) / norm_cubed[1][2])) * g(1);
+  dudt(12) = u(13,0);
+  dudt(13) = (((m(0) * diff_positions[2][0][0]) / norm_cubed[2][0]) + ((m(1) * diff_positions[2][1][0]) / norm_cubed[2][1])) * g(2);
+  dudt(14) = u(15,0);
+  dudt(15) = (((m(0) * diff_positions[2][0][1]) / norm_cubed[2][0]) + ((m(1) * diff_positions[2][1][1]) / norm_cubed[2][1])) * g(2);
+  dudt(16) = u(17,0);
+  dudt(17) = (((m(0) * diff_positions[2][0][2]) / norm_cubed[2][0]) + ((m(1) * diff_positions[2][1][2]) / norm_cubed[2][1])) * g(2);
   
  }
  

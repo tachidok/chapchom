@@ -34,7 +34,8 @@ least 300Mb free in the system for installation.
 
 You will need =Paraview= software to visualise results, we tested the
 output produced by =VTK 8.1.1= with
-=ParaView-5.5.2-Qt5-MPI-Linux-64bit=.[fn:name:Download it from the
+=ParaView-5.5.2-Qt5-MPI-Linux-64bit= and
+=Paraview-5.7.0-RC1-MPI-Linux-64bit=.[fn:name:Download it from the
 official Paraview webpage.]
 
 * Installation

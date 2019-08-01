@@ -15,7 +15,6 @@
 #define DIM 3 // This specialised implementation assumes we are
               // working with 3 bodies in 3 dimensions
 #define NBODIES 3
-#define GRAVITY -1.0
 
 namespace chapchom
 {
@@ -40,10 +39,7 @@ namespace chapchom
   /// Evaluates the system of odes at time "t". The values of the i-th
   /// function at previous times are accessible via u(i,1), u(i,2) and
   /// so on. The evaluation produces results in the vector dudt.
-  void evaluate_derivatives(const Real t, CCData<Real> &u, CCData<Real> &dudt);
-  
-  // Set parameters for odes
-  void set_odes_parameters();
+  void evaluate_derivatives(const Real t, CCData<Real> &u, CCData<Real> &dudt, const unsigned k = 0);
   
   // Gets access to the masses vector
   inline const Real m(const unsigned i) const {return M[i];}

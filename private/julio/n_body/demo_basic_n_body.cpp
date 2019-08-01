@@ -177,16 +177,19 @@ class CCNBodyProblem : public virtual ACIVPForODEs
 public:
  
  /// Constructor
- CCNBodyProblem(ACODEs *odes_pt, ACTimeStepper *time_stepper_pt)
-  : ACIVPForODEs(odes_pt, time_stepper_pt)
+ CCNBodyProblem(ACODEs *odes_pt, ACTimeStepper *time_stepper_pt, std::ostringstream &output_filename)
+  : ACIVPForODEs(odes_pt, time_stepper_pt),
+    Output_filename(output_filename.str())
  {
-  
+  std::ostringstream output_complete_filename;
+  output_complete_filename << Output_filename.str() << ".dat";
+  Output_file.open((output_complete_filename.str()).c_str());
  }
  
  /// Destructor
  ~CCNBodyProblem()
  {
-  
+  Output_file.close();
  }
  
  // Set initial conditions
@@ -201,12 +204,12 @@ public:
   u(5,0) = 0.0; // z-velocity
   // Initial conditions for 2nd body
   u(6,0) = 0.0; // x-position
-  u(7,0) = -5.0; // x-velocity
+  u(7,0) = -2.75674; // x-velocity
   u(8,0) = 5.2; // y-position
-  u(9,0) = -2.5; // y-velocity
+  u(9,0) = 0.0; // y-velocity
   u(10,0) = 0.0; // z-position
   u(11,0) = 0.0; // z-velocity
-#if 0
+#if 1
   // Initial conditions for 3rd body
   u(12,0) = -4.503; // x-position
   u(13,0) = -1.38; // x-velocity
@@ -221,8 +224,8 @@ public:
   u(21,0) = 2.39; // y-velocity
   u(22,0) = 0.0; // z-position
   u(23,0) = 0.0; // z-velocity
-#endif // #if 0
-#if 1
+#endif // #if 1
+#if 0
   // Initial conditions for 3rd body
   u(12,0) = -0.5; // x-position
   u(13,0) = -2.5; // x-velocity
@@ -236,8 +239,8 @@ public:
   u(20,0) = 5.4; // y-position
   u(21,0) = 1.25; // y-velocity
   u(22,0) = 0.0; // z-position
-  u(23,0) = 0.0; // z-velocity 
-#endif // #if 1 
+  u(3,0) = 0.0; // z-velocity 
+#endif // #if 0
  }
  
  // Set boundary conditions
@@ -252,14 +255,36 @@ public:
  // Document the solution
  void document_solution(std::ostringstream &output_filename)
  {
+  // Document animation
   output_particles(Time, (*U_pt), output_filename);
   
   // Output
   std::cout.precision(8);
+  std::cout.precision(8);
   std::cout << "t: " << Time
-            << "\t" << U_pt->value(0) << "\t" << U_pt->value(6) << "\t" << U_pt->value(12) << "\t" << U_pt->value(18) << std::endl;
+            << "\t" << U_pt->value(0) << "\t" << U_pt->value(2) << "\t" << U_pt->value(6) << "\t" << U_pt->value(8) << "\t" << U_pt->value(12) << "\t" << U_pt->value(14) << "\t" << U_pt->value(18) << "\t" << U_pt->value(20) << std::endl;
+  
+  // Document raw data
+  // t,
+  // x_1, vx_1, y_1, vy_1, z_1, vz_1,
+  // x_2, vx_2, y_2, vy_2, z_2, vz_2,
+  // x_3, vx_3, y_3, vy_3, z_3, vz_3,
+  // x_4, vx_4, y_4, vy_4, z_4, vz_4
+  Output_file << Time << "\t"
+              << u(0) << "\t" << u(1) << "\t" << u(2) << "\t" << u(3) << "\t" << u(4) << "\t" << u(5) << "\t"
+              << u(6) << "\t" << u(7) << "\t" << u(8) << "\t" << u(9) << "\t" << u(10) << "\t" << u(11) << "\t"
+              << u(12) << "\t" << u(13) << "\t" << u(14) << "\t" << u(15) << "\t" << u(16) << "\t" << u(17) << "\t"
+              << u(18) << "\t" << u(19) << "\t" << u(20) << "\t" << u(21) << "\t" << u(22) << "\t" << u(23) << std::endl;
   
  }
+ 
+protected:
+ 
+ // The output file
+ std::ostringstream Output_filename;
+ 
+ // The output file
+ std::ofstream Output_file;
  
 }; // class CCNBodyProblem
 
@@ -294,13 +319,19 @@ int main(int argc, char *argv[])
  //ACTimeStepper *time_stepper_pt =
  //factory_time_stepper.create_time_stepper("BDF1");
  
+ // ----------------------------------------------------------------
+ // Prepare the output file
+ // ----------------------------------------------------------------
+ std::ostringstream raw_output_filename;
+ raw_output_filename << "RESLT/raw_output";
+ 
  // Create an instance of the problem
- CCNBodyProblem n_body_problem(&odes, time_stepper_pt);
+ CCNBodyProblem n_body_problem(&odes, time_stepper_pt, raw_output_filename);
  
  // Prepare time integration data
  const Real initial_time = 0.0; // years
- const Real final_time = 10.0; // years
- const unsigned n_time_steps = 1000;
+ const Real final_time = 30.0; // years
+ const unsigned n_time_steps = 3000;
  
  // ----------------------------------------------------------------
  // Configure problem
@@ -317,8 +348,13 @@ int main(int argc, char *argv[])
  // Complete setup
  n_body_problem.complete_problem_setup();
  
+ // Output to file
+ std::ostringstream output_filename;
+ output_filename
+  << "./RESLT/soln" << "_" << std::setfill('0') << std::setw(5) << n_body_problem.output_file_index()++;
+ 
  // Document initial configuration
- n_body_problem.document_solution(ioutput_filename);
+ n_body_problem.document_solution(output_filename);
  
  // Flag to indicate whether to continue processing
  bool LOOP = true;
@@ -340,7 +376,7 @@ int main(int argc, char *argv[])
    
    // Output to file
    std::ostringstream ioutput_filename;
-   output_filename
+   ioutput_filename
     << "./RESLT/soln" << "_" << std::setfill('0') << std::setw(5) << n_body_problem.output_file_index()++;
    
    n_body_problem.document_solution(ioutput_filename);
