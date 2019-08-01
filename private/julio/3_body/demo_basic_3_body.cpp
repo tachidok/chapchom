@@ -39,8 +39,11 @@
 #include <vtkFieldData.h>
 #include <vtkPointData.h>
 
-//#define EIGHT_SHAPE_SOLUTION
-#define BODY_AT_CENTER_SOLUTION
+#define EIGHT_SHAPE_SOLUTION
+//#define BODY_AT_CENTER_SOLUTION
+//#define FLOWER_IN_CIRCLE_SOLUTION
+//#define TRIPLE_RINGS_SOLUTION
+//#define TRIANGLES_INSIDE_OVAL_SOLUTION
 
 using namespace chapchom;
 
@@ -199,33 +202,7 @@ public:
  
  // Set initial conditions
  void set_initial_conditions()
- {
-#ifdef BODY_AT_CENTER_SOLUTION 
-  // Body at the center and two others in elliptic orbitis
-  
-  // Initial conditions for 1st body
-  u(0,0) = 0.0; // x-position
-  u(1,0) = 0.0 ; // x-velocity
-  u(2,0) = 0.0; // y-position
-  u(3,0) = 0.0; // y-velocity
-  u(4,0) = 0.0; // z-position
-  u(5,0) = 0.0; // z-velocity
-  // Initial conditions for 2nd body
-  u(6,0) = -5.0; // x-position
-  u(7,0) = 0.0; // x-velocity
-  u(8,0) = 0.0; // y-position
-  u(9,0) = -1.0; // y-velocity
-  u(10,0) = 0.0; // z-position
-  u(11,0) = 0.0; // z-velocity
-  // Initial conditions for 3rd body
-  u(12,0) = 5.0; // x-position
-  u(13,0) = 0.0; // x-velocity
-  u(14,0) = 0.0; // y-position
-  u(15,0) = 1.0; // y-velocity
-  u(16,0) = 0.0; // z-position
-  u(17,0) = 0.0; // z-velocity
-#endif // #ifdef BODY_AT_CENTER_SOLUTION 
-  
+ {  
 #ifdef EIGHT_SHAPE_SOLUTION
   // An infinity/eight shape movement
   
@@ -257,6 +234,111 @@ public:
   u(16,0) = 0.0; // z-position
   u(17,0) = 0.0; // z-velocity 
 #endif // #ifdef EIGHT_SHAPE_SOLUTION
+
+#ifdef BODY_AT_CENTER_SOLUTION 
+  // Body at the center and two others in elliptic orbitis
+  
+  // Initial conditions for 1st body
+  u(0,0) = 0.0; // x-position
+  u(1,0) = 0.0 ; // x-velocity
+  u(2,0) = 0.0; // y-position
+  u(3,0) = 0.0; // y-velocity
+  u(4,0) = 0.0; // z-position
+  u(5,0) = 0.0; // z-velocity
+  // Initial conditions for 2nd body
+  u(6,0) = -5.0; // x-position
+  u(7,0) = 0.0; // x-velocity
+  u(8,0) = 0.0; // y-position
+  u(9,0) = -1.0; // y-velocity
+  u(10,0) = 0.0; // z-position
+  u(11,0) = 0.0; // z-velocity
+  // Initial conditions for 3rd body
+  u(12,0) = 5.0; // x-position
+  u(13,0) = 0.0; // x-velocity
+  u(14,0) = 0.0; // y-position
+  u(15,0) = 1.0; // y-velocity
+  u(16,0) = 0.0; // z-position
+  u(17,0) = 0.0; // z-velocity
+#endif // #ifdef BODY_AT_CENTER_SOLUTION 
+  
+#ifdef FLOWER_IN_CIRCLE_SOLUTION
+  // Flower in circle
+  
+  // Initial conditions for 1st body
+  u(0,0) = -0.602885898116520; // x-position
+  u(1,0) = 0.122913546623784; // x-velocity
+  u(2,0) = 1.059162128863347-1; // y-position
+  u(3,0) = 0.747443868604908; // y-velocity
+  u(4,0) = 0.0; // z-position
+  u(5,0) = 0.0; // z-velocity
+  // Initial conditions for 2nd body
+  u(6,0) = 0.252709795391000; // x-position
+  u(7,0) = -0.019325586404545; // x-velocity
+  u(8,0) = 1.058254872224370-1; // y-position
+  u(9,0) = 1.369241993562101; // y-velocity
+  u(10,0) = 0.0; // z-position
+  u(11,0) = 0.0; // z-velocity
+  // Initial conditions for 3rd body
+  u(12,0) = -0.355389016941814; // x-position
+  u(13,0) = -0.103587960218793; // x-velocity
+  u(14,0) = 1.038323764315145-1; // y-position
+  u(15,0) = -2.116685862168820; // y-velocity
+  u(16,0) = 0.0; // z-position
+  u(17,0) = 0.0; // z-velocity 
+#endif // #ifdef FLOWER_IN_CIRCLE_SOLUTION
+
+#ifdef TRIPLE_RINGS_SOLUTION
+  // Triple rings
+  
+  // Initial conditions for 1st body
+  u(0,0) = -0.0347; // x-position
+  u(1,0) = 0.2495; // x-velocity
+  u(2,0) = 1.1856; // y-position
+  u(3,0) = -0.1076; // y-velocity
+  u(4,0) = 0.0; // z-position
+  u(5,0) = 0.0; // z-velocity
+  // Initial conditions for 2nd body
+  u(6,0) = 0.2693; // x-position
+  u(7,0) = 0.2059; // x-velocity
+  u(8,0) = -1.0020; // y-position
+  u(9,0) = -0.9396; // y-velocity
+  u(10,0) = 0.0; // z-position
+  u(11,0) = 0.0; // z-velocity
+  // Initial conditions for 3rd body
+  u(12,0) = -0.2328; // x-position
+  u(13,0) = -0.4553; // x-velocity
+  u(14,0) = -0.5978; // y-position
+  u(15,0) = 1.0471; // y-velocity
+  u(16,0) = 0.0; // z-position
+  u(17,0) = 0.0; // z-velocity 
+#endif // #ifdef TRIPLE_RINGS_SOLUTION
+  
+#ifdef TRIANGLES_INSIDE_OVAL_SOLUTION
+  // Nested ovals
+  
+  // Initial conditions for 1st body
+  u(0,0) = 1.666163752077218-1; // x-position
+  u(1,0) = 0.841202975403070; // x-velocity
+  u(2,0) = -1.081921852656887+1; // y-position
+  u(3,0) = 0.029746212757039; // y-velocity
+  u(4,0) = 0.0; // z-position
+  u(5,0) = 0.0; // z-velocity
+  // Initial conditions for 2nd body
+  u(6,0) = 0.974807336315507-1; // x-position
+  u(7,0) = 0.142642469612081; // x-velocity
+  u(8,0) = -0.545551424117481+1; // y-position
+  u(9,0) = -0.492315648524683; // y-velocity
+  u(10,0) = 0.0; // z-position
+  u(11,0) = 0.0; // z-velocity
+  // Initial conditions for 3rd body
+  u(12,0) = 0.896986706257760-1; // x-position
+  u(13,0) = -0.983845445011510; // x-velocity
+  u(14,0) = -1.765806200083609+1; // y-position
+  u(15,0) = 0.462569435774018; // y-velocity
+  u(16,0) = 0.0; // z-position
+  u(17,0) = 0.0; // z-velocity 
+#endif // #ifdef TRIANGLES_INSIDE_OVAL_SOLUTION
+  
  }
  
  // Set boundary conditions
@@ -278,6 +360,17 @@ public:
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
+#ifdef EIGHT_SHAPE_SOLUTION
+  // Set masses and gravity
+  odes_pt->m(0) = 1.0;
+  odes_pt->m(1) = 1.0;
+  odes_pt->m(2) = 1.0;
+  
+  odes_pt->g(0) = -1.0;
+  odes_pt->g(1) = -1.0;
+  odes_pt->g(2) = -1.0;
+#endif // #ifdef EIGHT_SHAPE_SOLUTION
+  
 #ifdef BODY_AT_CENTER_SOLUTION 
   // Set masses and gravity
   odes_pt->m(0) = 10.0;
@@ -289,7 +382,8 @@ public:
   odes_pt->g(2) = -1.0;
 #endif // #ifdef BODY_AT_CENTER_SOLUTION
   
-#ifdef EIGHT_SHAPE_SOLUTION
+#ifdef FLOWER_IN_CIRCLE_SOLUTION
+  // Flower in circle
   // Set masses and gravity
   odes_pt->m(0) = 1.0;
   odes_pt->m(1) = 1.0;
@@ -298,7 +392,32 @@ public:
   odes_pt->g(0) = -1.0;
   odes_pt->g(1) = -1.0;
   odes_pt->g(2) = -1.0;
-#endif // #ifdef EIGHT_SHAPE_SOLUTION
+#endif // #ifdef FLOWER_IN_CIRCLE_SOLUTION
+
+#ifdef TRIPLE_RINGS_SOLUTION
+  // Triple rings
+  // Set masses and gravity
+  odes_pt->m(0) = 1.0;
+  odes_pt->m(1) = 1.0;
+  odes_pt->m(2) = 1.0;
+  
+  odes_pt->g(0) = -1.0;
+  odes_pt->g(1) = -1.0;
+  odes_pt->g(2) = -1.0;
+#endif // #ifdef TRIPLE_RINGS_SOLUTINO
+
+#ifdef TRIANGLES_INSIDE_OVAL_SOLUTION
+  // Nested oval
+  // Set masses and gravity
+  odes_pt->m(0) = 1.0;
+  odes_pt->m(1) = 1.0;
+  odes_pt->m(2) = 1.0;
+  
+  odes_pt->g(0) = -1.0;
+  odes_pt->g(1) = -1.0;
+  odes_pt->g(2) = -1.0;
+#endif // #ifdef TRIANGLES_INSIDE_OVAL_SOLUTION
+  
  }
  
  // Document the solution
