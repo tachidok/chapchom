@@ -1,7 +1,7 @@
 #ifndef CCADAMSMOULTON2PREDICTORCORRECTORMETHOD_H
 #define CCADAMSMOULTON2PREDICTORCORRECTORMETHOD_H
 
-#include "ac_time_stepper.h"
+#include "ac_predictor_corrector_time_stepper.h"
 // Time stepper to compute the initial guess for Newton's method
 #include "cc_runge_kutta_4_method.h"
 
@@ -11,9 +11,9 @@ namespace chapchom
  /// @class CCAdamsMoulton2PCMethod
  /// cc_adams_moulton_2_predictor_corrector_method.h This class
  /// implements Adams-Moulton 2 method or Trapezoidal rule as a
- /// predictor corrector to integrate ODE's. The predictor method is
- /// an Euler method
- class CCAdamsMoulton2PCMethod : public virtual ACTimeStepper
+ /// predictor corrector to integrate ODE's. The predictor method is a
+ /// Runge-Kutta 4 method
+ class CCAdamsMoulton2PCMethod : public virtual ACPredictorCorrectorTimeStepper
  {
  
  public:

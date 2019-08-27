@@ -8,8 +8,7 @@
 #include "../data_structures/cc_data.h"
 
 namespace chapchom
-{
-
+{ 
  /// @class ACTimeStepper ac_time_stepper.h
 
  /// This class implements the interfaces for integration methods to
@@ -73,7 +72,7 @@ namespace chapchom
  
   /// The number of history values
   unsigned N_history_values;
- 
+  
  };
 
 }

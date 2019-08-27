@@ -2,32 +2,6 @@
 
 namespace chapchom
 {
- 
- // ===================================================================
- // ===================================================================
- // ===================================================================
- 
- // The strategy to compute the new step size
- Real CCAdaptiveNewStepSizeHalfDouble::new_step_size(const Real local_error, const Real h)
- {
-  // Check whether the local error was too much (the step size was
-  // too big)
-  if (local_error > this->maximum_tolerance())
-   {
-    // Step was too big
-    return h * 0.5;
-   }
-  else
-   {
-    // Step was too small
-    return h * 2.0;
-   }
- }
- 
- // ===================================================================
- // ===================================================================
- // ===================================================================
- 
  // ===================================================================
  // Constructor
  // ===================================================================
@@ -114,6 +88,9 @@ namespace chapchom
   
   // Create the strategy to compute the new step size
   New_time_step_strategy_pt = new CCAdaptiveNewStepSizeHalfDouble();
+  // Configure new step size strategy tolerance values
+  New_time_step_strategy_pt->set_new_maximum_tolerance(Maximum_tolerance);
+  New_time_step_strategy_pt->set_new_minimum_tolerance(Minimum_tolerance);
   
   // Allow free memory of the strategy to compute the time step
   Free_memory_for_new_time_step_strategy = true;

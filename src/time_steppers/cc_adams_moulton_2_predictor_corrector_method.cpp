@@ -7,7 +7,7 @@ namespace chapchom
  // Constructor
  // ===================================================================
  CCAdamsMoulton2PCMethod::CCAdamsMoulton2PCMethod()
-  : ACTimeStepper()
+  : ACPredictorCorrectorTimeStepper()
  {
   
   // Sets the number of history values
@@ -52,6 +52,10 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
+  // The method is implemented following an P(EC)^k with a final
+  // evaluation step of the model at the end of the iterations. Thus
+  // it is a P(EC)^k E
+  
   // Get the number of odes
   const unsigned n_odes = odes.n_odes();
   
@@ -64,7 +68,7 @@ namespace chapchom
   // stored in index k
   odes.evaluate_derivatives(t, u, dudt, k);
   
-  // Store the predicted value by the external time stepper. Copy the
+  // Store the PREDICTED value by the external time stepper. Copy the
   // initial values from u
   CCData<Real> u_p(u);
   // Perfomed one prediction step and store the result in the
