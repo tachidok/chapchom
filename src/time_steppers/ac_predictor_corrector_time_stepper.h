@@ -7,6 +7,13 @@
 #include "../data_structures/ac_odes.h"
 #include "../data_structures/cc_data.h"
 
+#ifdef CHAPCHOM_USES_ARMADILLO
+// Include Armadillo type vector for residual
+#include "../matrices/cc_vector_armadillo.h"
+#else
+#include "../matrices/cc_vector.h"
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+
 #include "./ac_time_stepper.h"
 
 namespace chapchom
@@ -86,6 +93,22 @@ namespace chapchom
   
   // Disables output messages for adaptive step size method
   inline void disable_output_messages() {Output_messages=false;}
+  
+  // Maximum number of iterations for the predictor-corrector
+  // implementations
+  inline unsigned maximum_iterations() const {return Maximum_iterations;}
+  
+  // Maximum error tolerance for the predictor-corrector
+  // implementations
+  inline Real maximum_tolerance() const {return Maximum_tolerance;}
+  
+  // Minimum error tolerance for the predictor-corrector
+  // implementations
+  inline Real minimum_tolerance() const {return Minimum_tolerance;}
+  
+  // Flag to indicate whether output messages are enabled or disabled
+  // (enabled by default)
+  inline bool output_messages() const {return Output_messages;}
   
  protected:
  

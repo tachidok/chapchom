@@ -60,6 +60,24 @@ set terminal wxt 2 size 640,480 enhanced font 'Verdana,10' persist
 set key top right
 #set xrange [0:500]
 #set yrange [0:40]
+set title 'Backward-Euler - Predictor-Corrector error'
+set xlabel 'x'
+set ylabel 'e(x)'
+set tics scale 0.75
+set logscale y
+
+plot 'RESLT/bepc_error_h_1.dat' using 1:2 title 'h = 1.0' w linespoints ls 1, \
+     'RESLT/bepc_error_h_0.1.dat' using 1:2 title 'h = 1.0e-1' w linespoints ls 2, \
+     'RESLT/bepc_error_h_0.01.dat' using 1:2 title 'h = 1.0e-2' w linespoints ls 3, \
+     'RESLT/bepc_error_h_0.001.dat' using 1:2 title 'h = 1.0e-3' w linespoints ls 4
+
+set terminal wxt 3 size 640,480 enhanced font 'Verdana,10' persist
+#set terminal pngcairo size 640,480 enhanced font 'Verdana,10'
+#set output 'alpha_vs_density.png'
+
+set key top right
+#set xrange [0:500]
+#set yrange [0:40]
 set title 'Adams-Moulton 2 - Predictor-Corrector error'
 set xlabel 'x'
 set ylabel 'e(x)'
@@ -71,7 +89,7 @@ plot 'RESLT/am2pc_error_h_1.dat' using 1:2 title 'h = 1.0' w linespoints ls 1, \
      'RESLT/am2pc_error_h_0.01.dat' using 1:2 title 'h = 1.0e-2' w linespoints ls 3, \
      'RESLT/am2pc_error_h_0.001.dat' using 1:2 title 'h = 1.0e-3' w linespoints ls 4
 
-set terminal wxt 3 size 640,480 enhanced font 'Verdana,10' persist
+set terminal wxt 4 size 640,480 enhanced font 'Verdana,10' persist
 #set terminal pngcairo size 640,480 enhanced font 'Verdana,10'
 #set output 'alpha_vs_current.png'
 
@@ -88,7 +106,7 @@ plot 'RESLT/bdf1_error_h_1.dat' using 1:2 title 'h = 1.0' w linespoints ls 1, \
      'RESLT/bdf1_error_h_0.01.dat' using 1:2 title 'h = 1.0e-2' w linespoints ls 3, \
      'RESLT/bdf1_error_h_0.001.dat' using 1:2 title 'h = 1.0e-3' w linespoints ls 4
 
-set terminal wxt 4 size 640,480 enhanced font 'Verdana,10' persist
+set terminal wxt 5 size 640,480 enhanced font 'Verdana,10' persist
 #set terminal pngcairo size 640,480 enhanced font 'Verdana,10'
 #set output 'alpha_vs_current.png'
 
@@ -105,7 +123,7 @@ plot 'RESLT/am2_error_h_1.dat' using 1:2 title 'h = 1.0' w linespoints ls 1, \
      'RESLT/am2_error_h_0.01.dat' using 1:2 title 'h = 1.0e-2' w linespoints ls 3, \
      'RESLT/am2_error_h_0.001.dat' using 1:2 title 'h = 1.0e-3' w linespoints ls 4
 
-set terminal wxt 5 size 640,480 enhanced font 'Verdana,10' persist
+set terminal wxt 6 size 640,480 enhanced font 'Verdana,10' persist
 #set terminal pngcairo size 640,480 enhanced font 'Verdana,10'
 #set output 'alpha_vs_current.png'
 

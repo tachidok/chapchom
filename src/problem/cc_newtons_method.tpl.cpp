@@ -330,7 +330,7 @@ namespace chapchom
    {
     // Increase the numbew of Newton iterations
     n_newton_iterations++;
-     
+    
     // Perform actions before Newton's step
     actions_before_newton_step();
      

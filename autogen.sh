@@ -45,7 +45,7 @@ build_demos=TRUE
 # Indicates the number of processors to build the demos
 number_of_processors_to_run_demos=1
 # Indicates the number of processors to build the library
-number_of_processors_to_build_library=1
+number_of_processors_to_build_library=4
 # Indicates the configuration file with variables for paths for
 # external libraries
 configuration_file=./configs/current
@@ -124,11 +124,11 @@ echo ""
 # Number of processors to build library
 #====================================================================
 echo "How many processor to use to build $lib_name?"
-OptionPrompt "[1] [2] [4] [default: 1]"
+OptionPrompt "[1] [2] [4] [default: 4]"
 number_of_processors_to_build_library=`OptionRead`
 if test "$number_of_processors_to_build_library" != 1 -a "$number_of_processors_to_build_library" != 2 -a "$number_of_processors_to_build_library" != 4; then
-    number_of_processors_to_build_library=1
-    echo "Setting the number of processors to build library to [1]" 
+    number_of_processors_to_build_library=4
+    echo "Setting the number of processors to build library to [4]" 
     echo "We do not currently support the number of processors you"
     echo "specified!"
 fi

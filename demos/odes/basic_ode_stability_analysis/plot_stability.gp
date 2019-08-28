@@ -33,8 +33,9 @@ set logscale y
 
 plot 'RESLT/euler_stability.dat' using 1:2 title 'Euler' w linespoints ls 1, \
      'RESLT/rk4_stability.dat' using 1:2 title 'RK4' w linespoints ls 2, \
-     'RESLT/am2pc_stability.dat' using 1:2 title 'AM2-PC' w linespoints ls 3, \
-     'RESLT/bdf1_stability.dat' using 1:2 title 'BDF1' w linespoints ls 4, \
-     'RESLT/am2_stability.dat' using 1:2 title 'AM2' w linespoints ls 5, \
-     'RESLT/bdf2_stability.dat' using 1:2 title 'BDF2' w linespoints ls 6
+     'RESLT/bepc_stability.dat' using 1:2 title 'BE-PC' w linespoints ls 3, \
+     'RESLT/am2pc_stability.dat' using 1:2 title 'AM2-PC' w linespoints ls 4, \
+     'RESLT/bdf1_stability.dat' using 1:2 title 'BDF1' w linespoints ls 5, \
+     'RESLT/am2_stability.dat' using 1:2 title 'AM2' w linespoints ls 6, \
+     'RESLT/bdf2_stability.dat' using 1:2 title 'BDF2' w linespoints ls 7
 

@@ -45,6 +45,11 @@ namespace chapchom
    {
     return new CCRK4Method();
    }
+  // Backward-Euler as Predictor-Corrector method
+  else if (time_stepper_name.compare("bepc")==0)
+   {
+    return new CCAdamsMoulton2PCMethod();
+   }
   // Adams-Moulton 2 as Predictor-Corrector method
   else if (time_stepper_name.compare("am2pc")==0)
    {

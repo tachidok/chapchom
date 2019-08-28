@@ -13,6 +13,7 @@
 // Integration methods
 #include "../../../src/time_steppers/cc_euler_method.h"
 #include "../../../src/time_steppers/cc_runge_kutta_4_method.h"
+#include "../../../src/time_steppers/cc_backward_euler_predictor_corrector_method.h"
 #include "../../../src/time_steppers/cc_adams_moulton_2_predictor_corrector_method.h"
 #include "../../../src/time_steppers/cc_backward_euler_method.h"
 #include "../../../src/time_steppers/cc_adams_moulton_2_method.h"
@@ -457,7 +458,90 @@ private:
    time_stepper_pt = 0;
   
   }
- 
+  
+  {
+   std::cout << "Backward-Euler - Predictor-Corrector test" << std::endl;
+   // -----------------------------------------------------------------
+   // Instantiation of the ODEs
+   // -----------------------------------------------------------------
+   CCBasicODEs odes;
+   
+   // ----------------------------------------------------------------
+   // Time stepper
+   // ----------------------------------------------------------------
+   ACTimeStepper *time_stepper_pt =
+    factory_time_stepper.create_time_stepper("BEPC");
+   
+   // ----------------------------------------------------------------
+   // Prepare the output file name
+   // ----------------------------------------------------------------
+   std::ostringstream output_filename;
+   output_filename << "RESLT/bepc.dat";
+   output_filename.precision(8);
+   
+   // ----------------------------------------------------------------
+   // Prepare the output error file name
+   // ----------------------------------------------------------------
+   std::ostringstream output_error_filename;
+   output_error_filename << "RESLT/bepc_error.dat";
+   output_error_filename.precision(8);
+   
+   // Create an instance of the problem
+   CCBasicODEsProblem basic_ode_problem(&odes,
+                                        time_stepper_pt,
+                                        output_filename,
+                                        output_error_filename);
+   
+   // Prepare time integration data
+   const Real initial_time = 0.0;
+   const Real final_time = 2.0;
+   const Real time_step = 0.1;
+   
+   // ----------------------------------------------------------------
+   // Configure problem
+   // ----------------------------------------------------------------
+   // Initial time
+   basic_ode_problem.time() = initial_time;
+  
+   // Initial time step
+   basic_ode_problem.time_step() = time_step;
+  
+   // Set initial conditions
+   basic_ode_problem.set_initial_conditions();
+
+   // Document initial configuration
+   basic_ode_problem.document_solution();
+   
+   // Flag to indicate whether to continue processing
+   bool LOOP = true;
+  
+   // Main LOOP (loop until reaching final time)
+   while(LOOP)
+    {
+     // Performs an unsteady solve
+     basic_ode_problem.unsteady_solve();
+    
+     // Update time of the problem
+     basic_ode_problem.time()+=basic_ode_problem.time_step();
+    
+     // Check whether we have reached the final time
+     if (basic_ode_problem.time() >= final_time)
+      {
+       LOOP = false;
+      }
+    
+     basic_ode_problem.document_solution();
+    
+    } // while(LOOP)
+  
+   std::cout << "[FINISHING UP] ... " << std::endl;
+  
+   // Free memory
+   delete time_stepper_pt;
+   time_stepper_pt = 0;
+  
+  }
+  
   {
    std::cout << "Adams-Moulton 2 or Trapezoidal Rule - Predictor-Corrector test" << std::endl;
    // -----------------------------------------------------------------

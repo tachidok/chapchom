@@ -5,6 +5,7 @@
 #include "ac_time_stepper.h"
 #include "cc_euler_method.h"
 #include "cc_runge_kutta_4_method.h"
+#include "cc_backward_euler_predictor_corrector_method.h"
 #include "cc_adams_moulton_2_predictor_corrector_method.h"
 #include "cc_backward_euler_method.h"
 #include "cc_adams_moulton_2_method.h"

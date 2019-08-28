@@ -13,6 +13,7 @@
 // Integration methods
 #include "../../../src/time_steppers/cc_euler_method.h"
 #include "../../../src/time_steppers/cc_runge_kutta_4_method.h"
+#include "../../../src/time_steppers/cc_backward_euler_predictor_corrector_method.h"
 #include "../../../src/time_steppers/cc_adams_moulton_2_predictor_corrector_method.h"
 #include "../../../src/time_steppers/cc_backward_euler_method.h"
 #include "../../../src/time_steppers/cc_adams_moulton_2_method.h"
@@ -412,6 +413,83 @@ int main(int argc, char *argv[])
   // Solve
   stability_analysis_problem.solve();
       
+  std::cout << "[FINISHING UP] ... " << std::endl;
+  
+  // Free memory
+  delete time_stepper_pt;
+  time_stepper_pt = 0;
+  
+ }
+ 
+ {
+  std::cout << "--------------------------" << std::endl;
+  std::cout << "Backward Euler - Predictor-Corrector - Stability analysis" << std::endl;
+  // -----------------------------------------------------------------
+  // Instantiation of the ODEs
+  // -----------------------------------------------------------------
+  CCBasicODEs odes;
+  
+  // ----------------------------------------------------------------
+  // Time stepper
+  // ----------------------------------------------------------------
+  ACTimeStepper *time_stepper_pt =
+   factory_time_stepper.create_time_stepper("BEPC");
+  
+  // ----------------------------------------------------------------
+  // Prepare the output file name prefix
+  // ----------------------------------------------------------------
+  std::ostringstream output_filename_prefix;
+  output_filename_prefix << "RESLT/bepc";
+  
+  // ----------------------------------------------------------------
+  // Prepare the output error file name
+  // ----------------------------------------------------------------
+  std::ostringstream output_error_filename_prefix;
+  output_error_filename_prefix << "RESLT/bepc_error"; 
+  
+  // ----------------------------------------------------------------
+  // Prepare the output stability file name
+  // ----------------------------------------------------------------
+  std::ostringstream output_stability_filename_prefix;
+  output_stability_filename_prefix << "RESLT/bepc_stability";
+  
+  // Time interval for solving
+  const Real initial_time = 0.0;
+  const Real final_time = 20.0;
+  
+  // Create an instance of the problem
+  CCStabilityAnalysisProblem stability_analysis_problem(&odes,
+                                                        time_stepper_pt,
+                                                        output_filename_prefix,
+                                                        output_error_filename_prefix,
+                                                        output_stability_filename_prefix,
+                                                        initial_time,
+                                                        final_time);
+  
+  // ----------------------------------------------------------------
+  // Configure the problem with different time steps to perform
+  // stability analisys
+  // ----------------------------------------------------------------
+  Real time_step = 1.0;
+  stability_analysis_problem.time_step() = time_step;
+  // Solve
+  stability_analysis_problem.solve();
+
+  time_step = 0.1;
+  stability_analysis_problem.time_step() = time_step;
+  // Solve
+  stability_analysis_problem.solve();
+  
+  time_step = 0.01;
+  stability_analysis_problem.time_step() = time_step;
+  // Solve
+  stability_analysis_problem.solve();
+  
+  time_step = 0.001;
+  stability_analysis_problem.time_step() = time_step;
+  // Solve
+  stability_analysis_problem.solve();
+    
   std::cout << "[FINISHING UP] ... " << std::endl;
   
   // Free memory

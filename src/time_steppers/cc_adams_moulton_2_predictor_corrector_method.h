@@ -2,8 +2,10 @@
 #define CCADAMSMOULTON2PREDICTORCORRECTORMETHOD_H
 
 #include "ac_predictor_corrector_time_stepper.h"
+#if 0
 // Time stepper to compute the initial guess for Newton's method
 #include "cc_runge_kutta_4_method.h"
+#endif // #if 0
 
 namespace chapchom
 {
@@ -11,8 +13,7 @@ namespace chapchom
  /// @class CCAdamsMoulton2PCMethod
  /// cc_adams_moulton_2_predictor_corrector_method.h This class
  /// implements Adams-Moulton 2 method or Trapezoidal rule as a
- /// predictor corrector to integrate ODE's. The predictor method is a
- /// Runge-Kutta 4 method
+ /// predictor corrector to integrate ODE's.
  class CCAdamsMoulton2PCMethod : public virtual ACPredictorCorrectorTimeStepper
  {
  
@@ -49,10 +50,12 @@ namespace chapchom
    {
     BrokenCopy::broken_assign("CCAdamsMoulton2PCMethod");
    }
-
+  
+#if 0
   // The time stepper used to compute the initial guess
-  CCRK4Method Time_stepper_initial_guess; 
-    
+  CCRK4Method Time_stepper_initial_guess;
+#endif // #if 0
+  
  };
 
 }
