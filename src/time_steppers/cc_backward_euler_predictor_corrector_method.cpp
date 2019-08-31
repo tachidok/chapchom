@@ -14,7 +14,7 @@ namespace chapchom
   N_history_values = 2;
   
   // Enable output messages
-  enable_output_messages();
+  //enable_output_messages();
   
  }
  
@@ -135,13 +135,13 @@ namespace chapchom
    
    // Increase the number of iterations
    n_iterations++;
-   
+
    if (n_iterations >= maximum_iterations())
     {
      if (output_messages())
       {
-       chapchom_output << "Maximum number of iterations reached ["<< maximum_iterations() <<"]\n"
-                       << "with local error [" << local_error << "] and maximum_tolerance ["
+       chapchom_output << "Maximum number of iterations reached ["<< maximum_iterations()
+                       <<"], local error [" << local_error << "], maximum_tolerance ["
                        << maximum_tolerance() << "]\n"
                        << "You can change the maximum number of iterations by calling the method\n"
                        << "set_maximum_iterations()\n"
@@ -149,6 +149,13 @@ namespace chapchom
                        << "set_new_maximum_tolerance()" << std::endl;
       }
      
+    }
+   
+   // Check whether a fixed number of iterations is enabled
+   if (fixed_number_of_iterations())
+    {
+     // Force local error to be greater than maximum tolerance
+     local_error = maximum_tolerance() + 1.0;
     }
    
    // Check whether reaching maximum number of iteratios or error in

@@ -94,6 +94,22 @@ namespace chapchom
   // Disables output messages for adaptive step size method
   inline void disable_output_messages() {Output_messages=false;}
   
+  // Enables a maximum number of iterations for the
+  // prediction-correction phase
+  inline void enable_fixed_number_of_corrections(unsigned n_fixed_number_of_corrections) 
+  {
+   set_maximum_iterations(n_fixed_number_of_corrections);
+   Fixed_number_of_iterations = true;
+  }
+  
+  // Disables a maximum number of iterations for the
+  // prediction-correction phase
+  inline void disable_fixed_number_of_corrections() 
+  {
+   set_default_maximum_iterations();
+   Fixed_number_of_iterations = false;
+  }
+  
   // Maximum number of iterations for the predictor-corrector
   // implementations
   inline unsigned maximum_iterations() const {return Maximum_iterations;}
@@ -109,6 +125,10 @@ namespace chapchom
   // Flag to indicate whether output messages are enabled or disabled
   // (enabled by default)
   inline bool output_messages() const {return Output_messages;}
+  
+  // Flag to indicate whether a fixed number of iterations is enabled,
+  // thus no error checking is performed
+  inline bool fixed_number_of_iterations() const {return Fixed_number_of_iterations;}
   
  protected:
  
@@ -143,6 +163,10 @@ namespace chapchom
   // Flag to indicate whether output messages are enabled or disabled
   // (enabled by default)
   bool Output_messages;
+  
+  // Flag to indicate whether a fixed number of iterations is enabled,
+  // thus no error checking is performed
+  bool Fixed_number_of_iterations;
   
  };
 
