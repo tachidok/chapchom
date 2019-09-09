@@ -4,7 +4,7 @@ import numpy as np
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-filename1 = 'RESLT/am2pc_0_200.dat'
+filename1 = 'RESLT/bepc_10_0_200.dat'
 Linewidth = 1
 
 t, u1, u2, u3 = np.loadtxt(filename1, delimiter='\t', unpack=True)
@@ -18,7 +18,7 @@ plt.grid()
 #plt.ylim([0,1])
 plt.xlabel('t')
 plt.ylabel('u3')
-plt.title("Adams-Moulton 2 PC")
+plt.title("Backward-Euler PC")
 plt.legend()
 plt.show()
 
@@ -32,10 +32,10 @@ plt.grid()
 ax2.set_xlabel('u1')
 ax2.set_ylabel('u2')
 ax2.set_zlabel('u3')
-plt.title("Adams-Moulton 2 PC")
+plt.title("Backward-Euler PC")
 plt.show()
 
-filename3 = 'RESLT/am2pc_49800_50000.dat'
+filename3 = 'RESLT/bepc_10_49800_50000.dat'
 Linewidth = 1
 
 t, u1, u2, u3 = np.loadtxt(filename3, delimiter='\t', unpack=True)
@@ -49,7 +49,7 @@ plt.grid()
 #plt.ylim([0,1])
 plt.xlabel('t')
 plt.ylabel('u3')
-plt.title("Adams-Moulton 2 PC")
+plt.title("Backward-Euler PC")
 plt.legend()
 plt.show()
 
@@ -63,5 +63,5 @@ plt.grid()
 ax4.set_xlabel('u1')
 ax4.set_ylabel('u2')
 ax4.set_zlabel('u3')
-plt.title("Adams-Moulton 2 PC")
+plt.title("Backward-Euler PC")
 plt.show()

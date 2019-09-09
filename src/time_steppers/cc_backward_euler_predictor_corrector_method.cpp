@@ -55,9 +55,8 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // The method is implemented following an P(EC)^k with an optional
-  // final evaluation step of the model at the end, then making it an
-  // P(EC)^k E strategy
+  // The method is implemented following an P(EC)^k E with the final
+  // evaluation step as optionalw
   
   unsigned n_iterations = 0;
   
@@ -161,6 +160,15 @@ namespace chapchom
    // Check whether reaching maximum number of iteratios or error in
    // tolerance ranges
   }while(local_error > maximum_tolerance() && n_iterations < maximum_iterations());
+  
+  // Perform a last evaluation such that the strategy becomes in a
+  // E(PC)^k E
+  if (perform_final_evaluation())
+   {
+    // Evaluate the ODE at time "t" using the current values of "u"
+    // stored in index k
+    odes.evaluate_derivatives(t, u_p, dudt, k);
+   }
   
   // Shift values to the right to provide storage for the new values
   u.shift_history_values();

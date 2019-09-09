@@ -11,7 +11,9 @@ namespace chapchom
     Maximum_iterations(DEFAULT_PREDICTOR_CORRECTOR_TIME_STEPPER_MAXIMUM_ITERATIONS),
     Maximum_tolerance(DEFAULT_PREDICTOR_CORRECTOR_TIME_STEPPER_MAXIMUM_TOLERANCE),
     Minimum_tolerance(DEFAULT_PREDICTOR_CORRECTOR_TIME_STEPPER_MINIMUM_TOLERANCE),
-    Output_messages(false)
+    Output_messages(false),
+    Fixed_number_of_iterations(false),
+    Perform_final_evaluation(false)
  {
   // Sets the default new time step strategy
   set_default_configuration();
@@ -36,6 +38,10 @@ namespace chapchom
   
   // By default output messages are disabled
   disable_output_messages();
+  // By default disable fixed number of operations
+  disable_fixed_number_of_corrections();
+  // By default disable the last evaluation
+  disable_final_evaluation();
  }
  
 }

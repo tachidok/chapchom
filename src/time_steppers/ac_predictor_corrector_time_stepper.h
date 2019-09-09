@@ -110,6 +110,14 @@ namespace chapchom
    Fixed_number_of_iterations = false;
   }
   
+  // Enable final evaluation stage
+  inline void enable_final_evaluation()
+  {Perform_final_evaluation = true;}
+  
+  // Disable final evaluation stage
+  inline void disable_final_evaluation()
+  {Perform_final_evaluation = false;}
+  
   // Maximum number of iterations for the predictor-corrector
   // implementations
   inline unsigned maximum_iterations() const {return Maximum_iterations;}
@@ -129,6 +137,10 @@ namespace chapchom
   // Flag to indicate whether a fixed number of iterations is enabled,
   // thus no error checking is performed
   inline bool fixed_number_of_iterations() const {return Fixed_number_of_iterations;}
+
+  // Flag to indicate whether to perform a last evaluation of the
+  // model as the final stage of the time stepping method
+  inline bool perform_final_evaluation() const {return Perform_final_evaluation;}
   
  protected:
  
@@ -167,6 +179,12 @@ namespace chapchom
   // Flag to indicate whether a fixed number of iterations is enabled,
   // thus no error checking is performed
   bool Fixed_number_of_iterations;
+
+  // Flag to indicate whether to perform a final evaluation step, the
+  // default strategy is not to perform a final evaluation stage. The
+  // default strategy is an E(PC)^k E, where the k may be fixed or
+  // automatically computed based on the local error
+  bool Perform_final_evaluation;
   
  };
 

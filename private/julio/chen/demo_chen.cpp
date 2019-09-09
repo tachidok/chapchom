@@ -129,6 +129,7 @@ int main(int argc, char *argv[])
  
  const unsigned Fixed_number_of_prediction_correction_steps = 2;
  
+#if 0
  {
   std::cout << "Forward Euler test" << std::endl;
   // -----------------------------------------------------------------
@@ -180,31 +181,31 @@ int main(int argc, char *argv[])
   bool LOOP = true;
   
   // Main LOOP (loop until reaching final time)
-  while(LOOP)
-   {
-    // Performs an unsteady solve
-    chen_problem.unsteady_solve();
+   while(LOOP)
+    {
+     // Performs an unsteady solve
+     chen_problem.unsteady_solve();
     
-    // Update time of the problem
-    chen_problem.time()+=chen_problem.time_step();
+     // Update time of the problem
+     chen_problem.time()+=chen_problem.time_step();
     
-    // Check whether we have reached the final time
-    if (chen_problem.time() >= final_time)
-     {
-      LOOP = false;
-     }
+     // Check whether we have reached the final time
+     if (chen_problem.time() >= final_time)
+      {
+       LOOP = false;
+      }
     
-    chen_problem.document_solution();
+     chen_problem.document_solution();
     
-   } // while(LOOP)
+    } // while(LOOP)
   
-  std::cout << "[FINISHING UP] ... " << std::endl;
+   std::cout << "[FINISHING UP] ... " << std::endl;
   
-  // Free memory
-  delete time_stepper_pt;
-  time_stepper_pt = 0;
+   // Free memory
+   delete time_stepper_pt;
+   time_stepper_pt = 0;
   
- }
+  }
  
  {
   std::cout << "Runge-Kutta 4 test" << std::endl;
@@ -281,8 +282,8 @@ int main(int argc, char *argv[])
    delete time_stepper_pt;
    time_stepper_pt = 0;
   
-  }
-
+ }
+#endif // #if 0
  {
   std::cout << "Backwards Euler - Predictor-Corrector test" << std::endl;
   // -----------------------------------------------------------------
@@ -312,14 +313,15 @@ int main(int argc, char *argv[])
   
   // Set a fixed number of prediction-correction steps
   time_stepper_predictor_corrector_pt->enable_fixed_number_of_corrections(Fixed_number_of_prediction_correction_steps);
+  time_stepper_predictor_corrector_pt->enable_final_evaluation();
   
   // ----------------------------------------------------------------
   // Prepare the output file name
   // ----------------------------------------------------------------
   std::ostringstream output_filename0_200;
-  output_filename0_200 << "RESLT/bepc_0_200.dat";
+  output_filename0_200 << "RESLT/bepc_" << Fixed_number_of_prediction_correction_steps <<"_0_200.dat";
   std::ostringstream output_filename49800_50000;
-  output_filename49800_50000 << "RESLT/bepc_49800_50000.dat";
+  output_filename49800_50000 << "RESLT/bepc_" << Fixed_number_of_prediction_correction_steps << "_49800_50000.dat";
   
   // Create an instance of the problem
   CCChenProblem chen_problem(&odes,
@@ -352,30 +354,30 @@ int main(int argc, char *argv[])
   
   // Main LOOP (loop until reaching final time)
   while(LOOP)
-   {
-    // Performs an unsteady solve
-    chen_problem.unsteady_solve();
+    {
+     // Performs an unsteady solve
+     chen_problem.unsteady_solve();
     
-    // Update time of the problem
-    chen_problem.time()+=chen_problem.time_step();
+     // Update time of the problem
+     chen_problem.time()+=chen_problem.time_step();
     
-    // Check whether we have reached the final time
-    if (chen_problem.time() >= final_time)
-     {
-      LOOP = false;
-     }
+     // Check whether we have reached the final time
+     if (chen_problem.time() >= final_time)
+      {
+       LOOP = false;
+      }
     
-    chen_problem.document_solution();
+     chen_problem.document_solution();
     
-   } // while(LOOP)
+    } // while(LOOP)
   
-  std::cout << "[FINISHING UP] ... " << std::endl;
+   std::cout << "[FINISHING UP] ... " << std::endl;
   
-  // Free memory
-  delete time_stepper_pt;
-  time_stepper_pt = 0;
+   // Free memory
+   delete time_stepper_pt;
+   time_stepper_pt = 0;
   
- }
+  }
  
  {
   std::cout << "Adams-Moulton 2 - Predictor-Corrector test" << std::endl;
@@ -406,14 +408,15 @@ int main(int argc, char *argv[])
   
   // Set a fixed number of prediction-correction steps
   time_stepper_predictor_corrector_pt->enable_fixed_number_of_corrections(Fixed_number_of_prediction_correction_steps);
+  time_stepper_predictor_corrector_pt->enable_final_evaluation();
   
   // ----------------------------------------------------------------
   // Prepare the output file name
   // ----------------------------------------------------------------
   std::ostringstream output_filename0_200;
-  output_filename0_200 << "RESLT/am2pc_0_200.dat";
+  output_filename0_200 << "RESLT/am2pc_" << Fixed_number_of_prediction_correction_steps << "_0_200.dat";
   std::ostringstream output_filename49800_50000;
-  output_filename49800_50000 << "RESLT/am2pc_49800_50000.dat";
+  output_filename49800_50000 << "RESLT/am2pc_" << Fixed_number_of_prediction_correction_steps << "_49800_50000.dat";
   
   // Create an instance of the problem
   CCChenProblem chen_problem(&odes,
@@ -470,7 +473,7 @@ int main(int argc, char *argv[])
   time_stepper_pt = 0;
   
  }
- 
+#if 0 
  {
   std::cout << "BDF 1 test" << std::endl;
   // -----------------------------------------------------------------
@@ -532,21 +535,21 @@ int main(int argc, char *argv[])
     
     // Check whether we have reached the final time
     if (chen_problem.time() >= final_time)
-     {
-      LOOP = false;
-     }
+      {
+       LOOP = false;
+      }
     
-    chen_problem.document_solution();
+     chen_problem.document_solution();
     
-   } // while(LOOP)
+    } // while(LOOP)
   
-  std::cout << "[FINISHING UP] ... " << std::endl;
+   std::cout << "[FINISHING UP] ... " << std::endl;
   
-  // Free memory
-  delete time_stepper_pt;
-  time_stepper_pt = 0;
+   // Free memory
+   delete time_stepper_pt;
+   time_stepper_pt = 0;
 
- }
+  }
  
  {
   std::cout << "Adams-Moulton 2 test" << std::endl;
@@ -622,9 +625,9 @@ int main(int argc, char *argv[])
   // Free memory
   delete time_stepper_pt;
   time_stepper_pt = 0;
-   
- }
   
+ } 
+ 
  {
   std::cout << "BDF 2 test" << std::endl;
   // -----------------------------------------------------------------
@@ -701,7 +704,8 @@ int main(int argc, char *argv[])
   time_stepper_pt = 0;
 
  }
-  
+#endif // #if 0
+ 
  return 0;
  
 }
