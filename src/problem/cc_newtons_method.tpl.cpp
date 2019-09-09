@@ -11,7 +11,8 @@ namespace chapchom
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::CCNewtonsMethod()
-  : Newton_solver_tolerance(DEFAULT_NEWTON_SOLVER_TOLERANCE),
+  : Newton_absolute_solver_tolerance(DEFAULT_NEWTON_ABSOLUTE_SOLVER_TOLERANCE),
+    Newton_relative_solver_tolerance(DEFAULT_NEWTON_RELATIVE_SOLVER_TOLERANCE),
     Maximum_newton_iterations(DEFAULT_MAXIMUM_NEWTON_ITERATIONS),
     Maximum_allowed_residual(DEFAULT_MAXIMUM_ALLOWED_RESIDUAL),
     Initial_guess_has_been_set(false),
@@ -25,7 +26,7 @@ namespace chapchom
     Output_messages(true)
  {
   // Performs default configuration
-  default_configuration(); 
+  set_default_configuration(); 
  }
  
  // ===================================================================
@@ -158,36 +159,6 @@ namespace chapchom
  }
  
  // ===================================================================
- // Set Newton's solver tolerance
- // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::
- set_newton_solver_tolerance(const Real new_newton_solver_tolerance)
- {
-  Newton_solver_tolerance = new_newton_solver_tolerance;
- }
-
- // ===================================================================
- // Set the Maximun number of Newton's iterations
- // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::
- set_maximum_newton_iterations(const unsigned new_maximum_newton_iterations)
- {
-  Maximum_newton_iterations = new_maximum_newton_iterations;
- }
- 
- // ===================================================================
- // Set the Maximum allowed residual
- // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::
- set_maximum_allowed_residual(const Real new_maximum_allowed_residual)
- {
-  Maximum_allowed_residual = new_maximum_allowed_residual;
- }
-
- // ===================================================================
  // Clean up, free allocated memory
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
@@ -215,7 +186,7 @@ namespace chapchom
  // Sets default configuration
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::default_configuration()
+ void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::set_default_configuration()
  {
   // Cleans up
   clean_up();
@@ -312,14 +283,14 @@ namespace chapchom
    }
   
   // Check for convergence
-  if (initial_residual_norm < Newton_solver_tolerance)
+  if (initial_residual_norm < Newton_absolute_solver_tolerance)
    {
     // Is output message enabled?
     if (Output_messages)
      {
       // Finish Newton iteration
-      chapchom_output << "The initial residual is smaller than the newton's residual tolerance\n"
-                      << "Newton_solver_tolerance: " << Newton_solver_tolerance << "\n"
+      chapchom_output << "The initial residual is smaller than the newton's absolute residual tolerance\n"
+                      << "Newton_absolute_solver_tolerance: " << Newton_absolute_solver_tolerance << "\n"
                       << "Initial residual: " << initial_residual_norm
                       << std::endl;
      }
@@ -335,7 +306,13 @@ namespace chapchom
   
   // Store the residual of the current iteration
   Real current_residual_norm = initial_residual_norm;
-
+  
+  // Compute the relative tolerance
+  Real relative_tolerance = initial_residual_norm * Newton_relative_solver_tolerance;
+  
+  // Compute the termination tolerance
+  Real termination_tolerance = relative_tolerance + Newton_absolute_solver_tolerance;
+  
   // ---------------------------------------------------------------
   // The solution vector
   // ---------------------------------------------------------------
@@ -349,11 +326,11 @@ namespace chapchom
   clock_t initial_clock_time_for_newtons_method = Timing::cpu_clock_time();
   
   // Newton iterations
-  while(n_newton_iterations < Maximum_newton_iterations && current_residual_norm >= Newton_solver_tolerance)
+  while(n_newton_iterations < Maximum_newton_iterations && current_residual_norm >= termination_tolerance)
    {
     // Increase the numbew of Newton iterations
     n_newton_iterations++;
-     
+    
     // Perform actions before Newton's step
     actions_before_newton_step();
      
@@ -445,15 +422,15 @@ namespace chapchom
     if (Output_messages)
      {
       chapchom_output << "Newton iteration " << n_newton_iterations
-                    << ": Residual norm " << current_residual_norm << std::endl;
+                      << ": Residual norm (termination tolerance) " << current_residual_norm << " (" << termination_tolerance << ")"<< std::endl;
      }
     
     if (current_residual_norm > Maximum_allowed_residual)
      {
       // Error message
       std::ostringstream error_message;
-      error_message << "Newton's method MAXIMUM ALLOWED RESIDUAL error\n"
-                    << "If you consider you require more iterations you can\n"
+      error_message << "Newton's method MAXIMUM ALLOWED RESIDUAL error ["<<Maximum_allowed_residual<<"]\n"
+                    << "If you consider you require a larger allowed residual you can\n"
                     << "set your own by calling the method\n\n"
                     << "set_maximum_allowed_residual()\n"
                     << std::endl;
@@ -466,7 +443,7 @@ namespace chapchom
      {
       // Error message
       std::ostringstream error_message;
-      error_message << "Newton's method MAXIMUM NUMBER OF ITERATIONS reached\n"
+      error_message << "Newton's method MAXIMUM NUMBER OF ITERATIONS reached ["<<Maximum_newton_iterations<<"]\n"
                     << "If you consider you require more iterations you can\n"
                     << "set your own by calling the method\n\n"
                     << "set_maximum_newton_interations()\n"
@@ -475,8 +452,8 @@ namespace chapchom
                              CHAPCHOM_CURRENT_FUNCTION,
                              CHAPCHOM_EXCEPTION_LOCATION);
      }
-      
-   } // while(n_newton_iterations < Maximum_newton_iterations && current_residual_norm >= Newton_solver_tolerance) 
+    
+   } // while(n_newton_iterations < Maximum_newton_iterations && current_residual_norm >= termination_tolerance)
   
   // Time Newton's method
   clock_t final_clock_time_for_newtons_method = Timing::cpu_clock_time();

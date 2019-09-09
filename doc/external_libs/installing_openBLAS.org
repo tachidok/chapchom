@@ -2,40 +2,59 @@
 #+TITLE: Installing OpenBLAS
 #+AUTHOR: Julio C.
 
-This guide is to allow [[https://github.com/tachidok/chapchom][chapchom]] to work with =OpenBLAS 0.2.20= in
-=Ubuntu 16.04 LTS 64 bits=. If you find any problem or something in
-this guide makes no sense please contact the author.
+This guide is to allow [[https://github.com/tachidok/chapchom][chapchom]] to work with =OpenBLAS 0.2.20= in:
+ - =Ubuntu 16.04 LTS 64 bits=,
+ - =Ubuntu 18.04.2 LTS 64 bits=.
+If you find any problem or something in this guide makes no sense
+please contact the author.
 
 Please also refer to the [[http://www.openblas.net/][original documentation]] in case you are having
 troubles with the installation.
 
 * Requirements
 Before installing this version of OpenBLAS please check that you have
-not any other version of OpenBLAS already installed in your system. If
+no any other version of OpenBLAS already installed in your system. If
 that is the case then proceed to uninstall it.
 
 Once you ensure that OpenBLAS is not already installed in your system
 then proceed to install the following packages.
 
-+ libblas-dev (tested with =libblas-common=, =libblas-dev
-  3.6.0-2ubuntu2=)
+ * In =Ubuntu 16.04 LTS 64 bits=
+  + libblas-dev (tested with =libblas-common=, =libblas-dev
+    3.6.0-2ubuntu2=)
+ * In =Ubuntu 18.04.2 LTS 64 bits=
+  + libblas-dev (tested with =libblas3 3.7.1-4ubuntu1=, =libblas-dev
+    3.7.1-4ubuntu1=)
 
 The following set of packages are optional, however we highly
 recommend you to install them to improve performance.
 
-+ liblapack-dev (tested with =liblapack-dev 3.6.0-2ubuntu2=)
-+ libarpack-dev (tested with =libarpack2=, =libarpack2-dev 3.3.0-1build2=)
-+ SuperLU (tested with =SuperLU_5.2.0=). For this one check the
-  [[file:installing_superlu.html][installation file]] in the doc folder.
+ * In =Ubuntu 16.04 LTS 64 bits=
+  + liblapack-dev (tested with =liblapack-dev 3.6.0-2ubuntu2=)
+  + libarpack-dev (tested with =libarpack2=, =libarpack2-dev
+    3.3.0-1build2=)
+  + SuperLU (tested with =SuperLU_5.2.0=). For this one check the
+    [[file:installing_superlu.html][installation file]] in the doc folder.
+ * In =Ubuntu 18.04.2 LTS 64 bits=
+  + liblapack (tested with =liblapack3 3.7.1-4ubuntu1=, =liblapack-dev
+    3.7.1-4ubuntu1=)
+  + libarpack (=libarpack2 3.5.0+real-2=, =libarpack2-dev
+    3.5.0+real-2=)
+  + SuperLU (tested with =SuperLU_5.2.0=). For this one check the
+    [[file:installing_superlu.html][installation file]] in the doc folder.
 
+Make sure to install the =dev= versions of the libraries.
+  
 * Installation
 
 - Extract the compressed file
   =/external_src/openBLAS/OpenBLAS-0.2.20.tar.gz= in a folder of your
-  preference. We recommend you to extract it out of the chapchom
-  project folder to avoid adding the files to the git repository. If
-  you do extract it inside the chapchom project folder please extreme
-  precautions when adding your files to the git repository.
+  preference.[fn:note:For example in =../OpenBLAS-0.2.20= from the
+  =chapchom= root directory]. We recommend you to extract it out of
+  the =chapchom= project folder to avoid adding the files to the git
+  repository. If you do extract it inside the chapchom project folder
+  please extreme precautions when adding your files to the git
+  repository.
   
 - Go to the folder where you extracted the files and type
 
@@ -47,12 +66,14 @@ You can try =make -j # of processors= instead of =make= to use more
 processors at compilation time.
 
 - Once compilation is finished you are able to install it using the
-  following command (we recommned you to create a folder where to
-  install the library, ex. =/lib/=)
+  following command (we recommend you to create a folder where to
+  install the library, ex. =/installation/=)
 
 #+BEGIN_SRC bash
-mkdir lib
-make PREFIX=/path/to/your/installation install
+mkdir installation
+make PREFIX=./installation install
 #+END_SRC
 
-- That is it!!!
+or you can use =make PREFIX=/path/to/your/installation install=.
+
+- That is it, enjoy!!!

@@ -2,9 +2,11 @@
 #+TITLE: Installing VTK
 #+AUTHOR: Julio C.
 
-This guide is to allow [[https://github.com/tachidok/chapchom][chapchom]] to work with =VTK 8.1.1= in =Ubuntu
-16.04 LTS 64 bits=. If you find any problem or something in this guide
-makes no sense please contact the author.
+This guide is to allow [[https://github.com/tachidok/chapchom][chapchom]] to work with =VTK 8.1.1= in:
+ - =Ubuntu 16.04 LTS 64 bits=,
+ - =Ubuntu 18.04.2 LTS 64 bits=.
+If you find any problem or something in this guide makes no sense
+please contact the author.
 
 Please also refer to the [[https://www.vtk.org/vtk-users-guide/][VTK-user guide]] in case you are having
 troubles with the installation.
@@ -17,9 +19,12 @@ the case then proceed to uninstall it.
 Once you ensure that VTK is not already installed in your system then
 proceed to check that you have the following packages installed in
 your system.
-- cmake (tested with =cmake 3.5.1-1ubuntu3=)
-- freeglut3 (tested with version =2.8.1-2=)
-- freeglut3-dev (tested with version =2.8.1-2=)
+ * In =Ubuntu 16.04 LTS 64 bits=
+  - cmake (tested with =cmake 3.5.1-1ubuntu3=)
+  - freeglut3 (=freeglut3 2.8.1-2=, =freeglut3-dev 2.8.1-2=)
+ * In =Ubuntu 18.04.2 LTS 64 bits=
+  - =cmake 3.10.2=
+  - freeglut3 (=freeglut3 2.8.1-3=, =freeglut3-dev 2.8.1-3=)
 
 Based on the official documentation this installation process may take
 about one to four hours depending on the speed of the machine. Most of
@@ -27,8 +32,11 @@ the time is spent compiling the source code and only about 10 to 30
 minutes of human interaction are required. Also, make sure to have at
 least 300Mb free in the system for installation.
 
-You will need Paraview software to visualise results, we tested the
-output produced by VTK 8.1.1 with ParaView-5.5.2-Qt5-MPI-Linux-64bit.
+You will need =Paraview= software to visualise results, we tested the
+output produced by =VTK 8.1.1= with
+=ParaView-5.5.2-Qt5-MPI-Linux-64bit= and
+=Paraview-5.7.0-RC1-MPI-Linux-64bit=.[fn:name:Download it from the
+official Paraview webpage.]
 
 * Installation
 
@@ -45,21 +53,26 @@ output produced by VTK 8.1.1 with ParaView-5.5.2-Qt5-MPI-Linux-64bit.
 #+BEGIN_SRC bash
 mkdir VTK-bin
 cd VTK-bin
-cmake-gui ../VTK-8.1.1 -DCMAKE_INSTALL_PREFIX=./lib
+cmake-gui ../../VTK-8.1.1 -DCMAKE_INSTALL_PREFIX=./installation
 #+END_SRC
 
 the last line indicates where to perform the installation, I use to
-install it in the =lib= directory of the VTK-bin folder, that is why
-that value. However, if you have root privileges then you may not need
-to specify a value for the =CMAKE_INSTALL_PREFIX= variable. Click on
-the =configure= button, then in the =generate= button.
+install it in the =installation= directory of the VTK-bin folder, that
+is why that value. However, if you have root privileges then you may
+not need to specify a value for the =CMAKE_INSTALL_PREFIX=
+variable. Click on the =configure= button, then in the =generate=
+button.
 
 NOTE: Make sure that the source code and build binary directories are
 correctly set.
 
+- Source =./VTK-8.1.1=
+- Bin =./VTK-8.1.1/VTK-bin=
+
 NOTE2: It seems that when working with =MPI= one needs to enable MPI
 modules; look for the variable =VTK_Group_MPI= when using the
-=cmake-gui= option
+=cmake-gui= option.
+ - If you want =MPI= support you need to install it first (=openMPI=).
 
 NOTE3: Also check for the building type =DEBUG= or =RELEASE=.
 

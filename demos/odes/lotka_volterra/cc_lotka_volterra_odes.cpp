@@ -25,23 +25,25 @@ namespace chapchom
  { }
  
  // ===================================================================
- /// Evaluates the system of odes at time "t".
+ // Evaluates the system of odes at time "t", using the history values
+ // of u at index k
  // ===================================================================
- void CCLotkaVolterraODEs::evaluate(const Real t,
-                                    CCData<Real> &u,
-                                    CCData<Real> &dudt)
+ void CCLotkaVolterraODEs::evaluate_derivatives(const Real t,
+                                                CCData<Real> &u,
+                                                CCData<Real> &dudt,
+                                                const unsigned k)
  {
   // -----------------
-  // u(0) Number of prey
-  // u(1) Number of predators
+  // u(0,k) Number of prey at history index k
+  // u(1,k) Number of predators at history index k
   // -----------------
   // dudt(0) Rate of change or prey with respect to time
   // dudt(1) Rate of change of predators with respecto to time
   
   /// \frac{du_{1}}{dt} = a*u_{1} - b*u_{1}*u_{2}
   /// \frac{du_{2}}{dt} = -c*u_{2} + d*u_{1}*u_{2}
-  dudt(0) = a*u(0) - b*u(0)*u(1);
-  dudt(1) = -c*u(1) + d*u(0)*u(1);
+  dudt(0) = a*u(0,k) - b*u(0,k)*u(1,k);
+  dudt(1) = -c*u(1,k) + d*u(0,k)*u(1,k);
   
  }
  

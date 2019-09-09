@@ -45,6 +45,11 @@ namespace chapchom
    {
     return new CCRK4Method();
    }
+  // Backward-Euler as Predictor-Corrector method
+  else if (time_stepper_name.compare("bepc")==0)
+   {
+    return new CCAdamsMoulton2PCMethod();
+   }
   // Adams-Moulton 2 as Predictor-Corrector method
   else if (time_stepper_name.compare("am2pc")==0)
    {
@@ -60,6 +65,21 @@ namespace chapchom
    {
     return new CCAdamsMoulton2Method<MAT_TYPE,VEC_TYPE>();
    }
+  // BDF 2 method
+  else if (time_stepper_name.compare("bdf2")==0)
+   {
+    return new CCBDF2Method<MAT_TYPE,VEC_TYPE>();
+   }
+  // Runge-Kutta 4(5) Fehlberg method
+  else if (time_stepper_name.compare("rk45f")==0)
+   {
+    return new CCAdaptiveRK45FMethod();
+   }
+  // Runge-Kutta 4(5) Dormand-Prince method
+  else if (time_stepper_name.compare("rk45dp")==0)
+   {
+    return new CCAdaptiveRK45DPMethod();
+   }
   else
    {
     std::ostringstream error_message;
@@ -72,6 +92,9 @@ namespace chapchom
                   << "- Adams-Moulton 2 - Predictor-Corrector (am2pc)\n"
                   << "- Backward Euler - Fully Implicit (bdf1)\n"
                   << "- Adams-Moulton 2 - Fully Implicit (am2)\n"
+                  << "- Backward Differentiation Formula 2 - Fully Implicit (bdf2)\n"
+                  << "- Adaptive Runge-Kutta 4(5) Fehlberg (rk45f)\n"
+                  << "- Adaptive Runge-Kutta 4(5) Dormand-Prince (rk45dp)\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,

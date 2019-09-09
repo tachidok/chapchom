@@ -62,7 +62,7 @@ namespace chapchom
   void allocate_memory(const unsigned long m,
                        const unsigned long n); 
   
-  // Allocates memory to store entries of the vector
+  // Allocates memory to store entries of the matrix
   void allocate_memory();
   
   // Fills the vector with zeroes

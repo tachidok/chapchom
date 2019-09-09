@@ -13,7 +13,7 @@ SET(LIB_demo_basic_interpolation general_lib problem_lib)
 # ... and link againts them  
 TARGET_LINK_LIBRARIES(demo_basic_interpolation ${LIB_demo_basic_interpolation})
 
-# Check if the output/bin directory exists
+# Check if the bin directory exists
 IF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bin)
   # Then create the directory
   FILE(MAKE_DIRECTORY "${bin}")
@@ -24,6 +24,13 @@ set_target_properties(demo_basic_interpolation
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin"
 )
+
+# Could not make this work
+# Check if the RESLT directory exists
+#IF(NOT EXISTS ${CMAKE_CURRENT_SORUCE_DIR}/RESLT)
+# # Then create the directory
+#  FILE(MAKE_DIRECTORY "${RESLT}")
+#ENDIF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/RESLT)
 
 # ===========================================
 # Tests section

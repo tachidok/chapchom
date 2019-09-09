@@ -7,19 +7,11 @@ namespace chapchom
 {
 
  // ===================================================================
- // Empty constructor
+ // Constructor
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::CCNewtonsMethodForBackwardEuler()
-  : CCNewtonsMethod<MAT_TYPE, VEC_TYPE>(),
-  ODEs_pt(NULL),
-  ODEs_has_been_set(false),
-  U_pt(NULL),
-  U_has_been_set(false),
-  U_new_pt(NULL),
-  U_new_has_been_set(false),
-  Current_time_has_been_set(false),
-  Time_step_has_been_set(false)
+  : ACNewtonsMethodForImplicitTimeStepper<MAT_TYPE, VEC_TYPE>()
  {
   // Set the Jacobian and residual strategy for Newton's method (used
   // for parent class)
@@ -41,106 +33,18 @@ namespace chapchom
  template<class MAT_TYPE, class VEC_TYPE>
  void CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::actions_before_initial_convergence_check()
  {
-  Jacobian_and_residual_for_backward_euler.set_ODEs(ODEs_pt);
-  Jacobian_and_residual_for_backward_euler.set_U(U_pt);
-  Jacobian_and_residual_for_backward_euler.set_U_new(U_new_pt);
-  Jacobian_and_residual_for_backward_euler.set_current_time(Current_time);
-  Jacobian_and_residual_for_backward_euler.set_time_step(Time_step);
- }
- 
- // ===================================================================
- // Performs actions before Newton's method step
- // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::actions_before_newton_step()
- {
-  
- }
- 
- // ===================================================================
- // Performs actions after Newton's method step
- // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::actions_after_newton_step()
- {
-  // Update U next
-  const unsigned long n_data = U_new_pt->n_values();
-  for (unsigned long i = 0; i < n_data; i++)
-   {
-    U_new_pt->value(i)=this->x_pt()->value(i);
-   }
-  
- }
- 
- // ===================================================================
- // Set the ODEs
- // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_ODEs(ACODEs *odes_pt)
- {
-  // Set the odes
-  ODEs_pt = odes_pt;
-  
-  // Indicate that the ODEs have been set
-  ODEs_has_been_set = true;
-  
- }
- 
- // ===================================================================
- // Set the U vector/matrix with the values of the function at the
- // current time
- // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_U(CCData<Real> *u_pt)
- {
-  // Set the storage of the data
-  U_pt = u_pt;
-  
-  // Indicate that the U vector has been set
-  U_has_been_set = true;
-  
- }
-
- // ===================================================================
- // Set the U new vector/matrix storage for the new values of the
- // function after Newton's iteration
- // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_U_new(CCData<Real> *u_new_pt)
- {
-  // Set the storage of the data
-  U_new_pt = u_new_pt;
-  
-  // Indicate that the U new vector has been set
-  U_new_has_been_set = true;
-  
- }
- 
- // ===================================================================
- // Sets the current time
- // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_current_time(const Real t)
- {
-  // Set the constant time
-  Current_time = t;
-  
-  // Indicate that the current time has been set
-  Current_time_has_been_set = true; 
- }
-  
- // ===================================================================
- // Sets the time step
- // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::set_time_step(const Real h)
- {
-  // Set the time step 
-  Time_step = h;
-
-  // Indicate that the time step has been set
-  Time_step_has_been_set = true;
-  
+  // Get the odes
+  ACODEs *odes_pt = this->odes_pt();
+  // Get the time step
+  const Real h = this->time_step();
+  // Get the current time
+  const Real t = this->current_time();
+  // Get the u values
+  CCData<Real> *u_pt = this->u_pt();
+  // Get the index of the history values at time 't+h'
+  const unsigned k = this->history_index();
+  // Set the data for the computation of the jacobian and the residual
+  Jacobian_and_residual_for_backward_euler.set_data_for_jacobian_and_residual(odes_pt, h, t, u_pt, k);
  }
  
 }

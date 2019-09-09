@@ -31,8 +31,9 @@ namespace chapchom
   /// Empty destructor
   virtual ~CCLotkaVolterraODEs();
   
-  /// Evaluates the system of odes at time "t".
-  void evaluate(const Real t, CCData<Real> &u, CCData<Real> &dudt);
+  /// Evaluates the system of odes at time 't', using the history
+  /// values of u at index k
+  void evaluate_derivatives(const Real t, CCData<Real> &u, CCData<Real> &dudt, const unsigned k = 0);
   
  protected:
   

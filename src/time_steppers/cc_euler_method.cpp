@@ -11,7 +11,7 @@ namespace chapchom
  {
   
   // Sets the number of history values
-  N_history_values = 1;
+  N_history_values = 2;
   
  }
  
@@ -25,14 +25,14 @@ namespace chapchom
  
  // ===================================================================
  // Applies Eulers method to the given odes from the current time "t"
- // to the time "t+h"
+ // to the time "t+h". The values of u at time t+h will be stored at
+ // index k (default k = 0).
  // ===================================================================
  void CCEulerMethod::time_step(ACODEs &odes, const Real h,
                                const Real t,
-                               CCData<Real> &u)
+                               CCData<Real> &u,
+                               const unsigned k)
  {
-  // Get the number of odes
-  const unsigned n_odes = odes.n_odes();
   // Check if the ode has the correct number of history values to
   // apply Euler's method
   const unsigned n_history_values = u.n_history_values();
@@ -51,20 +51,22 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Temporary vector to store the evaluation of the odes
+  // Get the number of odes
+  const unsigned n_odes = odes.n_odes();
+  
+  // Temporary vector to store the evaluation of the odes.
   CCData<Real> dudt(n_odes);
   
-  // Evaluate the ODE at time "t" using the current values of "u"
-  odes.evaluate(t, u, dudt);
+  // Evaluate the ODE at time "t" using the values of "u" at index k
+  odes.evaluate_derivatives(t, u, dudt, k);
   
-  // Index for history values
-  const unsigned k = 0;
+  // Shift values to the right to provide storage for the new values
+  u.shift_history_values();
   
-  // Once the derivatives have been obtained do one step of Euler's
-  // method
+  // Perform one step of Euler's method
   for (unsigned i = 0; i < n_odes; i++)
    {
-    u(i,k+1) = u(i,k) + (h * dudt(i));
+    u(i,k) = u(i,k+1) + (h * dudt(i));
    }
   
  }

@@ -3,22 +3,17 @@
 namespace chapchom
 {
  // ===================================================================
- // Constructor
+ // Empty constructor
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::CCJacobianByFDAndResidualFromODEs()
-  : ACJacobianAndResidual<MAT_TYPE, VEC_TYPE>(),
-  ODEs_pt(NULL),
-  ODEs_has_been_set(false),
-  U_pt(NULL),
-  U_has_been_set(false),
-  Current_time_has_been_set(false)
+  : ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE>()
  {
   
  }
  
  // ===================================================================
- // Destructor
+ // Empty destructor
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::~CCJacobianByFDAndResidualFromODEs()
@@ -33,42 +28,22 @@ namespace chapchom
  template<class MAT_TYPE, class VEC_TYPE>
  void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::compute_jacobian()
  {
-  // Check whether the ODEs have been set
-  if (!ODEs_has_been_set || ODEs_pt == NULL)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "You have not established the ODEs used to compute\n"
-                  << "the Jacobian matrix.\n"
-                  << "You need to call the method set_ODEs()\n"
-                  << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
+  // Get a pointer to the ODEs
+  ACODEs *odes_pt = this->odes_pt();
   
-     // Check whether the U values have been set
-  if (!U_has_been_set || U_pt == NULL)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "You have not established the U function values\n"
-                  << "used to compute the Jacobian matrix.\n"
-                  << "You need to call the method set_U()\n"
-                  << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
+  // Get a pointer to the u values
+  CCData<Real> *u_pt = this->u_pt();
   
-  // Check whether the constant time has been set
-  if (!Current_time_has_been_set)
+  // Check whether the data for the computation of the jacobian has
+  // been set
+  if (!this->data_for_jacobian_and_residual_has_been_set() || odes_pt == NULL || u_pt == NULL)
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "You have not established the current time\n"
-                  << "used to compute the Jacobian matrix.\n"
-                  << "You need to call the method set_current_time()\n"
+    error_message << "You have not established the data required for\n"
+                  << "the computation of the Jacobian\n"
+                  << "You need to call the method\n"
+                  << "set_data_for_jacobian_and_residual()\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
@@ -76,33 +51,45 @@ namespace chapchom
    }
   
   // Get the number of ODEs
-  const unsigned n_dof = ODEs_pt->n_odes();
+  const unsigned n_dof = odes_pt->n_odes();
   
   // Allocate memory for the Jacobian (delete previous data)
   this->Jacobian.allocate_memory(n_dof, n_dof);
   
-  // Store the evaluation of the ODEs with the current U's values
+  // Get the current time
+  const Real t = this->current_time();
+  
+  // Get the time step
+  const Real h = this->time_step();
+  
+  // Get the index of history values of the u vector at time 't+h'
+  // that should be used to compute the values of the Jacobian
+  const unsigned k = this->history_index();
+  
+  // Store the evaluation of the odes
   CCData<Real> dudt(n_dof);
   
-  // Evaluate the ODEs
-  ODEs_pt->evaluate(Current_time, (*U_pt), dudt);
+  // Evaluate the ODEs using the history values of u at time t+h'
+  // indicated in the index k
+  odes_pt->evaluate_derivatives(t+h, (*u_pt), dudt, k);
   
   // Compute the approximated Jacobian
   for (unsigned i = 0; i < n_dof; i++)
    {
     // Create a copy of the U values and add an slight perturbation in
-    // the current DOF (indicated by the index i) and evaluate all the
+    // the i-th DOF and histroy value k, then evaluate all the
     // equations (this will helps us to approximate the column i of
     // the Jacobian)
-    CCData<Real> U_plus((*U_pt));
+    CCData<Real> u_plus((*u_pt));
     const Real delta_u = 1.0e-8;
     // ... the perturbation
-    U_plus(i)+=delta_u;
+    u_plus(i,k)+=delta_u;
     
     // Evaluate the ODEs with the slighted perturbed data
     CCData<Real> dudt_plus(n_dof);
-    // Evaluate the ODEs
-    ODEs_pt->evaluate(Current_time, U_plus, dudt_plus);
+    // Evaluate the ODEs using the history values indicated in the
+    // index K
+    odes_pt->evaluate_derivatives(t+h, u_plus, dudt_plus, k);
     // Compute the values for the Jacobian matrix, add entries for the
     // current i-column only (all functions with an slight
     // perturbation in the i-th dof)
@@ -124,48 +111,6 @@ namespace chapchom
  void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::compute_residual()
  {
   
- }
- 
- // ===================================================================
- // Set the ODEs
- // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::set_ODEs(ACODEs *odes_pt)
- {
-  // Set the odes
-  ODEs_pt = odes_pt;
-  
-  // Indicate that the ODEs have been set
-  ODEs_has_been_set = true;
-  
- }
- 
- // ===================================================================
- // Set the U vector/matrix with the values of the function at the
- // current time
- // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::set_U(CCData<Real> *u_pt)
- {
-  // Set the storage of the data
-  U_pt = u_pt;
-  
-  // Indicate that the U vector has been set
-  U_has_been_set = true;
-  
- }
- 
- // ===================================================================
- // Sets the current time
- // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::set_current_time(const Real t)
- {  
-  // Set the constant time
-  Current_time = t;
-  
-  // Indicate that the current time has been set
-  Current_time_has_been_set = true; 
- }
+ } 
  
 }

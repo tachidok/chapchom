@@ -1,0 +1,8 @@
+CHAPCHOM_RANGE_CHECK=TRUE
+CHAPCHOM_USES_DOUBLE_PRECISION=TRUE
+CHAPCHOM_USES_ARMADILLO=TRUE
+CHAPCHOM_AUTO_FIND_ARMADILLO_PATHS=TRUE
+ARMADILLO_AUTO_FIND_FOLDER=/home/tachidok/local/working/research/armadillo-8.300.3
+ARMADILLO_INCLUDE_DIRS=/home/tachidok/local/working/research/armadillo-8.300.3/installation/include
+ARMADILLO_LIBRARIES=/home/tachidok/local/working/research/armadillo-8.300.3/installation/lib/libarmadillo.so.8.300.3
+CHAPCHOM_USES_VTK=FALSE

@@ -80,6 +80,28 @@ namespace chapchom
   
   inline unsigned n_history_values() const {return N_history_values;}
   
+  // Output the data stored at the node (output horizontally without
+  // position by default, otherwise output vertically with position)
+  virtual void output(bool output_position = false,
+                      const unsigned t = 0) const;
+  // Output the data stored at the node to a file (output horizontally
+  // without position by default, otherwise output vertically with
+  // position)
+  virtual void output(std::ofstream &outfile,
+                      bool output_position = false,
+                      const unsigned t = 0) const;
+  
+  // Output the node
+  inline void print(bool output_position = false,
+                    const unsigned t = 0) const
+  {output(output_position, t);}
+  
+  // Output to file
+  inline void print(std::ofstream &outfile, 
+                    bool output_position = false,
+                    const unsigned t = 0) const
+  {output(outfile, output_position, t);}
+  
  protected:
   
   // The spatial dimension of the node

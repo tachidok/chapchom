@@ -26,13 +26,13 @@ namespace chapchom
   
   // Constructor. Allocates memory for the values. Initialise them to
   // zero
-  CCData(const unsigned n_values, const unsigned n_history_values=0);
+  CCData(const unsigned n_values, const unsigned n_history_values=1);
   
   // Constructor. Allocates memory for values and copy them from the
   // input vector
   CCData(T *values_pt,
          const unsigned n_values,
-         const unsigned n_history_values=0);
+         const unsigned n_history_values=1);
   
   // Copy constructor
   CCData(const CCData<T> &copy);
@@ -70,7 +70,9 @@ namespace chapchom
   // Free allocated memory
   void free_memory_of_values();
   
-  // Shift history values (mostly used for time integration)
+  // Shift history values (mostly used for time integration). Move the
+  // values from index 0 the indicated number of positions to the
+  // right
   void shift_history_values(const unsigned n_shift_positions = 1);
   
   // Get a pointer to the t-th history values
@@ -127,7 +129,7 @@ namespace chapchom
   inline unsigned n_values() const {return N_values;}
   
   // Gets the number of history values
-  inline unsigned n_history_values() const {return N_history_values-1;}
+  inline unsigned n_history_values() const {return N_history_values;}
   
   // Checks whether values have been set, or allocated
   inline bool is_empty() const {return (Is_values_empty && Is_status_empty);}

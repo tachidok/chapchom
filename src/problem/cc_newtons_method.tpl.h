@@ -29,9 +29,11 @@ namespace chapchom
 {
 
 #ifdef TYPEDEF_REAL_IS_DOUBLE
-#define DEFAULT_NEWTON_SOLVER_TOLERANCE 1.0e-8
+#define DEFAULT_NEWTON_ABSOLUTE_SOLVER_TOLERANCE 1.0e-8
+#define DEFAULT_NEWTON_RELATIVE_SOLVER_TOLERANCE 1.0e-8
 #else
-#define DEFAULT_NEWTON_SOLVER_TOLERANCE 1.0e-6
+#define DEFAULT_NEWTON_ABSOLUTE_SOLVER_TOLERANCE 1.0e-6
+#define DEFAULT_NEWTON_RELATIVE_SOLVER_TOLERANCE 1.0e-6
 #endif // #ifdef TYPEDEF_REAL_IS_DOUBLE
 #define DEFAULT_MAXIMUM_NEWTON_ITERATIONS 10
 #define DEFAULT_MAXIMUM_ALLOWED_RESIDUAL 10.0
@@ -69,15 +71,38 @@ namespace chapchom
    // Gets access to the last stored solution vector
    const VEC_TYPE *x_pt();
    
-   // Set Newton's solver tolerance
-   void set_newton_solver_tolerance(const Real new_newton_solver_tolerance);
+   // Set default Newton's relative solver tolerance
+   inline void set_default_newton_absolute_solver_tolerance()
+   {Newton_absolute_solver_tolerance = DEFAULT_NEWTON_ABSOLUTE_SOLVER_TOLERANCE;}
+   
+   // Set default Newton's relative solver tolerance
+   inline void set_default_newton_relative_solver_tolerance()
+   {Newton_relative_solver_tolerance = DEFAULT_NEWTON_RELATIVE_SOLVER_TOLERANCE;}
+   
+   // Enable relative newton solver tolerance
+   inline void enable_newton_relative_solver_tolerance()
+   {set_default_newton_relative_solver_tolerance();}
+   
+   // Disable relative newton solver tolerance
+   inline void disable_newton_relative_solver_tolerance()
+   {Newton_relative_solver_tolerance = 0.0;}
+   
+   // Set Newton's absolute solver tolerance
+   inline void set_newton_absolute_solver_tolerance(const Real new_newton_absolute_solver_tolerance)
+   {Newton_absolute_solver_tolerance = new_newton_absolute_solver_tolerance;}
+   
+   // Set Newton's relative solver tolerance
+   inline void set_newton_relative_solver_tolerance(const Real new_newton_relative_solver_tolerance)
+   {Newton_relative_solver_tolerance = new_newton_relative_solver_tolerance;}
    
    // Set the Maximun number of Newton's iterations
-   void set_maximum_newton_iterations(const unsigned new_maximum_newton_iterations);
+   inline void set_maximum_newton_iterations(const unsigned new_maximum_newton_iterations)
+   {Maximum_newton_iterations = new_maximum_newton_iterations;}
    
    // Set the Maximum allowed residual
-   void set_maximum_allowed_residual(const Real new_maximum_allowed_residual);
-
+   inline void set_maximum_allowed_residual(const Real new_maximum_allowed_residual)
+   {Maximum_allowed_residual = new_maximum_allowed_residual;}
+   
    // Enables output messages for Newton's method
    inline void enable_output_messages() {Output_messages=true;}
    
@@ -88,7 +113,7 @@ namespace chapchom
    void clean_up();
    
    // Sets default configuration
-   void default_configuration();
+   void set_default_configuration();
    
    // Applies Newton's method to solve the problem given by the
    // Jacobian and the residual computed by the estalished strategy.
@@ -117,8 +142,11 @@ namespace chapchom
    // Newton's method step
    virtual void actions_after_newton_step() { }
    
-   // Newton's solver tolerance
-   Real Newton_solver_tolerance;
+   // Newton's absolute solver tolerance
+   Real Newton_absolute_solver_tolerance;
+   
+   // Newton's relative solver tolerance
+   Real Newton_relative_solver_tolerance;
    
    // Maximun number of Newton's iterations
    unsigned Maximum_newton_iterations;

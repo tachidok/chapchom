@@ -33,7 +33,7 @@ namespace chapchom
  // ===================================================================
  // Problem unsteady solve
  // ===================================================================
- void ACIVPForODEs::unsteady_solve(bool shift_history_values)
+ void ACIVPForODEs::unsteady_solve()
  {
   // Call actions before time stepping
   actions_before_time_stepping();
@@ -43,12 +43,6 @@ namespace chapchom
   
   // Call actions after time stepping
   actions_after_time_stepping();
-
-  if (shift_history_values)
-   {
-    // Update data (shift history values, one position only)
-    U_pt->shift_history_values();
-   }
   
  }
  

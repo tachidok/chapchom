@@ -3,9 +3,12 @@
 #+AUTHOR: Julio C.
 
 This guide is to allow [[https://github.com/tachidok/chapchom][chapchom]] to work with external libraries such
-as =Armadillo=, =SuperLU= and =VTK (for visualisation)= in =Ubuntu
-16.04 LTS 64 bits=. If you find any problem or something in this guide
-makes no sense please contact the author.
+as =Armadillo=, =SuperLU= and =VTK (for visualisation)= in the
+following =OS=:
+ - =Ubuntu 16.04 LTS 64 bits=,
+ - =Ubuntu 18.04.2 LTS 64 bits=.
+If you find any problem or something in this guide makes no sense
+please contact the author.
 
 * Requirements
 Before installing any of the external libraries in your system ensure
@@ -14,12 +17,21 @@ produce crashes between versions.
 
 Once you ensure that non other versions of the external packages are
 already installed in your system then proceed to check that you have
-the following packages installed in your system.
+the following packages installed in your system.[fn:note:You may need
+to install =synaptic= package manager to install them.]
 
-- cmake (tested with =cmake 3.5.1-1ubuntu3=)
-- +libblas-dev (tested with =libblas-common=, =libblas-dev 3.6.0-2ubuntu2=)+
-- liblapack-dev (tested with =liblapack-dev 3.6.0-2ubuntu2=)
-- libarpack-dev (tested with =libarpack2=, =libarpack2-dev 3.3.0-1build2=)
+ * =Ubuntu 16.04 LTS 64 bits=
+   - cmake (=cmake 3.5.1-1ubuntu3=)
+   - liblapack (=liblapack-dev 3.6.0-2ubuntu2=)
+   - libarpack (=libarpack2=, =libarpack2-dev 3.3.0-1build2=)
+ * =Ubuntu 18.04.2 LTS 64 bits=
+   - =cmake 3.10.2=
+   - liblapack (=liblapack3 3.7.1-4ubuntu1=, =liblapack-dev
+     3.7.1-4ubuntu1=)
+   - libarpack (=libarpack2 3.5.0+real-2=, =libarpack2-dev
+     3.5.0+real-2=)
+
+ * +libblas-dev (tested with =libblas-common=, =libblas-dev 3.6.0-2ubuntu2=)+
 
 * Installation
 

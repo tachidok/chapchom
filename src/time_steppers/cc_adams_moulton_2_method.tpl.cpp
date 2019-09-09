@@ -11,12 +11,13 @@ namespace chapchom
   : ACTimeStepper()
  {  
   // Sets the number of history values
-  N_history_values = 1;
+  N_history_values = 2;
   
   //Newtons_method.set_newton_solver_tolerance(1.0e-3);
   
-  // Disable output for Newton's method
+  // Disable output for Newton's method and relative tolerance
   Newtons_method.disable_output_messages();
+  Newtons_method.disable_newton_relative_solver_tolerance();
  }
  
  // ===================================================================
@@ -30,15 +31,15 @@ namespace chapchom
  
  // ===================================================================
  // Applies Adams-Moulton 2 method to the given odes from the current
- // time "t" to the time "t+h"
+ // time "t" to the time "t+h". The values of u at time t+h will be
+ // stored at index k (default k = 0).
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  void CCAdamsMoulton2Method<MAT_TYPE,VEC_TYPE>::time_step(ACODEs &odes, const Real h,
                                                           const Real t,
-                                                          CCData<Real> &u)
+                                                          CCData<Real> &u,
+                                                          const unsigned k)
  {
-  // Get the number of odes
-  const unsigned n_odes = odes.n_odes();
   // Check if the ode has the correct number of history values to
   // apply Euler's method
   const unsigned n_history_values = u.n_history_values();
@@ -59,36 +60,35 @@ namespace chapchom
   
   // -----------------------------------------------------------------
   // Compute initial guess
-  // -----------------------------------------------------------------
-  // Temporary storage for Newton's method
-  CCData<Real> u_guess(u);
+  // -----------------------------------------------------------------  
+  // Compute the initial guess for Newton's method using the values of
+  // u at time 't', the values of u at time 't+h' are automatically
+  // shifted at index k 
+  Time_stepper_initial_guess.time_step(odes, h, t, u, k);
   
-  // Compute the initial guess for Newton's method
-  Time_stepper_initial_guess.time_step(odes, h, t, u_guess); 
+  // ---------------------------------------------------
+  // Transform the initial guess into a vector
+  // ---------------------------------------------------
+  // Get the number of odes
+  const unsigned n_odes = odes.n_odes();
+
+  // Create a vector with the initial guess from the first row (0)
+  // since the values have been shift
+  VEC_TYPE u_initial_guess(u.history_values_row_pt(0), n_odes);
+
+  // It is not required to shift the values to the right to provide
+  // storage for the new values since they were shift when computing
+  // the initial guess
   
-  // Create a vector with the initial guess from the second row (1)
-  // since values have not been shifted
-  VEC_TYPE u_0(u_guess.history_values_row_pt(1), n_odes);
+  // Pass the required data to Newton's method. The solution is stored
+  // in u at index k, therefore the values of u at time 't' are stored
+  // at index k+1
+  Newtons_method.set_data_for_jacobian_and_residual(&odes, h, t, &u, k);
   
-  // Pass the data required for Newton's method
-  Newtons_method.set_ODEs(&odes);
-  Newtons_method.set_U(&u);
-  Newtons_method.set_U_new(&u_guess);
-  Newtons_method.set_time_step(h);
-  Newtons_method.set_current_time(t);
-  
-  // Solver using Newton's method
-  Newtons_method.solve(u_0);
-  
-  // Index for history values
-  const unsigned k = 0;
-  
-  // Copy solution into output vector
-  for (unsigned i = 0; i < n_odes; i++)
-   {
-    u(i,k+1) = u_0(i);
-   }
-  
+  // Solve using Newton's method, the solution is automatically copied
+  // back at the u data structure
+  Newtons_method.solve(u_initial_guess);
+    
  }
 
 }
