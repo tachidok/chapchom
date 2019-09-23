@@ -22,7 +22,7 @@ set terminal wxt 0 size 640,480 enhanced font 'Verdana,10' persist
 #set terminal pngcairo size 640,480 enhanced font 'Verdana,10'
 #set output 'Current.png'
 
-set title "My 3D plot"
+set title "My surface"
 #set xrange [0:500]
 #set yrange [0:40]
 set xlabel 'x_0'
@@ -34,5 +34,23 @@ set hidden3d
 # what for it is used)
 set dgrid3d 50,50 qnorm 2
 # Plot surface (and use lines to connect it)
-splot 'output.dat' with lines
+splot 'RESLT/output.dat' with lines
+
+set terminal wxt 1 size 640,480 enhanced font 'Verdana,10' persist
+#set terminal pngcairo size 640,480 enhanced font 'Verdana,10'
+#set output 'Current.png'
+
+set title "Error"
+#set xrange [0:500]
+#set yrange [0:40]
+set xlabel 'x_0'
+set ylabel 'x_1'
+set tics scale 0.75
+# Only show one side of the surface (as if not using transparencies)
+set hidden3d
+# Set the size of the grid for interpolation and a function (not sure
+# what for it is used)
+set dgrid3d 50,50 qnorm 2
+# Plot error surface (and use lines to connect it)
+splot 'RESLT/error.dat' with lines
 
