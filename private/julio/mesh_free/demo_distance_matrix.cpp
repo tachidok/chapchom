@@ -25,6 +25,8 @@
 
 using namespace chapchom;
 
+// This fucntion has it maximum value at the center, depending on the
+// dimension s. At the boundaries it is zero.
 template<class VEC_TYPE>
 const Real test_function(VEC_TYPE &x, const unsigned s)
 {
@@ -83,66 +85,6 @@ void compute_distance_matrix(MAT_TYPE &data_sites, MAT_TYPE &centers,
  
 }
 
-#if 0
-
-const Real test_function(CCVector<Real> &x, const unsigned s)
-{
- Real prod=1.0;
- for (unsigned i = 0; i < s; i++)
-  {
-   prod*=x(i)*(1.0-x(i));
-  }
- return pow(4, s)*prod;
-}
-
-template<class T>
-void compute_distance_matrix(CCMatrix<T> &data_sites, CCMatrix<T> &centers,
-                             CCMatrix<T> &distance_matrix)
-{
- // Get the number of "vector points" on "data_sites"
- // Get the number of "vector points" on "centers"
- const unsigned n_vector_points_data_sites = data_sites.n_columns();
- const unsigned n_vector_points_centers = centers.n_columns();
-
- // The dimension of input vector points must be the same, otherwise
- // there is an error
- const unsigned dimension = data_sites.n_rows();
- const unsigned tmp_dimension = centers.n_rows();
-
- if (dimension != tmp_dimension)
-  {
-   // Error message
-   std::ostringstream error_message;
-   error_message << "The dimensions of the data sites vector and the\n"
-                 << "centers vector are different\n"
-                 << "dim(data_site):" << dimension
-                 << "\ndim(centers):" << tmp_dimension
-                 << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
-  }
- 
- // Loop over all the data points in the first matrix
- for (unsigned m = 0; m < n_vector_points_data_sites; m++)
-  {
-   // Loop over all the data points in the second matrix
-   for (unsigned n = 0; n < n_vector_points_centers; n++)
-    {
-     CCVector<T> distance(dimension);
-     distance.allocate_memory();
-     // Loop over the elements of both vectors
-     for (unsigned k = 0; k < dimension; k++)
-      {
-       distance(k) = data_sites(k, m) - centers(k, n);
-      }
-     distance_matrix(m,n)=distance.norm_2();
-    }
-  }
- 
-}
-#endif // #if 0
-
 // ==================================================================
 // ==================================================================
 // ==================================================================
@@ -193,6 +135,11 @@ int main(int argc, char *argv[])
   {
    nodes_pt[i] = new CCNode<Real>(dim, n_variables, n_history_values);
   }
+
+ // --------------------------------------------------------------
+ // Output supporting nodes
+ // --------------------------------------------------------------
+ std::ofstream nodes_file("RESLT/nodes.dat");
  
  // Assign positions
  for (unsigned i = 0; i < n_nodes; i++)
@@ -205,8 +152,17 @@ int main(int argc, char *argv[])
      //const Real position = x[k];
      nodes_pt[i]->set_position(position, k); 
      //x[k]+=h;
+     nodes_file << position;
+     if (k + 1 < dim)
+      {
+       nodes_file << " ";
+      }
     }
+   nodes_file << std::endl;
   }
+ 
+ // Close support nodes file
+ nodes_file.close();
  
  // --------------------------------------------------------------
  // Set initial conditions
@@ -354,7 +310,7 @@ int main(int argc, char *argv[])
  // --------------------------------------------------------------
  // Evaluate (compute error RMSE)
  // --------------------------------------------------------------
- const unsigned n_evaluation_points = 100;
+ const unsigned n_evaluation_points = 1000;
  const unsigned n_data_in_evaluation_points = pow(n_evaluation_points, dim);
  // Distance between a pair of nodes
  const Real h_test = L / (Real)(n_evaluation_points - 1);

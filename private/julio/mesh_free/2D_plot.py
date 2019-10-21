@@ -6,16 +6,28 @@ import numpy as np
 # ---------------------------------
 # Filename
 filename = 'RESLT/output.dat'
+filename_nodes = 'RESLT/nodes.dat'
 
 fig1 = plt.figure(1)
 ax1 = plt.axes(projection="3d")
+#ax1 = plt.gca(projection="3d")
 x1, x2, fx1x2 = np.loadtxt(filename, delimiter=' ', unpack=True)
 #ax1.plot(x, fx, label='$f(x)$', color='red', linestyle='solid', linewidth=Linewidth)
 #ax1.plot3D(x1, x2, fx1x2, label='$f(x)$', color='red')
-#ax1.scatter3D(x1, x2, fx1x2, label='$f(x)$', color='red')
+ax1.scatter3D(x1, x2, fx1x2, label='$f(x)$', color='red')
 #ax1.plot_wireframe(x1, x2, fx1x2, label='$f(x)$', color='red')
 #ax1.plot_surface(x1, x2, fx1x2, label='$f(x)$', color='red')
-ax1.plot_trisurf(x1, x2, fx1x2, label='$f(x)$', color='red')
+#ax1.plot_trisurf(x1, x2, fx1x2, label='$f(x)$', color='red')
+#ax1.contour3D(x1, x2, fx1x2, label='$f(x)$', color='red')
+
+# Supporting nodes
+x_nodes, y_nodes = np.loadtxt(filename_nodes, delimiter=' ', unpack=True)
+n_nodes = len(x_nodes)
+zeroes = []
+for i in range(n_nodes):
+    zeroes.append(0)
+    
+ax1.scatter(x_nodes, y_nodes, zeroes, label='Support nodes', color='blue')
 
 ax1.grid()
 #plt.xticks(np.arange(0,10,step=1))
@@ -36,10 +48,19 @@ ax2 = plt.axes(projection="3d")
 x1, x2, e = np.loadtxt(filename, delimiter=' ', unpack=True)
 #ax2.plot(x, e, label='error', color='red', linestyle='solid', linewidth=Linewidth)
 #ax2.plot3D(x1, x2, e, label='$f(x)$', color='red')
-#ax2.scatter3D(x1, x2, e, label='$f(x)$', color='red')
+ax2.scatter3D(x1, x2, e, label='$f(x)$', color='red')
 #ax2.plot_wireframe(x1, x2, e, label='$f(x)$', color='red')
 #ax2.plot_surface(x1, x2, e, label='$f(x)$', color='red')
-ax2.plot_trisurf(x1, x2, e, label='$f(x)$', color='red')
+#ax2.plot_trisurf(x1, x2, e, label='$f(x)$', color='red')
+
+# Supporting nodes
+x_nodes, y_nodes = np.loadtxt(filename_nodes, delimiter=' ', unpack=True)
+n_nodes = len(x_nodes)
+zeroes = []
+for i in range(n_nodes):
+    zeroes.append(0)
+    
+ax2.scatter(x_nodes, y_nodes, zeroes, label='Support nodes', color='blue')
 
 ax2.grid()
 #plt.xticks(np.arange(0,10,step=1))
