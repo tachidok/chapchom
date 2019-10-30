@@ -290,7 +290,8 @@ public:
  // Document the solution
  void document_solution(std::ostringstream &output_filename)
  {
-  CCChapchom2VTK::get_instance().output_particles(Time, (*U_pt), output_filename);
+  const unsigned n_data_per_particle = 6;
+  CCChapchom2VTK::get_instance().output_particles(Time, (*U_pt), output_filename, n_data_per_particle);
   
   // Output
   std::cout.precision(8);
