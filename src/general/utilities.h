@@ -220,7 +220,7 @@ namespace chapchom
  // is used throughout the library as a "replacement" for std::cout
  //========================================================================
  extern ChapchomOutput chapchom_output;
-
+ 
  //==================================================================
  // Utility method to time a program
  //==================================================================

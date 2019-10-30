@@ -221,9 +221,9 @@ namespace chapchom
 #endif // #if 0
  
  //========================================================================
- // Single (global) instantiation of the ChapchomOutput object -- this
+ // Single (global) instantiation of the ChapchomOutput class -- this
  // is used throughout the library as a "replacement" for std::cout
- //========================================================================
+ // ========================================================================
  ChapchomOutput chapchom_output;
- 
+  
 }

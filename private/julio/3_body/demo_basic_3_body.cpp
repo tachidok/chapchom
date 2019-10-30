@@ -24,20 +24,14 @@
 #include "../../../src/matrices/cc_matrix_armadillo.h"
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
 
+#ifdef CHAPCHOM_USES_VTK
+#include "../../../src/vtk/cc_chapchom2vtk.h"
+#endif // #ifdef CHAPCHOM_USES_VTK
+
 // Base class for the concrete problem
 #include "../../../src/problem/ac_ivp_for_odes.h"
 // Odes for N body problem
 #include "cc_odes_basic_3_body.h"
-
-// Include the VTK libraries to generate the output
-#include <vtkUnstructuredGrid.h>
-#include <vtkXMLUnstructuredGridWriter.h>
-#include <vtkSmartPointer.h>
-#include <vtkPoints.h>
-
-#include <vtkDoubleArray.h>
-#include <vtkFieldData.h>
-#include <vtkPointData.h>
 
 #define EIGHT_SHAPE_SOLUTION
 //#define BODY_AT_CENTER_SOLUTION
@@ -47,135 +41,8 @@
 
 using namespace chapchom;
 
-// ==================================================================
-// Functions for VTK output
-// ==================================================================
-void add_time_to_vtk_data_set(Real time,
-                              vtkSmartPointer<vtkUnstructuredGrid> &data_set)
-{
- // Add time stamp for the current file
- vtkSmartPointer<vtkDoubleArray> array = vtkSmartPointer<vtkDoubleArray>::New();
- array->SetName("TIME");
- array->SetNumberOfTuples(1);
- array->SetTuple1(0, time);
- data_set->GetFieldData()->AddArray(array);
-}
-
-void add_particles_to_vtk_data_set(CCData<Real> &particles_data,
-                                   vtkSmartPointer<vtkPoints> &data_points,
-                                   vtkSmartPointer<vtkUnstructuredGrid> &data_set)
-{
- const unsigned n_data_per_particle = 6;
- const int n_particles = particles_data.n_values()/n_data_per_particle;
- // An array to store the particles IDs
- vtkSmartPointer<vtkDoubleArray> ids = vtkSmartPointer<vtkDoubleArray>::New();
- ids->SetNumberOfComponents(1);
- ids->SetNumberOfTuples(n_particles);
- ids->SetName("ID");
- #if 0
- // An array to store the particles radius
- vtkSmartPointer<vtkDoubleArray> radius = vtkSmartPointer<vtkDoubleArray>::New();
- radius->SetNumberOfComponents(3);
- radius->SetNumberOfTuples(n_particles);
- radius->SetName("Radius");
-#endif // #if 0
- // An array to store the particles positions
- vtkSmartPointer<vtkDoubleArray> position = vtkSmartPointer<vtkDoubleArray>::New();
- position->SetNumberOfComponents(3);
- position->SetNumberOfTuples(n_particles);
- position->SetName("Position");
- // An array to store the particles velocity
- vtkSmartPointer<vtkDoubleArray> velocity = vtkSmartPointer<vtkDoubleArray>::New();
- velocity->SetNumberOfComponents(3);
- velocity->SetNumberOfTuples(n_particles);
- velocity->SetName("Velocity");
- // An array to store the particles masses
- vtkSmartPointer<vtkDoubleArray> masses = vtkSmartPointer<vtkDoubleArray>::New();
- masses->SetNumberOfComponents(1);
- masses->SetNumberOfTuples(n_particles);
- masses->SetName("Masses");
-
- // Temporal vector to extract data
- Real pos[3];
- Real vel[3];
- Real mass[1];
- int global_id = 0;
- // Loop through particles data
- for (unsigned i = 0; i < n_particles*n_data_per_particle; i+=n_data_per_particle)
-  {
-   // Position
-   pos[0] = particles_data(i,0);
-   pos[1] = particles_data(i+2,0);
-   pos[2] = particles_data(i+4,0);
-   std::cout << "POS:" << pos[0] << "," << pos[1] << "," << pos[2] << std::endl;
-   data_points->SetPoint(global_id, pos);
-   
-   // IDs
-   ids->InsertValue(global_id, global_id);
-   
-   // Velocity
-   vel[0] = particles_data(i+1,0);
-   vel[1] = particles_data(i+3,0);
-   vel[2] = particles_data(i+5,0);
-   std::cout << "VEL:" << vel[0] << "," << vel[1] << "," << vel[2] << std::endl;
-   velocity->InsertTuple(global_id, vel);
-   
-   mass[0] = global_id;
-   masses->InsertTuple(global_id, mass);
-   
-   global_id++;
-  }
- 
- // Add particles data to data set
- data_set->GetPointData()->AddArray(ids);
- //data_set->GetPointData()->AddArray(radius);
- //data_set->GetPointData()->AddArray(position);
- data_set->GetPointData()->AddArray(velocity);
- data_set->GetPointData()->AddArray(masses);
-}
-
-void output_particles(Real time,
-                      CCData<Real> &particles_data,
-                      std::ostringstream &file_name)
-{
- // Create a VTK writer
- vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer =
-  vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
- 
- // Generate the filename with the proper extension
- file_name << "." << writer->GetDefaultFileExtension();
- writer->SetFileName((file_name.str()).c_str());
- 
- // Create a pointer to a VTK Unstructured Grid data set
- vtkSmartPointer<vtkUnstructuredGrid> data_set =
-  vtkSmartPointer<vtkUnstructuredGrid>::New();
- 
- // Set up pointer to data point
- vtkSmartPointer<vtkPoints> data_points =
-  vtkSmartPointer<vtkPoints>::New();
- 
- // Get the total number of particles
- const int n_points = particles_data.n_values()/6;
- data_points->SetNumberOfPoints(n_points);
- 
- // Add time
- add_time_to_vtk_data_set(time, data_set);
- 
- // Add the particle data to the unstructured grid
- add_particles_to_vtk_data_set(particles_data, data_points, data_set);
- 
- // Set the points
- data_set->SetPoints(data_points);
- // Remove unused memory
- data_set->Squeeze();
- 
- // Set the writer's input data set
- writer->SetInputData(data_set);
- //writer->SetDataModelToBinary();
- writer->SetDataModeToAscii();
- writer->Write();
- 
-}
+// The VTK output object
+//CCChapchom2VTK VTK_helper = CCChapchom2VTK::get_instance();
 
 /// This class inherits from the ACIVPForODEs class, we implement
 /// specific functions to solve the 3 body problem
@@ -423,7 +290,7 @@ public:
  // Document the solution
  void document_solution(std::ostringstream &output_filename)
  {
-  output_particles(Time, (*U_pt), output_filename);
+  CCChapchom2VTK::get_instance().output_particles(Time, (*U_pt), output_filename);
   
   // Output
   std::cout.precision(8);
@@ -449,7 +316,7 @@ protected:
  
  // The output file
  std::ofstream Output_file;
- 
+  
 }; // class CC3BodyProblem
 
 // ==================================================================
