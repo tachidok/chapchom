@@ -36,7 +36,7 @@ namespace chapchom
   // Functions for VTK output
   // ==================================================================
   
-  // In charge of output a set of particles at current time into a
+  // In charge of output a set of particles at current time into a VTK
   // file. The particles are stored at particles_data parameter.
   // 
   // If having three dimensions data then it should be stored as
@@ -65,6 +65,19 @@ namespace chapchom
                         CCData<Real> &particles_data,
                         std::ostringstream &file_name,
                         const unsigned n_data_per_particle = 6);
+  
+  /*
+  // In charge of output the nodes positions and associated values
+  // (velocity, temperature, mass, etc) as a cloud of points
+  void output_points_cloud(std::vector<CCNode<Real> > &nodes,
+                           std::ostringstream &file_name);
+  */
+  
+  // In charge of output a cloud of points and its associated values
+  // (velocity, temperature, mass, etc)
+  void output_cloud_of_points(std::vector<CCData<Real> >&positions,
+                              std::vector<CCData<Real> >&values,
+                              std::ostringstream &file_name);
   
  private:
   
@@ -102,6 +115,11 @@ namespace chapchom
                                             vtkSmartPointer<vtkPoints> &data_points,
                                             vtkSmartPointer<vtkUnstructuredGrid> &data_set,
                                             const unsigned n_data_per_particle = 6);
+
+  void add_data_points_and_values_to_vtk_data_set_helper(std::vector<CCData<Real> >&positions,
+                                                         std::vector<CCData<Real> >&values,
+                                                         vtkSmartPointer<vtkPoints> &data_points,
+                                                         vtkSmartPointer<vtkUnstructuredGrid> &data_set);
   
  };
  

@@ -12,13 +12,24 @@ fig1 = plt.figure(1)
 ax1 = plt.axes(projection="3d")
 #ax1 = plt.gca(projection="3d")
 x1, x2, fx1x2 = np.loadtxt(filename, delimiter=' ', unpack=True)
+X1 = []
+X2 = []
+n_x1 = len(x1)
+for i in range(n_x1):
+    X1.append(x1)
+    X2.append(x2)
 #ax1.plot(x, fx, label='$f(x)$', color='red', linestyle='solid', linewidth=Linewidth)
-ax1.plot3D(x1, x2, fx1x2, label='$f(x)$', color='red')
+#ax1.plot3D(x1, x2, fx1x2, label='$f(x)$', color='red')
 #ax1.scatter3D(x1, x2, fx1x2, label='$f(x)$', color='red')
 #ax1.plot_wireframe(x1, x2, fx1x2, label='$f(x)$', color='red')
 #ax1.plot_surface(x1, x2, fx1x2, label='$f(x)$', color='red')
 #ax1.plot_trisurf(x1, x2, fx1x2, label='$f(x)$', color='red')
-#ax1.contour3D(x1, x2, fx1x2, label='$f(x)$', color='red')
+#ax1.contour3D(x1, x2, fx1x2, label='$f(x)$',  color='red')
+
+ax1.plot_wireframe(X1, X2, fx1x2, label='$f(x)$', color='red')
+#ax1.plot_surface(X1, X2, fx1x2, label='$f(x)$', color='red')
+#ax1.plot_trisurf(X1, X2, fx1x2, label='$f(x)$', color='red')
+#ax1.contour3D(X1, X2, fx1x2, label='$f(x)$',  color='red')
 
 # Supporting nodes
 x_nodes, y_nodes = np.loadtxt(filename_nodes, delimiter=' ', unpack=True)

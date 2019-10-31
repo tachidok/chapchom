@@ -33,16 +33,6 @@
 // Odes for N body problem
 #include "cc_odes_basic_n_body.h"
 
-// Include the VTK libraries to generate the output
-#include <vtkUnstructuredGrid.h>
-#include <vtkXMLUnstructuredGridWriter.h>
-#include <vtkSmartPointer.h>
-#include <vtkPoints.h>
-
-#include <vtkDoubleArray.h>
-#include <vtkFieldData.h>
-#include <vtkPointData.h>
-
 using namespace chapchom;
 
 /// This class implements inherits from the ACIVPForODEs class, we

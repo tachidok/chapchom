@@ -93,17 +93,121 @@ namespace chapchom
    
     global_id++;
    }
- 
+  
   // Add particles data to data set
   data_set->GetPointData()->AddArray(ids);
   //data_set->GetPointData()->AddArray(radius);
   //data_set->GetPointData()->AddArray(position);
   data_set->GetPointData()->AddArray(velocity);
   data_set->GetPointData()->AddArray(masses);
+  
  }
+ 
+ // ==================================================================
+ // Transfer the data from points and values to data_points and
+ // data_set, respectively. Called from method
+ // output_cloud_of_points()
+ // ==================================================================
+ // Add points and values to the unstructured grid
+ void CCChapchom2VTK::add_data_points_and_values_to_vtk_data_set_helper(std::vector<CCData<Real> >&positions,
+                                                                        std::vector<CCData<Real> >&values,
+                                                                        vtkSmartPointer<vtkPoints> &data_points,
+                                                                        vtkSmartPointer<vtkUnstructuredGrid> &data_set)
+ {
+  // Get the total number of points
+  const unsigned long n_points = positions.size();
+  // Get the total number of values
+  const unsigned n_values = values.size();
 
+  if (n_points != n_values)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The number of points is not the same as the number\n"
+                  << "of values associated with them.\n"
+                  << "Number of points: " << n_points
+                  << "\nNumber of values: " << n_values
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  if (n_points == 0 || n_values == 0)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "There are either no points or no values to plot\n"
+                  << "Number of points: " << n_points
+                  << "\nNumber of values: " << n_values
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+
+  // Get the dimension of the data points
+  const unsigned dim = positions[0].n_values();
+  // Get the number of values associated with each point
+  const unsigned n_variables = values[0].n_values();
+  
+  // An array to store the particles IDs
+  vtkSmartPointer<vtkDoubleArray> ids = vtkSmartPointer<vtkDoubleArray>::New();
+  ids->SetNumberOfComponents(1);
+  ids->SetNumberOfTuples(n_points);
+  ids->SetName("ID");
+  
+  // An array to store the particles IDs
+  vtkSmartPointer<vtkDoubleArray> variables = vtkSmartPointer<vtkDoubleArray>::New();
+  // Number of data per value
+  ids->SetNumberOfComponents(n_variables);
+  // Number of values
+  ids->SetNumberOfTuples(n_values);
+  ids->SetName("Variables");
+  
+  // Temporal arrays to extract data and store it in the corresponding
+  // data_points or data_sets
+  Real *position_array = new Real[dim];
+  Real *variables_array = new Real[n_variables];
+  long int global_id = 0;
+  
+  // Loop through particles data
+  for (unsigned long i = 0; i < n_points; i++)
+   {
+    // IDs
+    ids->InsertValue(global_id, global_id);
+    
+    // Position at time t = 0
+    const unsigned t = 0;
+    for (unsigned j = 0; j < dim; j++)
+     {
+      position_array[j] = positions[i].value(j, t);
+     }
+    
+    // Add positions into data_points
+    data_points->SetPoint(global_id, position_array);
+    
+    // Variable at time t = 0
+    const unsigned tv = 0;
+    for (unsigned j = 0; j < n_variables; j++)
+     {
+      variables_array[j] = values[i].value(j, tv);
+     }
+
+    // Add variables_array into variables
+    variables->InsertTuple(global_id, variables_array);
+    
+    global_id++;
+   }
+  
+  // Add ids array to data_set
+  data_set->GetPointData()->AddArray(ids);
+  // Add variables to data_set
+  data_set->GetPointData()->AddArray(variables);
+ }
+ 
  //========================================================================
- // In charge of output a set of particles at current time into a
+ // In charge of output a set of particles at current time into a VTK
  // file. The particles are stored at particles_data parameter.
  // 
  // If having three dimensions data then it should be stored as
@@ -137,11 +241,11 @@ namespace chapchom
   // Create a VTK writer
   vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer =
    vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
- 
+  
   // Generate the filename with the proper extension
   file_name << "." << writer->GetDefaultFileExtension();
   writer->SetFileName((file_name.str()).c_str());
- 
+  
   // Create a pointer to a VTK Unstructured Grid data set
   vtkSmartPointer<vtkUnstructuredGrid> data_set =
    vtkSmartPointer<vtkUnstructuredGrid>::New();
@@ -159,12 +263,97 @@ namespace chapchom
  
   // Add the particle data to the unstructured grid
   add_particles_to_vtk_data_set_helper(particles_data, data_points, data_set, n_data_per_particle);
- 
+  
   // Set the points
   data_set->SetPoints(data_points);
   // Remove unused memory
   data_set->Squeeze();
  
+  // Set the writer's input data set
+  writer->SetInputData(data_set);
+  //writer->SetDataModelToBinary();
+  writer->SetDataModeToAscii();
+  writer->Write();
+ 
+ }
+ /*
+ // In charge of output the nodes positions and associated values
+ // (velocity, temperature, mass, etc) as a cloud of points
+ void output_cloud_of_points(CCNode<Real> &nodes,
+                             std::ostringstream &file_name)
+ {
+  // Call the points cloud method
+  output_cloud_of_points(nodes.x(), nodes.u(), file_name);
+ }
+ */
+ //========================================================================
+ // In charge of output a cloud of points and its associated values
+ // (velocity, temperature, mass, etc)
+ //========================================================================
+ void CCChapchom2VTK::output_cloud_of_points(std::vector<CCData<Real> >&positions,
+                                             std::vector<CCData<Real> >&values,
+                                             std::ostringstream &file_name)
+ {
+  // Create a VTK writer
+  vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer =
+   vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
+  
+  // Generate the filename with the proper extension
+  file_name << "." << writer->GetDefaultFileExtension();
+  writer->SetFileName((file_name.str()).c_str());
+  
+  // Create a pointer to a VTK Unstructured Grid data set (where to
+  // store the values associated to the cloud of points)
+  vtkSmartPointer<vtkUnstructuredGrid> data_set =
+   vtkSmartPointer<vtkUnstructuredGrid>::New();
+  
+  // Set up pointer to data point (the positions of the points)
+  vtkSmartPointer<vtkPoints> data_points =
+   vtkSmartPointer<vtkPoints>::New();
+  
+  // Get the total number of points
+  const int n_points = positions.size();
+  // Get the total number of values
+  const int n_values = values.size();
+
+  if (n_points != n_values)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The number of points is not the same as the number\n"
+                  << "of values associated with them.\n"
+                  << "Number of points: " << n_points
+                  << "\nNumber of values: " << n_values
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+
+  if (n_points == 0 || n_values == 0)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "There are either no points or no values to plot\n"
+                  << "Number of points: " << n_points
+                  << "\nNumber of values: " << n_values
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Set the number of points in the cloud 
+  data_points->SetNumberOfPoints(n_points); 
+  
+  // Add points and values to the unstructured grid
+  add_data_points_and_values_to_vtk_data_set_helper(positions, values, data_points, data_set);
+  
+  // Set the points
+  data_set->SetPoints(data_points);
+  // Remove unused memory
+  data_set->Squeeze();
+  
   // Set the writer's input data set
   writer->SetInputData(data_set);
   //writer->SetDataModelToBinary();

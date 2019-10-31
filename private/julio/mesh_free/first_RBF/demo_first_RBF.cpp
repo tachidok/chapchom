@@ -23,6 +23,10 @@
 #include "../../../../src/linear_solvers/cc_solver_armadillo.h"
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
 
+#ifdef CHAPCHOM_USES_VTK
+#include "../../../../src/vtk/cc_chapchom2vtk.h"
+#endif // #ifdef CHAPCHOM_USES_VTK
+
 using namespace chapchom;
 
 // Franke's function (2D version)
@@ -88,11 +92,29 @@ template<class MAT_TYPE>
 void psi(MAT_TYPE &distance_matrix,
          MAT_TYPE &interpolation_matrix, const Real epsilon)
 {
- const unsigned n_rows = distance_matrix.n_rows();
- const unsigned n_columns = distance_matrix.n_columns();
- for (unsigned i = 0; i < n_rows; i++)
+ const unsigned n_rows_src = distance_matrix.n_rows();
+ const unsigned n_columns_src = distance_matrix.n_columns();
+ 
+ const unsigned n_rows_dst = interpolation_matrix.n_rows();
+ const unsigned n_columns_dst = interpolation_matrix.n_columns();
+ 
+ if (n_rows_src != n_rows_dst || n_columns_src != n_columns_dst)
   {
-   for (unsigned j = 0; j < n_columns; j++) 
+   // Error message
+   std::ostringstream error_message;
+   error_message << "The dimensions of the distance matrix and the\n"
+                 << "interpolation matrix are different\n"
+                 << "distance_matrix: " << n_rows_src << " x " << n_columns_src << "\n"
+                 << "interpolation_matrix: " << n_rows_dst << " x " << n_columns_dst << "\n"
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+ for (unsigned i = 0; i < n_rows_dst; i++)
+  {
+   for (unsigned j = 0; j < n_columns_dst; j++) 
     {
      const Real r = distance_matrix(i, j);
      interpolation_matrix(i,j) = std::exp(-((r*epsilon)*(r*epsilon)));
@@ -123,7 +145,7 @@ int main(int argc, char *argv[])
  const unsigned dim = 2;
  
  // The value for epsilon
- const Real epsilon = 21;
+ const Real epsilon = 2;
  
  // Interpolant degree
  const unsigned degree = 3;
@@ -150,7 +172,7 @@ int main(int argc, char *argv[])
  //const Real h = L / (Real)(n_nodes_per_dim - 1);
  std::vector<Real> x(dim, 0.0);
  // Create the nodes
- for (unsigned i = 0; i < n_nodes; i++)
+ for (unsigned long i = 0; i < n_nodes; i++)
   {
    nodes_pt[i] = new CCNode<Real>(dim, n_variables, n_history_values);
   }
@@ -161,7 +183,7 @@ int main(int argc, char *argv[])
  std::ofstream nodes_file("RESLT/nodes.dat");
  
  // Assign positions
- for (unsigned i = 0; i < n_nodes; i++)
+ for (unsigned long i = 0; i < n_nodes; i++)
   {
    for (unsigned k = 0; k < dim; k++)
     {
@@ -352,21 +374,19 @@ int main(int argc, char *argv[])
  // Evaluate (compute error RMSE)
  // --------------------------------------------------------------
  const unsigned n_evaluation_points_per_dimension = pow(dim+1, degree+1);
- const unsigned n_evaluation_points = pow(n_evaluation_points_per_dimension, dim);
+ const unsigned n_evaluation_nodes = pow(n_evaluation_points_per_dimension, dim);
  // Distance between a pair of nodes
  const Real h_test = L / (Real)(n_evaluation_points_per_dimension - 1);
  
- // Compute approximated solution at new positions
-#ifdef CHAPCHOM_USES_ARMADILLO
- CCMatrixArmadillo<Real> approx_solution_position(dim, n_evaluation_points);
-#else
- CCMatrix<Real> approx_solution_position(dim, n_evaluation_points);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
- approx_solution_position.allocate_memory();
- // --------------------------------------------------------------
+ // A vector of evaluation nodes
+ std::vector<CCNode<Real> *> evaluation_nodes_pt(n_evaluation_nodes);
+ // Create evaluation nodes
+ for (unsigned long i = 0; i < n_evaluation_nodes; i++)
+  {
+   evaluation_nodes_pt[i] = new CCNode<Real>(dim, n_variables, n_history_values);
+  } 
+ 
  // Assign positions
- // --------------------------------------------------------------
- std::vector<Real> x_eval(dim, 0.0);
  unsigned long kk = 0;
  for (unsigned i = 0; i < n_evaluation_points_per_dimension; i++)
   {
@@ -374,67 +394,116 @@ int main(int argc, char *argv[])
    for (unsigned j = 0; j < n_evaluation_points_per_dimension; j++)
     {
      const Real position_j = j*h_test;
-     approx_solution_position(0, kk) = position_i;
-     approx_solution_position(1, kk) = position_j;
+     evaluation_nodes_pt[kk]->set_position(position_i, 0);
+     evaluation_nodes_pt[kk]->set_position(position_j, 1);
      kk++;
     }
+  } 
+ 
+ DEB(n_evaluation_nodes);
+ DEB(kk);
+ 
+ // Compute approximated solution at new positions
+#ifdef CHAPCHOM_USES_ARMADILLO
+ CCMatrixArmadillo<Real> evaluation_nodes_position(dim, n_evaluation_nodes);
+#else
+ CCMatrix<Real> evaluation_nodes_position(dim, n_evaluation_nodes);
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+ evaluation_nodes_position.allocate_memory();
+ // --------------------------------------------------------------
+ // Assign positions
+ // --------------------------------------------------------------
+ for (unsigned long i = 0; i < n_evaluation_nodes; i++)
+  {
+   evaluation_nodes_position(0, i) = evaluation_nodes_pt[i]->get_position(0);
+   evaluation_nodes_position(1, i) = evaluation_nodes_pt[i]->get_position(1);
   }
  
  // Compute distance matrix with new positions
 #ifdef CHAPCHOM_USES_ARMADILLO
- CCMatrixArmadillo<Real> approx_distance_matrix(n_evaluation_points, n_nodes);
+ CCMatrixArmadillo<Real> evaluation_distance_matrix(n_evaluation_nodes, n_nodes);
 #else
- CCMatrix<Real> approx_distance_matrix(n_evaluation_points, n_nodes);
+ CCMatrix<Real> evaluation_distance_matrix(n_evaluation_nodes, n_nodes);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
  // --------------------------------------------------------------
- // Generate the distance matrix using the nodes position centers
- // shifted by the new positions
+ // Generate the distance matrix using the evaluation nodes position
+ // and the original nodes positions
  // --------------------------------------------------------------
- approx_distance_matrix.allocate_memory();
+ evaluation_distance_matrix.allocate_memory();
 #ifdef CHAPCHOM_USES_ARMADILLO
- compute_distance_matrix<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> >(approx_solution_position, nodes_position, approx_distance_matrix);
+ compute_distance_matrix<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> >(evaluation_nodes_position, nodes_position, evaluation_distance_matrix);
 #else
- compute_distance_matrix<CCMatrix<Real>, CCVector<Real> >(approx_solution_position, nodes_position, approx_distance_matrix);
+ compute_distance_matrix<CCMatrix<Real>, CCVector<Real> >(evaluation_nodes_position, nodes_position, evaluation_distance_matrix);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
  //approx_distance_matrix.print();
  
  // --------------------------------------------------------------
- // Create the interpolation matrix for approximated solution
+ // Create the interpolation matrix for evaluation nodes
  // --------------------------------------------------------------
 #ifdef CHAPCHOM_USES_ARMADILLO
- CCMatrixArmadillo<Real> interpolation_matrix_approx(n_evaluation_points, n_nodes);
+ CCMatrixArmadillo<Real> interpolation_evaluation_matrix(n_evaluation_nodes, n_nodes);
 #else
- CCMatrix<Real> interpolation_matrix_approx(n_evaluation_points, n_nodes);
+ CCMatrix<Real> interpolation_evaluation_matrix(n_evaluation_nodes, n_nodes);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
  // --------------------------------------------------------------
  // Generate the interpolation matrix using the RBF psi
  // --------------------------------------------------------------
- interpolation_matrix_approx.allocate_memory();
+ interpolation_evaluation_matrix.allocate_memory();
 #ifdef CHAPCHOM_USES_ARMADILLO
- psi<CCMatrixArmadillo<Real> >(approx_distance_matrix, interpolation_matrix_approx, epsilon);
+ psi<CCMatrixArmadillo<Real> >(evaluation_distance_matrix, interpolation_evaluation_matrix, epsilon);
 #else
- psi<CCMatrix<Real> >(approx_distance_matrix, interpolation_matrix_approx, epsilon);
+ psi<CCMatrix<Real> >(evaluation_distance_matrix, interpolation_evaluation_matrix, epsilon);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
  
  // Approximated solution
 #ifdef CHAPCHOM_USES_ARMADILLO
- CCVectorArmadillo<Real> approx_sol(n_evaluation_points);
+ CCVectorArmadillo<Real> approx_sol(n_evaluation_nodes);
 #else
- CCVector<Real> approx_sol(n_evaluation_points);
+ CCVector<Real> approx_sol(n_evaluation_nodes);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
- // Approximate solutin at given points
- multiply_matrix_times_vector(interpolation_matrix_approx, sol, approx_sol);
+ // Approximate solution at given points
+ multiply_matrix_times_vector(interpolation_evaluation_matrix, sol, approx_sol);
+ 
+ // --------------------------------------------------------------
+ // Assign solution to nodes
+ // --------------------------------------------------------------
+ for (unsigned long i = 0; i < n_evaluation_nodes; i++)
+  {
+   evaluation_nodes_pt[i]->set_variable(approx_sol(i), 0);
+  }
  
  // --------------------------
  // --------------------------
  // Here
  // --------------------------
  // --------------------------
+
+ // We need to create two CCData vectors, one storing the positions
+ // and other storing the variables/values associated with each
+ // position (A node)
+ std::vector<CCData<Real> > positions;
+ std::vector<CCData<Real> > values;
+ for (unsigned long i = 0; i < n_evaluation_nodes; i++)
+  {
+   positions.push_back(evaluation_nodes_pt[i]->x());
+   values.push_back(evaluation_nodes_pt[i]->u());
+  }
+
+ // Output to file
+ std::ostringstream output_filename;
+ output_filename
+  << "./RESLT/soln" << "_" << std::setfill('0') << "0";
  
+ CCChapchom2VTK::get_instance().output_cloud_of_points(positions, values, output_filename);
+ 
+ /*
  // --------------------------------------------------------------
  // Output data for plotting
  // --------------------------------------------------------------
  std::ofstream output_file("RESLT/output.dat");
+ // Output the number of data/points
+ output_file << n_evaluation_points << std::endl;
+ output_file << n_evaluation_points_per_dimension << std::endl;
  for (unsigned i = 0; i < n_evaluation_points; i++)
   {
    for (unsigned k = 0; k < dim; k++)
@@ -446,17 +515,17 @@ int main(int argc, char *argv[])
  
  // Close output file
  output_file.close();
- 
+ */
  // --------------------------------------------------------------
  // Get real solution at given points and get the error 
  // --------------------------------------------------------------
 #ifdef CHAPCHOM_USES_ARMADILLO
- CCVectorArmadillo<Real> real_sol(n_evaluation_points);
+ CCVectorArmadillo<Real> real_sol(n_evaluation_nodes);
 #else 
- CCVector<Real> real_sol(n_evaluation_points);
+ CCVector<Real> real_sol(n_evaluation_nodes);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
  real_sol.allocate_memory();
- for (unsigned i = 0; i < n_evaluation_points; i++)
+ for (unsigned i = 0; i < n_evaluation_nodes; i++)
   {
 #ifdef CHAPCHOM_USES_ARMADILLO
    CCVectorArmadillo<Real> tmp_v(dim);
@@ -466,7 +535,7 @@ int main(int argc, char *argv[])
    tmp_v.allocate_memory();
    for (unsigned j = 0; j < dim; j++)
     {
-     tmp_v(j) = approx_solution_position(j, i);
+     tmp_v(j) = evaluation_nodes_position(j, i);
     }
    // ------------------------
    // Evaluation at approx_solution_position
@@ -477,30 +546,31 @@ int main(int argc, char *argv[])
  // Compute error
  // --------------------------------------------------------------
 #ifdef CHAPCHOM_USES_ARMADILLO
- CCVectorArmadillo<Real> error(n_evaluation_points);
+ CCVectorArmadillo<Real> error(n_evaluation_nodes);
 #else
- CCVector<Real> error(n_evaluation_points);
+ CCVector<Real> error(n_evaluation_nodes);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
  error.allocate_memory();
  std::cerr << "ERRORS" << std::endl;
- for (unsigned i = 0; i < n_evaluation_points; i++)
+ for (unsigned i = 0; i < n_evaluation_nodes; i++)
   {
+   //error(i) = real_sol(i) - 0.0;
    error(i) = real_sol(i) - approx_sol(i);
    //std::cerr << i << ": " << std::fabs(error(i)) << std::endl;
    //std::cerr << i << ": " << real_sol(i) << ":" << approx_sol(i) << std::endl;
   }
  
- const Real rms_error = error.norm_2() / sqrt(n_evaluation_points);
+ const Real rms_error = error.norm_2() / sqrt(n_evaluation_nodes);
  
  // --------------------------------------------------------------
  // Output error
  // --------------------------------------------------------------
  std::ofstream error_file("RESLT/error.dat");
- for (unsigned i = 0; i < n_evaluation_points; i++)
+ for (unsigned i = 0; i < n_evaluation_nodes; i++)
   {
    for (unsigned k = 0; k < dim; k++)
     {
-     error_file << approx_solution_position(k, i) << " ";
+     error_file << evaluation_nodes_position(k, i) << " ";
     }
    error_file << error(i) << std::endl;
   }
@@ -519,7 +589,7 @@ int main(int argc, char *argv[])
  std::cerr << "RBF[Epsilon]: " << epsilon << std::endl;
  
  std::cerr << "N. nodes per dimension (evaluation): " << n_evaluation_points_per_dimension << std::endl;
- std::cerr << "N. total nodes (evaluation): " << n_evaluation_points << std::endl;
+ std::cerr << "N. total nodes (evaluation): " << n_evaluation_nodes << std::endl;
  
  std::cerr << "RMS-error: " << rms_error << std::endl;
  
