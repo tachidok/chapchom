@@ -76,7 +76,7 @@ namespace chapchom
   // In charge of output a cloud of points and its associated values
   // (velocity, temperature, mass, etc)
   void output_cloud_of_points(std::vector<CCData<Real> >&positions,
-                              std::vector<CCData<Real> >&values,
+                              std::vector<CCData<Real> >&u,
                               std::ostringstream &file_name);
   
  private:
@@ -117,7 +117,7 @@ namespace chapchom
                                             const unsigned n_data_per_particle = 6);
 
   void add_data_points_and_values_to_vtk_data_set_helper(std::vector<CCData<Real> >&positions,
-                                                         std::vector<CCData<Real> >&values,
+                                                         std::vector<CCData<Real> >&u,
                                                          vtkSmartPointer<vtkPoints> &data_points,
                                                          vtkSmartPointer<vtkUnstructuredGrid> &data_set);
   

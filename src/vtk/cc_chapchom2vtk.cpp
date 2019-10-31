@@ -32,8 +32,12 @@ namespace chapchom
                                                            vtkSmartPointer<vtkUnstructuredGrid> &data_set,
                                                            const unsigned n_data_per_particle)
  {
-  const int n_particles = particles_data.n_values()/n_data_per_particle;
- 
+  // Get the total number of particles, divide data by
+  // n_data_per_particle (Make sure you use SetNumberOfPoints() to
+  // allocate memory prior to using SetPoint())
+  const int n_particles = particles_data.n_values()/n_data_per_particle; 
+  data_points->SetNumberOfPoints(n_particles);
+  
   // An array to store the particles IDs
   vtkSmartPointer<vtkDoubleArray> ids = vtkSmartPointer<vtkDoubleArray>::New();
   ids->SetNumberOfComponents(1);
@@ -110,14 +114,14 @@ namespace chapchom
  // ==================================================================
  // Add points and values to the unstructured grid
  void CCChapchom2VTK::add_data_points_and_values_to_vtk_data_set_helper(std::vector<CCData<Real> >&positions,
-                                                                        std::vector<CCData<Real> >&values,
+                                                                        std::vector<CCData<Real> >&u,
                                                                         vtkSmartPointer<vtkPoints> &data_points,
                                                                         vtkSmartPointer<vtkUnstructuredGrid> &data_set)
  {
   // Get the total number of points
   const unsigned long n_points = positions.size();
   // Get the total number of values
-  const unsigned n_values = values.size();
+  const unsigned n_values = u.size();
 
   if (n_points != n_values)
    {
@@ -145,36 +149,40 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
-
+  
+  // Set the number of points in the cloud (Make sure you use
+  // SetNumberOfPoints() to allocate memory prior to using SetPoint())
+  data_points->SetNumberOfPoints(n_points);
+  
   // Get the dimension of the data points
   const unsigned dim = positions[0].n_values();
   // Get the number of values associated with each point
-  const unsigned n_variables = values[0].n_values();
+  const unsigned n_variables = u[0].n_values();
   
   // An array to store the particles IDs
   vtkSmartPointer<vtkDoubleArray> ids = vtkSmartPointer<vtkDoubleArray>::New();
   ids->SetNumberOfComponents(1);
   ids->SetNumberOfTuples(n_points);
-  ids->SetName("ID");
+  ids->SetName("IDs");
   
-  // An array to store the particles IDs
+  // An array to store the particles variables
   vtkSmartPointer<vtkDoubleArray> variables = vtkSmartPointer<vtkDoubleArray>::New();
   // Number of data per value
-  ids->SetNumberOfComponents(n_variables);
+  variables->SetNumberOfComponents(n_variables);
   // Number of values
-  ids->SetNumberOfTuples(n_values);
-  ids->SetName("Variables");
+  variables->SetNumberOfTuples(n_values);
+  variables->SetName("u");
   
   // Temporal arrays to extract data and store it in the corresponding
   // data_points or data_sets
   Real *position_array = new Real[dim];
-  Real *variables_array = new Real[n_variables];
+  Real *u_array = new Real[n_variables];
   long int global_id = 0;
   
   // Loop through particles data
   for (unsigned long i = 0; i < n_points; i++)
    {
-    // IDs
+    // IDs (insert data at a specified position)
     ids->InsertValue(global_id, global_id);
     
     // Position at time t = 0
@@ -191,11 +199,11 @@ namespace chapchom
     const unsigned tv = 0;
     for (unsigned j = 0; j < n_variables; j++)
      {
-      variables_array[j] = values[i].value(j, tv);
+      u_array[j] = u[i].value(j, tv);
      }
-
+    
     // Add variables_array into variables
-    variables->InsertTuple(global_id, variables_array);
+    variables->InsertTuple(global_id, u_array);
     
     global_id++;
    }
@@ -253,11 +261,7 @@ namespace chapchom
   // Set up pointer to data point
   vtkSmartPointer<vtkPoints> data_points =
    vtkSmartPointer<vtkPoints>::New();
- 
-  // Get the total number of particles, divide data by n_data_per_particle
-  const int n_points = particles_data.n_values()/n_data_per_particle;
-  data_points->SetNumberOfPoints(n_points);
- 
+  
   // Add time
   add_time_to_vtk_data_set_helper(time, data_set);
  
@@ -291,7 +295,7 @@ namespace chapchom
  // (velocity, temperature, mass, etc)
  //========================================================================
  void CCChapchom2VTK::output_cloud_of_points(std::vector<CCData<Real> >&positions,
-                                             std::vector<CCData<Real> >&values,
+                                             std::vector<CCData<Real> >&u,
                                              std::ostringstream &file_name)
  {
   // Create a VTK writer
@@ -314,7 +318,7 @@ namespace chapchom
   // Get the total number of points
   const int n_points = positions.size();
   // Get the total number of values
-  const int n_values = values.size();
+  const int n_values = u.size();
 
   if (n_points != n_values)
    {
@@ -343,11 +347,8 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Set the number of points in the cloud 
-  data_points->SetNumberOfPoints(n_points); 
-  
   // Add points and values to the unstructured grid
-  add_data_points_and_values_to_vtk_data_set_helper(positions, values, data_points, data_set);
+  add_data_points_and_values_to_vtk_data_set_helper(positions, u, data_points, data_set);
   
   // Set the points
   data_set->SetPoints(data_points);

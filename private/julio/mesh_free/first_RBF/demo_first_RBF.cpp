@@ -478,9 +478,10 @@ int main(int argc, char *argv[])
  // --------------------------
  // --------------------------
 
- // We need to create two CCData vectors, one storing the positions
- // and other storing the variables/values associated with each
- // position (A node)
+ // check the output since there is a bad naming for variables in Paraview
+ 
+ // Move the positions of the nodes and the results into two CCData<T>
+ // vectors
  std::vector<CCData<Real> > positions;
  std::vector<CCData<Real> > values;
  for (unsigned long i = 0; i < n_evaluation_nodes; i++)
