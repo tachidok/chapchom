@@ -5,6 +5,7 @@
 #include "../general/utilities.h"
 
 #include "../data_structures/cc_data.h"
+#include "../data_structures/cc_node.h"
 
 // Include the VTK libraries to generate the output
 #include <vtkUnstructuredGrid.h>
@@ -66,18 +67,25 @@ namespace chapchom
                         std::ostringstream &file_name,
                         const unsigned n_data_per_particle = 6);
   
-  /*
-  // In charge of output the nodes positions and associated values
-  // (velocity, temperature, mass, etc) as a cloud of points
-  void output_points_cloud(std::vector<CCNode<Real> > &nodes,
-                           std::ostringstream &file_name);
-  */
+  // In charge of output the node position and attributes (velocity,
+  // temperature, mass, etc) as a cloud of points
+  void output_node(CCNode<Real> &node, std::ostringstream &file_name);
   
-  // In charge of output a cloud of points and its associated values
+  // In charge of output the nodes positions and attributes (velocity,
+  // temperature, mass, etc) as a cloud of points
+  void output_nodes(std::vector<CCNode<Real> > &nodes, std::ostringstream &file_name); 
+  
+  // In charge of output the position and its corresponding attributes
   // (velocity, temperature, mass, etc)
-  void output_cloud_of_points(std::vector<CCData<Real> >&positions,
-                              std::vector<CCData<Real> >&u,
-                              std::ostringstream &file_name);
+  void output_position_and_attribute_data(CCData<Real> &positions,
+                                          CCData<Real> &attributes,
+                                          std::ostringstream &file_name);
+  
+  // In charge of output the vector positions and its corresponding
+  // attributes (velocity, temperature, mass, etc)
+  void output_position_and_attribute_datas(std::vector<CCData<Real> >&positions,
+                                           std::vector<CCData<Real> >&attributes,
+                                           std::ostringstream &file_name); 
   
  private:
   
@@ -115,11 +123,26 @@ namespace chapchom
                                             vtkSmartPointer<vtkPoints> &data_points,
                                             vtkSmartPointer<vtkUnstructuredGrid> &data_set,
                                             const unsigned n_data_per_particle = 6);
-
-  void add_data_points_and_values_to_vtk_data_set_helper(std::vector<CCData<Real> >&positions,
-                                                         std::vector<CCData<Real> >&u,
-                                                         vtkSmartPointer<vtkPoints> &data_points,
-                                                         vtkSmartPointer<vtkUnstructuredGrid> &data_set);
+  
+  // ==================================================================
+  // Transfer the data from point and attributes to data_points and
+  // data_set, respectively. Called from method
+  // output_position_and_attribute_data()
+  // ==================================================================
+  void add_data_point_and_attributes_to_vtk_data_set_helper(CCData<Real> &position,
+                                                            CCData<Real> &attributes,
+                                                            vtkSmartPointer<vtkPoints> &data_points,
+                                                            vtkSmartPointer<vtkUnstructuredGrid> &data_set);
+  
+  // ==================================================================
+  // Transfer the data from points and attributes to data_points and
+  // data_set, respectively. Called from method
+  // output_position_and_attribute_datas()
+  // ==================================================================
+  void add_data_points_and_attributes_to_vtk_data_set_helper(std::vector<CCData<Real> >&positions,
+                                                             std::vector<CCData<Real> >&attributes,
+                                                             vtkSmartPointer<vtkPoints> &data_points,
+                                                             vtkSmartPointer<vtkUnstructuredGrid> &data_set);
   
  };
  

@@ -489,13 +489,13 @@ int main(int argc, char *argv[])
    positions.push_back(evaluation_nodes_pt[i]->x());
    values.push_back(evaluation_nodes_pt[i]->u());
   }
-
+ 
  // Output to file
  std::ostringstream output_filename;
  output_filename
   << "./RESLT/soln" << "_" << std::setfill('0') << "0";
  
- CCChapchom2VTK::get_instance().output_cloud_of_points(positions, values, output_filename);
+ CCChapchom2VTK::get_instance().output_position_and_attribute_datas(positions, values, output_filename);
  
  /*
  // --------------------------------------------------------------
@@ -542,6 +542,25 @@ int main(int argc, char *argv[])
    // Evaluation at approx_solution_position
    real_sol(i) = test_function(tmp_v);
   }
+ 
+ {
+  // Move the positions of the nodes and the results into two CCData<T>
+  // vectors
+  std::vector<CCData<Real> > solution_values;
+  for (unsigned long i = 0; i < n_evaluation_nodes; i++)
+   {
+    CCData<Real> u(1);
+    u(0) = real_sol(i);
+    solution_values.push_back(u);
+    DEB(real_sol(i))
+     }
+  // Output to file
+  std::ostringstream output_sol_filename;
+  output_sol_filename
+   << "./RESLT/soln_real" << "_" << std::setfill('0') << "0";
+  
+  CCChapchom2VTK::get_instance().output_position_and_attribute_datas(positions, solution_values, output_sol_filename);
+ }
  
  // --------------------------------------------------------------
  // Compute error
