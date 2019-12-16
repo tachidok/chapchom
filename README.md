@@ -15,6 +15,13 @@ You need **git** installed in your computer, then type in a terminal
 git clone https://github.com/tachidok/chapchom
 ```
 
+Once you have gotten the code get into the `chapchom` folder and create your own branch by typing
+
+```shell
+git checkout -b john
+```
+to create a new branch with the name `john`
+
 ### What you need to have to work and run it nicely?
 * A C++ compiler - demo drivers and library built with version
   7.4.0. It may work with previous versions as well.
@@ -93,7 +100,7 @@ Mmm ... that is something we need to carefully think about.
 
 Once we have something intereseting to share with you we will  make the
 project public. Please check continuously for updates or contact the
-developers :construction: :envelope: (jcp.sansalvador.at.inaoep.mx) :envelope: :construction:
+developers :construction: :envelope: (jcp.sansalvador.at.inaoe.mx) :envelope: :construction:
 
 ### Notes for contributors
 Please check the documentation (in construction :construction: ) for anything you need to
@@ -104,7 +111,7 @@ submitting your contributions ....
 
 ### How many developers are currently working on the library
 
-At Friday, September/13, 2019 there is one and only one developer, me
+At Sunday, December/15, 2019 there is one and only one developer, me
 :no_mouth:
 
 :construction: :construction: :construction: :construction: :construction:
