@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
  CCVector<Real> b(n_rows);
 
  // Allocate memory for the vector
- b.allocate_memory();
+ //b.allocate_memory();
  
  // Fill the vector with data
  b(0) = -16.0;
@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
  bool is_column_vector = false;
  CCVector<Real> r(n_columns, is_column_vector);
  // Allocate memory for the vector
- r.allocate_memory();
+ //r.allocate_memory();
  
  // Fill the vector with data
  r(0) = 1.0;

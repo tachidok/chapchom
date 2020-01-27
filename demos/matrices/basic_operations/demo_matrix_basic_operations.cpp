@@ -609,7 +609,7 @@ int main(int argc, char *argv[])
   // the vector is created as a row vector
   bool is_column_vector = false;
   CCVector<Real> v(DIM, is_column_vector);
-  v.allocate_memory();
+  //v.allocate_memory();
   
   // The following vector states to take the first row of matrix A and
   // add it to half the second row and a quarter of the third row

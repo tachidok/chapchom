@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
   // The right hand side vector
   CCVector<Real> b(n_rows);
   // Allocate memory
-  b.allocate_memory();
+  //b.allocate_memory();
   
   // Solve the following system of equations Ax = b
   

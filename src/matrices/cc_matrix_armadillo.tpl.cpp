@@ -1713,24 +1713,27 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
+
+  // Check whether the vector is a column vector
+  if (!vector.is_column_vector())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The vector to multiply the matrix is not a column vector\n"
+                  << "vector.is_column_vector(): " << vector.is_column_vector()
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
   
   // Check whether the dimensions of the matrix and the vector allow
   // the operation
-  unsigned n_rows_matrix = matrix.n_rows();
-  unsigned n_columns_matrix = matrix.n_columns();
+  const unsigned n_rows_matrix = matrix.n_rows();
+  const unsigned n_columns_matrix = matrix.n_columns();
   
-  unsigned n_rows_vector = 0;
-  unsigned n_columns_vector = 0;
-  if (!vector.is_column_vector()) // a row vector
-   {
-    n_rows_vector = 1;
-    n_columns_vector = vector.n_values();
-   }
-  else // a column vector
-   {
-    n_rows_vector = vector.n_values();
-    n_columns_vector = 1;
-   }
+  const unsigned n_rows_vector = vector.n_values();
+  const unsigned n_columns_vector = 1;
   
   // Check that the dimension of the vector and the matrix allow the
   // operation
@@ -1749,50 +1752,54 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Check whether the dimension of the solution vector is correct
-  unsigned n_rows_solution_vector = 0;
-  unsigned n_columns_solution_vector = 0;
-  if (!solution_vector.is_column_vector()) // a row vector
-   {
-    n_rows_solution_vector = 1;
-    n_columns_solution_vector = solution_vector.n_values();
-   }
-  else // a column vector
-   {
-    n_rows_solution_vector = solution_vector.n_values();
-    n_columns_solution_vector = 1;
-   }
-  
-  if (n_rows_matrix != n_rows_solution_vector ||
-      n_columns_vector != n_columns_solution_vector)
+  // Check whether the solution vector is a column vector
+  if (!solution_vector.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "The dimension of the solution vector is not appropiate for\n"
-                  << "the operation:\n"
-                  << "dim(matrix) = (" << n_rows_matrix << ", "
-                  << n_columns_matrix << ")\n"
-                  << "dim(vector) = (" << n_rows_vector << ", "
-                  << n_columns_vector << ")\n"
-                  << "dim(solution_vector) = (" << n_rows_solution_vector
-                  << ", " << n_columns_solution_vector << ")\n" << std::endl;
+    error_message << "The solution vector is not a column vector\n"
+                  << "solution_vector.is_column_vector(): "
+                  << solution_vector.is_column_vector()
+                  << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Get the vector pointer of the solution vector
-  arma::Mat<T> *arma_solution_vector_pt = solution_vector.arma_vector_pt();
+  // Compute the dimensions for the solution vector
+  const unsigned n_rows_solution_vector = n_columns_matrix;
+  const unsigned n_columns_solution_vector = n_columns_vector;
   
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
   if (!solution_vector.is_own_memory_allocated())
    {
     // Allocate memory for the matrix
-    solution_vector.allocate_memory();
-    // Get the new matrix pointer
-    arma_solution_vector_pt = solution_vector.arma_vector_pt();
+    solution_vector.allocate_memory(n_rows_solution_vector);
    }
+  else
+   {
+    if (solution_vector.n_values() != n_rows_solution_vector)
+     {
+      // Error message
+      std::ostringstream error_message;
+      error_message << "The dimension of the solution vector is not appropiate for\n"
+                    << "the operation:\n"
+                    << "dim(matrix) = (" << n_rows_matrix << ", "
+                    << n_columns_matrix << ")\n"
+                    << "dim(vector) = (" << n_rows_vector << ", "
+                    << n_columns_vector << ")\n"
+                    << "dim(solution_vector) = (" << n_rows_solution_vector
+                    << ", " << n_columns_solution_vector << ")\n" << std::endl;
+      throw ChapchomLibError(error_message.str(),
+                             CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
+     }
+    
+   }
+  
+  // Get the vector pointer of the solution vector
+  arma::Mat<T> *arma_solution_vector_pt = solution_vector.arma_vector_pt();
   
   // Get both the vector and the matrix pointer
   arma::Mat<T> *arma_vector_pt = vector.arma_vector_pt();

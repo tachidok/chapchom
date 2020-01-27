@@ -36,7 +36,7 @@ namespace chapchom
    virtual void allocate_memory(const unsigned long n) = 0;
    
    // Allocates memory to store entries of the vector
-   virtual void allocate_memory() = 0;
+   //virtual void allocate_memory() = 0;
    
    // Fills the vector with zeroes
    virtual void fill_with_zeroes() = 0;

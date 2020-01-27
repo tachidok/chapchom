@@ -26,8 +26,8 @@ namespace chapchom
  CCVector<T>::CCVector(const unsigned long n, bool is_column_vector)
   : ACVector<T>(n, is_column_vector)
  {
-  // Delete any data in memory
-  clean_up();
+  // Allocate memory
+  allocate_memory(n);
  }
  
  // ===================================================================
@@ -361,31 +361,47 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Check that both vectors have the same column vector status (both
-  // are columns vectors or both are row vectors)
-  if (this->is_column_vector() != vector.is_column_vector())
+  // Check that the three vectors have the same column vector status
+  if (this->is_column_vector() != vector.is_column_vector() ||
+      solution_vector.is_column_vector() != vector.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "Both vectors MUST BE either column or row vectors\n"
+    error_message << "The three vectors MUST BE either column or row vectors\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Get the vector pointer of the solution vector
-  T *solution_vector_pt = solution_vector.vector_pt();
-  
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
   if (!solution_vector.is_own_memory_allocated())
    {
     // Allocate memory for the vector
-    solution_vector.allocate_memory();
-    // Get the new vector pointer
-    solution_vector_pt = solution_vector.vector_pt();
+    solution_vector.allocate_memory(n_values_input_vector);
    }
+  else
+   {
+    // Check that the already allocated memory is correct (n_values)
+    if (solution_vector.n_values() != vector.n_values())
+     {
+      // Error message
+      std::ostringstream error_message;
+      error_message << "The number of elements for the solution vector is\n"
+                    << "not as expected\n"
+                    << "dim(solution_vector): " << solution_vector.n_values()
+                    << "\ndim(vector): " << vector.n_values()
+                    << std::endl;
+      throw ChapchomLibError(error_message.str(),
+                             CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
+     }
+    
+   }
+  
+  // Get the vector pointer of the solution vector
+  T *solution_vector_pt = solution_vector.vector_pt();
   
   // Get the vector pointer of the input vector
   T *vector_pt = vector.vector_pt();
@@ -434,32 +450,48 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
-  
-  // Check that both vectors have the same transposed status (both are
-  // columns vectors or both are row vectors)
-  if (this->is_column_vector() != vector.is_column_vector())
+
+  // Check that the three vectors have the same column vector status
+  if (this->is_column_vector() != vector.is_column_vector() ||
+      solution_vector.is_column_vector() != vector.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "Both vectors MUST BE either column or row vectors\n"
+    error_message << "The three vectors MUST BE either column or row vectors\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Get the vector pointer of the solution vector
-  T *solution_vector_pt = solution_vector.vector_pt();
-  
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
   if (!solution_vector.is_own_memory_allocated())
    {
     // Allocate memory for the vector
-    solution_vector.allocate_memory();
-    // Get the new vector pointer
-    solution_vector_pt = solution_vector.vector_pt();
+    solution_vector.allocate_memory(n_values_input_vector);
    }
+  else
+   {
+    // Check that the already allocated memory is correct (n_values)
+    if (solution_vector.n_values() != vector.n_values())
+     {
+      // Error message
+      std::ostringstream error_message;
+      error_message << "The number of elements for the solution vector is\n"
+                    << "not as expected\n"
+                    << "dim(solution_vector): " << solution_vector.n_values()
+                    << "\ndim(vector): " << vector.n_values()
+                    << std::endl;
+      throw ChapchomLibError(error_message.str(),
+                             CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
+     }
+    
+   }
+  
+  // Get the vector pointer of the solution vector
+  T *solution_vector_pt = solution_vector.vector_pt();
   
   // Get the vector pointer of the input vector
   T *vector_pt = vector.vector_pt();
@@ -510,31 +542,47 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Check that both vectors have the same transposed status (both are
-  // columns vectors or both are row vectors)
-  if (this->is_column_vector() != vector.is_column_vector())
+  // Check that the three vectors have the same column vector status
+  if (this->is_column_vector() != vector.is_column_vector() ||
+      solution_vector.is_column_vector() != vector.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "Both vectors MUST BE either column or row vectors\n"
+    error_message << "The three vectors MUST BE either column or row vectors\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Get the vector pointer of the solution vector
-  T *solution_vector_pt = solution_vector.vector_pt();
-  
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
   if (!solution_vector.is_own_memory_allocated())
    {
     // Allocate memory for the vector
-    solution_vector.allocate_memory();
-    // Get the new vector pointer
-    solution_vector_pt = solution_vector.vector_pt();
+    solution_vector.allocate_memory(n_values_input_vector);
    }
+  else
+   {
+    // Check that the already allocated memory is correct (n_values)
+    if (solution_vector.n_values() != vector.n_values())
+     {
+      // Error message
+      std::ostringstream error_message;
+      error_message << "The number of elements for the solution vector is\n"
+                    << "not as expected\n"
+                    << "dim(solution_vector): " << solution_vector.n_values()
+                    << "\ndim(vector): " << vector.n_values()
+                    << std::endl;
+      throw ChapchomLibError(error_message.str(),
+                             CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
+     }
+    
+   }
+  
+  // Get the vector pointer of the solution vector
+  T *solution_vector_pt = solution_vector.vector_pt();
   
   // Get the vector pointer of the input vector
   T *vector_pt = vector.vector_pt();
@@ -901,26 +949,32 @@ namespace chapchom
   
   // Set the number of rows and columns of the matrix
   this->NValues = n;
-  
-  // Allocate memory
-  allocate_memory();
- }
- 
- // ===================================================================
- // Allocates memory to store entries of the vector
- // ===================================================================
- template<class T>
- void CCVector<T>::allocate_memory()
- {
-  // Delete any data in memory
-  clean_up();
+
+  //allocate_memory();
   
   // Allocate memory for the vector
   Vector_pt = new T[this->NValues];
   
   // Mark the vector as allocated its own memory
   this->Is_own_memory_allocated=true;
+  
  }
+ 
+ // // ===================================================================
+ // // Allocates memory to store entries of the vector
+ // // ===================================================================
+ // template<class T>
+ // void CCVector<T>::allocate_memory()
+ // {
+ //  // Delete any data in memory
+ //  clean_up();
+  
+ //  // Allocate memory for the vector
+ //  Vector_pt = new T[this->NValues];
+  
+ //  // Mark the vector as allocated its own memory
+ //  this->Is_own_memory_allocated=true;
+ // }
  
  // ===================================================================
  // Fills the vector with zeroes
@@ -1072,31 +1126,47 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Check that both vectors have the same column vector status (both
-  // are columns vectors or both are row vectors)
-  if (vector_one.is_column_vector() != vector_two.is_column_vector())
+  // Check that the three vectors have the same column vector status
+  if (vector_one.is_column_vector() != vector_two.is_column_vector() ||
+      solution_vector.is_column_vector() != vector_two.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "Both vectors MUST BE either column or row vectors\n"
+    error_message << "The three vectors MUST BE either column or row vectors\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Get the vector pointer of the solution vector
-  T *solution_vector_pt = solution_vector.vector_pt();
-  
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
   if (!solution_vector.is_own_memory_allocated())
    {
     // Allocate memory for the vector
-    solution_vector.allocate_memory();
-    // Get the new vector pointer
-    solution_vector_pt = solution_vector.vector_pt();
+    solution_vector.allocate_memory(n_values_vector_one);
    }
+  else
+   {
+    // Check that the already allocated memory is correct (n_values)
+    if (solution_vector.n_values() != vector_one.n_values())
+     {
+      // Error message
+      std::ostringstream error_message;
+      error_message << "The number of elements for the solution vector is\n"
+                    << "not as expected\n"
+                    << "dim(solution_vector): " << solution_vector.n_values()
+                    << "\ndim(vector_one): " << vector_one.n_values()
+                    << std::endl;
+      throw ChapchomLibError(error_message.str(),
+                             CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
+     }
+    
+   }
+  
+  // Get the vector pointer of the solution vector
+  T *solution_vector_pt = solution_vector.vector_pt();
   
   // Get the vector pointer of the vector one
   T *vector_one_pt = vector_one.vector_pt();
@@ -1149,33 +1219,49 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
-  
-  // Check that both vectors have the same column vector status (both
-  // are columns vectors or both are row vectors)
-  if (vector_one.is_column_vector() != vector_two.is_column_vector())
+
+  // Check that the three vectors have the same column vector status
+  if (vector_one.is_column_vector() != vector_two.is_column_vector() ||
+      solution_vector.is_column_vector() != vector_two.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "Both vectors MUST BE either column or row vectors\n"
+    error_message << "The three vectors MUST BE either column or row vectors\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Get the vector pointer of the solution vector
-  T *solution_vector_pt = solution_vector.vector_pt();
-  
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
   if (!solution_vector.is_own_memory_allocated())
    {
     // Allocate memory for the vector
-    solution_vector.allocate_memory();
-    // Get the new vector pointer
-    solution_vector_pt = solution_vector.vector_pt();
+    solution_vector.allocate_memory(n_values_vector_one);
+   }
+  else
+   {
+    // Check that the already allocated memory is correct (n_values)
+    if (solution_vector.n_values() != vector_one.n_values())
+     {
+      // Error message
+      std::ostringstream error_message;
+      error_message << "The number of elements for the solution vector is\n"
+                    << "not as expected\n"
+                    << "dim(solution_vector): " << solution_vector.n_values()
+                    << "\ndim(vector_one): " << vector_one.n_values()
+                    << std::endl;
+      throw ChapchomLibError(error_message.str(),
+                             CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
+     }
+    
    }
   
+  // Get the vector pointer of the solution vector
+  T *solution_vector_pt = solution_vector.vector_pt();
+    
   // Get the vector pointer of the vector one
   T *vector_one_pt = vector_one.vector_pt();
   // Get the vector pointer of the vector two
@@ -1227,32 +1313,48 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
-  
-  // Check that both vectors have the same column vector status (both
-  // are columns vectors or both are row vectors)
-  if (vector_one.is_column_vector() != vector_two.is_column_vector())
+
+  // Check that the three vectors have the same column vector status
+  if (vector_one.is_column_vector() != vector_two.is_column_vector() ||
+      solution_vector.is_column_vector() != vector_two.is_column_vector())
    {
     // Error message
     std::ostringstream error_message;
-    error_message << "Both vectors MUST BE either column or row vectors\n"
+    error_message << "The three vectors MUST BE either column or row vectors\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Get the vector pointer of the solution vector
-  T *solution_vector_pt = solution_vector.vector_pt();
-  
   // Check whether the solution vector has allocated memory, otherwise
   // allocate it here!!!
   if (!solution_vector.is_own_memory_allocated())
    {
     // Allocate memory for the vector
-    solution_vector.allocate_memory();
-    // Get the new vector pointer
-    solution_vector_pt = solution_vector.vector_pt();
+    solution_vector.allocate_memory(n_values_vector_one);
    }
+  else
+   {
+    // Check that the already allocated memory is correct (n_values)
+    if (solution_vector.n_values() != vector_one.n_values())
+     {
+      // Error message
+      std::ostringstream error_message;
+      error_message << "The number of elements for the solution vector is\n"
+                    << "not as expected\n"
+                    << "dim(solution_vector): " << solution_vector.n_values()
+                    << "\ndim(vector_one): " << vector_one.n_values()
+                    << std::endl;
+      throw ChapchomLibError(error_message.str(),
+                             CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
+     }
+    
+   }
+  
+  // Get the vector pointer of the solution vector
+  T *solution_vector_pt = solution_vector.vector_pt();
   
   // Get the vector pointer of the vector one
   T *vector_one_pt = vector_one.vector_pt();

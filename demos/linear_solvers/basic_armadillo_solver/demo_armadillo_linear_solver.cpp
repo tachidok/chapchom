@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
   // vector)
   CCVectorArmadillo<Real> b(n_rows);
   // Allocate memory
-  b.allocate_memory();
+  //b.allocate_memory();
   
   // Solve the following system of equations Ax = b
   
