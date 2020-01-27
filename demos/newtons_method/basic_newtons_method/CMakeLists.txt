@@ -41,3 +41,5 @@ ADD_TEST(NAME TEST_demo_basic_newtons_method_run
 SET (VALIDATE_FILENAME_demo_basic_newtons_method "validate_demo_basic_newtons_method.dat")
 ADD_TEST(NAME TEST_demo_basic_newtons_method_check_output
          COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_basic_newtons_method} ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)
+
+SET_TESTS_PROPERTIES(TEST_demo_basic_newtons_method_check_output PROPERTIES DEPENDS TEST_demo_basic_newtons_method_run)

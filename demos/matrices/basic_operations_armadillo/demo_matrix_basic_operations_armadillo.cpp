@@ -770,6 +770,111 @@ int main(int argc, char *argv[])
   
  }
  
+ {
+
+  // ##############################################################################
+  // Concatenate matrices
+  // ##############################################################################
+  std::cout << std::endl << ""
+            << "##############################################################################\n"
+            << "Concatenate matrices (horizontal concatenation)\n"
+            << "##############################################################################"
+            << std::endl;
+  output_test << std::endl << ""
+              << "##############################################################################\n"
+              << "Concatenate matrices (horizontal concatenation)\n"
+              << "##############################################################################"
+              << std::endl;
+  
+  // ------------------------------------------------------------------
+  // Create two matrices with the same number of rows and concatenate
+  // them
+  // ------------------------------------------------------------------
+  const unsigned N_ROWS_M1 = 10;
+  const unsigned N_COLUMNS_M1 = 5;
+  CCMatrixArmadillo<unsigned> M1(N_ROWS_M1, N_COLUMNS_M1);
+  M1.allocate_memory();
+
+  for (unsigned ii = 0; ii < N_ROWS_M1; ii++)
+   {
+    for (unsigned jj = 0; jj < N_COLUMNS_M1; jj++)
+     {
+      M1(ii, jj) = jj;
+     }
+   }
+  
+  const unsigned N_ROWS_M2 = 10;
+  const unsigned N_COLUMNS_M2 = 15;
+  CCMatrixArmadillo<unsigned> M2(N_ROWS_M2, N_COLUMNS_M2);
+  M2.allocate_memory();
+  
+  for (unsigned ii = 0; ii < N_ROWS_M2; ii++)
+   {
+    for (unsigned jj = 0; jj < N_COLUMNS_M2; jj++)
+     {
+      M2(ii, jj) = jj + 5;
+     }
+   }
+  
+  // The concatenated matrix
+  CCMatrixArmadillo<unsigned> C1;
+  
+  concatenate_matrices_horizontally(M1, M2, C1);
+  
+  C1.output();
+  C1.output(output_test);
+
+  std::cout << std::endl << ""
+            << "##############################################################################\n"
+            << "Concatenate matrices (vertical concatenation)\n"
+            << "##############################################################################"
+            << std::endl;
+  output_test << std::endl << ""
+              << "##############################################################################\n"
+              << "Concatenate matrices (vertical concatenation)\n"
+              << "##############################################################################"
+              << std::endl;
+  
+  // ------------------------------------------------------------------
+  // Create two matrices with the same number of rows and concatenate
+  // them
+  // ------------------------------------------------------------------
+  const unsigned N_ROWS_M3 = 5;
+  const unsigned N_COLUMNS_M3 = 10;
+  CCMatrixArmadillo<unsigned> M3(N_ROWS_M3, N_COLUMNS_M3);
+  M3.allocate_memory();
+
+  for (unsigned ii = 0; ii < N_ROWS_M3; ii++)
+   {
+    for (unsigned jj = 0; jj < N_COLUMNS_M3; jj++)
+     {
+      M3(ii, jj) = ii;
+     }
+   }
+  
+  const unsigned N_ROWS_M4 = 15;
+  const unsigned N_COLUMNS_M4 = 10;
+  CCMatrixArmadillo<unsigned> M4(N_ROWS_M4, N_COLUMNS_M4);
+  M4.allocate_memory();
+  
+  for (unsigned ii = 0; ii < N_ROWS_M4; ii++)
+   {
+    for (unsigned jj = 0; jj < N_COLUMNS_M4; jj++)
+     {
+      M4(ii, jj) = ii + 5;
+     }
+   }
+  
+  // The concatenated matrix
+  CCMatrixArmadillo<unsigned> C2;
+  
+  concatenate_matrices_vertically(M3, M4, C2);
+  
+  C2.output();
+  C2.output(output_test);
+  
+ }
+ 
  // Close the output for test
  output_test.close();
  

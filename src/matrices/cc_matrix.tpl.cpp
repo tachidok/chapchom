@@ -1282,6 +1282,40 @@ namespace chapchom
  }
  
  // ================================================================
+ // Concatenate matrices horizontally
+ // ================================================================
+ template<class T>
+ void concatenate_matrices_horizontally(const CCMatrix<T> &left_matrix,
+                                        const CCMatrix<T> &right_matrix,
+                                        CCMatrix<T> &concatenated_matrix)
+ {
+  // Error message
+  std::ostringstream error_message;
+  error_message << "This method is not currently implemented for this type of matrices"
+                << "Please implemented it yourself" << std::endl;
+  throw ChapchomLibError(error_message.str(),
+                         CHAPCHOM_CURRENT_FUNCTION,
+                         CHAPCHOM_EXCEPTION_LOCATION);
+ }
+ 
+ // ================================================================
+ // Concatenate matrices vertically
+ // ================================================================
+ template<class T>
+ void concatenate_matrices_vertically(const CCMatrix<T> &upper_matrix,
+                                      const CCMatrix<T> &lower_matrix,
+                                      CCMatrix<T> &concatenated_matrix)
+ {
+  // Error message
+  std::ostringstream error_message;
+  error_message << "This method is not currently implemented for this type of matrices"
+                << "Please implemented it yourself" << std::endl;
+  throw ChapchomLibError(error_message.str(),
+                         CHAPCHOM_CURRENT_FUNCTION,
+                         CHAPCHOM_EXCEPTION_LOCATION);
+ }
+ 
+ // ================================================================
  // Extra methods to work with vector and matrices operations
  // ================================================================
 

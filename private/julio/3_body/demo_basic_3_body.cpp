@@ -33,9 +33,9 @@
 // Odes for N body problem
 #include "cc_odes_basic_3_body.h"
 
-#define EIGHT_SHAPE_SOLUTION
+//#define EIGHT_SHAPE_SOLUTION
 //#define BODY_AT_CENTER_SOLUTION
-//#define FLOWER_IN_CIRCLE_SOLUTION
+#define FLOWER_IN_CIRCLE_SOLUTION
 //#define TRIPLE_RINGS_SOLUTION
 //#define TRIANGLES_INSIDE_OVAL_SOLUTION
 

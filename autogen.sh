@@ -166,10 +166,10 @@ if test "$build_and_run_demos" = "b" -o "$build_and_run_demos" = "B" ; then
 else
     build_demos=TRUE
     echo "How many processor use to run tests?"
-    OptionPrompt "[1] [2] [4] [default: 1]"
+    OptionPrompt "[1] [2] [4] [default: 4]"
     number_of_processors_to_run_demos=`OptionRead`
     if test "$number_of_processors_to_run_demos" != 1 -a "$number_of_processors_to_run_demos" != 2 -a "$number_of_processors_to_run_demos" != 4; then
-        number_of_processors_to_run_demos=1
+        number_of_processors_to_run_demos=4
         echo "Setting the number of processors to run tests to [1]" 
         echo "We do not currently support the number of processors you"
         echo "specified!"

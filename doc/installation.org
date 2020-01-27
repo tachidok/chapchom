@@ -1,0 +1,14 @@
+* Include the =bin= folder of the project to your =PATH= variable
+
+Add the following lines at the end of your =.bashrc= file in your home
+folder.
+
+#+BEGIN_SRC bash
+export PATH="/home/tachidok/local/working/research/chapchom/bin/:$PATH"
+#+END_SRC
+
+Assumming the working directory of the library is at
+
+#+BEGIN_SRC bash
+/home/tachidok/local/working/research/chapchom/
+#+END_SRC

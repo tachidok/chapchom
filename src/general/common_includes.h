@@ -67,6 +67,9 @@
 #include <fstream> // functions for inputting from and outputting to files
 #include <sstream>
 
+// Include ArgParse
+#include "../../external_src/argparse/src/argparse.hpp"
+
 // Own chapchom definitions
 #include "definitions.h"
 #include "cmake_definitions.h"

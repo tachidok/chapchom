@@ -46,7 +46,7 @@ def main():
     
     # Set the positional arguments
     parser.add_argument("--root_folder", type=str, help="The root folder to search for given extensions", required=True)
-    parser.add_argument("--ext", type=str, nargs='+', help="The list of extensions to look for and delete", required=True, choices=['dat', 'jpg', 'png', 'jpeg'])
+    parser.add_argument("--ext", type=str, nargs='+', help="The list of extensions to look for and delete", required=True, choices=['dat', 'jpg', 'png', 'jpeg', 'tar.gz'])
     parser.add_argument("--ignore_in_path", type=str, nargs='*', help="A list of strings that may occur in the path, therefore these files  should be ignored for deletion", required=False)
         
     # parse args

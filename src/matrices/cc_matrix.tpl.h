@@ -153,6 +153,18 @@ namespace chapchom
                         const CCMatrix<T> &right_matrix,
                         CCMatrix<T> &solution_matrix);
  
+ // Concatenate matrices horizontally
+ template<class T>
+  void concatenate_matrices_horizontally(const CCMatrix<T> &left_matrix,
+                                         const CCMatrix<T> &right_matrix,
+                                         CCMatrix<T> &concatenated_matrix);
+ 
+ // Concatenate matrices vertically
+ template<class T>
+  void concatenate_matrices_vertically(const CCMatrix<T> &upper_matrix,
+                                       const CCMatrix<T> &lower_matrix,
+                                       CCMatrix<T> &concatenated_matrix);
+ 
  // ================================================================
  // Extra methods to work with vector and matrices operations
  // ================================================================

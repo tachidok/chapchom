@@ -464,7 +464,8 @@ namespace chapchom
   
   // Temporal arrays to extract data and store it in the corresponding
   // data_points or data_sets
-  Real *position_array = new Real[dim];
+  //Real *position_array = new Real[dim];
+  Real *position_array = new Real[dim+1]; // REMOVE
   Real *u_array = new Real[n_attributes];
   long int global_id = 0;
   
@@ -480,6 +481,8 @@ namespace chapchom
      {
       position_array[j] = positions[i].value(j, t);
      }
+    
+    position_array[2] = attributes[i].value(0, 0); // REMOVE
     
     // Add positions into data_points
     data_points->SetPoint(global_id, position_array);

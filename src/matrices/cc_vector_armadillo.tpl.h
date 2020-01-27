@@ -191,6 +191,18 @@ namespace chapchom
                                            const CCVectorArmadillo<T> &vector_two,
                                            CCVectorArmadillo<T> &solution_vector);
  
+ // Concatenate vector horizontally
+ template<class T>
+  void concatenate_vectors_horizontally(const CCVectorArmadillo<T> &left_vector,
+                                        const CCVectorArmadillo<T> &right_vector,
+                                        CCVectorArmadillo<T> &concatenated_vector);
+ 
+ // Concatenate matrices vertically
+ template<class T>
+  void concatenate_vectors_vertically(const CCVectorArmadillo<T> &upper_vector,
+                                      const CCVectorArmadillo<T> &lower_vector,
+                                      CCVectorArmadillo<T> &concatenated_vector);
+ 
 }
 
 #endif // #ifndef CCVECTORARMADILLO_TPL_H

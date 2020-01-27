@@ -11,7 +11,7 @@ namespace chapchom
  // Empty constructor
  // ===================================================================
  template<class T>
- CCMatrixArmadillo<T>::CCMatrixArmadillo() 
+ CCMatrixArmadillo<T>::CCMatrixArmadillo()
   : ACMatrix<T>()
  {
   // Delete any data in memory
@@ -573,7 +573,7 @@ namespace chapchom
   // Compute transpose
   arma::Mat<T> arma_transposed_matrix_pt = Arma_matrix_pt->t();
   
-  transposed_matrix.set_matrix(&arma_transposed_matrix_pt, this->NRows, this->NColumns);
+  transposed_matrix.set_matrix(&arma_transposed_matrix_pt, arma_transposed_matrix_pt.n_rows, arma_transposed_matrix_pt.n_cols);
  }
  
  // ===================================================================
@@ -1270,6 +1270,178 @@ namespace chapchom
   
   // Perform the addition
   (*arma_solution_matrix_pt) = (*arma_matrix_one_pt) * (*arma_matrix_two_pt);
+  
+ }
+ 
+ // ================================================================
+ // Concatenate matrices horizontally
+ // ================================================================
+ template<class T>
+  void concatenate_matrices_horizontally(const CCMatrixArmadillo<T> &left_matrix,
+                                         const CCMatrixArmadillo<T> &right_matrix,
+                                         CCMatrixArmadillo<T> &concatenated_matrix)
+ {
+  // Check that both matrices have memory allocated
+  if (!left_matrix.is_own_memory_allocated() || !right_matrix.is_own_memory_allocated())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "One of the matrices to operate with has no memory allocated\n"
+                  << "left_matrix.is_own_memory_allocated() = "
+                  << left_matrix.is_own_memory_allocated() << "\n"
+                  << "right_matrix.is_own_memory_allocated() = "
+                  << right_matrix.is_own_memory_allocated() << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check whether the number of rows of the matrices are the same
+  const unsigned long n_rows_left_matrix = left_matrix.n_rows();
+  const unsigned long n_rows_right_matrix = right_matrix.n_rows();
+  if (n_rows_left_matrix != n_rows_right_matrix)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The number of rows of the matrices is not the same:\n"
+                  << "n_rows(left_matrix) = (" << n_rows_left_matrix << ")\n"
+                  << "n_rows(right_matrix) = (" << n_rows_right_matrix << ")\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Get the number of columns of each matrix and compute the new
+  // number of columns for the new matrix
+  const unsigned long n_columns_left_matrix = left_matrix.n_columns();
+  const unsigned long n_columns_right_matrix = right_matrix.n_columns();
+  const unsigned long n_columns_new_concatenated_matrix =
+   n_columns_left_matrix + n_columns_right_matrix;
+  const unsigned long n_rows_new_concatenated_matrix = n_rows_left_matrix;
+  
+  // Check whether the concatenated matrix has allocated memory,
+  // otherwise allocate it here!!!
+  if (!concatenated_matrix.is_own_memory_allocated())
+   {
+    // Allocate memory for the matrix
+    concatenated_matrix.allocate_memory(n_rows_new_concatenated_matrix,
+                                        n_columns_new_concatenated_matrix);
+   }
+  
+  // Check whether the dimension of the concatenated matrix is correct
+  const unsigned long n_rows_concatenated_matrix = concatenated_matrix.n_rows();
+  const unsigned long n_columns_concatenated_matrix = concatenated_matrix.n_columns();
+  if (n_rows_concatenated_matrix != n_rows_new_concatenated_matrix ||
+      n_columns_concatenated_matrix != n_columns_new_concatenated_matrix)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The dimension of the matrix is not as expected:\n"
+                  << "dim(concatenated_matrix) = (" << n_rows_concatenated_matrix << ", "
+                  << n_columns_concatenated_matrix << ")\n"
+                  << "dim(expected_matrix) = (" << n_rows_new_concatenated_matrix
+                  << ", " << n_columns_new_concatenated_matrix << ")\n" << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Get the matrix pointer of the concatenated matrix
+  arma::Mat<T> *arma_concatenated_matrix_pt = concatenated_matrix.arma_matrix_pt();
+  
+  // Get the matrix pointer of the input matrices
+  arma::Mat<T> *arma_left_matrix_pt = left_matrix.arma_matrix_pt();
+  arma::Mat<T> *arma_right_matrix_pt = right_matrix.arma_matrix_pt();
+  
+  // Perform the concatenation of rows/horizontal_concatenation
+  (*arma_concatenated_matrix_pt) = arma::join_rows((*arma_left_matrix_pt), (*arma_right_matrix_pt));
+  
+ }
+ 
+ // ================================================================
+ // Concatenate matrices vertically
+ // ================================================================
+ template<class T>
+  void concatenate_matrices_vertically(const CCMatrixArmadillo<T> &upper_matrix,
+                                       const CCMatrixArmadillo<T> &lower_matrix,
+                                       CCMatrixArmadillo<T> &concatenated_matrix)
+ {
+  // Check that both matrices have memory allocated
+  if (!upper_matrix.is_own_memory_allocated() || !lower_matrix.is_own_memory_allocated())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "One of the matrices to operate with has no memory allocated\n"
+                  << "upper_matrix.is_own_memory_allocated() = "
+                  << upper_matrix.is_own_memory_allocated() << "\n"
+                  << "lower_matrix.is_own_memory_allocated() = "
+                  << lower_matrix.is_own_memory_allocated() << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check whether the number of columns of the matrices are the same
+  const unsigned long n_columns_upper_matrix = upper_matrix.n_columns();
+  const unsigned long n_columns_lower_matrix = lower_matrix.n_columns();
+  if (n_columns_upper_matrix != n_columns_lower_matrix)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The number of columns of the matrices is not the same:\n"
+                  << "n_columns(upper_matrix) = (" << n_columns_upper_matrix << ")\n"
+                  << "n_columns(lower_matrix) = (" << n_columns_lower_matrix << ")\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Get the number of rows of each matrix and compute the new number
+  // of rows for the new matrix
+  const unsigned long n_rows_upper_matrix = upper_matrix.n_rows();
+  const unsigned long n_rows_lower_matrix = lower_matrix.n_rows();
+  const unsigned long n_rows_new_concatenated_matrix =
+   n_rows_upper_matrix + n_rows_lower_matrix;
+  const unsigned long n_columns_new_concatenated_matrix = n_columns_upper_matrix;
+  
+  // Check whether the concatenated matrix has allocated memory,
+  // otherwise allocate it here!!!
+  if (!concatenated_matrix.is_own_memory_allocated())
+   {
+    // Allocate memory for the matrix
+    concatenated_matrix.allocate_memory(n_rows_new_concatenated_matrix,
+                                        n_columns_new_concatenated_matrix);
+   }
+  
+  // Check whether the dimension of the concatenated matrix is correct
+  const unsigned long n_rows_concatenated_matrix = concatenated_matrix.n_rows();
+  const unsigned long n_columns_concatenated_matrix = concatenated_matrix.n_columns();
+  if (n_rows_concatenated_matrix != n_rows_new_concatenated_matrix ||
+      n_columns_concatenated_matrix != n_columns_new_concatenated_matrix)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The dimension of the new matrix is not as expected:\n"
+                  << "dim(concatenated_matrix) = (" << n_rows_concatenated_matrix << ", "
+                  << n_columns_concatenated_matrix << ")\n"
+                  << "dim(expected_matrix) = (" << n_rows_new_concatenated_matrix
+                  << ", " << n_columns_new_concatenated_matrix << ")\n" << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Get the matrix pointer of the concatenated matrix
+  arma::Mat<T> *arma_concatenated_matrix_pt = concatenated_matrix.arma_matrix_pt();
+  
+  // Get the matrix pointer of the input matrices
+  arma::Mat<T> *arma_upper_matrix_pt = upper_matrix.arma_matrix_pt();
+  arma::Mat<T> *arma_lower_matrix_pt = lower_matrix.arma_matrix_pt();
+  
+  // Perform the concatenation of rows/horizontal_concatenation
+  (*arma_concatenated_matrix_pt) = arma::join_cols((*arma_upper_matrix_pt), (*arma_lower_matrix_pt));
   
  }
  

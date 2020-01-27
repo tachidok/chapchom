@@ -2,9 +2,32 @@
 #+TITLE: TODO list for CHAPCHOM
 #+AUTHOR: Julio César Pérez Sansalvador
 * Work on Mesh Free Methods
-- Working on Distance Matrix taken from book Mesh Free Approximation
+** Need to modify the strategy for memory allocation of matrices and vectors
+- IF WE DO ALL THE FOLLOWING THE WE WILL NOT REQUIRE TO EXPLICITLY
+  CALL FOR THE MEMORY ALLOCATION METHOD WHEN WORKING WITH MATRICES AND VECTORS
+- Memory allocation is performed if a matrix or vector is created with
+  a given size, otherwise, no memory allocation should be performed
+
+- Delete the method "allocate_memory()" without arguments to check how
+  many parts of the code are affected.
+
+- The methods that work with matrices and vectors should initially
+  check whether the matrices or vectors have memory allocated, if that
+  is the case then check the dimensions, otherwise then create the
+  matrices and vectors with the corresponding dimensions.
+- We should not require to create a matrix or vector with the
+  corresponding sizes for operation in order to be able to perform the
+  operations, the user SHOULD NOT BE RESPONSIBLE for the sizes of the
+  resulting matrices.
+- Check the flag of memory allocation when creating a matrix with an
+  initial size, it should be set to memory allocated since the matrix
+  has been given a size therefore memory should have been allocated.
+- Check how the method for matrices concatenation (armadillo) are
+  working in order to know how to do this!!!
+** Demos
+- WORKING ON THIS - Working on Distance Matrix taken from book Mesh Free Approximation
   Methods with MATLAB
-- Working on problem of chapter 1
+- DONE Working on problem of chapter 1
  - 1D
   - Left to review the position of nodes given by an /h/ value, such
    that the distance between nodes is /h/.
@@ -13,8 +36,10 @@
   - Create methods to generate nodes positions
   - Distance between nodes given by an /h/ parameter
   - Random nodes position
-- Then move to Chapter 2 of the book and implement the same stuff as
+- DONE Then move to Chapter 2 of the book and implement the same stuff as
   above
+- WORKING ON THIS - Then move to Chapter 6 of the book and implement
+  the same stuff as above
 * Work on Documentation
 - How to git with CHAPCHOM
 

@@ -1,4 +1,5 @@
 # Add directories with demo/test cases
+ADD_SUBDIRECTORY(argparse)
 ADD_SUBDIRECTORY(interpolation)
 ADD_SUBDIRECTORY(matrices)
 ADD_SUBDIRECTORY(linear_solvers)

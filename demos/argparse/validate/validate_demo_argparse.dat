@@ -1,0 +1,6 @@
+args.string_argument: HELLO
+args.boolean_argument: 1
+args.verbosity: 1
+args.real_argument: 0.33
+args.vector_real_arguments_one_or_more: 0.2, 0.4, 0.5
+args.vector_real_arguments_none_or_more: 5.8, 4.2, 1, 20.6

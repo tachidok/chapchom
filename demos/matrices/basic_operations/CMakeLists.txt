@@ -59,3 +59,11 @@ ELSE (CHAPCHOM_USES_DOUBLE_PRECISION)
 ENDIF (CHAPCHOM_USES_DOUBLE_PRECISION)
 ADD_TEST(NAME TEST_demo_copy_matrices_check_output
          COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_copy_matrices} ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)
+
+# ===========================================
+# Test execution order
+# ===========================================
+#SET_TESTS_PROPERTIES(TEST_demo_matrix_basic_operations_check_output TEST_demo_copy_matrices_check_output PROPERTIES DEPENDS TEST_demo_matrix_basic_operations_run DEPENDS TEST_demo_copy_matrices_run)
+SET_TESTS_PROPERTIES(TEST_demo_matrix_basic_operations_check_output PROPERTIES DEPENDS TEST_demo_matrix_basic_operations_run)
+SET_TESTS_PROPERTIES(TEST_demo_copy_matrices_run PROPERTIES DEPENDS TEST_demo_matrix_basic_operations_check_output)
+SET_TESTS_PROPERTIES(TEST_demo_copy_matrices_check_output PROPERTIES DEPENDS TEST_demo_copy_matrices_run)

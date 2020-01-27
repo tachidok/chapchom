@@ -1289,5 +1289,27 @@ namespace chapchom
   
  }
  
+ // ================================================================
+ // Concatenate vector horizontally
+ // ================================================================
+ template<class T>
+  void concatenate_vectors_horizontally(const CCVectorArmadillo<T> &left_vector,
+                                        const CCVectorArmadillo<T> &right_vector,
+                                        CCVectorArmadillo<T> &concatenated_vector)
+ {
+  // WORK ON THIS
+ }
+ 
+ // ================================================================
+ // Concatenate matrices vertically
+ // ================================================================
+ template<class T>
+  void concatenate_vectors_vertically(const CCVectorArmadillo<T> &upper_vector,
+                                      const CCVectorArmadillo<T> &lower_vector,
+                                      CCVectorArmadillo<T> &concatenated_vector)
+ {
+  // WORK ON THIS
+ }
+ 
 }
 

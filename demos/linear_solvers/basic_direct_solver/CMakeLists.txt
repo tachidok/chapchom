@@ -38,3 +38,8 @@ ELSE (CHAPCHOM_USES_DOUBLE_PRECISION)
 ENDIF (CHAPCHOM_USES_DOUBLE_PRECISION)
 ADD_TEST(NAME TEST_demo_linear_solver_check_output
          COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_linear_solver} ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)
+
+# ===========================================
+# Test execution order
+# ===========================================
+SET_TESTS_PROPERTIES(TEST_demo_linear_solver_check_output PROPERTIES DEPENDS TEST_demo_linear_solver_run)

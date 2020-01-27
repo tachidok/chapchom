@@ -40,5 +40,3 @@ Suggested (and working) installation order
 - SuperLU
 - Armadillo
 - VTK
-
-
