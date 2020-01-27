@@ -312,9 +312,9 @@ int main(int argc, char *argv[])
  // Set right-hand side
  // --------------------------------------------------------------
 #ifdef CHAPCHOM_USES_ARMADILLO
- CCVectorArmadillo<Real> rhs(n_nodes+M);
+ CCVectorArmadillo<Real> rhs(n_nodes);
 #else 
- CCVector<Real> rhs(n_nodes+M);
+ CCVector<Real> rhs(n_nodes);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
  rhs.allocate_memory();
  for (unsigned i = 0; i < n_nodes; i++)
@@ -339,40 +339,33 @@ int main(int argc, char *argv[])
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
   }
  
+ // ================================================================
+ // Create the additional entries for the matrices considering the
+ // number of entries set by the interpolation polynomial (M = 3)
+ // ================================================================
+#ifdef CHAPCHOM_USES_ARMADILLO
+ CCVectorArmadillo<Real> additional_rhs(M);
+#else
+ CCVector<Real> additional_rhs(M);
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+ additional_rhs.allocate_memory();
  // Set the constraints given in page 55 and 56, where the sum is
  // equal to zero, thus
- for (unsigned i = n_nodes; i < n_nodes + M; i++)
+ for (unsigned i = 0; i < M; i++)
   {
-   rhs(i) = 0;
+   additional_rhs(i) = 0;
   }
  
-//  // ================================================================
-//  // Create the additional entries for the matrices considering the
-//  // number of entries set by the interpolation polynomial (M = 3)
-//  // ================================================================
-// #ifdef CHAPCHOM_USES_ARMADILLO
-//  CCVectorArmadillo<Real> additional_rhs(M);
-// #else
-//  CCVector<Real> additional_rhs(M);
-// #endif // #ifdef CHAPCHOM_USES_ARMADILLO
-//  additional_rhs.allocate_memory();
-//  // Set the constraints given in page 55 and 56, where the sum is
-//  // equal to zero, thus
-//  for (unsigned i = 0; i < M; i++)
-//   {
-//    additional_rhs(i) = 0;
-//   }
-
-//  // Create the block version of the rhs concatenating the original rhs
-//  // and the additional rhs
-// #ifdef CHAPCHOM_USES_ARMADILLO
-//  CCVectorArmadillo<Real> block_rhs(n_nodes + M);
-// #else 
-//  CCVector<Real> block_rhs(n_nodes + M);
-// #endif // #ifdef CHAPCHOM_USES_ARMADILLO
-//  // Concatenate
-//  concatenate_matrices_vertically(rhs, additional_rhs, block_rhs);
-
+ // Create the block version of the rhs concatenating the original rhs
+ // and the additional rhs
+#ifdef CHAPCHOM_USES_ARMADILLO
+ CCVectorArmadillo<Real> block_rhs(n_nodes + M);
+#else 
+ CCVector<Real> block_rhs(n_nodes + M);
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+ // Concatenate
+ concatenate_vectors_vertically(rhs, additional_rhs, block_rhs);
+ 
  // -------------------------------
  // Create the matrix P
  // -------------------------------
@@ -439,9 +432,9 @@ int main(int argc, char *argv[])
  // The solution vector (with the respective number of rows) stores
  // the coefficients for the interpolant polynomials
 #ifdef CHAPCHOM_USES_ARMADILLO
- CCVectorArmadillo<Real> sol(n_nodes + 3);
+ CCVectorArmadillo<Real> sol(n_nodes + M);
 #else
- CCVector<Real> sol(n_nodes + 3);
+ CCVector<Real> sol(n_nodes + M);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
  
  // --------------------------------------------------------------
@@ -462,9 +455,8 @@ int main(int argc, char *argv[])
  // --------------------------------------------------------------
  // Solve the system of equations
  // -------------------------------------------------------------- 
- // HERE MODIFY WHEN IMPLEMENTING BLOCK VECTOR AND CONCATENATION
- linear_solver.solve(block_interpolation_matrix, rhs, sol);
- //linear_solver.solve(block_interpolation_matrix, block_rhs, sol);
+ //linear_solver.solve(block_interpolation_matrix, rhs, sol);
+ linear_solver.solve(block_interpolation_matrix, block_rhs, sol);
  
  //std::cerr << "Solution vector" << std::endl;
  //sol.print();

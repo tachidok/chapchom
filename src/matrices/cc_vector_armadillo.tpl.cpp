@@ -11,7 +11,7 @@ namespace chapchom
  // Empty constructor
  // ===================================================================
  template<class T>
- CCVectorArmadillo<T>::CCVectorArmadillo() 
+ CCVectorArmadillo<T>::CCVectorArmadillo()
   : ACVector<T>()
  {
   // Delete any data in memory
@@ -1226,9 +1226,9 @@ namespace chapchom
     // Error message
     std::ostringstream error_message;
     error_message << "One of the vectors to operate with has no memory allocated\n"
-                  << "vector_one.is_own_memory_allocated() = "
+                  << "vector_one.is_own_memory_allocated(): "
                   << vector_one.is_own_memory_allocated() << "\n"
-                  << "vector_two.is_own_memory_allocated() = "
+                  << "vector_two.is_own_memory_allocated(): "
                   << vector_two.is_own_memory_allocated() << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,
@@ -1297,7 +1297,97 @@ namespace chapchom
                                         const CCVectorArmadillo<T> &right_vector,
                                         CCVectorArmadillo<T> &concatenated_vector)
  {
-  // WORK ON THIS
+  // Check that both vector have memory allocated
+  if (!left_vector.is_own_memory_allocated() || !right_vector.is_own_memory_allocated())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "One of the vectors to operate with has no memory allocated\n"
+                  << "left_vector.is_own_memory_allocated(): "
+                  << left_vector.is_own_memory_allocated() << "\n"
+                  << "right_vector.is_own_memory_allocated(): "
+                  << right_vector.is_own_memory_allocated() << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check whether both vectors are row vectors
+  if (left_vector.is_column_vector() || right_vector.is_column_vector())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "One of the vectors is not a row vector, if you need\n"
+                  << "to concatenate two row vectors to create a matrix\n"
+                  << "then BETTER FIRST transform your vectors to matrices\n"
+                  << "then concatenate them\n"
+                  << "left_vector.is_column_vector(): " << left_vector.is_column_vector()
+                  << "\nright_vector.is_column_vector(): " << right_vector.is_column_vector()
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check whether the concatenated vector is a row vector, if not
+  // then transpose it
+  if (concatenated_vector.is_column_vector())
+   {
+    // Warning message
+    std::ostringstream warning_message;
+    warning_message << "The resulting concatenated vector is a column vector\n"
+                    << "concatenated_vector.is_column_vector(): "
+                    << concatenated_vector.is_column_vector()
+                    << "\n\n Thus I am going to transpose it!!!"
+                    << std::endl;
+    ChapchomLibWarning(warning_message.str(),
+                       CHAPCHOM_CURRENT_FUNCTION,
+                       CHAPCHOM_EXCEPTION_LOCATION);
+    
+    concatenated_vector.transpose();
+    
+   }
+  
+  // Get the number of elements of each vector and compute the new
+  // number of elements for the new vector
+  const unsigned long n_elements_left_vector = left_vector.n_values();
+  const unsigned long n_elements_right_vector = right_vector.n_values();
+  const unsigned long n_elements_new_concatenated_vector =
+   n_elements_left_vector + n_elements_right_vector;
+  
+  // Check whether the concatenated vector has allocated memory,
+  // otherwise allocate it here!!!
+  if (!concatenated_vector.is_own_memory_allocated())
+   {
+    // Allocate memory for the matrix (create a row vector)
+    concatenated_vector.allocate_memory(n_elements_new_concatenated_vector);
+   }
+  
+  // Check whether the dimension of the concatenated matrix is correct
+  const unsigned long n_elements_concatenated_vector = concatenated_vector.n_values();
+  if (n_elements_concatenated_vector != n_elements_new_concatenated_vector)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The number of element of the concatenated vector is not as expected:\n"
+                  << "dim(concatenated_vector) = (" << n_elements_concatenated_vector << ")\n"
+                  << "dim(expected_vector) = (" << n_elements_new_concatenated_vector << ")\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Get the matrix pointer of the concatenated matrix
+  arma::Mat<T> *arma_concatenated_vector_pt = concatenated_vector.arma_vector_pt();
+  
+  // Get the vector pointer of the input vector
+  arma::Mat<T> *arma_left_vector_pt = left_vector.arma_vector_pt();
+  arma::Mat<T> *arma_right_vector_pt = right_vector.arma_vector_pt();
+  
+  // Perform the concatenation of rows/horizontal_concatenation
+  (*arma_concatenated_vector_pt) = arma::join_rows((*arma_left_vector_pt), (*arma_right_vector_pt));
+  
  }
  
  // ================================================================
@@ -1308,7 +1398,92 @@ namespace chapchom
                                       const CCVectorArmadillo<T> &lower_vector,
                                       CCVectorArmadillo<T> &concatenated_vector)
  {
-  // WORK ON THIS
+  // Check that both vector have memory allocated
+  if (!upper_vector.is_own_memory_allocated() || !lower_vector.is_own_memory_allocated())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "One of the vectors to operate with has no memory allocated\n"
+                  << "upper_vector.is_own_memory_allocated(): "
+                  << upper_vector.is_own_memory_allocated() << "\n"
+                  << "lower_vector.is_own_memory_allocated(): "
+                  << lower_vector.is_own_memory_allocated() << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check whether both vectors are column vectors
+  if (!upper_vector.is_column_vector() || !lower_vector.is_column_vector())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "One of the vectors is not a column vector, if you need\n"
+                  << "to concatenate two column vectors to create a matrix\n"
+                  << "then BETTER FIRST transform your vectors to matrices\n"
+                  << "then concatenate them\n"
+                  << "upper_vector.is_column_vector(): " << upper_vector.is_column_vector()
+                  << "\nlower_vector.is_column_vector(): " << lower_vector.is_column_vector()
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Check whether the concatenated vector is a column vector
+  if (!concatenated_vector.is_column_vector())
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The resulting concatenated vector is a row vector\n"
+                  << "concatenated_vector.is_column_vector(): "
+                  << concatenated_vector.is_column_vector()
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Get the number of elements of each vector and compute the new
+  // number of elements for the new vector
+  const unsigned long n_elements_upper_vector = upper_vector.n_values();
+  const unsigned long n_elements_lower_vector = lower_vector.n_values();
+  const unsigned long n_elements_new_concatenated_vector =
+   n_elements_upper_vector + n_elements_lower_vector;
+  
+  // Check whether the concatenated vector has allocated memory,
+  // otherwise allocate it here!!!
+  if (!concatenated_vector.is_own_memory_allocated())
+   {
+    // Allocate memory for the matrix (create a column vector)
+    concatenated_vector.allocate_memory(n_elements_new_concatenated_vector);
+   }
+  
+  // Check whether the dimension of the concatenated matrix is correct
+  const unsigned long n_elements_concatenated_vector = concatenated_vector.n_values();
+  if (n_elements_concatenated_vector != n_elements_new_concatenated_vector)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "The number of element of the concatenated vector is not as expected:\n"
+                  << "dim(concatenated_vector) = (" << n_elements_concatenated_vector << ")\n"
+                  << "dim(expected_vector) = (" << n_elements_new_concatenated_vector << ")\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
+  // Get the matrix pointer of the concatenated matrix
+  arma::Mat<T> *arma_concatenated_vector_pt = concatenated_vector.arma_vector_pt();
+  
+  // Get the vector pointer of the input vector
+  arma::Mat<T> *arma_upper_vector_pt = upper_vector.arma_vector_pt();
+  arma::Mat<T> *arma_lower_vector_pt = lower_vector.arma_vector_pt();
+  
+  // Perform the concatenation of rows/horizontal_concatenation
+  (*arma_concatenated_vector_pt) = arma::join_cols((*arma_upper_vector_pt), (*arma_lower_vector_pt));
+  
  }
  
 }
