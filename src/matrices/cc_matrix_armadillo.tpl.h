@@ -79,7 +79,7 @@ namespace chapchom
                         const unsigned long n);
    
    // Allocates memory to store entries of the vector
-   void allocate_memory();
+   //void allocate_memory();
    
    // Fills the vector with zeroes
    void fill_with_zeroes();

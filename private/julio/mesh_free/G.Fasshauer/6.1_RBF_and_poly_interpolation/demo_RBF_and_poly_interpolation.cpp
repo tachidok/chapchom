@@ -72,7 +72,7 @@ void compute_distance_matrix(MAT_TYPE &data_sites, MAT_TYPE &centers,
    for (unsigned n = 0; n < n_vector_points_centers; n++)
     {
      VEC_TYPE distance(dimension);
-     distance.allocate_memory();
+     //distance.allocate_memory();
      // Loop over the elements of both vectors
      for (unsigned k = 0; k < dimension; k++)
       {
@@ -262,7 +262,7 @@ int main(int argc, char *argv[])
  CCMatrix<Real> nodes_position(dim, n_nodes);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
  // Each column stores the vector position of a node
- nodes_position.allocate_memory();
+ //nodes_position.allocate_memory();
  for (unsigned i = 0; i < n_nodes; i++)
   {
    for (unsigned j = 0; j < dim; j++)
@@ -283,7 +283,7 @@ int main(int argc, char *argv[])
  // Generate the distance matrix using the nodes position centers
  // shifted by the same nodes position
  // --------------------------------------------------------------
- distance_matrix.allocate_memory();
+ //distance_matrix.allocate_memory();
 #ifdef CHAPCHOM_USES_ARMADILLO
  compute_distance_matrix<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> >(nodes_position, nodes_position, distance_matrix);
 #else
@@ -301,7 +301,7 @@ int main(int argc, char *argv[])
  // --------------------------------------------------------------
  // Generate the interpolation matrix using the RBF PSI
  // --------------------------------------------------------------
- interpolation_matrix.allocate_memory();
+ //interpolation_matrix.allocate_memory();
 #ifdef CHAPCHOM_USES_ARMADILLO
  psi<CCMatrixArmadillo<Real> >(distance_matrix, interpolation_matrix, epsilon);
 #else
@@ -316,7 +316,7 @@ int main(int argc, char *argv[])
 #else 
  CCVector<Real> rhs(n_nodes);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
- rhs.allocate_memory();
+ //rhs.allocate_memory();
  for (unsigned i = 0; i < n_nodes; i++)
   {
 #ifdef CHAPCHOM_USES_ARMADILLO
@@ -324,7 +324,7 @@ int main(int argc, char *argv[])
 #else
    CCVector<Real> tmp_v(dim);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
-   tmp_v.allocate_memory();
+   //tmp_v.allocate_memory();
    for (unsigned j = 0; j < dim; j++)
     {
      tmp_v(j) = nodes_pt[i]->get_position(j);
@@ -348,7 +348,7 @@ int main(int argc, char *argv[])
 #else
  CCVector<Real> additional_rhs(M);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
- additional_rhs.allocate_memory();
+ //additional_rhs.allocate_memory();
  // Set the constraints given in page 55 and 56, where the sum is
  // equal to zero, thus
  for (unsigned i = 0; i < M; i++)
@@ -374,7 +374,7 @@ int main(int argc, char *argv[])
 #else
  CCMatrix<Real> P(n_nodes, M);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
- P.allocate_memory();
+ //P.allocate_memory();
  for (unsigned i = 0; i < n_nodes; i++)
   {
    P(i, 0) = 1;
@@ -398,7 +398,7 @@ int main(int argc, char *argv[])
  CCMatrix<Real> Zeroes(M, M);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
  // Fill it with zeroes
- Zeroes.allocate_memory();
+ //Zeroes.allocate_memory();
  Zeroes.fill_with_zeroes();
 
  // ---------------------------------------------------------
@@ -513,7 +513,7 @@ int main(int argc, char *argv[])
 #else
  CCMatrix<Real> evaluation_nodes_position(dim, n_evaluation_nodes);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
- evaluation_nodes_position.allocate_memory();
+ //evaluation_nodes_position.allocate_memory();
  // --------------------------------------------------------------
  // Assign positions
  // --------------------------------------------------------------
@@ -533,7 +533,7 @@ int main(int argc, char *argv[])
  // Generate the distance matrix using the evaluation nodes position
  // and the original nodes positions
  // --------------------------------------------------------------
- evaluation_distance_matrix.allocate_memory();
+ //evaluation_distance_matrix.allocate_memory();
 #ifdef CHAPCHOM_USES_ARMADILLO
  compute_distance_matrix<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> >(evaluation_nodes_position, nodes_position, evaluation_distance_matrix);
 #else
@@ -552,7 +552,7 @@ int main(int argc, char *argv[])
  // --------------------------------------------------------------
  // Generate the interpolation matrix using the RBF psi
  // --------------------------------------------------------------
- interpolation_evaluation_matrix.allocate_memory();
+ //interpolation_evaluation_matrix.allocate_memory();
 #ifdef CHAPCHOM_USES_ARMADILLO
  psi<CCMatrixArmadillo<Real> >(evaluation_distance_matrix, interpolation_evaluation_matrix, epsilon);
 #else
@@ -567,7 +567,7 @@ int main(int argc, char *argv[])
 #else
  CCMatrix<Real> Pe(n_evaluation_nodes, M);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
- Pe.allocate_memory();
+ //Pe.allocate_memory();
  for (unsigned i = 0; i < n_evaluation_nodes; i++)
   {
    Pe(i, 0) = 1;
@@ -647,7 +647,7 @@ int main(int argc, char *argv[])
 #else 
  CCVector<Real> real_sol(n_evaluation_nodes);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
- real_sol.allocate_memory();
+ //real_sol.allocate_memory();
  for (unsigned i = 0; i < n_evaluation_nodes; i++)
   {
 #ifdef CHAPCHOM_USES_ARMADILLO
@@ -655,7 +655,7 @@ int main(int argc, char *argv[])
 #else
    CCVector<Real> tmp_v(dim);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
-   tmp_v.allocate_memory();
+   //tmp_v.allocate_memory();
    for (unsigned j = 0; j < dim; j++)
     {
      tmp_v(j) = evaluation_nodes_position(j, i);
@@ -692,7 +692,7 @@ int main(int argc, char *argv[])
 #else
  CCVector<Real> error(n_evaluation_nodes);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
- error.allocate_memory();
+ //error.allocate_memory();
  std::cerr << "ERRORS" << std::endl;
  for (unsigned i = 0; i < n_evaluation_nodes; i++)
   {

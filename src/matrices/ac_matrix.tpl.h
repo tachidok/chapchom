@@ -35,7 +35,7 @@ namespace chapchom
                                 const unsigned long n) = 0;
    
    // Allocates memory to store entries of the matrix
-   virtual void allocate_memory() = 0;
+   //virtual void allocate_memory() = 0;
    
    // Fills the matrix with zeroes
    virtual void fill_with_zeroes() = 0;

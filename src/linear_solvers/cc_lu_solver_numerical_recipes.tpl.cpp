@@ -96,18 +96,45 @@ namespace chapchom
                              CHAPCHOM_CURRENT_FUNCTION,
                              CHAPCHOM_EXCEPTION_LOCATION);
      }
-    else if (this->A.n_rows() != X.n_rows())
+    
+    // Check whether the solution matrix has allocated memory,
+    // otherwise allocate it here!!!
+    if (!X.is_own_memory_allocated())
      {
-      // Error message
-      std::ostringstream error_message;
-      error_message << "The number of rows of the matrix and the number "
-                    << "of rows of the solution matrix are not the same:\n"
-                    << "A.n_rows() = (" << this->A.n_rows() << ")\n"
-                    << "X.n_rows() = (" << X.n_rows() << ")\n" << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      // Allocate memory
+      X.allocate_memory(this->A.n_rows(), B.n_columns());
      }
+    else
+     {
+      if (this->A.n_rows() != X.n_rows())
+       {
+        // Error message
+        std::ostringstream error_message;
+        error_message << "The number of rows of the matrix and the number "
+                      << "of rows of the solution matrix are not the same:\n"
+                      << "A.n_rows() = (" << this->A.n_rows() << ")\n"
+                      << "X.n_rows() = (" << X.n_rows() << ")\n" << std::endl;
+        throw ChapchomLibError(error_message.str(),
+                               CHAPCHOM_CURRENT_FUNCTION,
+                               CHAPCHOM_EXCEPTION_LOCATION);
+       }
+      
+      if (B.n_columns() != X.n_columns())
+       {
+        // Error message
+        std::ostringstream error_message;
+        error_message << "The number of columns of the rhs matrix and the number"
+                      << "of columns of the solution matrix are not the same:\n"
+                      << "n_rhs = (" << B.n_columns() << ")\n"
+                      << "X.n_columns() = (" << X.n_columns() << ")\n"
+                      << std::endl;
+        throw ChapchomLibError(error_message.str(),
+                               CHAPCHOM_CURRENT_FUNCTION,
+                               CHAPCHOM_EXCEPTION_LOCATION);
+       }
+      
+     }
+    
     // The case for the same number of columns on the rhs vector and
     // the solution vector is tested in the back_substitution() method
     
@@ -235,8 +262,47 @@ namespace chapchom
   // We can only do back-substitution if a matrix has been factorised
   if (Resolve_enabled)
    {
+    // Check whether the solution matrix has allocated memory,
+    // otherwise allocate it here!!!
+    if (!X.is_own_memory_allocated())
+     {
+      // Allocate memory
+      X.allocate_memory(this->A.n_rows(), B.n_columns());
+     }
+    else
+     {
+      if (this->A.n_rows() != X.n_rows())
+       {
+        // Error message
+        std::ostringstream error_message;
+        error_message << "The number of rows of the matrix and the number "
+                      << "of rows of the solution matrix are not the same:\n"
+                      << "A.n_rows() = (" << this->A.n_rows() << ")\n"
+                      << "X.n_rows() = (" << X.n_rows() << ")\n" << std::endl;
+        throw ChapchomLibError(error_message.str(),
+                               CHAPCHOM_CURRENT_FUNCTION,
+                               CHAPCHOM_EXCEPTION_LOCATION);
+       }
+      
+      if (B.n_columns() != X.n_columns())
+       {
+        // Error message
+        std::ostringstream error_message;
+        error_message << "The number of columns of the rhs matrix and the number"
+                      << "of columns of the solution matrix are not the same:\n"
+                      << "n_rhs = (" << B.n_columns() << ")\n"
+                      << "X.n_columns() = (" << X.n_columns() << ")\n"
+                      << std::endl;
+        throw ChapchomLibError(error_message.str(),
+                               CHAPCHOM_CURRENT_FUNCTION,
+                               CHAPCHOM_EXCEPTION_LOCATION);
+       }
+      
+     }
+    
     // Do the back substitution
     back_substitution(B, X);
+    
    }
   else
    {
@@ -266,8 +332,45 @@ namespace chapchom
   // We can only do back-substitution if a matrix has been factorised
   if (Resolve_enabled)
    {
+    // Check whether the solution vector is a column vector
+    if (!x.is_column_vector())
+     {
+      // Error message
+      std::ostringstream error_message;
+      error_message << "The solution vector is not a column vector\n"
+                    << std::endl;
+      throw ChapchomLibError(error_message.str(),
+                             CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
+     }
+    
+    // Check whether the solution matrix has allocated memory,
+    // otherwise allocate it here!!!
+    if (!x.is_own_memory_allocated())
+     {
+      // Allocate memory
+      x.allocate_memory(this->A.n_rows());
+     }
+    else
+     {
+      if (this->A.n_rows() != x.n_values())
+       {
+        // Error message
+        std::ostringstream error_message;
+        error_message << "The number of rows of the matrix and the number "
+                      << "of rows of the solution vector are not the same:\n"
+                      << "A.n_rows() = (" << this->A.n_rows() << ")\n"
+                      << "x.n_values() = (" << x.n_values() << ")\n" << std::endl;
+        throw ChapchomLibError(error_message.str(),
+                               CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
+       }
+
+     }
+    
     // Do the back substitution
     back_substitution(b, x);
+    
    }
   else
    {
@@ -369,28 +472,6 @@ namespace chapchom
   // Number of right hand sizes (same as the number of output
   // X-vectors)
   const unsigned n_rhs = B.n_columns();
-  
-  if (n_rhs != X_output.n_columns())
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "The number of columns of the rhs vector and the number "
-                  << "of columns of the solution matrix are not the same:\n"
-                  << "n_rhs = (" << n_rhs << ")\n"
-                  << "X_output.n_columns() = (" << X_output.n_columns() << ")\n"
-                  << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
-  
-  // Check whether the solution matrix has allocated memory, otherwise
-  // allocate it here!!!
-  if (!X_output.is_own_memory_allocated())
-   {
-    // Allocate memory
-    X_output.allocate_memory();
-   }
   
   // The solution vector size n x 1 (Numerical Recipes definition)
   Vec_DP x(n_rows);

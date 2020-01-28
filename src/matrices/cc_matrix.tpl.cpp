@@ -24,8 +24,7 @@ namespace chapchom
  CCMatrix<T>::CCMatrix(const unsigned long m, const unsigned long n)
   : ACMatrix<T>(m, n)
  {
-  // Delete any data in memory
-  clean_up();
+  allocate_memory(m, n);
  }
  
  // ===================================================================
@@ -290,35 +289,36 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Check whether the dimension of the solution matrix are correct
-  const unsigned long n_rows_solution_matrix = solution_matrix.n_rows();
-  const unsigned long n_columns_solution_matrix = solution_matrix.n_columns();
-  if (n_rows != n_rows_solution_matrix || n_columns != n_columns_solution_matrix)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "The dimension of the matrices is not the same:\n"
-                  << "dim(this) = (" << n_rows << ", "
-                  << n_columns << ")\n"
-                  << "dim(solution_matrix) = (" << n_rows_solution_matrix
-                  << ", " << n_columns_solution_matrix << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
-  
-  // Get the matrix pointer of the solution matrix
-  T *solution_matrix_pt = solution_matrix.matrix_pt();
-  
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
   if (!solution_matrix.is_own_memory_allocated())
    {
     // Allocate memory for the matrix
-    solution_matrix.allocate_memory();
-    // Get the new matrix pointer
-    solution_matrix_pt = solution_matrix.matrix_pt();
+    solution_matrix.allocate_memory(n_rows, n_columns);
    }
+  else
+   {
+    // Check whether the dimension of the solution matrix are correct
+    const unsigned long n_rows_solution_matrix = solution_matrix.n_rows();
+    const unsigned long n_columns_solution_matrix = solution_matrix.n_columns();
+    if (n_rows != n_rows_solution_matrix || n_columns != n_columns_solution_matrix)
+     {
+      // Error message
+      std::ostringstream error_message;
+      error_message << "The dimensions of the matrices are not the same:\n"
+                    << "dim(this) = (" << n_rows << ", "
+                    << n_columns << ")\n"
+                    << "dim(solution_matrix) = (" << n_rows_solution_matrix
+                    << ", " << n_columns_solution_matrix << ")\n" << std::endl;
+      throw ChapchomLibError(error_message.str(),
+                             CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
+     }
+    
+   }
+  
+  // Get the matrix pointer of the solution matrix
+  T *solution_matrix_pt = solution_matrix.matrix_pt();
   
   // Get the matrix pointer of the input matrix
   T *matrix_pt = matrix.matrix_pt();
@@ -375,35 +375,36 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Check whether the dimension of the solution matrix are correct
-  const unsigned long n_rows_solution_matrix = solution_matrix.n_rows();
-  const unsigned long n_columns_solution_matrix = solution_matrix.n_columns();
-  if (n_rows != n_rows_solution_matrix || n_columns != n_columns_solution_matrix)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "The dimension of the matrices is not the same:\n"
-                  << "dim(this) = (" << n_rows << ", "
-                  << n_columns << ")\n"
-                  << "dim(solution_matrix) = (" << n_rows_solution_matrix
-                  << ", " << n_columns_solution_matrix << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
-  
-  // Get the matrix pointer of the solution matrix
-  T *solution_matrix_pt = solution_matrix.matrix_pt();
-  
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
   if (!solution_matrix.is_own_memory_allocated())
    {
     // Allocate memory for the matrix
-    solution_matrix.allocate_memory();
-    // Get the new matrix pointer
-    solution_matrix_pt = solution_matrix.matrix_pt();
+    solution_matrix.allocate_memory(n_rows, n_columns);
    }
+  else
+   {
+    // Check whether the dimension of the solution matrix are correct
+    const unsigned long n_rows_solution_matrix = solution_matrix.n_rows();
+    const unsigned long n_columns_solution_matrix = solution_matrix.n_columns();
+    if (n_rows != n_rows_solution_matrix || n_columns != n_columns_solution_matrix)
+     {
+      // Error message
+      std::ostringstream error_message;
+      error_message << "The dimension of the matrices is not the same:\n"
+                    << "dim(this) = (" << n_rows << ", "
+                    << n_columns << ")\n"
+                    << "dim(solution_matrix) = (" << n_rows_solution_matrix
+                    << ", " << n_columns_solution_matrix << ")\n" << std::endl;
+      throw ChapchomLibError(error_message.str(),
+                             CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
+     }
+
+   }
+  
+  // Get the matrix pointer of the solution matrix
+  T *solution_matrix_pt = solution_matrix.matrix_pt();
   
   // Get the matrix pointer of the input matrix
   T *matrix_pt = matrix.matrix_pt();
@@ -462,39 +463,40 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Check whether the dimension of the solution matrix are correct
-  const unsigned long n_rows_solution_matrix = solution_matrix.n_rows();
-  const unsigned long n_columns_solution_matrix = solution_matrix.n_columns();
-  if (n_rows_left_matrix != n_rows_solution_matrix ||
-      n_columns_right_matrix != n_columns_solution_matrix)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "The dimension of the solution matrix is not appropiate for\n"
-                  << "the operation:\n"
-                  << "dim(left_matrix) = (" << n_rows_left_matrix << ", "
-                  << n_columns_left_matrix << ")\n"
-                  << "dim(right_matrix) = (" << n_rows_right_matrix << ", "
-                  << n_columns_right_matrix << ")\n"
-                  << "dim(solution_matrix) = (" << n_rows_solution_matrix
-                  << ", " << n_columns_solution_matrix << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
-  
-  // Get the matrix pointer of the solution matrix
-  T *solution_matrix_pt = solution_matrix.matrix_pt();
-  
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
   if (!solution_matrix.is_own_memory_allocated())
    {
     // Allocate memory for the matrix
-    solution_matrix.allocate_memory();
-    // Get the new matrix pointer
-    solution_matrix_pt = solution_matrix.matrix_pt();
+    solution_matrix.allocate_memory(n_rows_left_matrix, n_columns_right_matrix);
    }
+  else
+   {
+    // Check whether the dimension of the solution matrix are correct
+    const unsigned long n_rows_solution_matrix = solution_matrix.n_rows();
+    const unsigned long n_columns_solution_matrix = solution_matrix.n_columns();
+    if (n_rows_left_matrix != n_rows_solution_matrix ||
+        n_columns_right_matrix != n_columns_solution_matrix)
+     {
+      // Error message
+      std::ostringstream error_message;
+      error_message << "The dimension of the solution matrix is not appropiate for\n"
+                    << "the operation:\n"
+                    << "dim(left_matrix) = (" << n_rows_left_matrix << ", "
+                    << n_columns_left_matrix << ")\n"
+                    << "dim(right_matrix) = (" << n_rows_right_matrix << ", "
+                    << n_columns_right_matrix << ")\n"
+                    << "dim(solution_matrix) = (" << n_rows_solution_matrix
+                    << ", " << n_columns_solution_matrix << ")\n" << std::endl;
+      throw ChapchomLibError(error_message.str(),
+                             CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
+     }
+    
+   }
+  
+  // Get the matrix pointer of the solution matrix
+  T *solution_matrix_pt = solution_matrix.matrix_pt();
   
   // Get the matrix pointer of the right matrix
   T *right_matrix_pt = right_matrix.matrix_pt();
@@ -947,25 +949,31 @@ namespace chapchom
   this->NColumns = n;
   
   // Allocate memory
-  allocate_memory();
-  
- }
- 
- // ===================================================================
- // Allocates memory to store entries of the matrix
- // ===================================================================
- template<class T>
- void CCMatrix<T>::allocate_memory()
- {
-  // Delete any data in memory
-  clean_up();
+  //allocate_memory();
   
   // Allocate memory for the matrix
   Matrix_pt = new T[this->NRows * this->NColumns];
   
   // Mark the matrix as allocated its own memory
   this->Is_own_memory_allocated=true;
+  
  }
+ 
+ // // ===================================================================
+ // // Allocates memory to store entries of the matrix
+ // // ===================================================================
+ // template<class T>
+ // void CCMatrix<T>::allocate_memory()
+ // {
+ //  // Delete any data in memory
+ //  clean_up();
+  
+ //  // Allocate memory for the matrix
+ //  Matrix_pt = new T[this->NRows * this->NColumns];
+  
+ //  // Mark the matrix as allocated its own memory
+ //  this->Is_own_memory_allocated=true;
+ // }
 
  // ===================================================================
  // Fills the matrix with zeroes
@@ -1043,45 +1051,46 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Check whether the dimension of the solution matrix are correct
-  const unsigned long n_rows_solution_matrix = solution_matrix.n_rows();
-  const unsigned long n_columns_solution_matrix = solution_matrix.n_columns();
-  if (n_rows_matrix_one != n_rows_solution_matrix ||
-      n_columns_matrix_one != n_columns_solution_matrix)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "The dimension of the matrices is not the same:\n"
-                  << "dim(matrix_one) = (" << n_rows_matrix_one << ", "
-                  << n_columns_matrix_one << ")\n"
-                  << "dim(solution_matrix) = (" << n_rows_solution_matrix
-                  << ", " << n_columns_solution_matrix << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
-  
-  // Get the matrix pointer of the solution matrix
-  T *solution_matrix_pt = solution_matrix.matrix_pt();
-  
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
   if (!solution_matrix.is_own_memory_allocated())
    {
     // Allocate memory for the matrix
-    solution_matrix.allocate_memory();
-    // Get the new matrix pointer
-    solution_matrix_pt = solution_matrix.matrix_pt();
+    solution_matrix.allocate_memory(n_rows_matrix_one, n_columns_matrix_one);
    }
+  else
+   {
+    // Check whether the dimension of the solution matrix are correct
+    const unsigned long n_rows_solution_matrix = solution_matrix.n_rows();
+    const unsigned long n_columns_solution_matrix = solution_matrix.n_columns();
+    if (n_rows_matrix_one != n_rows_solution_matrix ||
+        n_columns_matrix_one != n_columns_solution_matrix)
+     {
+      // Error message
+      std::ostringstream error_message;
+      error_message << "The dimension of the matrices is not the same:\n"
+                    << "dim(matrix_one) = (" << n_rows_matrix_one << ", "
+                    << n_columns_matrix_one << ")\n"
+                    << "dim(solution_matrix) = (" << n_rows_solution_matrix
+                    << ", " << n_columns_solution_matrix << ")\n" << std::endl;
+      throw ChapchomLibError(error_message.str(),
+                             CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
+     }
+
+   }
+  
+  // Get the matrix pointer of the solution matrix
+  T *solution_matrix_pt = solution_matrix.matrix_pt();
   
   // Get the matrix pointer of the input matrices
   T *matrix_one_pt = matrix_one.matrix_pt();
   T *matrix_two_pt = matrix_two.matrix_pt();
   // Perform the addition
-  for (unsigned long i = 0; i < n_rows_solution_matrix; i++)
+  for (unsigned long i = 0; i < n_rows_matrix_one; i++)
    {
-    const unsigned long offset = i*n_columns_solution_matrix;
-    for (unsigned long j = 0; j < n_columns_solution_matrix; j++)
+    const unsigned long offset = i*n_columns_matrix_one;
+    for (unsigned long j = 0; j < n_columns_matrix_one; j++)
      {
       solution_matrix_pt[offset+j] =
        matrix_one_pt[offset+j] + matrix_two_pt[offset+j];
@@ -1133,46 +1142,47 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
-  
-  // Check whether the dimension of the solution matrix are correct
-  const unsigned long n_rows_solution_matrix = solution_matrix.n_rows();
-  const unsigned long n_columns_solution_matrix = solution_matrix.n_columns();
-  if (n_rows_matrix_one != n_rows_solution_matrix ||
-      n_columns_matrix_one != n_columns_solution_matrix)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "The dimension of the matrices is not the same:\n"
-                  << "dim(matrix_one) = (" << n_rows_matrix_one << ", "
-                  << n_columns_matrix_one << ")\n"
-                  << "dim(solution_matrix) = (" << n_rows_solution_matrix
-                  << ", " << n_columns_solution_matrix << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
-  
-  // Get the matrix pointer of the solution matrix
-  T *solution_matrix_pt = solution_matrix.matrix_pt();
-  
+
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
   if (!solution_matrix.is_own_memory_allocated())
    {
     // Allocate memory for the matrix
-    solution_matrix.allocate_memory();
-    // Get the new matrix pointer
-    solution_matrix_pt = solution_matrix.matrix_pt();
+    solution_matrix.allocate_memory(n_rows_matrix_one, n_columns_matrix_one);
    }
+  else
+   {
+    // Check whether the dimension of the solution matrix are correct
+    const unsigned long n_rows_solution_matrix = solution_matrix.n_rows();
+    const unsigned long n_columns_solution_matrix = solution_matrix.n_columns();
+    if (n_rows_matrix_one != n_rows_solution_matrix ||
+        n_columns_matrix_one != n_columns_solution_matrix)
+     {
+      // Error message
+      std::ostringstream error_message;
+      error_message << "The dimension of the matrices is not the same:\n"
+                    << "dim(matrix_one) = (" << n_rows_matrix_one << ", "
+                    << n_columns_matrix_one << ")\n"
+                    << "dim(solution_matrix) = (" << n_rows_solution_matrix
+                    << ", " << n_columns_solution_matrix << ")\n" << std::endl;
+      throw ChapchomLibError(error_message.str(),
+                             CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
+     }
+    
+   }
+  
+  // Get the matrix pointer of the solution matrix
+  T *solution_matrix_pt = solution_matrix.matrix_pt();
   
   // Get the matrix pointer of the input matrices
   T *matrix_one_pt = matrix_one.matrix_pt();
   T *matrix_two_pt = matrix_two.matrix_pt();
   // Perform the substraction
-  for (unsigned long i = 0; i < n_rows_solution_matrix; i++)
+  for (unsigned long i = 0; i < n_rows_matrix_one; i++)
    {
-    const unsigned long offset = i*n_columns_solution_matrix;
-    for (unsigned long j = 0; j < n_columns_solution_matrix; j++)
+    const unsigned long offset = i*n_columns_matrix_one;
+    for (unsigned long j = 0; j < n_columns_matrix_one; j++)
      {
       solution_matrix_pt[offset+j] =
        matrix_one_pt[offset+j] - matrix_two_pt[offset+j];
@@ -1225,6 +1235,14 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
+  // Check whether the solution matrix has allocated memory, otherwise
+  // allocate it here!!!
+  if (!solution_matrix.is_own_memory_allocated())
+   {
+    // Allocate memory for the matrix
+    solution_matrix.allocate_memory(n_rows_left_matrix, n_columns_right_matrix);
+   }
+  
   // Check whether the dimension of the solution matrix are correct
   const unsigned long n_rows_solution_matrix = solution_matrix.n_rows();
   const unsigned long n_columns_solution_matrix = solution_matrix.n_columns();
@@ -1248,16 +1266,6 @@ namespace chapchom
   
   // Get the matrix pointer of the solution matrix
   T *solution_matrix_pt = solution_matrix.matrix_pt();
-  
-  // Check whether the solution matrix has allocated memory, otherwise
-  // allocate it here!!!
-  if (!solution_matrix.is_own_memory_allocated())
-   {
-    // Allocate memory for the matrix
-    solution_matrix.allocate_memory();
-    // Get the new matrix pointer
-    solution_matrix_pt = solution_matrix.matrix_pt();
-   }
   
   // Get the matrix pointer of the left matrix
   T *left_matrix_pt = left_matrix.matrix_pt();
@@ -1386,50 +1394,51 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Check whether the dimension of the solution matrix are correct
-  const unsigned long n_rows_solution_matrix = solution_matrix.n_rows();
-  const unsigned long n_columns_solution_matrix = solution_matrix.n_columns();
-  if (n_rows_left_vector != n_rows_solution_matrix ||
-      n_columns_right_vector != n_columns_solution_matrix)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "The dimension of the solution matrix is not appropiate for\n"
-                  << "the operation:\n"
-                  << "dim(left_vector) = (" << n_rows_left_vector << ", "
-                  << n_columns_left_vector << ")\n"
-                  << "dim(right_vector) = (" << n_rows_right_vector << ", "
-                  << n_columns_right_vector << ")\n"
-                  << "dim(solution_matrix) = (" << n_rows_solution_matrix
-                  << ", " << n_columns_solution_matrix << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
-  
-  // Get the matrix pointer of the solution matrix
-  T *solution_matrix_pt = solution_matrix.matrix_pt();
-  
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
   if (!solution_matrix.is_own_memory_allocated())
    {
     // Allocate memory for the matrix
-    solution_matrix.allocate_memory();
-    // Get the new matrix pointer
-    solution_matrix_pt = solution_matrix.matrix_pt();
+    solution_matrix.allocate_memory(n_rows_left_vector, n_columns_right_vector);
    }
+  else
+   {
+    // Check whether the dimension of the solution matrix are correct
+    const unsigned long n_rows_solution_matrix = solution_matrix.n_rows();
+    const unsigned long n_columns_solution_matrix = solution_matrix.n_columns();
+    if (n_rows_left_vector != n_rows_solution_matrix ||
+        n_columns_right_vector != n_columns_solution_matrix)
+     {
+      // Error message
+      std::ostringstream error_message;
+      error_message << "The dimension of the solution matrix is not appropiate for\n"
+                    << "the operation:\n"
+                    << "dim(left_vector) = (" << n_rows_left_vector << ", "
+                    << n_columns_left_vector << ")\n"
+                    << "dim(right_vector) = (" << n_rows_right_vector << ", "
+                    << n_columns_right_vector << ")\n"
+                    << "dim(solution_matrix) = (" << n_rows_solution_matrix
+                    << ", " << n_columns_solution_matrix << ")\n" << std::endl;
+      throw ChapchomLibError(error_message.str(),
+                             CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
+     }
+
+   }
+  
+  // Get the matrix pointer of the solution matrix
+  T *solution_matrix_pt = solution_matrix.matrix_pt();
   
   // Get both vectors and multiply them
   T *left_vector_pt = left_vector.vector_pt();
   T *right_vector_pt = right_vector.vector_pt();
   
   // Perform the multiplication
-  for (unsigned long i = 0; i < n_rows_solution_matrix; i++)
+  for (unsigned long i = 0; i < n_rows_left_vector; i++)
    {
     const unsigned offset_left_vector = i * n_columns_left_vector;
     const unsigned offset_right_vector = i * n_columns_right_vector;
-    for (unsigned long j = 0; j < n_columns_solution_matrix; j++)
+    for (unsigned long j = 0; j < n_columns_right_vector; j++)
      {
       // Initialise
       solution_matrix_pt[offset_right_vector+j] = 0;
@@ -1501,50 +1510,51 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
-  // Check whether the dimension of the solution matrix are correct
-  const unsigned long n_rows_solution_matrix = solution_matrix.n_rows();
-  const unsigned long n_columns_solution_matrix = solution_matrix.n_columns();
-  if (n_rows_vector != n_rows_solution_matrix ||
-      n_columns_matrix != n_columns_solution_matrix)
-   {
-    // Error message
-    std::ostringstream error_message;
-    error_message << "The dimension of the solution matrix is not appropiate for\n"
-                  << "the operation:\n"
-                  << "dim(vector) = (" << n_rows_vector << ", "
-                  << n_columns_vector << ")\n"
-                  << "dim(matrix) = (" << n_rows_matrix << ", "
-                  << n_columns_matrix << ")\n"
-                  << "dim(solution_matrix) = (" << n_rows_solution_matrix
-                  << ", " << n_columns_solution_matrix << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
-   }
-  
-  // Get the matrix pointer of the solution matrix
-  T *solution_matrix_pt = solution_matrix.matrix_pt();
-  
   // Check whether the solution matrix has allocated memory, otherwise
   // allocate it here!!!
   if (!solution_matrix.is_own_memory_allocated())
    {
     // Allocate memory for the matrix
-    solution_matrix.allocate_memory();
-    // Get the new matrix pointer
-    solution_matrix_pt = solution_matrix.matrix_pt();
+    solution_matrix.allocate_memory(n_rows_vector, n_columns_matrix);
    }
+  else
+   {
+    // Check whether the dimension of the solution matrix are correct
+    const unsigned long n_rows_solution_matrix = solution_matrix.n_rows();
+    const unsigned long n_columns_solution_matrix = solution_matrix.n_columns();
+    if (n_rows_vector != n_rows_solution_matrix ||
+        n_columns_matrix != n_columns_solution_matrix)
+     {
+      // Error message
+      std::ostringstream error_message;
+      error_message << "The dimension of the solution matrix is not appropiate for\n"
+                    << "the operation:\n"
+                    << "dim(vector) = (" << n_rows_vector << ", "
+                    << n_columns_vector << ")\n"
+                    << "dim(matrix) = (" << n_rows_matrix << ", "
+                    << n_columns_matrix << ")\n"
+                    << "dim(solution_matrix) = (" << n_rows_solution_matrix
+                    << ", " << n_columns_solution_matrix << ")\n" << std::endl;
+      throw ChapchomLibError(error_message.str(),
+                             CHAPCHOM_CURRENT_FUNCTION,
+                             CHAPCHOM_EXCEPTION_LOCATION);
+     }
+
+   }
+  
+  // Get the matrix pointer of the solution matrix
+  T *solution_matrix_pt = solution_matrix.matrix_pt();
   
   // Get both the vector and the matrix pointer
   T *vector_pt = vector.vector_pt();
   T *matrix_pt = matrix.matrix_pt();
   
   // Perform the multiplication
-  for (unsigned long i = 0; i < n_rows_solution_matrix; i++)
+  for (unsigned long i = 0; i < n_rows_vector; i++)
    {
     const unsigned offset_vector = i * n_columns_vector;
     const unsigned offset_matrix = i * n_columns_matrix;
-    for (unsigned long j = 0; j < n_columns_solution_matrix; j++)
+    for (unsigned long j = 0; j < n_columns_matrix; j++)
      {
       // Initialise
       solution_matrix_pt[offset_matrix+j] = 0;

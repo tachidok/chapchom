@@ -24,7 +24,7 @@ void rotate(Real *input_vector,
  
  // Create the rotation matrix
  CCMatrix<Real> R(DIM, DIM);
- R.allocate_memory();
+ //R.allocate_memory();
  
  const Real sin_theta_x = sin(roll);
  const Real sin_theta_y = sin(pitch);
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
   CCMatrix<Real> I(n_rows, n_columns);
   
   // Allocate memory
-  I.allocate_memory();
+  //I.allocate_memory();
   
   // Feed some data to the matrix (the identity)
   for (unsigned i = 0; i < n_rows; i++)
@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
   CCMatrix<Real> C(n_rows, n_columns);
 
   // Allocate memory
-  C.allocate_memory();
+  //C.allocate_memory();
  
   std::cout << std::endl
             << "------------------------------------------------------------------------------"
@@ -379,7 +379,7 @@ int main(int argc, char *argv[])
    
    // Matrix to permute
    CCMatrix<unsigned> A(DIM, DIM);
-   A.allocate_memory();
+   //A.allocate_memory();
    
    A(0,0) = 1;   A(0,1) = 2;   A(0,2) = 3;
    A(1,0) = 4;   A(1,1) = 5;   A(1,2) = 6;
@@ -425,7 +425,7 @@ int main(int argc, char *argv[])
    
   // Matrix to permute
   CCMatrix<unsigned> A(DIM, DIM);
-  A.allocate_memory();
+  //A.allocate_memory();
    
   A(0,0) = 1;   A(0,1) = 2;   A(0,2) = 3;   A(0,3) = 4;
   A(1,0) = 5;   A(1,1) = 6;   A(1,2) = 7;   A(1,3) = 8;
@@ -599,7 +599,7 @@ int main(int argc, char *argv[])
 
   // Create a matrix
   CCMatrix<Real> A(DIM, DIM);
-  A.allocate_memory();
+  //A.allocate_memory();
   
   A(0,0) = 0.5;   A(0,1) = 0.5;   A(0,2) = 0.5;
   A(1,0) = 1.0;   A(1,1) = 1.0;   A(1,2) = 1.0;
@@ -664,7 +664,7 @@ int main(int argc, char *argv[])
   // The permutation matrix (row permutations - multiply P to the left
   // of the matrix to permute)
   CCMatrix<unsigned> P(DIM, DIM);
-  P.allocate_memory();
+  //P.allocate_memory();
   
   // Each row of this matrix tell us how much of the rows of the
   // matrix to the right should we take to create the new
@@ -684,7 +684,7 @@ int main(int argc, char *argv[])
 
   // Matrix to permute
   CCMatrix<unsigned> A(DIM, DIM);
-  A.allocate_memory();
+  //A.allocate_memory();
 
   A(0,0) = 1;   A(0,1) = 2;   A(0,2) = 3;
   A(1,0) = 4;   A(1,1) = 5;   A(1,2) = 6;
@@ -727,7 +727,7 @@ int main(int argc, char *argv[])
   // The permutation matrix (column permutations - multiply P to the
   // right of the matrix to permute)
   CCMatrix<unsigned> P(DIM, DIM);
-  P.allocate_memory();
+  //P.allocate_memory();
   
   // Each column of this matrix tell us how much of the columns of the
   // matrix to the left should we take to create the new
@@ -747,7 +747,7 @@ int main(int argc, char *argv[])
   
   // Matrix to permute
   CCMatrix<unsigned> A(DIM, DIM);
-  A.allocate_memory();
+  //A.allocate_memory();
   
   A(0,0) = 1;   A(0,1) = 4;   A(0,2) = 7;
   A(1,0) = 2;   A(1,1) = 5;   A(1,2) = 8;

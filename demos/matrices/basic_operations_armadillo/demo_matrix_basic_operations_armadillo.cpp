@@ -24,7 +24,7 @@ void rotate(double *input_vector,
  
  // Create the rotation matrix
  CCMatrixArmadillo<double> R(DIM, DIM);
- R.allocate_memory();
+ //R.allocate_memory();
  
  const double sin_theta_x = sin(roll);
  const double sin_theta_y = sin(pitch);
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
   CCMatrixArmadillo<double> I(n_rows, n_columns);
   
   // Allocate memory
-  I.allocate_memory();
+  //I.allocate_memory();
   
   // Feed some data to the matrix (the identity)
   for (unsigned i = 0; i < n_rows; i++)
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
   CCMatrixArmadillo<double> C(n_rows, n_columns);
 
   // Allocate memory
-  C.allocate_memory();
+  //C.allocate_memory();
  
   std::cout << std::endl
             << "------------------------------------------------------------------------------"
@@ -386,7 +386,7 @@ int main(int argc, char *argv[])
    
    // Matrix to permute
    CCMatrixArmadillo<unsigned> A(DIM, DIM);
-   A.allocate_memory();
+   //A.allocate_memory();
    
    A(0,0) = 1;   A(0,1) = 2;   A(0,2) = 3;
    A(1,0) = 4;   A(1,1) = 5;   A(1,2) = 6;
@@ -432,7 +432,7 @@ int main(int argc, char *argv[])
    
   // Matrix to permute
   CCMatrixArmadillo<unsigned> A(DIM, DIM);
-  A.allocate_memory();
+  //A.allocate_memory();
    
   A(0,0) = 1;   A(0,1) = 2;   A(0,2) = 3;   A(0,3) = 4;
   A(1,0) = 5;   A(1,1) = 6;   A(1,2) = 7;   A(1,3) = 8;
@@ -606,7 +606,7 @@ int main(int argc, char *argv[])
 
   // Create a matrix
   CCMatrixArmadillo<double> A(DIM, DIM);
-  A.allocate_memory();
+  //A.allocate_memory();
   
   A(0,0) = 0.5;   A(0,1) = 0.5;   A(0,2) = 0.5;
   A(1,0) = 1.0;   A(1,1) = 1.0;   A(1,2) = 1.0;
@@ -671,7 +671,7 @@ int main(int argc, char *argv[])
   // The permutation matrix (row permutations - multiply P to the left
   // of the matrix to permute)
   CCMatrixArmadillo<unsigned> P(DIM, DIM);
-  P.allocate_memory();
+  //P.allocate_memory();
   
   // Each row of this matrix tell us how much of the rows of the
   // matrix to the right should we take to create the new
@@ -691,7 +691,7 @@ int main(int argc, char *argv[])
 
   // Matrix to permute
   CCMatrixArmadillo<unsigned> A(DIM, DIM);
-  A.allocate_memory();
+  //A.allocate_memory();
 
   A(0,0) = 1;   A(0,1) = 2;   A(0,2) = 3;
   A(1,0) = 4;   A(1,1) = 5;   A(1,2) = 6;
@@ -734,7 +734,7 @@ int main(int argc, char *argv[])
   // The permutation matrix (column permutations - multiply P to the
   // right of the matrix to permute)
   CCMatrixArmadillo<unsigned> P(DIM, DIM);
-  P.allocate_memory();
+  //P.allocate_memory();
   
   // Each column of this matrix tell us how much of the columns of the
   // matrix to the left should we take to create the new
@@ -754,7 +754,7 @@ int main(int argc, char *argv[])
   
   // Matrix to permute
   CCMatrixArmadillo<unsigned> A(DIM, DIM);
-  A.allocate_memory();
+  //A.allocate_memory();
   
   A(0,0) = 1;   A(0,1) = 4;   A(0,2) = 7;
   A(1,0) = 2;   A(1,1) = 5;   A(1,2) = 8;
@@ -793,7 +793,7 @@ int main(int argc, char *argv[])
   const unsigned N_ROWS_M1 = 10;
   const unsigned N_COLUMNS_M1 = 5;
   CCMatrixArmadillo<unsigned> M1(N_ROWS_M1, N_COLUMNS_M1);
-  M1.allocate_memory();
+  //M1.allocate_memory();
 
   for (unsigned ii = 0; ii < N_ROWS_M1; ii++)
    {
@@ -806,7 +806,7 @@ int main(int argc, char *argv[])
   const unsigned N_ROWS_M2 = 10;
   const unsigned N_COLUMNS_M2 = 15;
   CCMatrixArmadillo<unsigned> M2(N_ROWS_M2, N_COLUMNS_M2);
-  M2.allocate_memory();
+  //M2.allocate_memory();
   
   for (unsigned ii = 0; ii < N_ROWS_M2; ii++)
    {
@@ -842,7 +842,7 @@ int main(int argc, char *argv[])
   const unsigned N_ROWS_M3 = 5;
   const unsigned N_COLUMNS_M3 = 10;
   CCMatrixArmadillo<unsigned> M3(N_ROWS_M3, N_COLUMNS_M3);
-  M3.allocate_memory();
+  //M3.allocate_memory();
 
   for (unsigned ii = 0; ii < N_ROWS_M3; ii++)
    {
@@ -855,7 +855,7 @@ int main(int argc, char *argv[])
   const unsigned N_ROWS_M4 = 15;
   const unsigned N_COLUMNS_M4 = 10;
   CCMatrixArmadillo<unsigned> M4(N_ROWS_M4, N_COLUMNS_M4);
-  M4.allocate_memory();
+  //M4.allocate_memory();
   
   for (unsigned ii = 0; ii < N_ROWS_M4; ii++)
    {

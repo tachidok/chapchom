@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
  // The matrix A
  CCMatrixArmadillo<Real> A(n_rows, n_cols);
  // Allocate memory
- A.allocate_memory();
+ //A.allocate_memory();
  
  // Fill in some data
  A(0,0) = 7.0;  A(0,1) = 5.0;  A(0,2) = -3.0;
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
   // The right hand side vectors
   CCMatrixArmadillo<Real> B(n_rows, n_rows);
   // Allocate memory
-  B.allocate_memory();
+  //B.allocate_memory();
   
   // Solve the following system of equations AX = B
   
@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
   CCSolverArmadillo<Real> armadillo_linear_solver;
   
   // The solution vector
-  CCMatrixArmadillo<Real> SOL(n_cols, 1);
+  CCMatrixArmadillo<Real> SOL(A.n_rows(), B.n_columns());
   
   // Solve the system of equations
   armadillo_linear_solver.solve(A, B, SOL);

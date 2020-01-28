@@ -93,25 +93,43 @@ namespace chapchom
                               CHAPCHOM_CURRENT_FUNCTION,
                               CHAPCHOM_EXCEPTION_LOCATION);
       }
-     else if (this->A.n_rows() != X.n_rows())
-      {
-       // Error message
-       std::ostringstream error_message;
-       error_message << "The number of rows of the matrix and the number "
-                     << "of rows of the solution matrix are not the same:\n"
-                     << "A.n_rows() = (" << this->A.n_rows() << ")\n"
-                     << "X.n_rows() = (" << X.n_rows() << ")\n" << std::endl;
-       throw ChapchomLibError(error_message.str(),
-                              CHAPCHOM_CURRENT_FUNCTION,
-                              CHAPCHOM_EXCEPTION_LOCATION);
-      }
-     
+
      // Check whether the solution matrix has allocated memory,
      // otherwise allocate it here!!!
      if (!X.is_own_memory_allocated())
       {
        // Allocate memory
-       X.allocate_memory();
+       X.allocate_memory(this->A.n_rows(), B.n_columns());
+      }
+     else
+      {
+       if (this->A.n_rows() != X.n_rows())
+        {
+         // Error message
+         std::ostringstream error_message;
+         error_message << "The number of rows of the matrix and the number "
+                       << "of rows of the solution matrix are not the same:\n"
+                       << "A.n_rows() = (" << this->A.n_rows() << ")\n"
+                       << "X.n_rows() = (" << X.n_rows() << ")\n" << std::endl;
+         throw ChapchomLibError(error_message.str(),
+                                CHAPCHOM_CURRENT_FUNCTION,
+                                CHAPCHOM_EXCEPTION_LOCATION);
+        }
+       
+       if (B.n_columns() != X.n_columns())
+        {
+         // Error message
+         std::ostringstream error_message;
+         error_message << "The number of columns of the rhs matrix and the number\n"
+                       << "of columns of the solution matrix are not the same:\n"
+                       << "n_rhs = (" << B.n_columns() << ")\n"
+                       << "X.n_columns() = (" << X.n_columns() << ")\n"
+                       << std::endl;
+         throw ChapchomLibError(error_message.str(),
+                                CHAPCHOM_CURRENT_FUNCTION,
+                                CHAPCHOM_EXCEPTION_LOCATION);
+        }
+       
       }
      
      // Get pointers to the Armadillo's matrices

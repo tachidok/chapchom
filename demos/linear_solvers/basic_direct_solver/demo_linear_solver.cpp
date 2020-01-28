@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
  // The matrix A
  CCMatrix<Real> A(n_rows, n_cols);
  // Allocate memory
- A.allocate_memory();
+ //A.allocate_memory();
  
  // Fill in some data
  A(0,0) = 7.0;  A(0,1) = 5.0;  A(0,2) = -3.0;
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
   // The right hand side vectors
   CCMatrix<Real> B(n_rows, n_rows);
   // Allocate memory
-  B.allocate_memory();
+  //B.allocate_memory();
   
   // Solve the following system of equations AX = B
   
@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
   CCLUSolverNumericalRecipes<Real> linear_solver;
   
   // The solution vector
-  CCMatrix<Real> SOL(n_cols, n_cols);
+  CCMatrix<Real> SOL(A.n_rows(), B.n_columns());
   
   // Solve the system of equations
   linear_solver.solve(A, B, SOL);
