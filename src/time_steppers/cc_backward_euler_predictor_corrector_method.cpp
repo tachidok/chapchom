@@ -71,7 +71,7 @@ namespace chapchom
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
   
   // Allocate memory for the local error vector
-  local_error_vector.allocate_memory();
+  //local_error_vector.allocate_memory();
   // Initialise local error with 0
   Real local_error = 0;
   

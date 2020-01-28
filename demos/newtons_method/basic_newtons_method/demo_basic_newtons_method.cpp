@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
 #else 
  CCVector<Real> x(n_dof);
 #endif
- x.allocate_memory();
+ //x.allocate_memory();
  x(0) = initial_guess;
  
  // Set initial dofs in Jacobian and residual strategy

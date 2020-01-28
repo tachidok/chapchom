@@ -175,17 +175,17 @@ namespace chapchom
      {
       // Error message
       std::ostringstream error_message;
-      error_message << "The vector b must be a column vector and it is not!" << std::endl;
+      error_message << "The vector b must be a column vector" << std::endl;
       throw ChapchomLibError(error_message.str(),
                              CHAPCHOM_CURRENT_FUNCTION,
                              CHAPCHOM_EXCEPTION_LOCATION);
      }
-
+    
     if (!x.is_column_vector())
      {
       // Error message
       std::ostringstream error_message;
-      error_message << "The vector x (solution) must be a column vector and it is not!" << std::endl;
+      error_message << "The vector x (solution) must be a column vector" << std::endl;
       throw ChapchomLibError(error_message.str(),
                              CHAPCHOM_CURRENT_FUNCTION,
                              CHAPCHOM_EXCEPTION_LOCATION);
@@ -205,25 +205,29 @@ namespace chapchom
                              CHAPCHOM_CURRENT_FUNCTION,
                              CHAPCHOM_EXCEPTION_LOCATION);
      }
-    else if (this->A.n_rows() != x.n_values())
-     {
-      // Error message
-      std::ostringstream error_message;
-      error_message << "The number of rows of the matrix and the number "
-                    << "of rows of the solution vector are not the same:\n"
-                    << "A.n_rows() = (" << this->A.n_rows() << ")\n"
-                    << "x.n_values() = (" << x.n_values() << ")\n" << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
-     }
     
     // Check whether the solution vector has allocated memory,
     // otherwise allocate it here!!!
     if (!x.is_own_memory_allocated())
      {
       // Allocate memory
-      x.allocate_memory();
+      x.allocate_memory(this->A.n_rows());
+     }
+    else
+     {
+      if (this->A.n_rows() != x.n_values())
+       {
+        // Error message
+        std::ostringstream error_message;
+        error_message << "The number of rows of the matrix and the number "
+                      << "of rows of the solution vector are not the same:\n"
+                      << "A.n_rows() = (" << this->A.n_rows() << ")\n"
+                      << "x.n_values() = (" << x.n_values() << ")\n" << std::endl;
+        throw ChapchomLibError(error_message.str(),
+                               CHAPCHOM_CURRENT_FUNCTION,
+                               CHAPCHOM_EXCEPTION_LOCATION);
+       }
+      
      }
     
     // Get pointers to the Armadillo's matrices
