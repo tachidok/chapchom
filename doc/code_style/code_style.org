@@ -32,7 +32,7 @@ of what is going on. In this case we have two options,
   this option).
 
 Certainly, the above prevents code reusing which is one of the main
-purposes of this library.
+purposes of this project.
 
 First of all, +try to+ make your code as *self-explanatory* as
 possible. Suppose that you are telling a story to a group of people
@@ -96,7 +96,9 @@ Avoid using the well known variables names:
 | =delete_variable= | =here=           | =there=            |
 | a                 | b                | c                  |
 
-I know you (use?) have used those variable names, everyone does it.
+I know you (use?) have used those variable names, everyone does it,
+but this is the time to forget about them and use self explained
+variables names.
 
 *Variables that stores the number of elements of something must use
 the prefix* =n_=. For example, if you want to store the number
