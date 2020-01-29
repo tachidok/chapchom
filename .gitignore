@@ -50,6 +50,7 @@ include/
 # ==============================================================
 doc/**/*.html
 doc/**/*.htm
+doc/*doxy_doc
 
 # ==============================================================
 # Latex generated files in doc directoy
@@ -216,6 +217,9 @@ doc/**/TSWLatexianTemp*
 
 # Kile
 doc/**/*.kilepr
+
+# Doxygen generated files
+doc/*doxy_doc
 
 # ==============================================================
 # C++
