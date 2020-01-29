@@ -3,8 +3,6 @@
 ![Travis(.org)](https://img.shields.io/travis/tachidok/chapchom?label=master)
 ![Travis (.org)branch](https://img.shields.io/travis/tachidok/chapchom/julio?label=julio)
 
-[![BuildStatus](https://travis-ci.org/tachidok/chapchom.svg?branch=julio)](https://travis-ci.org/tachidok/chapchom)
-
 # Welcome!
 Hi there, this is the official git repository for the **chapchom**
 library.
