@@ -1,3 +1,7 @@
+# Chapchom
+
+[![Build Status](https://travis-ci.org/tachidok/chapchom.svg?branch=testing_travis)](https://travis-ci.org/tachidok/chapchom)
+
 # Welcome!
 Hi there, this is the official git repository for the **chapchom**
 library.
