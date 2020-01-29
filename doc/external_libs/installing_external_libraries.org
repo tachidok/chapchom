@@ -33,6 +33,13 @@ to install =synaptic= package manager to install them.]
 
  * +libblas-dev (tested with =libblas-common=, =libblas-dev 3.6.0-2ubuntu2=)+
 
+* Optional
+If you want to create the documentation then install doxygen and
+graphviz.
+ * Tested versions with =Ubuntu 18.04.2 LTS 64 bits=
+  - =doxygen 1.8.13-10= (installed from package manager synaptic)
+  - =graphviz 2.40.1-2= (installed from package manager synaptic)
+
 * Installation
 
 Suggested (and working) installation order

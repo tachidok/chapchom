@@ -10,6 +10,7 @@
 (require 'package)
 (setq package-enable-at-startup nil)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+;(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
 ;;; Initialise packages
 (package-initialize)
 ;;; Refresh the content of the package at startup
@@ -129,11 +130,14 @@
   (setq projectile-completion-system 'ivy)
   (message "projectile ... [DONE]"))
 
+(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+
 ;;; Integration for counsel and projectile
 (use-package counsel-projectile
   :ensure t
   :config
-  (counsel-projectile-on)
+                                        ;(counsel-projectile-on) Breaking changes in version 0.2 (no longer exists)
+  (counsel-projectile-mode)
   (message "counsel-projectile ... [DONE]"))
 
 ;;; ibuffer
@@ -143,6 +147,7 @@
       (quote (("default"
 	       ("dired" (mode . dired-mode))
 	       ("org" (name . "^.*org$"))
+               ("mark-down" (name . "^.*md$"))
                ("gnuplot" (or
                            (name . "^.*gp$")
                            (name . "^.*gnuplot$")))
@@ -183,6 +188,17 @@
   :config (setq auto-mode-alist 
                 (append '(("\\.\\(gp\\|gnuplot\\)$" . gnuplot-mode)) auto-mode-alist))
   (message "gnuplot-mode ... [DONE]"))
+
+;;; markdowm-mode
+(use-package markdown-mode
+  :disabled
+  :ensure t 
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown")
+  (message "markdown-mode ... [DONE]"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Some other nice packages (for C/C++ development)
@@ -233,7 +249,8 @@
   (eval-after-load 'company
     '(add-to-list 'company-backends 'company-c-headers))
   (eval-after-load 'company
-    '(add-to-list 'company-c-headers-path-system "/usr/include/c++/5.4.0/"))
+                                        ;'(add-to-list 'company-c-headers-path-system "/usr/include/c++/5.4.0/"))
+    '(add-to-list 'company-c-headers-path-system "/usr/include/c++/7.4.0/"))
   (message "company ... [DONE]"))
 
 ;;; Irony for code completion
@@ -278,6 +295,7 @@
 
 ;;; Agressive indent, automatically indents the code
 (use-package aggressive-indent
+  :disabled
   :ensure t
   :config
   (global-aggressive-indent-mode 1)
@@ -343,6 +361,13 @@
 ;;;  (add-to-list 'ac-sources 'ac-source-semantic)
 ;;;  )
 ;;;(add-hook 'c-mode-common-hook 'my:add-semantic-to-autocomplete)
+
+;;; Enable the package elpy, used for python
+(use-package elpy
+  ;;;:disabled
+  :ensure t
+  :config
+  (message "elpy ... [DONE]"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Personal emacs editor configuration
@@ -432,25 +457,28 @@
 ;;; Custom variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (custom-set-variables
- ;;; custom-set-variables was added by Custom.
- ;;; If you edit it by hand, you could mess it up, so be careful.
- ;;; Your init file should contain only one such instance.
- ;;; If there is more than one, they won't work right.
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(column-number-mode t)
  '(doc-view-continuous t)
  '(font-use-system-font t)
  '(indent-tabs-mode nil)
  '(mouse-wheel-progressive-speed nil)
  '(mouse-wheel-scroll-amount (quote (1 ((shift) . 1) ((control)))))
-;;; '(nil nil t)
+ '(package-selected-packages
+   (quote
+    (elpy cmake-font-lock cmake-mode geben-helm-projectile iedit expand-region aggressive-indent flycheck company-c-headers company-irony dumb-jump ggtags markdown-mode gnuplot-mode counsel-projectile projectile auctex magit counsel undo-tree org-bullets ace-window which-key use-package)))
  '(text-mode-hook (quote (turn-on-auto-fill text-mode-hook-identify))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file (setq )hould contain only one such instance.
+ ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Ubuntu Mono" :foundry "unknown" :slant normal :weight normal :height 113 :width normal)))))
+ '(default ((t (:family "Ubuntu Mono" :foundry "unknown" :slant normal :weight normal :height 113 :width normal))))
+ '(aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 3.0)))))
 
 (message "Custom variables ...  [DONE]")
 

@@ -92,6 +92,7 @@ namespace chapchom
    }
   // Copy the data from the vector to the Matrix_pt vector
   set_matrix(vector_pt, m, n);
+  
  }
 
  // ===================================================================
