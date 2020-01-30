@@ -1,0 +1,21 @@
+#+STARTUP: showall
+#+TITLE: Distance Matrix
+#+AUTHOR: Julio C.
+
+* The problem we are solving
+Lets $\mathbf{x}_{j}$ be a set of points in a region $\Omega$, where
+$\Omega \in \mathbb{R}^{s}$ and $y_{j} \in \mathbb{R}$ such that
+
+\begin{equation}
+ y_{j} = f(\mathbf{x}_{j})
+\end{equation}
+
+where $f$ is an unknown function. We want to find a function $P_{f}$
+such that when evaluated at the point $\mathbf{x}_{j}$ it matches the
+evaluation point $y_{j}$, that is
+
+\begin{equation}
+ y_{j} = P_{f}(\mathbf{x}_{j})
+\end{equation}
+
+for $j=1,\ldots,N$
