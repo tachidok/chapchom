@@ -1,4 +1,4 @@
 language: cpp
 os: linux
 script: 
- - 4 | a | .configs/current | 4 | a | a | ./autogen.sh
+ - ./autogen.sh a a 4 ./configs/default a 4
