@@ -1,7 +1,8 @@
-language: cpp
-os: linux
-compiler:
- - clang
- - gcc
-script: 
- - ./autogen.sh a a 4 ./configs/default a 4
+matrix:
+ include:
+  - os: linux
+   - language: cpp
+   - script: ./autogen.sh a a 4 ./configs/default a 4
+  - os: linux
+   - language: cpp
+   - script: ./autogen.sh a a 4 ./configs/default a 4
