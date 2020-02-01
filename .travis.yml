@@ -1,4 +1,7 @@
 language: cpp
 os: linux
+compiler:
+ - clang
+ - gcc
 script: 
  - ./autogen.sh a a 4 ./configs/default a 4

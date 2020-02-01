@@ -114,7 +114,9 @@ echo ""
 #====================================================================
 echo "Which library type do you want to build?"
 OptionPrompt "The a)STATIC or the b)SHARED type library? [a/b -- default: a]"
+
 static_or_shared='a'
+
 if test $input_arguments = 1; then
     static_or_shared=$1
 else
@@ -136,10 +138,11 @@ echo ""
 #====================================================================
 # Library version
 #====================================================================
-
 echo "Which library version do you want to build?"
 OptionPrompt "The a)DEBUG or the b)RELEASE version of the library ? [a/b -- default: a]"
+
 debug_or_release='a'
+
 if test $input_arguments = 1; then
     debug_or_release=$2
 else
@@ -161,7 +164,9 @@ echo ""
 #====================================================================
 echo "How many processor to use to build $lib_name?"
 OptionPrompt "[1] [2] [4] [default: 4]"
+
 number_of_processors_to_build_library=4
+
 if test $input_arguments = 1; then
     number_of_processors_to_build_library=$3
 else
@@ -182,10 +187,11 @@ echo ""
 #====================================================================
 # Configuration file for extra configuration
 #====================================================================
-
 echo "Specify the path config file with extra configuration flags:"
 OptionPrompt "[default: ./configs/current]"
+
 extra_config_file="./configs/current"
+
 if test $input_arguments = 1; then
     extra_config_file=$4
 else
@@ -208,7 +214,9 @@ echo ""
 
 echo "Do you want to build and run the demos?"
 OptionPrompt "a)DO BUILD/RUN demos b)DO NOT BUILD/RUN demos [a/b -- default: a]"
+
 build_and_run_demos='a'
+
 if test $input_arguments = 1; then
     build_and_run_demos=$5
 else
@@ -221,7 +229,9 @@ else
     build_demos=TRUE
     echo "How many processor use to run tests?"
     OptionPrompt "[1] [2] [4] [default: 4]"
+    
     number_of_processors_to_run_demos=4
+    
     if test $input_arguments = 1; then
         number_of_processors_to_run_demos=$6
     else
