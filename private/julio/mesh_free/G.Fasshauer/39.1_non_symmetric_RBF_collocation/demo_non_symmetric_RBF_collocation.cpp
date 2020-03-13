@@ -1,7 +1,6 @@
-// This demo driver is based on the Program 6.1
-// RBFInterpolation2Dlinear.m from the book "Meshfree Approximation
-// Methods with MATLAB, Gregory E. Fasshauer", World Scientific
-// Publishing, 2007
+// This demo driver is based on the Program 39.1 KansaLaplace2D.m from
+// the book "Meshfree Approximation Methods with MATLAB, Gregory
+// E. Fasshauer", World Scientific Publishing, 2007
 
 // Include general/common includes, utilities and initialisation
 #include "../../../../../src/general/common_includes.h"
@@ -30,11 +29,31 @@
 
 using namespace chapchom;
 
-// Franke's function (2D version)
+// f function
 template<class VEC_TYPE>
-const Real test_function(VEC_TYPE &x)
+const Real Lu(VEC_TYPE &x)
 {
- return (x(0) + x(1)) / 2.0;
+ return -1.25*M_PI*M_PI*sin(M_PI*x(0))*cos(M_PI*x(1)/2.0);
+}
+
+// u exact solution
+template<class VEC_TYPE>
+const Real u_exact(VEC_TYPE &x)
+{
+ return sin(M_PI*x(0))*cos(M_PI*x(1)/2.0);
+}
+
+// Radial function
+const Real psi(const Real r, const Real epsilon)
+{
+ return std::exp(-((r*epsilon)*(r*epsilon)));
+}
+
+// Laplacian psi
+const Real Lpsi(const Real r, const Real epsilon)
+{
+ const Real er2 = (epsilon*r)*(epsilon*r);
+ return 4*epsilon*epsilon*std::exp(-er2)*(er2-1);
 }
 
 template<class MAT_TYPE, class VEC_TYPE>
@@ -84,42 +103,6 @@ void compute_distance_matrix(MAT_TYPE &data_sites, MAT_TYPE &centers,
  
 }
 
-template<class MAT_TYPE>
-void psi(MAT_TYPE &distance_matrix,
-         MAT_TYPE &interpolation_matrix, const Real epsilon)
-{
- const unsigned n_rows_src = distance_matrix.n_rows();
- const unsigned n_columns_src = distance_matrix.n_columns();
- 
- const unsigned n_rows_dst = interpolation_matrix.n_rows();
- const unsigned n_columns_dst = interpolation_matrix.n_columns();
- 
- if (n_rows_src != n_rows_dst || n_columns_src != n_columns_dst)
-  {
-   // Error message
-   std::ostringstream error_message;
-   error_message << "The dimensions of the distance matrix and the\n"
-                 << "interpolation matrix are different\n"
-                 << "distance_matrix: " << n_rows_src << " x " << n_columns_src << "\n"
-                 << "interpolation_matrix: " << n_rows_dst << " x " << n_columns_dst << "\n"
-                 << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
-  }
- 
- for (unsigned i = 0; i < n_rows_dst; i++)
-  {
-   for (unsigned j = 0; j < n_columns_dst; j++) 
-    {
-     const Real r = distance_matrix(i, j);
-     interpolation_matrix(i,j) = std::exp(-((r*epsilon)*(r*epsilon)));
-    }
-   
-  }
- 
-}
-
 struct Args {
  argparse::ArgValue<Real> epsilon;
 };
@@ -143,7 +126,7 @@ int main(int argc, char *argv[])
  // Add arguments  
  parser.add_argument<Real>(args.epsilon, "--epsilon")
   .help("Epsilon for phi")
-  .default_value("6.0");
+  .default_value("9.0");
  
  // Parse the input arguments
  parser.parse_args(argc, argv);
@@ -157,6 +140,8 @@ int main(int argc, char *argv[])
  const unsigned dim = 2;
  
  // The value for epsilon
+ //const Real epsilon = 21.1;
+ //const Real epsilon = 9.0;
  Real epsilon = args.epsilon;
  
  // Interpolant degree
@@ -164,9 +149,6 @@ int main(int argc, char *argv[])
  
  // Specify the one-dimensional lenght of the domain
  const unsigned L = 1.0;
-
- // The interpolation polynomial order (as indicated in program 6.1)
- const unsigned M = 3;
  
  // --------------------------------------------------------------
  // Create and give position to nodes
@@ -301,12 +283,17 @@ int main(int argc, char *argv[])
  // --------------------------------------------------------------
  // Generate the interpolation matrix using the RBF PSI
  // --------------------------------------------------------------
- //interpolation_matrix.allocate_memory();
-#ifdef CHAPCHOM_USES_ARMADILLO
- psi<CCMatrixArmadillo<Real> >(distance_matrix, interpolation_matrix, epsilon);
-#else
- psi<CCMatrix<Real> >(distance_matrix, interpolation_matrix, epsilon);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+
+ for (unsigned i = 0; i < n_nodes; i++)
+  {
+   for (unsigned j = 0; j < n_nodes; j++)
+    {
+     Real r = distance_matrix(i, j);
+     interpolation_matrix(i, j) = Lpsi(r, epsilon);
+     interpolation_matrix(i, j) = psi(r, epsilon);
+    }
+   
+  }
  
  // --------------------------------------------------------------
  // Set right-hand side
@@ -315,7 +302,7 @@ int main(int argc, char *argv[])
  CCVectorArmadillo<Real> rhs(n_nodes);
 #else 
  CCVector<Real> rhs(n_nodes);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO 
  //rhs.allocate_memory();
  for (unsigned i = 0; i < n_nodes; i++)
   {
@@ -330,112 +317,21 @@ int main(int argc, char *argv[])
      tmp_v(j) = nodes_pt[i]->get_position(j);
     }
    // --------------------------------------------------------------
-   // Evaluate the KNOWN function at the centers positions
+   // Evaluate the function f at the centers positions
    // --------------------------------------------------------------
 #ifdef CHAPCHOM_USES_ARMADILLO
-   rhs(i) = test_function<CCVectorArmadillo<Real> >(tmp_v);
+   rhs(i) = Lu<CCVectorArmadillo<Real> >(tmp_v);
 #else
-   rhs(i) = test_function<CCVector<Real> >(tmp_v);
+   rhs(i) = Lu<CCVector<Real> >(tmp_v);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
   }
- 
- // ================================================================
- // Create the additional entries for the matrices considering the
- // number of entries set by the interpolation polynomial (M = 3)
- // ================================================================
-#ifdef CHAPCHOM_USES_ARMADILLO
- CCVectorArmadillo<Real> additional_rhs(M);
-#else
- CCVector<Real> additional_rhs(M);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
- //additional_rhs.allocate_memory();
- // Set the constraints given in page 55 and 56, where the sum is
- // equal to zero, thus
- for (unsigned i = 0; i < M; i++)
-  {
-   additional_rhs(i) = 0;
-  }
- 
- // Create the block version of the rhs concatenating the original rhs
- // and the additional rhs
-#ifdef CHAPCHOM_USES_ARMADILLO
- CCVectorArmadillo<Real> block_rhs(n_nodes + M);
-#else 
- CCVector<Real> block_rhs(n_nodes + M);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
- // Concatenate
- concatenate_vectors_vertically(rhs, additional_rhs, block_rhs);
- 
- // -------------------------------------------------------------
- // Create the matrix P / Additional matrix with polynomial
- // information to ensure matrix inversion
- // -------------------------------------------------------------
-#ifdef CHAPCHOM_USES_ARMADILLO
- CCMatrixArmadillo<Real> P(n_nodes, M);
-#else
- CCMatrix<Real> P(n_nodes, M);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
- //P.allocate_memory();
- for (unsigned i = 0; i < n_nodes; i++)
-  {
-   P(i, 0) = 1;
-   P(i, 1) = nodes_pt[i]->get_position(0);
-   P(i, 2) = nodes_pt[i]->get_position(1);
-  }
- 
- // The transposed P
-#ifdef CHAPCHOM_USES_ARMADILLO
- CCMatrixArmadillo<Real> P_t;
-#else
- CCMatrix<Real> P_t;
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
- // Get the transpose of P
- P.transpose(P_t);
- 
- // Create the zero matrix
-#ifdef CHAPCHOM_USES_ARMADILLO
- CCMatrixArmadillo<Real> Zeroes(M, M);
-#else
- CCMatrix<Real> Zeroes(M, M);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
- // Fill it with zeroes
- //Zeroes.allocate_memory();
- Zeroes.fill_with_zeroes();
-
- // ---------------------------------------------------------
- // Create the block matrix
- // ---------------------------------------------------------
-#ifdef CHAPCHOM_USES_ARMADILLO
- CCMatrixArmadillo<Real> block_upper_interpolation_matrix;
-#else
- CCMatrix<Real> block_upper_interpolation_matrix;
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
- 
- // Concatenate upper parts
- concatenate_matrices_horizontally(interpolation_matrix, P, block_upper_interpolation_matrix);
- 
-#ifdef CHAPCHOM_USES_ARMADILLO
- CCMatrixArmadillo<Real> block_lower_interpolation_matrix;
-#else
- CCMatrix<Real> block_lower_interpolation_matrix;
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
- concatenate_matrices_horizontally(P_t, Zeroes, block_lower_interpolation_matrix);
- 
-#ifdef CHAPCHOM_USES_ARMADILLO
- CCMatrixArmadillo<Real> block_interpolation_matrix;
-#else
- CCMatrix<Real> block_interpolation_matrix;
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
- 
- // Concatenate upper parts
- concatenate_matrices_vertically(block_upper_interpolation_matrix, block_lower_interpolation_matrix, block_interpolation_matrix);
  
  // The solution vector (with the respective number of rows) stores
  // the coefficients for the interpolant polynomials
 #ifdef CHAPCHOM_USES_ARMADILLO
- CCVectorArmadillo<Real> sol(n_nodes + M);
+ CCVectorArmadillo<Real> sol(n_nodes);
 #else
- CCVector<Real> sol(n_nodes + M);
+ CCVector<Real> sol(n_nodes);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
  
  // --------------------------------------------------------------
@@ -455,10 +351,9 @@ int main(int argc, char *argv[])
  
  // --------------------------------------------------------------
  // Solve the system of equations
- // -------------------------------------------------------------- 
- //linear_solver.solve(block_interpolation_matrix, rhs, sol);
- linear_solver.solve(block_interpolation_matrix, block_rhs, sol);
- 
+ // --------------------------------------------------------------
+ //linear_solver.solve(distance_matrix, rhs, sol);
+ linear_solver.solve(interpolation_matrix, rhs, sol);
  //std::cerr << "Solution vector" << std::endl;
  //sol.print();
  
@@ -560,32 +455,6 @@ int main(int argc, char *argv[])
  psi<CCMatrix<Real> >(evaluation_distance_matrix, interpolation_evaluation_matrix, epsilon);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
  
- // -------------------------------
- // Create the matrix Pe
- // -------------------------------
-#ifdef CHAPCHOM_USES_ARMADILLO
- CCMatrixArmadillo<Real> Pe(n_evaluation_nodes, M);
-#else
- CCMatrix<Real> Pe(n_evaluation_nodes, M);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
- //Pe.allocate_memory();
- for (unsigned i = 0; i < n_evaluation_nodes; i++)
-  {
-   Pe(i, 0) = 1;
-   Pe(i, 1) = evaluation_nodes_pt[i]->get_position(0);
-   Pe(i, 2) = evaluation_nodes_pt[i]->get_position(1);
-  }
- 
- // ---------------------------------------------------------
- // Create the block matrix
- // --------------------------------------------------------- 
-#ifdef CHAPCHOM_USES_ARMADILLO
- CCMatrixArmadillo<Real> block_interpolation_evaluation_matrix;
-#else
- CCMatrix<Real> block_interpolation_evaluation_matrix;
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
- concatenate_matrices_horizontally(interpolation_evaluation_matrix, Pe, block_interpolation_evaluation_matrix); 
- 
  // Approximated solution
 #ifdef CHAPCHOM_USES_ARMADILLO
  CCVectorArmadillo<Real> approx_sol(n_evaluation_nodes);
@@ -593,7 +462,7 @@ int main(int argc, char *argv[])
  CCVector<Real> approx_sol(n_evaluation_nodes);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
  // Approximate solution at given points
- multiply_matrix_times_vector(block_interpolation_evaluation_matrix, sol, approx_sol);
+ multiply_matrix_times_vector(interpolation_evaluation_matrix, sol, approx_sol);
  
  // --------------------------------------------------------------
  // Assign solution to nodes
@@ -663,7 +532,7 @@ int main(int argc, char *argv[])
     }
    // ------------------------
    // Evaluation at approx_solution_position
-   real_sol(i) = test_function(tmp_v);
+   real_sol(i) = u_exact(tmp_v);
   }
  /*
    {

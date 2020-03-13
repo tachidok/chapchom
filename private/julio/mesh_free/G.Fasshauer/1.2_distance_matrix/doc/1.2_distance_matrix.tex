@@ -1,0 +1,105 @@
+% Created 2020-02-18 mar 18:35
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\usepackage[margin=1.0in]{geometry}
+\usepackage{setspace}
+\date{}
+\title{Distance Matrix}
+\hypersetup{
+  pdfkeywords={},
+  pdfsubject={},
+  pdfcreator={Emacs 25.2.2 (Org mode 8.2.10)}}
+\begin{document}
+
+\maketitle
+\singlespacing
+
+\section*{Introduction}
+\label{sec-1}
+
+
+Lets $\mathbf{x}_{j}$ be a set of points in a region $\Omega \in
+\mathbb{R}^{s}$, and $y_{j} \in \mathbb{R}$ such that\footnote{The
+notation and exercises follows that presented in the book by Fasshauer
+\cite{Fasshauer:2007:BK}.}
+
+\begin{equation}
+ y_{j} = f(\mathbf{x}_{j})
+\end{equation}
+
+where $f$ is an unknown function. We want to find a function $P_{f}$
+such that when evaluated at the point $\mathbf{x}_{j}$ it matches the
+evaluation point $y_{j}$, that is
+
+\begin{equation}
+ y_{j} = P_{f}(\mathbf{x}_{j})
+\end{equation}
+
+for $j=1,\ldots,N$
+
+We can construct this function $P_{f}$ as a linear combination of some
+\emph{basis functions} $B_{k}$, \emph{i.e.},
+
+\begin{equation}
+ P_{f}(\mathbf{x}) = \sum_{k=1}^N c_k B_{k}(\mathbf{x})
+\end{equation}
+
+where $\mathbf{x} \in \mathbb{R}^{s}$. This is an interpolation
+problem that lead us to solve the following system of equations
+
+\begin{equation}
+ A \mathbf{c} = \mathbf{y}
+\end{equation}
+
+where the \emph{interpolation matrix} A is given by $A_{j,k} =
+B_{k}(\mathbf{x}_{j})$, with $j,k=1,\ldots,N$ the vector $\mathbf{c} =
+[c_1, c_2, ..., c_{N}]^T$, and the vector $\mathbf{y} = [y_{1},
+y_{2}, ..., y_{N}]^T$.
+
+The interpolation problem would be \emph{well-posed} (a solution to the
+problem exists and it is unique) if and only if the matrix A is
+square.
+
+\section*{Example}
+\label{sec-2}
+Lets say we want to construct a function $P_{f}$ that approximates the
+following function:
+
+\begin{equation}
+ f_{s}(\mathbf{x}) = 4^s \prod_{d=1}^s x_{d}(1-x_{d}), \qquad \mathbf{x}=[x_1,...,x_s] \in [0,1]^s.
+\end{equation}
+
+where $f_{s}$ evaluates to zero at the boundaries of the unit cube
+$\mathbb{R}^{s}$ and has a maximum value of 1 at the center of the
+cube.
+
+\subsection*{Construction of $P_{f}$}
+\label{sec-2-1}
+We construct $P_{f}$ as a linear combination of certain basis
+functions $B_{k} = ||\mathbf{x} - \mathbf{x}_{k}||_{2}$ such that
+
+\begin{equation}
+ P_{f}(\mathbf{x}) = \sum_{k=1}^N c_{k} \underbrace{||\mathbf{x} - \mathbf{x}_{k}||_{2}}_{B_{k}}, \qquad \mathbf{x} \in [0,1]^s
+\end{equation}
+
+therefore
+
+\bibliographystyle{ieeetr}
+\bibliography{biblio}
+% Emacs 25.2.2 (Org mode 8.2.10)
+\end{document}

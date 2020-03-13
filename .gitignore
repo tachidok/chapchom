@@ -76,6 +76,15 @@ doc/**/*.out
 doc/**/*.toc
 doc/**/*.fmt
 
+private/**/*.aux
+private/**/*.lof
+private/**/*.log
+private/**/*.lot
+private/**/*.fls
+private/**/*.out
+private/**/*.toc
+private/**/*.fmt
+
 ## Intermediate documents:
 doc/**/*.dvi
 doc/**/*-converted-to.*
@@ -92,6 +101,14 @@ doc/**/*-blx.aux
 doc/**/*-blx.bib
 doc/**/*.brf
 doc/**/*.run.xml
+
+private/**/*.bbl
+private/**/*.bcf
+private/**/*.blg
+private/**/*-blx.aux
+private/**/*-blx.bib
+private/**/*.brf
+private/**/*.run.xml
 
 ## Build tool auxiliary files:
 doc/**/*.fdb_latexmk
