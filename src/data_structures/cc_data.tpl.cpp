@@ -6,10 +6,10 @@
 namespace chapchom
 {
  
- // ===================================================================
- // Constructor. Allocates memory for the values. Initialise them to
- // zero
- // ===================================================================
+ /// ===================================================================
+ /// Constructor. Allocates memory for the values. Initialise them to
+ /// zero
+ /// ===================================================================
  template<class T>
  CCData<T>::CCData(const unsigned n_values,
                    const unsigned n_history_values)
@@ -35,10 +35,10 @@ namespace chapchom
   
  }
  
- // ===================================================================
- // Constructor. Allocates memory for values and copy them from the
- // input vector
- // ===================================================================
+ /// ===================================================================
+ /// Constructor. Allocates memory for values and copy them from the
+ /// input vector
+ /// ===================================================================
  template<class T>
  CCData<T>::CCData(T *values_pt,
                    const unsigned n_values,
@@ -74,9 +74,9 @@ namespace chapchom
   
  }
  
- // ===================================================================
- // Copy constructor
- // ===================================================================
+ /// ===================================================================
+ /// Copy constructor
+ /// ===================================================================
  template<class T>
  CCData<T>::CCData(const CCData<T> &copy)
   : Is_values_empty(true), Is_status_empty(true), Delete_values_storage(true),
@@ -107,9 +107,9 @@ namespace chapchom
   
  }
  
- // ===================================================================
- // Destructor
- // ===================================================================
+ /// ===================================================================
+ /// Destructor
+ /// ===================================================================
  template<class T>
  CCData<T>::~CCData()
  {
@@ -117,9 +117,9 @@ namespace chapchom
   clean_up();
  }
  
- // ===================================================================
- // Assignment operator
- // ===================================================================
+ /// ===================================================================
+ /// Assignment operator
+ /// ===================================================================
  template<class T>
  CCData<T>& CCData<T>::operator=(const CCData<T> &source_values)
  {
@@ -158,9 +158,9 @@ namespace chapchom
   return *this;
  }
  
- // ===================================================================
- // Transforms the input values vector to a Data class type
- // ===================================================================
+ /// ===================================================================
+ /// Transforms the input values vector to a Data class type
+ /// ===================================================================
  template<class T>
  void CCData<T>::set_values(const T *values_pt)
  {
@@ -180,9 +180,9 @@ namespace chapchom
   
  }
  
- // ===================================================================
- // Clean up for any dynamically stored data
- // ===================================================================
+ /// ===================================================================
+ /// Clean up for any dynamically stored data
+ /// ===================================================================
  template<class T>
  void CCData<T>::clean_up()
  {
@@ -211,9 +211,9 @@ namespace chapchom
   
  }
  
- // ===================================================================
- // Free allocated memory
- // ===================================================================
+ /// ===================================================================
+ /// Free allocated memory
+ /// ===================================================================
  template<class T>
  void CCData<T>::free_memory_of_values()
  {
@@ -242,10 +242,10 @@ namespace chapchom
   
  }
  
- // ===================================================================
- // Shift history values (mostly used for time integration). Move the
- // values from index 0 the indicated number of positions to the right
- // ===================================================================
+ /// ===================================================================
+ /// Shift history values (mostly used for time integration). Move the
+ /// values from index 0 the indicated number of positions to the right
+ /// ===================================================================
  template<class T>
  void CCData<T>::shift_history_values(const unsigned n_shift_positions)
  {
@@ -279,9 +279,9 @@ namespace chapchom
   
  }
  
- // ===================================================================
- // Get a pointer to the t-th history values
- // ===================================================================
+ /// ===================================================================
+ /// Get a pointer to the t-th history values
+ /// ===================================================================
  template<class T>
  T *CCData<T>::history_values_row_pt(const unsigned t)
  {
@@ -301,9 +301,9 @@ namespace chapchom
   return &(Values_pt[t*N_values]);
  }
  
- // ===================================================================
- // Get the specified value (read-only)
- // ===================================================================
+ /// ===================================================================
+ /// Get the specified value (read-only)
+ /// ===================================================================
  template<class T>
  const T CCData<T>::value(const unsigned &i, const unsigned t) const
  {
@@ -345,9 +345,9 @@ namespace chapchom
   return Values_pt[t*N_values+i];
  }
  
- // ===================================================================
- // Set values (write version)
- // ===================================================================
+ /// ===================================================================
+ /// Set values (write version)
+ /// ===================================================================
  template<class T>
  T &CCData<T>::value(const unsigned &i, const unsigned t)
  {
@@ -389,9 +389,9 @@ namespace chapchom
   return Values_pt[t*N_values+i];
  }
  
- // ===================================================================
- // Output the values vector (matrix)
- // ===================================================================
+ /// ===================================================================
+ /// Output the values vector (matrix)
+ /// ===================================================================
  template<class T>
  void CCData<T>::output(bool output_indexes) const
  {
@@ -421,9 +421,9 @@ namespace chapchom
   
  }
  
- // ===================================================================
- // Output the matrix
- // ===================================================================
+ /// ===================================================================
+ /// Output the matrix
+ /// ===================================================================
  template<class T>
  void CCData<T>::output(std::ofstream &outfile,
                         bool output_indexes) const
@@ -454,10 +454,10 @@ namespace chapchom
   
  }
  
- // ===================================================================
- // Creates a zero Values_pt and Status_pt vectors with the given
- // number of elements
- // ===================================================================
+ /// ===================================================================
+ /// Creates a zero Values_pt and Status_pt vectors with the given
+ /// number of elements
+ /// ===================================================================
  template<class T>
  void CCData<T>::create_zero_values_and_status_vectors()
  {
@@ -480,9 +480,9 @@ namespace chapchom
   
  }
  
- // ===================================================================
- // Pins all the values associated with this data
- // ===================================================================
+ /// ===================================================================
+ /// Pins all the values associated with this data
+ /// ===================================================================
  template<class T>
  void CCData<T>::pin_all()
  {
@@ -495,9 +495,9 @@ namespace chapchom
    }
  }
 
- // ===================================================================
- // Unpins all the values associated with this data
- // ===================================================================
+ /// ===================================================================
+ /// Unpins all the values associated with this data
+ /// ===================================================================
  template<class T>
  void CCData<T>::unpin_all()
  {

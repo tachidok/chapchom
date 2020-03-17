@@ -6,9 +6,9 @@
 namespace chapchom
 {
 
- // ===================================================================
- // Empty constructor
- // ===================================================================
+ /// ===================================================================
+ /// Empty constructor
+ /// ===================================================================
  template<class T>
  CCNode<T>::CCNode(const unsigned dimension, const unsigned n_variables,
                    const unsigned n_history_values)
@@ -17,17 +17,17 @@ namespace chapchom
     U(N_variables, N_history_values)
  { }
  
- // ===================================================================
- // Empty destructor
- // ===================================================================
+ /// ===================================================================
+ /// Empty destructor
+ /// ===================================================================
  template<class T>
  CCNode<T>::~CCNode()
  { }
  
- // ===================================================================
- // Output the data stored at the node (output horizontally without
- // position by default, otherwise output vertically with position)
- // ===================================================================
+ /// ===================================================================
+ /// Output the data stored at the node (output horizontally without
+ /// position by default, otherwise output vertically with position)
+ /// ===================================================================
  template<class T>
  void CCNode<T>::output(bool output_position,
                         const unsigned t) const
@@ -48,11 +48,11 @@ namespace chapchom
   std::cout << std::endl; 
  }
  
- // ===================================================================
- // Output the data stored at the node to a file (output horizontally
- // without position by default, otherwise output vertically with
- // position)
- // ===================================================================
+ /// ===================================================================
+ /// Output the data stored at the node to a file (output horizontally
+ /// without position by default, otherwise output vertically with
+ /// position)
+ /// ===================================================================
  template<class T>
  void CCNode<T>::output(std::ofstream &outfile,
                         bool output_position,

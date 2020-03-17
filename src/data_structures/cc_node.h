@@ -4,4 +4,6 @@
 #define CCNODE_H
 #include "cc_node.tpl.h"
 #include "cc_node.tpl.cpp"
+#include "cc_boundary_node.tpl.h"
+#include "cc_boundary_node.tpl.cpp"
 #endif // #ifndef CCNODE_H
