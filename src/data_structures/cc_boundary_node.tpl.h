@@ -19,7 +19,7 @@ namespace chapchom
  public:
   
   /// Constructor
-  CCBoundaryNode(const unsigned boundary, const unsigned dimension, const unsigned n_variables, const unsigned n_history_values);
+  CCBoundaryNode(const unsigned boundary, const unsigned dimension, const unsigned n_variables, const unsigned n_history_values=1);
   
   /// Empty destructor
   virtual ~CCBoundaryNode();
@@ -42,7 +42,36 @@ namespace chapchom
   /// Get the boundary coordinates zeta of the node on boundary b
   void get_boundary_coordinates(const unsigned b, std::vector<Real> &zeta);
   
+  /// Get the boundaries the node is on (read only)
+  inline const std::set<unsigned> &boundaries() const {return Boundaries;}
+  
+  /// Output the data stored at the node (boundary ids, position and
+  /// values at time t)
+  void output_boundary_position_and_value(const unsigned t = 0);
+  
+  /// Output the data stored at the node (boundary ids, position and
+  /// values at time t)
+  void output_boundary_position_and_value(std::ofstream &outfile, const unsigned t = 0) const;
+  
  protected:
+  
+  // Copy constructor (we do not want this class to be copiable because
+  // it contains dynamically allocated variables, A in this
+  // case). Check
+  // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
+  CCBoundaryNode(const CCBoundaryNode& boundary_node) 
+   {
+    BrokenCopy::broken_copy("CCBoundaryNode");
+   }
+  
+  // Copy constructor (we do not want this class to be copiable because
+  // it contains dynamically allocated variables, A in this
+  // case). Check
+  // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
+  void operator=(const CCBoundaryNode&) 
+   {
+    BrokenCopy::broken_assign("CCBoundaryNode");
+   }
   
   /// A set to store the boundaries where the node lies on
   std::set<unsigned> Boundaries;

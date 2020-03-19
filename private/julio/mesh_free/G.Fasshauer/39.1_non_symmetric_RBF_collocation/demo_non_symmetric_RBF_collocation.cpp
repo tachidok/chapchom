@@ -132,20 +132,20 @@ int main(int argc, char *argv[])
  parser.parse_args(argc, argv);
  
  // --------------------------------------------------------------
+ // RBF parameters
+ // --------------------------------------------------------------
+ // The value for epsilon
+ //const Real epsilon = 21.1;
+ //const Real epsilon = 9.0;
+ Real epsilon = args.epsilon;
+ 
+ // --------------------------------------------------------------
  // Domain specification
  // --------------------------------------------------------------
  // TODO: Create a DOMAIN (mesh?) type class
  
  // Dimension of the problem
  const unsigned dim = 2;
- 
- // The value for epsilon
- //const Real epsilon = 21.1;
- //const Real epsilon = 9.0;
- Real epsilon = args.epsilon;
- 
- // Interpolant degree
- const unsigned degree = 3;
  
  // Specify the one-dimensional lenght of the domain
  const unsigned L = 1.0;
@@ -154,24 +154,82 @@ int main(int argc, char *argv[])
  // Create and give position to nodes
  // --------------------------------------------------------------
  // Nodes per dimension
- const unsigned n_nodes_per_dim = pow(2, degree+1);
+ const unsigned n_nodes_per_dim = pow(2, 4);
  // The number of nodes
  const unsigned n_nodes = pow(n_nodes_per_dim, dim);
+ // Distance between a pair of nodes
+ const Real h = L / (Real)(n_nodes_per_dim - 1);
  // A vector of nodes
  std::vector<CCNode<Real> *> nodes_pt(n_nodes);
  
- // Number of variables stored in the node
+ // Number of variables stored in each node
  const unsigned n_variables = 1;
- // Number of history values
- const unsigned n_history_values = 1;
  
- // Distance between a pair of nodes
- //const Real h = L / (Real)(n_nodes_per_dim - 1);
- std::vector<Real> x(dim, 0.0);
- // Create the nodes
- for (unsigned long i = 0; i < n_nodes; i++)
+ // Create nodes
+ for (unsigned i = 0; i < n_nodes; i++)
   {
-   nodes_pt[i] = new CCNode<Real>(dim, n_variables, n_history_values);
+   nodes_pt[i] = new CCNode<Real>(dim, n_variables);
+  }
+ 
+ // Assign positions
+ unsigned kk = 0;
+ for (unsigned i = 0; i < n_nodes_per_dim; i++)
+  {
+   const Real position_i = i*h;
+   for (unsigned j = 0; j < n_nodes_per_dim; j++)
+    {
+     const Real position_j = j*h;
+     nodes_pt[kk]->set_position(position_i, 0);
+     nodes_pt[kk]->set_position(position_j, 1);
+     kk++;
+    }
+  }
+ 
+ // Create boundary nodes
+ const unsigned n_nodes_per_boundary = n_nodes_per_dim;
+ // Create total number of boundary nodes
+ const unsigned n_boundary_nodes = (n_nodes_per_dim * 4) - 4;
+ // A vector of boundary nodes
+ std::vector<CCBoundaryNode<Real> *> boundary_nodes_pt(n_boundary_nodes);
+ // The IDs for the boundaries
+ const unsigned boundary_1_id = 1;
+ const unsigned boundary_2_id = 2;
+ 
+ // Create the boundary nodes
+ for (unsigned i = 0; i < n_boundary_nodes; i++)
+  {
+   if (i < n_nodes_per_boundary)
+    {
+     boundary_nodes_pt[i] = new CCBoundaryNode<Real>(boundary_1_id, dim, n_variables);
+    }
+   else
+    {
+     boundary_nodes_pt[i] = new CCBoundaryNode<Real>(boundary_2_id, dim, n_variables);
+    }
+  }
+ 
+ // We have two boundaries and two nodes lying on both boundaries
+ boundary_nodes_pt[0]->add_to_boundary(boundary_2_id);
+ boundary_nodes_pt[n_nodes_per_boundary-1]->add_to_boundary(boundary_2_id);
+ 
+ // Assign positions
+ kk = 0;
+ for (unsigned i = 0; i < n_nodes_per_dim; i++)
+  {
+   const Real position_i = i*h;
+   // (x, 0)
+   boundary_nodes_pt[i]->set_position(position_i, 0);
+   boundary_nodes_pt[i]->set_position(0, 1);
+   // (x, 1)
+   boundary_nodes_pt[i+n_nodes_per_dim]->set_position(position_i, 0);
+   boundary_nodes_pt[i+n_nodes_per_dim]->set_position(1, 1);
+   // (1, y)
+   boundary_nodes_pt[i+n_nodes_per_dim*2]->set_position(1, 0);
+   boundary_nodes_pt[i+n_nodes_per_dim*2]->set_position(position_i, 1);
+   // (0, y)
+   boundary_nodes_pt[i+n_nodes_per_dim*3]->set_position(0, 0);
+   boundary_nodes_pt[i+n_nodes_per_dim*3]->set_position(position_i, 1);
+   
   }
  
  // --------------------------------------------------------------

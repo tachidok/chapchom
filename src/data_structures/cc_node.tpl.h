@@ -21,7 +21,7 @@ namespace chapchom
  public:
   
   /// Empty constructor
-  CCNode(const unsigned dimension, const unsigned n_variables, const unsigned n_history_values);
+  CCNode(const unsigned dimension, const unsigned n_variables, const unsigned n_history_values=1);
   
   /// Empty destructor
   virtual ~CCNode();
@@ -87,6 +87,7 @@ namespace chapchom
   /// position by default, otherwise output vertically with position)
   virtual void output(bool output_position = false,
                       const unsigned t = 0) const;
+  
   /// Output the data stored at the node to a file (output horizontally
   /// without position by default, otherwise output vertically with
   /// position)
@@ -94,18 +95,25 @@ namespace chapchom
                       bool output_position = false,
                       const unsigned t = 0) const;
   
-  /// Output the node
-  inline void print(bool output_position = false,
-                    const unsigned t = 0) const
-  {output(output_position, t);}
-  
-  /// Output to file
-  inline void print(std::ofstream &outfile, 
-                    bool output_position = false,
-                    const unsigned t = 0) const
-  {output(outfile, output_position, t);}
-  
  protected:
+  
+  // Copy constructor (we do not want this class to be copiable because
+  // it contains dynamically allocated variables, A in this
+  // case). Check
+  // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
+  CCNode(const CCNode& node) 
+   {
+    BrokenCopy::broken_copy("CCNode");
+   }
+  
+  // Copy constructor (we do not want this class to be copiable because
+  // it contains dynamically allocated variables, A in this
+  // case). Check
+  // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
+  void operator=(const CCNode&) 
+   {
+    BrokenCopy::broken_assign("CCNode");
+   }
   
   /// The spatial dimension of the node
   const unsigned Dimension;

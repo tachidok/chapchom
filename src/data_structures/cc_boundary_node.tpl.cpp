@@ -14,7 +14,7 @@ namespace chapchom
                                    const unsigned dimension,
                                    const unsigned n_variables,
                                    const unsigned n_history_values)
-  : CCNode<T>(dimension, n_variables, n_history_values)
+  : CCBoundaryNode<T>(dimension, n_variables, n_history_values)
  {
   // Add the node to the boundary
   add_to_boundary(boundary);
@@ -181,6 +181,72 @@ namespace chapchom
    {
     zeta[i] = Boundary_coordinates[b][i];
    }
+  
+ }
+ 
+ /// ===================================================================
+ /// Output the data stored at the node (boundary ids, position and
+ /// values at time t)
+ /// ===================================================================
+ template<class T>
+ void CCBoundaryNode<T>::output_boundary_position_and_value(const unsigned t)
+ {
+  std::set<unsigned>::iterator it;
+  // Output boundaries
+  std::cout << "B: ";
+  for (it = Boundaries.begin(); it != Boundaries.end(); it++)
+   {
+    std::cout << (*it) << "\t";
+   }
+  
+  // Output positions
+  std::cout << "X: ";
+  for (unsigned i = 0; i < this->Dimension; i++)
+   {
+    std::cout << this->X.value(i,t) << "\t";
+   } // for (i < this->Dimension)
+
+  // Output data
+  std::cout << "U: ";
+  for (unsigned i = 0; i < this->N_variables; i++)
+   {
+    std::cout << this->U.value(i,t) << "\t";
+   } // for (i < this->N_variables)
+  
+  std::cout << std::endl;
+  
+ }
+ 
+ /// ===================================================================
+ /// Output the data stored at the node (boundary ids, position and
+ /// values at time t)
+ /// ===================================================================
+ template<class T>
+ void CCBoundaryNode<T>::output_boundary_position_and_value(std::ofstream &outfile, const unsigned t) const
+ {
+  // Output boundaries
+  std::cout << "B: ";
+  std::set<unsigned>::iterator it;
+  for (it = Boundaries.begin(); it != Boundaries.end(); it++)
+   {
+    outfile << (*it) << "\t";
+   }
+  
+  // Output positions
+  std::cout << "X: ";
+  for (unsigned i = 0; i < this->Dimension; i++)
+   {
+    outfile << this->X.value(i,t) << "\t";
+   } // for (i < this->Dimension)
+  
+  // Output data
+  std::cout << "U: ";
+  for (unsigned i = 0; i < this->N_variables; i++)
+   {
+    outfile << this->U.value(i,t) << "\t";
+   } // for (i < this->N_variables)
+  
+  outfile << std::endl;  
   
  }
  
