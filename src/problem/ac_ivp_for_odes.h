@@ -29,37 +29,37 @@ namespace chapchom
   /// Destructor
   virtual ~ACIVPForODEs();
   
-  // Get access to the U vector
+  /// Get access to the U vector
   CCData<Real> *u_pt() const {return U_pt;}
   
-  // Read-only access to the vector U values
+  /// Read-only access to the vector U values
   inline const Real u(const unsigned i, const unsigned t = 0) const {return U_pt->value(i,t);}
   
-  // Write access to the vector U values
+  /// Write access to the vector U values
   inline Real &u(const unsigned i, const unsigned t = 0) {return U_pt->value(i,t);}
   
   // -------------------------------------------------------------------------
   // THESE METHODS MUST BE IMPLEMENTED IN THE CONCRETE PROBLEM CLASS [BEGIN]
   // -------------------------------------------------------------------------
-  // Set initial conditions
+  /// Set initial conditions
   virtual void set_initial_conditions() = 0;
   
-  // Set boundary conditions
+  /// Set boundary conditions
   virtual void set_boundary_conditions() = 0;
     
-  // Document the solution
+  /// Document the solution
   virtual void document_solution(std::ostringstream &output_filename) { } 
   // -------------------------------------------------------------------------
   // THESE METHODS MUST BE IMPLEMENTED IN THE CONCRETE PROBLEM CLASS [END]
   // -------------------------------------------------------------------------
   
-  // A helper function to complete the problem setup
+  /// A helper function to complete the problem setup
   void complete_problem_setup() { }
   
-  // Problem steady solve (empty)
+  /// Problem steady solve (empty)
   void steady_solve() { }
   
-  // Problem unsteady solve
+  /// Problem unsteady solve
   void unsteady_solve();
   
  protected:
@@ -82,26 +82,26 @@ namespace chapchom
     BrokenCopy::broken_assign("ACIVPForODEs");
    } 
   
-  // The set of actions to be performed before a time stepping
+  /// The set of actions to be performed before a time stepping
   virtual void actions_before_time_stepping() { }
   
-  // The set of actions to be performed after a time stepping
+  /// The set of actions to be performed after a time stepping
   virtual void actions_after_time_stepping() { } 
   
-  // The set of actions to be performed before newton solve
+  /// The set of actions to be performed before newton solve
   virtual void actions_before_newton_solve() { }
   
-  // The set of actions to be performed after newton solve
+  /// The set of actions to be performed after newton solve
   virtual void actions_after_newton_solve() { }
   
-  // The ODEs
+  /// The ODEs
   ACODEs *ODEs_pt;
   
-  // The Time Stepper to approximate a solution to the ODEs
+  /// The Time Stepper to approximate a solution to the ODEs
   ACTimeStepper *Time_stepper_pt;
   
-  // The storage for the approximated solution of the time integration
-  // of the ODEs
+  /// The storage for the approximated solution of the time integration
+  /// of the ODEs
   CCData<Real> *U_pt;
   
  };

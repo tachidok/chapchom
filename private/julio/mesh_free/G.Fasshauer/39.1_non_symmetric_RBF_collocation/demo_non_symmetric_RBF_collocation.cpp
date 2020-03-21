@@ -56,6 +56,7 @@ const Real Lpsi(const Real r, const Real epsilon)
  return 4*epsilon*epsilon*std::exp(-er2)*(er2-1);
 }
 
+#if 0
 template<class MAT_TYPE, class VEC_TYPE>
 void compute_distance_matrix(MAT_TYPE &data_sites, MAT_TYPE &centers,
                              MAT_TYPE &distance_matrix)
@@ -99,6 +100,67 @@ void compute_distance_matrix(MAT_TYPE &data_sites, MAT_TYPE &centers,
       }
      distance_matrix(m,n)=distance.norm_2();
     }
+  }
+ 
+}
+#endif // #if 0
+
+template<class MAT_TYPE, class VEC_TYPE>
+void generate_interpolation_matrix_and_rhs_vector(std::vector<CCNode<Real> *> &nodes_pt,
+                                                  std::vector<CCNode<Real> *> &centers_pt,
+                                                  MAT_TYPE &interpolation_matrix,
+                                                  VEC_TYPE &rhs_vector)
+{
+ // Get the number of nodes and centers
+ const unsigned n_nodes = nodes_pt.size();
+ const unsigned n_centers = centers_pt.size();
+ 
+ // Get the dimension of the nodes and centers
+ const unsigned dimension = nodes_pt[0]->dimension();
+ const unsigned tmp_dimension = centers_pt[0]->dimension();
+ 
+ if (dimension != tmp_dimension)
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "The dimension of the nodes and the centers\n"
+                 << "is different\n"
+                 << "dim(nodes):" << dimension
+                 << "\ndim(centers):" << tmp_dimension
+                 << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
+ 
+ // Loop over all nodes
+ for (unsigned m = 0; m < n_nodes; m++)
+  {
+   // Loop over all centers
+   for (unsigned n = 0; n < n_centers; n++)
+    {
+     VEC_TYPE distance(dimension);
+     // Loop over the elements of both, the node and the center
+     for (unsigned k = 0; k < dimension; k++)
+      {
+       distance(k) = nodes_pt[m]->get_position(k) - centers_pt[n]->get_position(k);
+      }
+     Real r = distance.norm_2();
+     interpolation_matrix(m,n) = Lpsi(r, epsilon);
+     //interpolation_matrix(m, n) = psi(r, epsilon);
+    }
+   
+   VEC_TYPE tmp_v(dimension);
+   for (unsigned k = 0; k < dimension; k++)
+    {
+     tmp_v(k) = nodes_pt[m]->get_position(k);
+    }
+   
+   // --------------------------------------------------------------
+   // Evaluate the function f() at the nodes positions 
+   // --------------------------------------------------------------
+   rhs_vector(m) = Lu<VEC_TYPE >(tmp_v);
+   
   }
  
 }
@@ -159,6 +221,7 @@ int main(int argc, char *argv[])
  const unsigned n_nodes = pow(n_nodes_per_dim, dim);
  // Distance between a pair of nodes
  const Real h = L / (Real)(n_nodes_per_dim - 1);
+ 
  // A vector of nodes
  std::vector<CCNode<Real> *> nodes_pt(n_nodes);
  
@@ -189,6 +252,7 @@ int main(int argc, char *argv[])
  const unsigned n_nodes_per_boundary = n_nodes_per_dim;
  // Create total number of boundary nodes
  const unsigned n_boundary_nodes = (n_nodes_per_dim * 4) - 4;
+ 
  // A vector of boundary nodes
  std::vector<CCBoundaryNode<Real> *> boundary_nodes_pt(n_boundary_nodes);
  // The IDs for the boundaries
@@ -233,32 +297,25 @@ int main(int argc, char *argv[])
   }
  
  // --------------------------------------------------------------
- // Output supporting nodes
+ // Output nodes positions
  // --------------------------------------------------------------
+ // Interior nodes
  std::ofstream nodes_file("RESLT/nodes.dat");
- 
- // Assign positions
- for (unsigned long i = 0; i < n_nodes; i++)
+ for (unsigned i = 0; i < n_nodes; i++)
   {
-   for (unsigned k = 0; k < dim; k++)
-    {
-     const Real r = rand();
-     const Real position = static_cast<Real>(r / RAND_MAX) * L;
-     // Generate position and assign it
-     //const Real position = x[k];
-     nodes_pt[i]->set_position(position, k);
-     //x[k]+=h;
-     nodes_file << position;
-     if (k + 1 < dim)
-      {
-       nodes_file << " ";
-      }
-    }
-   nodes_file << std::endl;
+   nodes_pt[kk]->output(nodes_file, true);
   }
- 
- // Close support nodes file
+ // Close interior nodes file
  nodes_file.close();
+ 
+ // Boundary nodes
+ std::ofstream boundary_nodes_file("RESLT/boundary_nodes.dat");
+ for (unsigned i = 0; i < n_boundary_nodes; i++)
+  {
+   boundary_nodes_pt[i]->output_boundary_position_and_value(boundary_nodes_file);
+  }
+ // Close boundary nodes file
+ boundary_nodes_file.close();
  
  // --------------------------------------------------------------
  // Set initial conditions
@@ -289,100 +346,32 @@ int main(int argc, char *argv[])
  // Set the problem and solve it
  // --------------------------------------------------------------
  
- // TODO: The distance matrix may be formed while we loop over the
- // nodes to extract their position
- 
- // --------------------------------------------------------------
- // Loop over the nodes and extract their position and store them in a
- // matrix
- // --------------------------------------------------------------
-#ifdef CHAPCHOM_USES_ARMADILLO
- CCMatrixArmadillo<Real> nodes_position(dim, n_nodes);
-#else
- CCMatrix<Real> nodes_position(dim, n_nodes);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
- // Each column stores the vector position of a node
- //nodes_position.allocate_memory();
- for (unsigned i = 0; i < n_nodes; i++)
-  {
-   for (unsigned j = 0; j < dim; j++)
-    {
-     nodes_position(j, i) = nodes_pt[i]->get_position(j);
-    }
-  }
-  
  // -------------------------------------------------------------- 
- // Create the distance matrix
- // --------------------------------------------------------------
-#ifdef CHAPCHOM_USES_ARMADILLO
- CCMatrixArmadillo<Real> distance_matrix(n_nodes, n_nodes);
-#else
- CCMatrix<Real> distance_matrix(n_nodes, n_nodes);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
- // --------------------------------------------------------------
- // Generate the distance matrix using the nodes position centers
- // shifted by the same nodes position
- // --------------------------------------------------------------
- //distance_matrix.allocate_memory();
-#ifdef CHAPCHOM_USES_ARMADILLO
- compute_distance_matrix<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> >(nodes_position, nodes_position, distance_matrix);
-#else
- compute_distance_matrix<CCMatrix<Real>, CCVector<Real> >(nodes_position, nodes_position, distance_matrix);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
- 
- // -------------------------------------------------------------- 
- // Create the interpolation matrix (the one that applies the RBF)
+ // Create the interpolation matrix
  // --------------------------------------------------------------
 #ifdef CHAPCHOM_USES_ARMADILLO
  CCMatrixArmadillo<Real> interpolation_matrix(n_nodes, n_nodes);
 #else
  CCMatrix<Real> interpolation_matrix(n_nodes, n_nodes);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
- // --------------------------------------------------------------
- // Generate the interpolation matrix using the RBF PSI
- // --------------------------------------------------------------
-
- for (unsigned i = 0; i < n_nodes; i++)
-  {
-   for (unsigned j = 0; j < n_nodes; j++)
-    {
-     Real r = distance_matrix(i, j);
-     interpolation_matrix(i, j) = Lpsi(r, epsilon);
-     interpolation_matrix(i, j) = psi(r, epsilon);
-    }
-   
-  }
  
  // --------------------------------------------------------------
- // Set right-hand side
+ // Create the right-hand side vector
  // --------------------------------------------------------------
 #ifdef CHAPCHOM_USES_ARMADILLO
  CCVectorArmadillo<Real> rhs(n_nodes);
 #else 
  CCVector<Real> rhs(n_nodes);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO 
- //rhs.allocate_memory();
- for (unsigned i = 0; i < n_nodes; i++)
-  {
-#ifdef CHAPCHOM_USES_ARMADILLO
-   CCVectorArmadillo<Real> tmp_v(dim);
-#else
-   CCVector<Real> tmp_v(dim);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
-   //tmp_v.allocate_memory();
-   for (unsigned j = 0; j < dim; j++)
-    {
-     tmp_v(j) = nodes_pt[i]->get_position(j);
-    }
-   // --------------------------------------------------------------
-   // Evaluate the function f at the centers positions
-   // --------------------------------------------------------------
+ 
+ // --------------------------------------------------------------
+ // Generate the interpolation matrix and the right-hand side vector
+ // --------------------------------------------------------------
 #ifdef CHAPCHOM_USES_ARMADILLO
-   rhs(i) = Lu<CCVectorArmadillo<Real> >(tmp_v);
+ generate_interpolation_matrix_and_rhs_vector<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> >(nodes_pt, nodes_pt, interpolation_matrix, rhs);
 #else
-   rhs(i) = Lu<CCVector<Real> >(tmp_v);
+ generate_interpolation_matrix_and_rhs_vector<CCMatrix<Real>, CCVector<Real> >(nodes_pt, nodes_pt, interpolation_matrix, rhs);
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
-  }
  
  // The solution vector (with the respective number of rows) stores
  // the coefficients for the interpolant polynomials

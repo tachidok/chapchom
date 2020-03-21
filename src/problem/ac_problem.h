@@ -26,28 +26,28 @@ namespace chapchom
   /// Destructor
   virtual ~ACProblem();
   
-  // Problem steady solve
+  /// Problem steady solve
   virtual void steady_solve() = 0;
   
-  // Problem unsteady solve
+  /// Problem unsteady solve
   virtual void unsteady_solve() = 0;
   
-  // Write access to the current time
+  /// Write access to the current time
   inline Real &time() {return Time;}
   
-  // Read-only access to the current time
+  /// Read-only access to the current time
   inline Real time() const {return Time;}
   
-  // Write access to the current time step
+  /// Write access to the current time step
   inline Real &time_step() {return Time_step;}
   
-  // Read-only access to the current time step
+  /// Read-only access to the current time step
   inline Real time_step() const {return Time_step;}
 
-  // Write access to the current time step
+  /// Write access to the current time step
   inline unsigned &output_file_index() {return Output_file_index;}
   
-  // Read-only access to the current time step
+  /// Read-only access to the current time step
   inline unsigned output_file_index() const {return Output_file_index;}
   
  protected:
@@ -68,34 +68,34 @@ namespace chapchom
     BrokenCopy::broken_assign("ACProblem");
    }
   
-  // Initialise problem (sets framework ready to work)
+  /// Initialise problem (sets framework ready to work)
   void initialise_problem();
   
-  // Finalise problem (performs operations to free resources)
+  /// Finalise problem (performs operations to free resources)
   void finalise_problem();
   
-  // The set of actions to be performed before a time stepping
+  /// The set of actions to be performed before a time stepping
   virtual void actions_before_time_stepping() = 0;
   
-  // The set of actions to be performed after a time stepping
+  /// The set of actions to be performed after a time stepping
   virtual void actions_after_time_stepping() = 0; 
   
-  // The set of actions to be performed before newton solve
+  /// The set of actions to be performed before newton solve
   virtual void actions_before_newton_solve() = 0;
   
-  // The set of actions to be performed after newton solve
+  /// The set of actions to be performed after newton solve
   virtual void actions_after_newton_solve() = 0;
   
-  // Document the solution
+  /// Document the solution
   virtual void document_solution(std::ostringstream &output_filename) = 0;
   
-  // The current time
+  /// The current time
   Real Time;
   
-  // The time step
+  /// The time step
   Real Time_step;
   
-  // A counter to store the current output file index
+  /// A counter to store the current output file index
   unsigned Output_file_index;
   
  };

@@ -13,7 +13,7 @@ namespace chapchom
  
  /// Abstract class to represent boundary nodes
  template<class T>
-  class CCBoundaryNode
+  class CCBoundaryNode : public virtual CCNode<T>
  {
   
  public:

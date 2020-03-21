@@ -43,8 +43,8 @@ namespace chapchom
                               std::vector<Real> &x,
                               const unsigned order);
   
-  // Does 2D interpolation specifying the data points, the order of the
-  // interpolation and the desired "x" values to interpolate
+  /// Does 2D interpolation specifying the data points, the order of the
+  /// interpolation and the desired "x" values to interpolate
   virtual void interpolate_2D(std::vector<std::vector<Real> > &x_points,
                               std::vector<Real> &fx_points,
                               std::vector<std::vector<Real> > &x,
@@ -58,8 +58,8 @@ namespace chapchom
                               std::vector<std::vector<Real> > &x,
                               const unsigned order);
   
-  // Does 3D interpolation specifying the data points, the order of the
-  // interpolation and the desired "x" values to interpolate
+  /// Does 3D interpolation specifying the data points, the order of the
+  /// interpolation and the desired "x" values to interpolate
   virtual void interpolate_3D(std::vector<std::vector<Real> > &x_points,
                               std::vector<Real> &fx_points,
                               std::vector<std::vector<Real> > &x,
