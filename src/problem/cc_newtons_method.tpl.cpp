@@ -333,14 +333,14 @@ namespace chapchom
     
     // Perform actions before Newton's step
     actions_before_newton_step();
-     
+    
     // ---------------------------------------------------------------------
     // Computation of the Jacobian
     // ---------------------------------------------------------------------
-     
+    
     // Time the computation of the Jacobian matrix
     clock_t initial_clock_time_for_jacobian = Timing::cpu_clock_time();
-     
+    
     if (!jacobian_has_been_computed)
      {
       // Compute the Jacobian

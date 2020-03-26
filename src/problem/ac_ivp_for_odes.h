@@ -1,12 +1,11 @@
-#ifndef CCIVPFORODES_H
-#define CCIVPFORODES_H
+#ifndef ACIVPFORODES_H
+#define ACIVPFORODES_H
 
 #include "../general/common_includes.h"
 #include "../general/utilities.h"
 
 #include "../data_structures/ac_odes.h"
 #include "../data_structures/cc_data.h"
-#include "../time_steppers/ac_time_stepper.h"
 #include "ac_problem.h"
 
 namespace chapchom
@@ -44,23 +43,18 @@ namespace chapchom
   /// Set initial conditions
   virtual void set_initial_conditions() = 0;
   
-  /// Set boundary conditions
-  virtual void set_boundary_conditions() = 0;
-    
-  /// Document the solution
-  virtual void document_solution(std::ostringstream &output_filename) { } 
+  /// Document solution
+  virtual void document_solution() = 0;
   // -------------------------------------------------------------------------
   // THESE METHODS MUST BE IMPLEMENTED IN THE CONCRETE PROBLEM CLASS [END]
   // -------------------------------------------------------------------------
   
-  /// A helper function to complete the problem setup
+  /// A helper function to complete the problem setup (empty)
   void complete_problem_setup() { }
   
-  /// Problem steady solve (empty)
-  void steady_solve() { }
-  
-  /// Problem unsteady solve
-  void unsteady_solve();
+  /// We perform an unsteady solve by default, if you require a
+  /// different solving strategy then override this method
+  void solve();
   
  protected:
   
@@ -70,7 +64,6 @@ namespace chapchom
  ACIVPForODEs(const ACIVPForODEs &copy)
   : ACProblem()
    {
-    
     BrokenCopy::broken_copy("ACIVPForODEs");
    }
   
@@ -82,23 +75,26 @@ namespace chapchom
     BrokenCopy::broken_assign("ACIVPForODEs");
    } 
   
+  /// Problem steady solve (empty)
+  void steady_solve() { }
+  
+  /// Problem unsteady solve
+  void unsteady_solve();
+  
   /// The set of actions to be performed before a time stepping
   virtual void actions_before_time_stepping() { }
   
   /// The set of actions to be performed after a time stepping
   virtual void actions_after_time_stepping() { } 
   
-  /// The set of actions to be performed before newton solve
+  /// The set of actions to be performed before newton solve (empty)
   virtual void actions_before_newton_solve() { }
   
-  /// The set of actions to be performed after newton solve
+  /// The set of actions to be performed after newton solve (empty)
   virtual void actions_after_newton_solve() { }
   
   /// The ODEs
   ACODEs *ODEs_pt;
-  
-  /// The Time Stepper to approximate a solution to the ODEs
-  ACTimeStepper *Time_stepper_pt;
   
   /// The storage for the approximated solution of the time integration
   /// of the ODEs
@@ -108,5 +104,5 @@ namespace chapchom
  
 }
 
-#endif // #ifndef CCIVPFORODES_H
+#endif // #ifndef ACIVPFORODES_H
 

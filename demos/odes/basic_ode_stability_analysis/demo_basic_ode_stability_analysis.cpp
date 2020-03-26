@@ -176,8 +176,8 @@ public:
   // Main LOOP (loop until reaching final time)
   while(LOOP)
    {
-    // Performs an unsteady solve
-    this->unsteady_solve();
+    // Solve (unsteady solve) - PARENT VERSION
+    ACIVPForODEs::solve();
     
     // Update time of the problem
     this->time()+=this->time_step();
@@ -191,7 +191,7 @@ public:
     this->document_solution();
      
    } // while(LOOP)
-
+  
   // Document error at $u = Final_time$
   const Real u_analytical = 1.0/(1.0+Final_time);
   Output_stability_file << this->time_step() << "\t" << fabs(u(0)- u_analytical) << std::endl;
@@ -205,14 +205,11 @@ public:
   u(0) = 1.0; 
  }
  
- // Set boundary conditions
- void set_boundary_conditions() { }
- 
  // Document the solution
  void document_solution()
  {
   // Initial problem configuration
-  Output_file << Time << "\t" << u(0) << std::endl;
+  Output_file << this->time() << "\t" << u(0) << std::endl;
   output_error();
  }
 
@@ -223,7 +220,7 @@ public:
   const Real t = this->time();
   const Real u_analytical = 1.0/(1.0+t);
   const Real error = std::fabs(u(0)-u_analytical);
-  Output_error_file << Time << "\t" << error << std::endl;
+  Output_error_file << t << "\t" << error << std::endl;
  }
  
 protected:

@@ -152,9 +152,6 @@ public:
   U_values_for_interpolator.push_back(u(0));
  }
  
- // Set boundary conditions
- void set_boundary_conditions() { }
- 
  // The set of actions to be performed after a time stepping
  void actions_after_time_stepping()
  {
@@ -277,7 +274,7 @@ public:
   const Real t = this->time();
   const Real u_analytical = 1.0/(1.0+t);
   const Real error = std::fabs(u(0)-u_analytical);
-  Output_error_file << Time << "\t" << error << std::endl;
+  Output_error_file << t << "\t" << error << std::endl;
  }
  
  // Output error for fixed output
@@ -406,8 +403,8 @@ int main(int argc, char *argv[])
   // Main LOOP (loop until reaching final time)
   while(LOOP)
    {
-    // Performs an unsteady solve
-    basic_ode_problem.unsteady_solve();
+    // Solve (unsteady solve)
+    basic_ode_problem.solve();
     
     // Update time of the problem
     basic_ode_problem.time()+=basic_ode_problem.time_step();
@@ -493,8 +490,8 @@ int main(int argc, char *argv[])
   // Main LOOP (loop until reaching final time)
   while(LOOP)
    {
-    // Performs an unsteady solve
-    basic_ode_problem.unsteady_solve();
+    // Solve (unsteady solve)
+    basic_ode_problem.solve();
     
     // Update time of the problem
     basic_ode_problem.time()+=basic_ode_problem.time_step();

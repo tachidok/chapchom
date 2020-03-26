@@ -288,7 +288,7 @@ if ! cmake ../ \
     echo "[ERROR] CMake"
     echo "============================================================= "
     echo ""
-    exit 1
+    exit 1 # Add this flag for TravisCS report
 fi
 
 #if test cmake_output != 0 ; then

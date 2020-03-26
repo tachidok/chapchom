@@ -9,7 +9,11 @@
 
 // Matrices
 #include "../../../../../src/matrices/cc_matrix.h"
+// Nodes
 #include "../../../../../src/data_structures/cc_node.h"
+
+// We need to inherent from a mesh free problem
+#include "../../../../../src/problem/ac_mesh_free_problem.h"
 
 // The class to solve linear systems using numerical recipes
 #include "../../../../../src/linear_solvers/cc_lu_solver_numerical_recipes.h"
@@ -165,6 +169,111 @@ void generate_interpolation_matrix_and_rhs_vector(std::vector<CCNode<Real> *> &n
  
 }
 
+// =================================================================
+// =================================================================
+// =================================================================
+/// This class inherits from the ACMeshFreeProblem class and
+/// approximates a solution to the PDE
+///
+/// \Delta^2 \mathbf{u} = f(\mathbf{x})
+///
+/// where f(\mathbf{x}) = -1.25*M_PI*M_PI*sin(M_PI*x(0))*cos(M_PI*x(1)/2.0)
+///
+/// and Dirichlet boundary conditions
+///
+/// u(\mathbf{x}) = sin(M_PI*x(0)), when \mathbf{x} \in \Gamma_{1}
+/// u(\mathbf{x}) = 0,              when \mathbf{x} \in \Gamma_{2}
+///
+/// where \Gamma_{1} = \{ \mathbf{x}: 0 \leq x(0) \leq 1, x(1) = 0 \} and
+/// where \Gamma_{2} = \partial \Omega \Gamma_{1}
+///
+// =================================================================
+// =================================================================
+// =================================================================
+ class CCMeshFreeLaplacianProblem : public virtual ACMeshFreeProblem
+ {
+ 
+ public:
+ 
+  /// Constructor
+  CCMeshFreeLaplacianProblem(std::ostringstream &output_filename,
+                             std::ostringstream &output_filename_error)
+   : ACMeshFreeProblem()
+  {
+   Output_file.open((output_filename.str()).c_str());
+   Output_error_file.open((output_filename_error.str()).c_str());
+  }
+  
+  /// Destructor
+  ~CCMeshFreeLaplacianProblem()
+  {
+   Output_file.close();
+   Output_error_file.close();
+  }
+  
+  // Set initial conditions (empty)
+  void set_initial_conditions() { }
+  
+  // Set boundary conditions
+  void set_boundary_conditions()
+  {
+   // Loop over the boundary nodes and assign boundary conditions
+   for (unsigned i = 0; i < N_boundary_nodes; i++)
+    {
+     CCBoundaryNode<Real> *bnd_node_pt = Boundary_nodes_pt[i];
+     // Check whether the node live on boundary 1 or boundary 2
+     const unsigned bnd_id = 1;
+     if (bnd_node_pt->is_on_boundary(bnd_id))
+      {
+       // Get node position
+       const Real x = bnd_node_pt->get_position(0);
+       const Real u_value = sin(M_PI*x);
+       bnd_node_pt->set_variable(u_value, 0);
+       bnd_node_pt->pin_u(0);
+      }
+     else
+      {
+       bnd_node_pt->set_variable(0, 0);
+       bnd_node_pt->pin_u(0);
+      }
+     
+    }
+   
+  }
+  
+  // Complete problem setup (set boundary conditions)
+  void complete_problem_setup()
+  {
+   set_boundary_conditions();
+  }
+  
+  // Document the solution
+  void document_solution()
+  {
+   // Initial problem configuration
+   Output_file << Time << "\t" << u(0) << std::endl;
+   output_error();
+  }
+  
+  // Output error
+  void output_error()
+  {
+   // Compute the error 
+   const Real t = this->time();
+   const Real u_analytical = 1.0/(1.0+t);
+   const Real error = std::fabs(u(0)-u_analytical);
+   Output_error_file << Time << "\t" << error << std::endl;
+  }
+  
+ protected:
+  
+  // The output file
+  std::ofstream Output_file;
+  // The error output file
+  std::ofstream Output_error_file;
+  
+ }; // class CCMeshFreeLaplacianProblem
+
 struct Args {
  argparse::ArgValue<Real> epsilon;
 };
@@ -177,10 +286,7 @@ struct Args {
 // ==================================================================
 // ==================================================================
 int main(int argc, char *argv[])
-{
- // Initialise chapchom
- initialise_chapchom();
-
+{ 
  // Instantiate parser
  Args args;
  auto parser = argparse::ArgumentParser(argv[0], "Distance Matrix");
@@ -201,146 +307,43 @@ int main(int argc, char *argv[])
  //const Real epsilon = 9.0;
  Real epsilon = args.epsilon;
  
+ // ----------------------------------------------------------------
+ // Prepare the output file name
+ // ----------------------------------------------------------------
+ std::ostringstream output_solution_filename;
+ output_solution_filename << "RESLT/soln.dat";
+ //output_solution_filename.precision(8);
+ 
+ // ----------------------------------------------------------------
+ // Prepare the output error file name
+ // ----------------------------------------------------------------
+ std::ostringstream output_error_filename;
+ output_error_filename << "RESLT/soln_error.dat";
+ //output_error_filename.precision(8);
+ 
+ // Create an instance of the problem
+ CCMeshFreeLaplacianProblem problem(output_solution_filename, output_error_filename);
+ 
  // --------------------------------------------------------------
  // Domain specification
  // --------------------------------------------------------------
  // TODO: Create a DOMAIN (mesh?) type class
+ // Create the nodes
+ problem.create_nodes();
  
- // Dimension of the problem
- const unsigned dim = 2;
- 
- // Specify the one-dimensional lenght of the domain
- const unsigned L = 1.0;
- 
- // --------------------------------------------------------------
- // Create and give position to nodes
- // --------------------------------------------------------------
- // Nodes per dimension
- const unsigned n_nodes_per_dim = pow(2, 4);
- // The number of nodes
- const unsigned n_nodes = pow(n_nodes_per_dim, dim);
- // Distance between a pair of nodes
- const Real h = L / (Real)(n_nodes_per_dim - 1);
- 
- // A vector of nodes
- std::vector<CCNode<Real> *> nodes_pt(n_nodes);
- 
- // Number of variables stored in each node
- const unsigned n_variables = 1;
- 
- // Create nodes
- for (unsigned i = 0; i < n_nodes; i++)
-  {
-   nodes_pt[i] = new CCNode<Real>(dim, n_variables);
-  }
- 
- // Assign positions
- unsigned kk = 0;
- for (unsigned i = 0; i < n_nodes_per_dim; i++)
-  {
-   const Real position_i = i*h;
-   for (unsigned j = 0; j < n_nodes_per_dim; j++)
-    {
-     const Real position_j = j*h;
-     nodes_pt[kk]->set_position(position_i, 0);
-     nodes_pt[kk]->set_position(position_j, 1);
-     kk++;
-    }
-  }
- 
- // Create boundary nodes
- const unsigned n_nodes_per_boundary = n_nodes_per_dim;
- // Create total number of boundary nodes
- const unsigned n_boundary_nodes = (n_nodes_per_dim * 4) - 4;
- 
- // A vector of boundary nodes
- std::vector<CCBoundaryNode<Real> *> boundary_nodes_pt(n_boundary_nodes);
- // The IDs for the boundaries
- const unsigned boundary_1_id = 1;
- const unsigned boundary_2_id = 2;
- 
- // Create the boundary nodes
- for (unsigned i = 0; i < n_boundary_nodes; i++)
-  {
-   if (i < n_nodes_per_boundary)
-    {
-     boundary_nodes_pt[i] = new CCBoundaryNode<Real>(boundary_1_id, dim, n_variables);
-    }
-   else
-    {
-     boundary_nodes_pt[i] = new CCBoundaryNode<Real>(boundary_2_id, dim, n_variables);
-    }
-  }
- 
- // We have two boundaries and two nodes lying on both boundaries
- boundary_nodes_pt[0]->add_to_boundary(boundary_2_id);
- boundary_nodes_pt[n_nodes_per_boundary-1]->add_to_boundary(boundary_2_id);
- 
- // Assign positions
- kk = 0;
- for (unsigned i = 0; i < n_nodes_per_dim; i++)
-  {
-   const Real position_i = i*h;
-   // (x, 0)
-   boundary_nodes_pt[i]->set_position(position_i, 0);
-   boundary_nodes_pt[i]->set_position(0, 1);
-   // (x, 1)
-   boundary_nodes_pt[i+n_nodes_per_dim]->set_position(position_i, 0);
-   boundary_nodes_pt[i+n_nodes_per_dim]->set_position(1, 1);
-   // (1, y)
-   boundary_nodes_pt[i+n_nodes_per_dim*2]->set_position(1, 0);
-   boundary_nodes_pt[i+n_nodes_per_dim*2]->set_position(position_i, 1);
-   // (0, y)
-   boundary_nodes_pt[i+n_nodes_per_dim*3]->set_position(0, 0);
-   boundary_nodes_pt[i+n_nodes_per_dim*3]->set_position(position_i, 1);
-   
-  }
- 
- // --------------------------------------------------------------
- // Output nodes positions
- // --------------------------------------------------------------
- // Interior nodes
- std::ofstream nodes_file("RESLT/nodes.dat");
- for (unsigned i = 0; i < n_nodes; i++)
-  {
-   nodes_pt[kk]->output(nodes_file, true);
-  }
- // Close interior nodes file
- nodes_file.close();
- 
- // Boundary nodes
- std::ofstream boundary_nodes_file("RESLT/boundary_nodes.dat");
- for (unsigned i = 0; i < n_boundary_nodes; i++)
-  {
-   boundary_nodes_pt[i]->output_boundary_position_and_value(boundary_nodes_file);
-  }
- // Close boundary nodes file
- boundary_nodes_file.close();
- 
- // --------------------------------------------------------------
- // Set initial conditions
- // --------------------------------------------------------------
- /*
- for (unsigned i = 0; i < n_nodes; i++)
- {
- for (unsigned j = 0; j < n_variables; j++)
- {
- const Real u = 0.0;
- nodes_pt[i]->set_variable(u, j);
- }
- }
- */
- 
- // --------------------------------------------------------------
  // Set boundary conditions
- // --------------------------------------------------------------
- /*
- // Move the first and the last node to the boundary of the domain
- nodes_pt[0]->set_position(0.0, 0);
- nodes_pt[0]->set_variable(0.0, 0);
- nodes_pt[n_nodes-1]->set_position(1.0, 0);
- nodes_pt[n_nodes-1]->set_variable(1.0, 0);
- */
+ problem.complete_problem_setup();
+ 
+#ifdef CHAPCHOM_PANIC_MODE
+ // Output initial state of the nodes
+ std::ostringstream output_nodes_filename;
+ output_nodes_filename << "RESLT/nodes.dat";
+ std::ostringstream output_boundary_nodes_filename;
+ output_boundary_nodes_filename << "RESLT/boundary_nodes.dat";
+
+ problem.output_nodes_information(output_nodes_filename);
+ problem.output_boundary_nodes_information(output_boundary_nodes_filename);
+#endif // #ifdef CHAPCHOM_PANIC_MODE
  
  // --------------------------------------------------------------
  // Set the problem and solve it
@@ -678,9 +681,6 @@ int main(int argc, char *argv[])
   {
    delete nodes_pt[i];
   }
- 
- // Finalise chapcom
- finalise_chapchom();
  
  return 0;
  

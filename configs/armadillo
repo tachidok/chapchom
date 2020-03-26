@@ -6,3 +6,4 @@ ARMADILLO_AUTO_FIND_FOLDER=/home/tachidok/local/working/research/armadillo-8.300
 ARMADILLO_INCLUDE_DIRS=/home/tachidok/local/working/research/armadillo-8.300.3/installation/include
 ARMADILLO_LIBRARIES=/home/tachidok/local/working/research/armadillo-8.300.3/installation/lib/libarmadillo.so.8.300.3
 CHAPCHOM_USES_VTK=FALSE
+CHAPCHOM_PANIC_MODE=TRUE

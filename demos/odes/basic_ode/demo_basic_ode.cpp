@@ -244,15 +244,14 @@ private:
    // Initial conditions
    u(0) = 1.0; 
   }
- 
-  // Set boundary conditions
-  void set_boundary_conditions() { }
   
   // Document the solution
   void document_solution()
   {
+   // Get the inital time
+   const Real t = this->time();
    // Initial problem configuration
-   Output_file << Time << "\t" << u(0) << std::endl;
+   Output_file << t << "\t" << u(0) << std::endl;
    output_error();
   }
   
@@ -263,7 +262,7 @@ private:
    const Real t = this->time();
    const Real u_analytical = 1.0/(1.0+t);
    const Real error = std::fabs(u(0)-u_analytical);
-   Output_error_file << Time << "\t" << error << std::endl;
+   Output_error_file << t << "\t" << error << std::endl;
   }
  
  protected:
@@ -352,9 +351,9 @@ private:
    // Main LOOP (loop until reaching final time)
    while(LOOP)
     {
-     // Performs an unsteady solve
-     basic_ode_problem.unsteady_solve();
-    
+     // Solve (unsteady solve)
+     basic_ode_problem.solve();
+     
      // Update time of the problem
      basic_ode_problem.time()+=basic_ode_problem.time_step();
     
@@ -435,8 +434,8 @@ private:
    // Main LOOP (loop until reaching final time)
    while(LOOP)
     {
-     // Performs an unsteady solve
-     basic_ode_problem.unsteady_solve();
+     // Solve (unsteady solve)
+     basic_ode_problem.solve();
     
      // Update time of the problem
      basic_ode_problem.time()+=basic_ode_problem.time_step();
@@ -518,8 +517,8 @@ private:
    // Main LOOP (loop until reaching final time)
    while(LOOP)
     {
-     // Performs an unsteady solve
-     basic_ode_problem.unsteady_solve();
+     // Solve (unsteady solve)
+     basic_ode_problem.solve();
     
      // Update time of the problem
      basic_ode_problem.time()+=basic_ode_problem.time_step();
@@ -601,9 +600,9 @@ private:
    // Main LOOP (loop until reaching final time)
    while(LOOP)
     {
-     // Performs an unsteady solve
-     basic_ode_problem.unsteady_solve();
-    
+     // Solve (unsteady solve)
+     basic_ode_problem.solve();
+     
      // Update time of the problem
      basic_ode_problem.time()+=basic_ode_problem.time_step();
     
@@ -703,8 +702,8 @@ private:
    // Main LOOP (loop until reaching final time)
    while(LOOP)
     {
-     // Performs an unsteady solve
-     basic_ode_problem.unsteady_solve();
+     // Solve (unsteady solve)
+     basic_ode_problem.solve();
     
      // Update time of the problem
      basic_ode_problem.time()+=basic_ode_problem.time_step();
@@ -805,8 +804,8 @@ private:
    // Main LOOP (loop until reaching final time)
    while(LOOP)
     {
-     // Performs an unsteady solve
-     basic_ode_problem.unsteady_solve();
+     // Solve (unsteady solve)
+     basic_ode_problem.solve();
     
      // Update time of the problem
      basic_ode_problem.time()+=basic_ode_problem.time_step();
@@ -907,8 +906,8 @@ private:
    // Main LOOP (loop until reaching final time)
    while(LOOP)
     {
-     // Performs an unsteady solve
-     basic_ode_problem.unsteady_solve();
+     // Solve (unsteady solve)
+     basic_ode_problem.solve();
     
      // Update time of the problem
      basic_ode_problem.time()+=basic_ode_problem.time_step();

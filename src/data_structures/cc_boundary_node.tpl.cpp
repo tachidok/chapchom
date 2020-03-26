@@ -14,7 +14,7 @@ namespace chapchom
                                    const unsigned dimension,
                                    const unsigned n_variables,
                                    const unsigned n_history_values)
-  : CCBoundaryNode<T>(dimension, n_variables, n_history_values)
+  : CCNode<T>(dimension, n_variables, n_history_values)
  {
   // Add the node to the boundary
   add_to_boundary(boundary);

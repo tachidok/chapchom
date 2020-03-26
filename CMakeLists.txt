@@ -180,6 +180,11 @@ IF (CHAPCHOM_USES_VTK)
   SET(CHAPCHOM_CXX_FLAGS "${CHAPCHOM_CXX_FLAGS} ${CHAPCHOM_VTK_DEFINE}" )
 ENDIF (CHAPCHOM_USES_VTK)
 
+SET(CHAPCHOM_PANIC_MODE_DEFINE "-DCHAPCHOM_PANIC_MODE")
+IF (CHAPCHOM_PANIC_MODE)
+  SET(CHAPCHOM_CXX_FLAGS "${CHAPCHOM_CXX_FLAGS} ${CHAPCHOM_PANIC_MODE_DEFINE}" )
+ENDIF (CHAPCHOM_PANIC_MODE)
+
 # ----------------------------------------------------------------------
 # Set modified compilation variables
 # ----------------------------------------------------------------------

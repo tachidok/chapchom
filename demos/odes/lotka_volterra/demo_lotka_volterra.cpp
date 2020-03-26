@@ -65,14 +65,11 @@ public:
   //u(1) = 0.9; // Initial number of predators
  }
  
- // Set boundary conditions
- void set_boundary_conditions() { }
- 
  // Document the solution
  void document_solution()
  {
   // Initial problem configuration
-  Output_file << Time << "\t" << u(0) << "\t" << u(1) << std::endl;
+  Output_file << this->time() << "\t" << u(0) << "\t" << u(1) << std::endl;
  }
  
 protected:
@@ -152,8 +149,8 @@ int main(int argc, char *argv[])
    // Main LOOP (loop until reaching final time)
    while(LOOP)
     {
-     // Performs an unsteady solve
-     lotka_volterra_problem.unsteady_solve();
+     // Solve (unsteady solve)
+     lotka_volterra_problem.solve();
     
      // Update time of the problem
      lotka_volterra_problem.time()+=lotka_volterra_problem.time_step();
@@ -228,8 +225,8 @@ int main(int argc, char *argv[])
   // Main LOOP (loop until reaching final time)
   while(LOOP)
    {
-    // Performs an unsteady solve
-    lotka_volterra_problem.unsteady_solve();
+    // Solve (unsteady solve)
+    lotka_volterra_problem.solve();
     
     // Update time of the problem
     lotka_volterra_problem.time()+=lotka_volterra_problem.time_step();
@@ -304,8 +301,8 @@ int main(int argc, char *argv[])
   // Main LOOP (loop until reaching final time)
   while(LOOP)
    {
-    // Performs an unsteady solve
-    lotka_volterra_problem.unsteady_solve();
+    // Solve (unsteady solve)
+    lotka_volterra_problem.solve();
     
     // Update time of the problem
     lotka_volterra_problem.time()+=lotka_volterra_problem.time_step();
@@ -380,8 +377,8 @@ int main(int argc, char *argv[])
   // Main LOOP (loop until reaching final time)
   while(LOOP)
    {
-    // Performs an unsteady solve
-    lotka_volterra_problem.unsteady_solve();
+    // Solve (unsteady solve)
+    lotka_volterra_problem.solve();
     
     // Update time of the problem
     lotka_volterra_problem.time()+=lotka_volterra_problem.time_step();
@@ -456,8 +453,8 @@ int main(int argc, char *argv[])
   // Main LOOP (loop until reaching final time)
   while(LOOP)
    {
-    // Performs an unsteady solve
-    lotka_volterra_problem.unsteady_solve();
+    // Solve (unsteady solve)
+    lotka_volterra_problem.solve();
     
     // Update time of the problem
     lotka_volterra_problem.time()+=lotka_volterra_problem.time_step();
@@ -532,8 +529,8 @@ int main(int argc, char *argv[])
   // Main LOOP (loop until reaching final time)
   while(LOOP)
    {
-    // Performs an unsteady solve
-    lotka_volterra_problem.unsteady_solve();
+    // Solve (unsteady solve)
+    lotka_volterra_problem.solve();
     
     // Update time of the problem
     lotka_volterra_problem.time()+=lotka_volterra_problem.time_step();

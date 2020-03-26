@@ -83,6 +83,14 @@ namespace chapchom
   /// Get the number of history values stores in the node
   inline unsigned n_history_values() const {return N_history_values;}
   
+  /// Test whether the node is on any boundary (a common Node can not
+  /// be on any boundary, use a CCBoundaryNode instead)
+  virtual bool is_on_boundary() {return false;}
+  
+  /// Test whether the node is on boundary b (a common Node can not be
+  /// on any boundary, use a CCBoundaryNode instead)
+  virtual bool is_on_boundary(const unsigned b) {return false;}
+  
   /// Output the data stored at the node (output horizontally without
   /// position by default, otherwise output vertically with position)
   virtual void output(bool output_position = false,
