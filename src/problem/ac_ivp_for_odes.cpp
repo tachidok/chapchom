@@ -50,6 +50,24 @@ namespace chapchom
   
   // Get the number of time steppers
   const unsigned n_time_steppers = this->n_time_steppers();
+  
+  // If there are more than one time stepper then throw an error since
+  // this feature has not been tested and it possibly wont work at
+  // all, please carefully implement any necessary changes
+  if (n_time_steppers > 1)
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "This feature has not been fully tested\n"
+                  << "Please create a demo driver that uses more than one\n"
+                  << "time stepper and implement the necessary changes to\n"
+                  << "the code.\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+  
   // Loop over all the time steppers
   for (unsigned i = 0; i < n_time_steppers; i++)
    {

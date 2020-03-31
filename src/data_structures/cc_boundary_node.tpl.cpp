@@ -44,6 +44,7 @@ namespace chapchom
  template<class T>
  void CCBoundaryNode<T>::remove_from_boundary(const unsigned b)
  {
+#ifdef CHAPCHOM_PANIC_MODE
   // First check whether the node lies on the given boundary
   if(!is_on_boundary(b))
    {
@@ -53,6 +54,7 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
+#endif // #ifdef CHAPCHOM_PANIC_MODE
   
   //Remove the boundary from the set 
   Boundaries.erase(b);
@@ -113,6 +115,7 @@ namespace chapchom
  template<class T>
  void CCBoundaryNode<T>::set_boundary_coordinates(const unsigned b, const std::vector<Real> &zeta)
  {
+#ifdef CHAPCHOM_PANIC_MODE
   // First check whether the node lies on the given boundary
   if(!is_on_boundary(b))
    {
@@ -122,6 +125,7 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
+#endif // #ifdef CHAPCHOM_PANIC_MODE
   
   // Get the number of boundary coordinates and copy them
   const unsigned n_boundary_coordinates = zeta.size();
@@ -139,6 +143,7 @@ namespace chapchom
  template<class T>
  void CCBoundaryNode<T>::get_boundary_coordinates(const unsigned b, std::vector<Real> &zeta)
  {
+#ifdef CHAPCHOM_PANIC_MODE
   // First check whether the node lies on the given boundary
   if(!is_on_boundary(b))
    {
@@ -160,10 +165,12 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
+#endif // #ifdef CHAPCHOM_PANIC_MODE
   
   // Check whether the number of boundary coordinates matches that of
   // the output vector
   const unsigned n_boundary_coordinates = Boundary_coordinates[b].size();
+#ifdef CHAPCHOM_PANIC_MODE
   const unsigned n_output_boundary_coordinates = zeta.size();
   if (n_boundary_coordinates != n_output_boundary_coordinates)
    {
@@ -175,6 +182,7 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
+#endif // #ifdef CHAPCHOM_PANIC_MODE
   
   // Copy the boundary coordinates
   for (unsigned i = 0; i < n_boundary_coordinates; i++)

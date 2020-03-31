@@ -16,6 +16,7 @@ namespace chapchom
   : Is_values_empty(true), Is_status_empty(true), Delete_values_storage(true),
     N_values(n_values), N_history_values(n_history_values)
  {
+#ifdef CHAPCHOM_PANIC_MODE
   if (N_history_values == 0)
    {
     // Error message
@@ -26,6 +27,7 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
+#endif // #ifdef CHAPCHOM_PANIC_MODE
   
   // Delete any data in memory
   clean_up();
@@ -46,6 +48,7 @@ namespace chapchom
   : Is_values_empty(true), Is_status_empty(true), Delete_values_storage(true),
     N_values(n_values), N_history_values(n_history_values)
  {
+#ifdef CHAPCHOM_PANIC_MODE
   if (N_history_values == 0)
    {
     // Error message
@@ -56,6 +59,7 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
+#endif // #ifdef CHAPCHOM_PANIC_MODE
   
   // Delete any data in memory
   clean_up();
@@ -82,6 +86,7 @@ namespace chapchom
   : Is_values_empty(true), Is_status_empty(true), Delete_values_storage(true),
     N_values(copy.n_values()), N_history_values(copy.n_history_values())
  {
+#ifdef CHAPCHOM_PANIC_MODE
   if (N_history_values == 0)
    {
     // Error message
@@ -92,6 +97,7 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
+#endif // #ifdef CHAPCHOM_PANIC_MODE
   
   // Copy the data from the copy object to the Values_pt vector
   set_values(copy.values_pt());
@@ -123,6 +129,7 @@ namespace chapchom
  template<class T>
  CCData<T>& CCData<T>::operator=(const CCData<T> &source_values)
  {
+#ifdef CHAPCHOM_RANGE_CHECK
   if (N_values != source_values.n_values())
    {
     // Error message
@@ -150,6 +157,7 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
+#endif // #ifdef CHAPCHOM_RANGE_CHECK
   
   // Clean-up and set values
   set_values(source_values.values_pt());

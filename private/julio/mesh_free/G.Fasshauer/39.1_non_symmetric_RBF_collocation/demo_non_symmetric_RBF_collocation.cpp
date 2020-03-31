@@ -9,6 +9,7 @@
 
 // Matrices
 #include "../../../../../src/matrices/cc_matrix.h"
+
 // Nodes
 #include "../../../../../src/data_structures/cc_node.h"
 
@@ -217,8 +218,10 @@ void generate_interpolation_matrix_and_rhs_vector(std::vector<CCNode<Real> *> &n
   // Set boundary conditions
   void set_boundary_conditions()
   {
+   // Get the number of boundary nodes
+   const unsigned n_bnd_nodes = n_boundary_nodes();
    // Loop over the boundary nodes and assign boundary conditions
-   for (unsigned i = 0; i < N_boundary_nodes; i++)
+   for (unsigned i = 0; i < n_bnd_nodes; i++)
     {
      CCBoundaryNode<Real> *bnd_node_pt = Boundary_nodes_pt[i];
      // Check whether the node live on boundary 1 or boundary 2
@@ -251,7 +254,7 @@ void generate_interpolation_matrix_and_rhs_vector(std::vector<CCNode<Real> *> &n
   void document_solution()
   {
    // Initial problem configuration
-   Output_file << Time << "\t" << u(0) << std::endl;
+   Output_file << time() << "\t" << u(0) << std::endl;
    output_error();
   }
   
@@ -262,7 +265,7 @@ void generate_interpolation_matrix_and_rhs_vector(std::vector<CCNode<Real> *> &n
    const Real t = this->time();
    const Real u_analytical = 1.0/(1.0+t);
    const Real error = std::fabs(u(0)-u_analytical);
-   Output_error_file << Time << "\t" << error << std::endl;
+   Output_error_file << time() << "\t" << error << std::endl;
   }
   
  protected:

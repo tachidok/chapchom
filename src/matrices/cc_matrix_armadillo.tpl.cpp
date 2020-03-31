@@ -27,7 +27,7 @@ namespace chapchom
  {
   // Allocate memory
   allocate_memory(m, n);
-
+  
   // DELETE DELETE DELETE DELETE
   // // Delete any data in memory
   // clean_up();

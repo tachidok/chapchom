@@ -7,7 +7,7 @@ namespace chapchom
 {
 
  // ===================================================================
- // Constructor
+ /// Constructor
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::CCNewtonsMethod()
@@ -30,7 +30,7 @@ namespace chapchom
  }
  
  // ===================================================================
- // Destructor
+ /// Destructor
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::~CCNewtonsMethod()
@@ -40,7 +40,7 @@ namespace chapchom
  }
  
  // ===================================================================
- // Set the Jacobian matrix
+ /// Set the Jacobian matrix
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::set_jacobian_and_residual_strategy(ACJacobianAndResidual<MAT_TYPE,VEC_TYPE> *jacobian_and_residual_strategy_pt)
@@ -54,7 +54,7 @@ namespace chapchom
  }
  
  // ===================================================================
- // Set the Linear solver
+ /// Set the Linear solver
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::
@@ -75,7 +75,7 @@ namespace chapchom
  }
  
  // ===================================================================
- // Gets access to the Jacobian and residual computation strategy
+ /// Gets access to the Jacobian and residual computation strategy
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  ACJacobianAndResidual<MAT_TYPE,VEC_TYPE> *CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::
@@ -99,7 +99,7 @@ namespace chapchom
  }
  
  // ===================================================================
- // Gets access to the linear solver
+ /// Gets access to the linear solver
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  ACLinearSolver<MAT_TYPE, VEC_TYPE> *CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::linear_solver_pt()
@@ -122,8 +122,8 @@ namespace chapchom
  }
 
  // ===================================================================
- // Set the initial guess. You should override this method if you
- // require to copy the initial guess to some other data structures
+ /// Set the initial guess. You should override this method if you
+ /// require to copy the initial guess to some other data structures
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::set_initial_guess(VEC_TYPE &x)
@@ -136,7 +136,7 @@ namespace chapchom
  }
  
  // ===================================================================
- // Gets access to the last stored solution vector
+ /// Gets access to the last stored solution vector
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  const VEC_TYPE *CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::x_pt()
@@ -159,7 +159,7 @@ namespace chapchom
  }
  
  // ===================================================================
- // Clean up, free allocated memory
+ /// Clean up, free allocated memory
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::clean_up()
@@ -183,7 +183,7 @@ namespace chapchom
  }
  
  // ===================================================================
- // Sets default configuration
+ /// Sets default configuration
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::set_default_configuration()
@@ -207,11 +207,11 @@ namespace chapchom
  }
  
  // ===================================================================
- // Applies Newton's method to solve the problem given by the
- // Jacobian and the residual computed by the estalished strategy.
- // The initial guess is already set by previously calling the
- // function set_initial_guess(). The final solution (if any) is
- // stored in the X_pt vector
+ /// Applies Newton's method to solve the problem given by the
+ /// Jacobian and the residual computed by the estalished strategy.
+ /// The initial guess is already set by previously calling the
+ /// function set_initial_guess(). The final solution (if any) is
+ /// stored in the X_pt vector
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::solve()
@@ -476,10 +476,10 @@ namespace chapchom
  }
  
  // ===================================================================
- // Applies Newton's method to solve the problem given by the Jacobian
- // and the residual computed by the estalished strategy. The initial
- // guess is set in the input/output x vector where the final solution
- // (if any) is returned
+ /// Applies Newton's method to solve the problem given by the Jacobian
+ /// and the residual computed by the estalished strategy. The initial
+ /// guess is set in the input/output x vector where the final solution
+ /// (if any) is returned
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::solve(VEC_TYPE &x)
