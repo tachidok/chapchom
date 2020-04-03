@@ -3,8 +3,8 @@
 
 namespace chapchom
 {
- // Keep track of the total time spent in a program, since
- // initilaisation up-to termination
+ /// Keep track of the total time spent in a program, since
+ /// initilaisation up-to termination
  namespace Global_timings
  {
   // Initial time
@@ -12,7 +12,8 @@ namespace chapchom
   // Initial CPU clock time
   clock_t Global_initial_cpu_clock_time=0;
  }
- 
+
+ /// In charge of initialising time variables to keep track of execution time
  bool initialise_chapchom()
  {
   chapchom_output << "Initialising chapchom .." << std::endl;
@@ -41,6 +42,7 @@ namespace chapchom
   
  }
  
+ /// In charge of finalising and reporting execution times
  bool finalise_chapchom()
  {
   chapchom_output << "Finalising chapchom ..." << std::endl;

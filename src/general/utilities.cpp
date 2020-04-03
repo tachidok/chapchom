@@ -4,8 +4,8 @@ namespace chapchom
 {
  
  // =======================================================================
- // The error messages are based on oomph-lib's implementation to deal
- // with errors
+ /// The error messages are based on oomph-lib's implementation to deal
+ /// with errors
  // =======================================================================
 
  //=======================================================================
@@ -200,17 +200,17 @@ namespace chapchom
  ////////////////////////////////////////////////////////////////////////
 
  //=======================================================================
- // Set default values for the output stream (cout) and modifier (no
- // modification)
+ /// Set default values for the output stream (cout) and modifier (no
+ /// modification)
  // =======================================================================
  ChapchomOutput::ChapchomOutput() : Stream_pt(&std::cout)
  { }
 
 #if 0
  // =======================================================================
- // Overload the << operator, writing output to the stream addressed by
- // Stream_pt and calling the function defined by the object addressed
- // by Output_modifier_pt
+ /// Overload the << operator, writing output to the stream addressed by
+ /// Stream_pt and calling the function defined by the object addressed
+ /// by Output_modifier_pt
  // =======================================================================
  template<class _Tp>
  std::ostream &ChapchomOutput::operator<<(_Tp argument)
@@ -221,8 +221,8 @@ namespace chapchom
 #endif // #if 0
  
  //========================================================================
- // Single (global) instantiation of the ChapchomOutput class -- this
- // is used throughout the library as a "replacement" for std::cout
+ /// Single (global) instantiation of the ChapchomOutput class -- this
+ /// is used throughout the library as a "replacement" for std::cout
  // ========================================================================
  ChapchomOutput chapchom_output;
   

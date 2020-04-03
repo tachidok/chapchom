@@ -10,7 +10,6 @@ namespace chapchom
  ACMeshFreeProblem<MAT_TYPE, VEC_TYPE>::ACMeshFreeProblem()
   : ACProblem(),
     Time_stepper_pt(NULL),
-    Linear_solver_has_been_set(false),
     Free_memory_for_linear_solver(false)
  {
   // Set default linear solver
@@ -44,9 +43,6 @@ namespace chapchom
     // Free memory
     delete Linear_solver_pt;
     Linear_solver_pt = 0;
-
-    // Indicate there are not linear solver established
-    Linear_solver_has_been_set = false;
     
     // Memory has been already free
     Free_memory_for_linear_solver = false;
@@ -71,9 +67,6 @@ namespace chapchom
   Linear_solver_pt = new CCLUSolverNumericalRecipes<Real>();
 #endif
   
-  // Set linear solver for Newton's method
-  Linear_solver_has_been_set = true;
-  
   // In charge of free the memory for linear solver
   Free_memory_for_linear_solver = true;
   
@@ -91,9 +84,6 @@ namespace chapchom
   
   // Assign the new linear solver
   Linear_solver_pt = linear_solver_pt;
-  
-  // Make sure to indicate that the new linear solver is set
-  Linear_solver_has_been_set = true;
   
   // An external new linear solver has been set, then we no longer
   // need to worry about freeing its allocated memory
@@ -130,6 +120,7 @@ namespace chapchom
  template<class MAT_TYPE, class VEC_TYPE>
  void ACMeshFreeProblem<MAT_TYPE, VEC_TYPE>::unsteady_solve()
  {
+#ifdef CHAPCHOM_PANIC_MODE
   // We need to check whether a Time Stepper has been set for the
   // unsteady solveJacobian computation strategy has been set
   if (Time_stepper_pt == NULL)
@@ -143,6 +134,7 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);  
    }
+#endif // #ifdef CHAPCHOM_PANIC_MODE
   
   // This feature has not been tested and it possibly wont work at all, 
   // please carefully implement any necessary changes
@@ -457,6 +449,9 @@ namespace chapchom
   // Loop over all nodes
   for (unsigned m = 0; m < n_node; m++)
    {
+    
+    // We need to check whether 
+    
     // Loop over all centers
     for (unsigned n = 0; n < n_center; n++)
      {
@@ -467,8 +462,24 @@ namespace chapchom
         distance(k) = node_pt(m)->get_position(k) - center_nodes[n]->get_position(k);
        }
       Real r = distance.norm_2();
+      
+      // get_jacobian()
+      
+      // - Each RBF must add its contribution to the
+      // - Jacobian/interpolation matrix part
+      
+      // get_residual() - Each RBF must add its contribution to the
+      // RHS vector
+      
+      // We need to send the nodes, the interpolation matrix and the
+      // RHS to the specific functions that agregates its values to
+      // the matrix A (the RBF)
+      
+      // Here we need to choose what function of the rbf use
+      if (interior node)
       Interpolation_matrix(m,n) = Lpsi(r, epsilon);
-      //interpolation_matrix(m, n) = psi(r, epsilon);
+      else (boundary node)
+      interpolation_matrix(m, n) = psi(r, epsilon);
      }
     
     VEC_TYPE tmp_v(dimension);
@@ -480,6 +491,7 @@ namespace chapchom
     // --------------------------------------------------------------
     // Evaluate the function f() at the nodes positions 
     // --------------------------------------------------------------
+    // Hero goes the RHS, the functions
     RHS_vector(m) = Lu<VEC_TYPE >(tmp_v);
     
    }

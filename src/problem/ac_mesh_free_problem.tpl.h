@@ -81,8 +81,8 @@ namespace chapchom
   /// Set the time stepper for the time dependent problem
   inline void set_time_stepper(ACTimeStepper *time_stepper_pt) {Time_stepper_pt = time_stepper_pt;}
   
-  /// Set the Linear solver
-  void set_linear_solver(ACLinearSolver<MAT_TYPE, VEC_TYPE> *linear_solver_pt);
+  /// Set radial base function
+  inline void set_radial_base_function(ACRadialBaseFunction *rbf_pt) {RBF_pt = rbf_pt;}
   
   /* /// Gets access to the dimension of the problem */
   /* inline const unsigned dim() const {return Dim;} */
@@ -152,7 +152,7 @@ namespace chapchom
   ACTimeStepper *Time_stepper_pt;
   
   /// The PDE with the RBF
-  
+  ACRadialBaseFunction *RBF_pt;
   
   /// The vector with the nodes
   std::vector<CCNode<Real> *> Nodes_pt;
@@ -184,9 +184,6 @@ namespace chapchom
   
   /// A pointer to the linear solver
   ACLinearSolver<MAT_TYPE, VEC_TYPE> *Linear_solver_pt;
-  
-  /// Flag to indicate whether a linear solver has been set or not
-  bool Linear_solver_has_been_set;
   
   /// Flag to indicate whether to free the memory allocated to the
   /// linear solver

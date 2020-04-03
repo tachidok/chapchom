@@ -33,6 +33,7 @@ namespace chapchom
                              CCData<Real> &u,
                              const unsigned k)
  {
+#ifdef CHAPCHOM_PANIC_MODE
   // Check if the ode has the correct number of history values to
   // apply Runge-Kutta 4 method
   const unsigned n_history_values = u.n_history_values();
@@ -50,6 +51,7 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
+#endif // #ifdef CHAPCHOM_PANIC_MODE
   
   // Get the number of odes
   const unsigned n_odes = odes.n_odes();

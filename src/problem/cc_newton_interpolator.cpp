@@ -4,7 +4,7 @@ namespace chapchom
 {
  
  // ===================================================================
- // Empty constructor
+ /// Empty constructor
  // ===================================================================
  CCNewtonInterpolator::CCNewtonInterpolator()
   : ACInterpolator()
@@ -13,7 +13,7 @@ namespace chapchom
  }
  
  // ===================================================================
- // Empty destructor
+ /// Empty destructor
  // ===================================================================
  CCNewtonInterpolator::~CCNewtonInterpolator()
  { 
@@ -21,12 +21,12 @@ namespace chapchom
  }
  
  // ===================================================================
- // Does the interpolation specifying the set data points, the order
- // of the interpolation and the desired "x_interpolate" value to
- // interpolate. We use Newton's polynomial formula to construct a
- // given order polynomial and interpolate.  N(n) = b0 +
- // b1(x_interpolate-x0) + b2(x_interpolate-x0)(x_interpolate-x1) +
- // b3(x_interpolate-x0)(x_interpolate-x1)(x_interpolate-x2) ...
+ /// Does the interpolation specifying the set data points, the order
+ /// of the interpolation and the desired "x_interpolate" value to
+ /// interpolate. We use Newton's polynomial formula to construct a
+ /// given order polynomial and interpolate.  N(n) = b0 +
+ /// b1(x_interpolate-x0) + b2(x_interpolate-x0)(x_interpolate-x1) +
+ /// b3(x_interpolate-x0)(x_interpolate-x1)(x_interpolate-x2) ...
  // ===================================================================
  Real CCNewtonInterpolator::interpolate_1D(std::vector<Real> &x,
                                            std::vector<Real> &fx,

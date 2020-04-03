@@ -42,6 +42,7 @@ namespace chapchom
                                                  CCData<Real> &u,
                                                  const unsigned k)
  {
+#ifdef CHAPCHOM_PANIC_MODE
   // Check if the ode has the correct number of history values to
   // apply Backward-Euler's method
   const unsigned n_history_values = u.n_history_values();
@@ -59,6 +60,7 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
+#endif // #ifdef CHAPCHOM_PANIC_MODE
   
   // -----------------------------------------------------------------
   // Compute the value of u_{t+h} if this is the first time
