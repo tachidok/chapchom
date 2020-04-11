@@ -8,21 +8,15 @@
 #include "../time_steppers/ac_time_stepper.h"
 #include "ac_problem.h"
 
-#ifdef CHAPCHOM_USES_ARMADILLO
-// Include Armadillo type matrices
-#include "../matrices/cc_matrix_armadillo.h"
-
-// The class to solve linear systems using Armadillo's type matrices
-#include "../linear_solvers/cc_solver_armadillo.h"
-
-#else // If armadillo is not used then use the default solver
-
 // Matrices
+#ifdef CHAPCHOM_USES_ARMADILLO
+#include "../matrices/cc_matrix_armadillo.h"
+#else // If armadillo is not used then use the default solver
 #include "../matrices/cc_matrix.h"
-// The class to solve linear systems using numerical recipes
-#include "../linear_solvers/cc_lu_solver_numerical_recipes.h"
-
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
+
+// Factory for linear solver
+#include "../linear_solvers/cc_factory_linear_solver.h"
 
 namespace chapchom
 {

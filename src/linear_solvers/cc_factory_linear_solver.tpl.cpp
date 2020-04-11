@@ -1,100 +1,60 @@
-#include "cc_factory_time_stepper.tpl.h"
+#include "cc_factory_linear_solver.tpl.h"
 
 namespace chapchom
 {
-
+ 
  // ===================================================================
  // Empty constructor
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- CCFactoryTimeStepper<MAT_TYPE,VEC_TYPE>::CCFactoryTimeStepper()
- { 
-
+ CCFactoryLinearSolver<MAT_TYPE,VEC_TYPE>::CCFactoryLinearSolver()
+ {
+  
  }
-
+ 
  // ===================================================================
  // Empty destructor
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- CCFactoryTimeStepper<MAT_TYPE,VEC_TYPE>::~CCFactoryTimeStepper()
+ CCFactoryLinearSolver<MAT_TYPE,VEC_TYPE>::~CCFactoryLinearSolver()
  { 
 
  }
 
  // ===================================================================
- // Returns the specified time stepper (integration method)
+ // Returns the specified linear solver
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- ACTimeStepper* CCFactoryTimeStepper<MAT_TYPE,VEC_TYPE>::
- create_time_stepper(std::string time_stepper_name)
+ ACLinearSolver* CCFactoryLinearSolver<MAT_TYPE,VEC_TYPE>::
+ create_linear_solver(std::string linear_solver_name)
  {
   // Get the string and change it to lower case 
-  std::transform(time_stepper_name.begin(), time_stepper_name.end(),
-                 time_stepper_name.begin(), ::tolower);
+  std::transform(linear_solver_name.begin(), linear_solver_name.end(),
+                 linear_solver_name.begin(), ::tolower);
   
   // ------------------------------------------------------
-  // Check what time stepper method we need to create
+  // Check what linear solver we need to create
   // ------------------------------------------------------
-  // Euler method
-  if (time_stepper_name.compare("euler")==0)
+  // LU solver from numerical recipes
+  if (linear_solver_name.compare("numerical_recipes")==0)
    {
-    return new CCEulerMethod();
+    return new CCLUSolverNumericalRecipes<Real>();
    }
-  // Runge-Kutta 4 method
-  else if (time_stepper_name.compare("rk4")==0)
+#ifdef CHAPCHOM_USES_ARMADILLO
+  // Linear solver from Armadillo
+  else if (linear_solver_name.compare("armadillo")==0)
    {
-    return new CCRK4Method();
+    return new CCSolverArmadillo<Real>();
    }
-  // Backward-Euler as Predictor-Corrector method
-  else if (time_stepper_name.compare("bepc")==0)
-   {
-    return new CCAdamsMoulton2PCMethod();
-   }
-  // Adams-Moulton 2 as Predictor-Corrector method
-  else if (time_stepper_name.compare("am2pc")==0)
-   {
-    return new CCAdamsMoulton2PCMethod();
-   }
-  // Backward Euler method
-  else if (time_stepper_name.compare("bdf1")==0)
-   {
-    return new CCBackwardEulerMethod<MAT_TYPE,VEC_TYPE>();
-   }
-  // Adams-Moulton 2 or Trapezoidal Rule method
-  else if (time_stepper_name.compare("am2")==0)
-   {
-    return new CCAdamsMoulton2Method<MAT_TYPE,VEC_TYPE>();
-   }
-  // BDF 2 method
-  else if (time_stepper_name.compare("bdf2")==0)
-   {
-    return new CCBDF2Method<MAT_TYPE,VEC_TYPE>();
-   }
-  // Runge-Kutta 4(5) Fehlberg method
-  else if (time_stepper_name.compare("rk45f")==0)
-   {
-    return new CCAdaptiveRK45FMethod();
-   }
-  // Runge-Kutta 4(5) Dormand-Prince method
-  else if (time_stepper_name.compare("rk45dp")==0)
-   {
-    return new CCAdaptiveRK45DPMethod();
-   }
+#endif
   else
    {
     std::ostringstream error_message;
-    error_message << "The time stepper (integration method) you want to use is not "
-                  << "implemented yet. Please implement it yourself or select"
-                  << "another one\n\n"
+    error_message << "The linear solver you want to use is not implemented yet.\n"
+                  << "Please implement it yourself or select another one\n\n"
                   << "Availables ones\n"
-                  << "- Euler (euler)\n"
-                  << "- Runge-Kutta 4 (rk4)\n"
-                  << "- Adams-Moulton 2 - Predictor-Corrector (am2pc)\n"
-                  << "- Backward Euler - Fully Implicit (bdf1)\n"
-                  << "- Adams-Moulton 2 - Fully Implicit (am2)\n"
-                  << "- Backward Differentiation Formula 2 - Fully Implicit (bdf2)\n"
-                  << "- Adaptive Runge-Kutta 4(5) Fehlberg (rk45f)\n"
-                  << "- Adaptive Runge-Kutta 4(5) Dormand-Prince (rk45dp)\n"
+                  << "- LU linear solver from Numerical Recipes (numerical_recipes)\n"
+                  << "- Armadillo Linear Solver (armadillo) - only if support for armadiilo library is enabled\n"
                   << std::endl;
     throw ChapchomLibError(error_message.str(),
                            CHAPCHOM_CURRENT_FUNCTION,

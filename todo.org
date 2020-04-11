@@ -3,8 +3,9 @@
 #+AUTHOR: Julio César Pérez Sansalvador
 
 * TODO Chapchom
-*** Implement full demo for Poisson Equation
-*** Integrate the use of Triangle for the generation of points/nodes
+** Implement full demo for Poisson Equation
+** Integrate the use of Triangle for the generation of points/nodes
+** Work on the linear solver factory
 
 * DONE Work on Mesh Free Methods
 ** Need to modify the strategy for memory allocation of matrices and vectors

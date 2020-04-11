@@ -8,18 +8,16 @@
 #include "../general/common_includes.h"
 #include "../general/utilities.h"
 
-#include "../matrices/cc_matrix.h"
-// Includes the abstract class for linear solvers
-#include "../linear_solvers/ac_linear_solver.h"
-#include "../linear_solvers/cc_lu_solver_numerical_recipes.h"
-
 #ifdef CHAPCHOM_USES_ARMADILLO
 // Include Armadillo type matrices since the templates may include
 // Armadillo type matrices
 #include "../matrices/cc_matrix_armadillo.h"
-// Linear solver using ARMADILLO matrices
-#include "../linear_solvers/cc_solver_armadillo.h"
+#else
+#include "../matrices/cc_matrix.h"
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
+
+// Factory for linear solver
+#include "../linear_solvers/cc_factory_linear_solver.h"
 
 // Includes the abstract class for strategies to compute the Jacobian
 // and the residual

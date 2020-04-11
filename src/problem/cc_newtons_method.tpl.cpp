@@ -191,11 +191,14 @@ namespace chapchom
   // Cleans up
   clean_up();
   
+  // Create a factor for the linear solver
+  CCFactoryLinearSolver<MAT_TYPE, VEC_TYPE> factory_linear_solver;
+  
   // Create the linear solver
 #ifdef CHAPCHOM_USES_ARMADILLO
-  Linear_solver_pt = new CCSolverArmadillo<Real>();
+  Linear_solver_pt = factory_linear_solver.create_linear_solver("numerical_recipes");
 #else
-  Linear_solver_pt = new CCLUSolverNumericalRecipes<Real>();
+  Linear_solver_pt = factory_linear_solver.create_linear_solver("armadillo");
 #endif
   
   // Set linear solver for Newton's method
