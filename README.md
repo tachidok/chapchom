@@ -14,6 +14,12 @@ Method. We are interested in particle methods.
 
 ## How to get your own copy of the project?
 
+You need **git** installed in your computer, then type in a terminal
+
+```shell
+git clone https://github.com/tachidok/chapchom
+```
+
 ### What you need to have to work and run it nicely?
 * A C++ compiler - demo drivers and library built with version
   7.4.0. It may work with previous versions as well.
@@ -34,38 +40,39 @@ Method. We are interested in particle methods.
 * Doxygen - to build classes diagrams and useful documentation from
   the code (not currently supported)
 
+### How to configure it?
+* Open a terminal (shell command line) and go into the folder you
+  downloaded the library, then type
+
+```shell
+./autogen.sh
+```
+
+That should be it. Follow the instructions on screen from the
+_autogen.sh_ script to configure your own copy of the library.
+
 ### Recommended but not compulsory external libraries
 If you want to get the maximum performance of the library you will
-need to install the following external packages. However, if you are
-in a rush and do not have the time to install them then do not worry,
-the library runs still nicely without them.
+need to install the following external packages. You can find
+information on how to configure them in the _doc_ folder of your
+installation.
 
 * OpenBLAS
 * SuperLU (requires OpenBLAS)
 * Armadillo (requires SuperLU)
 * VTK (for visuallisation purposes, we use it in combination with
   Paraview)
-
-### How to configure it?
-* Open a terminal (shell command line) and do the following
-
-```shell
-git clone https://github.com/tachidok/chapchom
-cd chapchom
-./autogen.sh
-```
-
-That should be it. Follow the instructions on screen from the
-_autogen.sh_ script to configure your copy of the library.
+  
+NOTEL: The library can run nicely without these packages.
 
 ### Examples and test cases
 
-Demos, examples or test cases can be found in the "demos" directory
+Demos, examples or test cases can be found in the _demos_ directory
 under the root folder. These demos are also used to self test the
 implementation. You should run all of them to make sure nothing is
 broken.
 
-A large number of examples is expected to live in the "demos"
+A large number of examples is expected to live in the _demos_
 directory so you can check there for any feature available in the
 library.
 
@@ -102,7 +109,8 @@ submitting your contributions ....
 
 ### How many developers are currently working on the library
 
-At Mondat, 09 September 2019 there is one and only one developer, me :no_mouth:
+At Friday, September/13, 2019 there is one and only one developer, me
+:no_mouth:
 
 :construction: :construction: :construction: :construction: :construction:
 
