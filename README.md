@@ -3,59 +3,75 @@
 ![Travis(.org)](https://img.shields.io/travis/tachidok/chapchom?label=master)
 ![Travis (.org)branch](https://img.shields.io/travis/tachidok/chapchom/julio?label=julio)
 
-# Welcome!
+---
+
+## Welcome!
 Hi there, this is the official git repository for the **chapchom**
 library.
 
 ## What the project is about?
 We intent to develop a **Object-Oriented-Parallel numerical library**
-with aims to solve PDE's by Mesh Free Methods and the Finite Element
-Method. We are interested in particle methods.
+with aims to solve PDE's by Mesh Free/Finite Element Method. We are
+interested in particle methods.
 
-## How to get your own copy of the project?
+## Fast installation and starting up!!!
 
+### What you need to have it working nicely?
+* A C++ compiler - demo drivers and library built with version
+  7.4.0. It may work with previous versions as well.
+  
+* CMake - to configure and install it. We tested with version 3.10.2.
+
+* Python - to test output from demo drivers with validation files
+  (also to produce nice plots). We tested with version 3.7.3 but it
+  should work with any version >= 3
+
+#### Optional
+
+* Latex - to build documentation. Most documentation is generated from
+  `.org` files.
+
+* Doxygen - to build classes diagrams and useful documentation from
+  the code.
+
+* MPI support for parallel features - `not currently supported`.
+
+### How to get your own copy of the project?
 You need **git** installed in your computer, then type in a terminal
 
 ```shell
 git clone https://github.com/tachidok/chapchom
 ```
 
-### What you need to have to work and run it nicely?
-* A C++ compiler - demo drivers and library built with version
-  7.4.0. It may work with previous versions as well.
-  
-* MPI support for future parallel features (not currently supported)
-
-* CMake - to configure and install it. We have version 3.10.2 and it
-  works all fine.
-
-* Python - use it to test output from demo drivers with validation
-  files and to produce nice plots. We use version 3.7.3 but it
-  probably works with any version >= 3
-
-* Latex - to build documentation (see notes in the doc folder for
-  installation instructions of Latex). Most documentation is built
-  with org mode.
-
-* Doxygen - to build classes diagrams and useful documentation from
-  the code (not currently supported)
-
 ### How to configure it?
-* Open a terminal (shell command line) and go into the folder you
-  downloaded the library, then type
+* In a terminal (shell command line) go into the folder you cloned the
+  project, then type
 
 ```shell
 ./autogen.sh
 ```
 
-That should be it. Follow the instructions on screen from the
-_autogen.sh_ script to configure your own copy of the library.
+That should be it. Follow up the instructions on screen from the
+`autogen.sh` script to configure your own copy of the library.
 
-### Recommended but not compulsory external libraries
-If you want to get the maximum performance of the library you will
-need to install the following external packages. You can find
-information on how to configure them in the _doc_ folder of your
-installation.
+**For full details and additional features please check the full
+documentation in the `doc` folder**
+
+If you got doxygen installed in your system then generate the
+documentation by typing in a terminal,
+
+```shell
+./make_doc.sh
+```
+
+the documentation will be automatically generated into the
+`doc/doxy_doc/html` folder, then open the `index.html` file in a
+web-browser.
+
+## Additional and recommended external libraries
+If you want to get the maximum performance you will need to install
+the following external packages. You can find information on how to
+configure them in the `doc` folder.
 
 * OpenBLAS
 * SuperLU (requires OpenBLAS)
@@ -63,30 +79,34 @@ installation.
 * VTK (for visuallisation purposes, we use it in combination with
   Paraview)
   
-NOTEL: The library can run nicely without these packages.
+NOTE: The project works and runs nicely without these packages.
 
-### Examples and test cases
+## Examples and test cases
 
-Demos, examples or test cases can be found in the _demos_ directory
-under the root folder. These demos are also used to self test the
-implementation. You should run all of them to make sure nothing is
-broken.
+Demos, examples or test cases are in the `demos` folder. These demos
+are also used to self test the implementation. You should run all of
+them to make sure nothing is broken. You can select to perform a full
+test at installation time, otherwise type
 
-A large number of examples is expected to live in the _demos_
-directory so you can check there for any feature available in the
-library.
+```shell
+./ctest
+```
+into the specified build folder (the default one is `build`).
 
-#### Current demos for specific functionalities
+A large number of examples is expected to live in the `demos` folder
+so check there for any feature available in the project.
+
+### Current demos for specific functionalities
 * Interpolation
 * Linear solvers
 * Matrices operations
 * Newton's method
 * Solution of ODE's
   * Lotka-Volterra solved with different time steppers
-  * 3-body problem
   * N-body problem
+   * Only 3-body and 4-body
   * Explicit time steppers
-  * Implicit time steppers (full implicit and E(PC)^k E
+  * Implicit time steppers (full implicit and _E(PC)^k E_
     implementations)
   * Adaptive time steppers
 
@@ -96,20 +116,19 @@ Mmm ... that is something we need to carefully think about.
 
 ## How to contribute
 
-Once we have something intereseting to share with you we will  make the
-project public. Please check continuously for updates or contact the
-developers :construction: :envelope: (jcp.sansalvador.at.inaoep.mx) :envelope: :construction:
+Get your own copy and have fun. Do not hesitate to contact the
+developers at :envelope: (jcp.sansalvador.at.inaoep.mx) :envelope:
 
 ### Notes for contributors
-Please check the documentation (in construction :construction: ) for anything you need to
-set-up your account, get a copy of the latest development and start
-submitting your contributions ....
+For full details on contributions please check the documentation in
+the `doc` folder. Contact the developers for current in-development
+features.
 
-### Facts and curiosities
+## Facts and curiosities
 
 ### How many developers are currently working on the library
 
-At Friday, September/13, 2019 there is one and only one developer, me
+At Sunday, April/12, 2020 there is one and only one developer, me
 :no_mouth:
 
 :construction: :construction: :construction: :construction: :construction:
@@ -123,4 +142,3 @@ This project was initially uploaded to GitHub on Friday, 11 March 2016
 https://en.wikipedia.org/wiki/List_of_finite_element_software_packages
 
 ## Have fun and enjoy .... !!!
-
