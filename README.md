@@ -7,12 +7,11 @@
 
 ## Welcome!
 Hi there, this is the official git repository for the **chapchom**
-library.
+project.
 
 ## What the project is about?
 We intent to develop a **Object-Oriented-Parallel numerical library**
-with aims to solve PDE's by Mesh Free/Finite Element Method. We are
-interested in particle methods.
+with aims to solve PDE's by Mesh Free/Finite Element Method.
 
 ## Fast installation and starting up!!!
 
@@ -41,21 +40,27 @@ You need **git** installed in your computer, then type in a terminal
 
 ```shell
 git clone https://github.com/tachidok/chapchom
+git checkout bob
 ```
 
+The second line generates your fully customised branch and assumes
+your name is _bob_
+
 ### How to configure it?
-* In a terminal (shell command line) go into the folder you cloned the
-  project, then type
+* In a terminal (shell command line) go into the `chapchom` folder
+  then type
 
 ```shell
 ./autogen.sh
 ```
 
-That should be it. Follow up the instructions on screen from the
-`autogen.sh` script to configure your own copy of the library.
+* Follow up the instructions on screen to configure your own copy of
+the project.
 
 **For full details and additional features please check the full
-documentation in the `doc` folder**
+documentation in the `doc` folder.**
+
+#### Documentation
 
 If you got doxygen installed in your system then generate the
 documentation by typing in a terminal,
@@ -103,8 +108,7 @@ so check there for any feature available in the project.
 * Newton's method
 * Solution of ODE's
   * Lotka-Volterra solved with different time steppers
-  * N-body problem
-   * Only 3-body and 4-body
+  * N-body problem (only 3-body and 4-body)
   * Explicit time steppers
   * Implicit time steppers (full implicit and _E(PC)^k E_
     implementations)
