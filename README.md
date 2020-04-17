@@ -40,6 +40,7 @@ You need **git** installed in your computer, then type in a terminal
 
 ```shell
 git clone https://github.com/tachidok/chapchom
+cd chapchom
 git checkout bob
 ```
 

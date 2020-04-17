@@ -27,7 +27,7 @@ namespace chapchom
  /// PDEs. It specifies a template for solving a problem thus one
  /// needs to create a class that inherents from this one to solve a
  /// particular Mesh Free Problem for a particular PDE
- template<class MAT_TYPE, class VEC_TYPE>
+ template<class NODE_TYPE>
   class ACMeshFreeProblem : public virtual ACProblem
  {
   
@@ -183,10 +183,14 @@ namespace chapchom
   /// linear solver
   bool Free_memory_for_linear_solver;
   
-  // --------------------------------------------------------------
-  // Generate the interpolation matrix and the right-hand side vector
-  // --------------------------------------------------------------
-  void generate_interpolation_matrix_and_rhs_vector(std::vector<CCNode<Real> *> &center_nodes);
+  /// Generate the interpolation matrix and the right-hand side vector
+  virtual void generate_interpolation_matrix_and_rhs_vector(std::vector<CCNode<Real> *> &center_nodes) = 0;
+  
+  /// Generate interpolation matrix
+  void generate_interpolation_matrix(std::vector<CCNode<Real> *> &center_nodes);
+  
+  /// Generate right-hand side vector
+  void generate_rhs_vector();
   
  };
  

@@ -5,7 +5,9 @@
 * TODO Chapchom
 ** Implement full demo for Poisson Equation
 ** Integrate the use of Triangle for the generation of points/nodes
-** Work on the linear solver factory
+** TODO Work on the linear solver factory
+** Delete templates from matrices and linear solvers.
+*** There is really no need for templates since we have a typedef to define whether use float or doubles
 
 * DONE Work on Mesh Free Methods
 ** Need to modify the strategy for memory allocation of matrices and vectors

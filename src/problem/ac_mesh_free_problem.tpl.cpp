@@ -464,7 +464,11 @@ namespace chapchom
        {
         distance(k) = node_pt(m)->get_position(k) - center_nodes[n]->get_position(k);
        }
+      
+      // Get the distance
       Real r = distance.norm_2();
+      
+      Interpolation_matrix(m,n) = node_pt(m)->get_contribution_to_interpolation_matrix(r);
       
       // get_jacobian()
       
@@ -496,6 +500,8 @@ namespace chapchom
     // --------------------------------------------------------------
     // Hero goes the RHS, the functions
     RHS_vector(m) = Lu<VEC_TYPE >(tmp_v);
+
+    RHS_vector(m) = node_pt(m)->get_contribution_to_rhs_vector();
     
    }
   
