@@ -36,7 +36,7 @@ namespace chapchom
   /// odes from the current time "t" to the time "t+h". The values of
   /// u at time t+h will be stored at index k (default k = 0).
   void time_step(ACODEs &odes, const Real h, const Real t,
-                 CCData<Real> &u, const unsigned k = 0);
+                 CCData &u, const unsigned k = 0);
   
   /// Set the strategy for the computation of the Jacobian of the ODEs (if known)
   inline void set_strategy_for_odes_jacobian(ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE> *jacobian_strategy_for_odes_pt)

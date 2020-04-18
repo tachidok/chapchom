@@ -34,7 +34,7 @@ namespace chapchom
  // ===================================================================
  void CCAdamsMoulton2PCMethod::time_step(ACODEs &odes, const Real h,
                                          const Real t,
-                                         CCData<Real> &u,
+                                         CCData &u,
                                          const unsigned k)
  {
   // Check if the ode has the correct number of history values to
@@ -79,14 +79,14 @@ namespace chapchom
   // -- Prediction phase --
   // -----------------------------------------------------------------
   // Temporary vector to store the evaluation of the odes.
-  CCData<Real> dudt(n_odes);
+  CCData dudt(n_odes);
   // Evaluate the ODE at time "t" using the current values of "u"
   // stored in index k
   odes.evaluate_derivatives(t, u, dudt, k);
   
   // Store the PREDICTED value by the external time stepper. Copy the
   // initial values from u
-  CCData<Real> u_p(u);
+  CCData u_p(u);
   
   // Prediction step (Forward Euler)
   for (unsigned i = 0; i < n_odes; i++)
@@ -99,7 +99,7 @@ namespace chapchom
   // -----------------------------------------------------------------
   // -- Temporary vector to store the evaluation of the odes with the
   // -- predicted values.
-  CCData<Real> dudt_p(n_odes);
+  CCData dudt_p(n_odes);
   
   do {
    // Evaluate the ODE at time "t+h" using the predicted values of
@@ -191,7 +191,7 @@ namespace chapchom
  // ===================================================================
  void CCAdamsMoulton2PCMethod::time_step(ACODEs &odes, const Real h,
                                          const Real t,
-                                         CCData<Real> &u,
+                                         CCData &u,
                                          const unsigned k)
  {
   // Check if the ode has the correct number of history values to
@@ -223,14 +223,14 @@ namespace chapchom
   // -- Prediction phase --
   // -----------------------------------------------------------------
   // Temporary vector to store the evaluation of the odes.
-  CCData<Real> dudt(n_odes);
+  CCData dudt(n_odes);
   // Evaluate the ODE at time "t" using the current values of "u"
   // stored in index k
   odes.evaluate_derivatives(t, u, dudt, k);
   
   // Store the PREDICTED value by the external time stepper. Copy the
   // initial values from u
-  CCData<Real> u_p(u);
+  CCData u_p(u);
   // Perfomed one prediction step and store the result in the
   // predicted u_p
   Time_stepper_initial_guess.time_step(odes, h, t, u_p, k);
@@ -240,7 +240,7 @@ namespace chapchom
   // -----------------------------------------------------------------
   // -- Temporary vector to store the evaluation of the odes with the
   // -- predicted values.
-  CCData<Real> dudt_p(n_odes);
+  CCData dudt_p(n_odes);
   
   // Evaluate the ODE at time "t+h" using the predicted values of
   // "u_p" stored at index k=0 because u_p has not history values

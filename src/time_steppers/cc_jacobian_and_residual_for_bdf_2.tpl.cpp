@@ -37,7 +37,7 @@ namespace chapchom
   // Get the current time
   const Real t = this->current_time();
   // Get the u values
-  CCData<Real> *u_pt = this->u_pt();
+  CCData *u_pt = this->u_pt();
   // Get the index of the history values at time 't+h'
   const unsigned k = this->history_index();
   
@@ -115,7 +115,7 @@ namespace chapchom
   // Get the current time
   const Real t = this->current_time();
   // Get the u values
-  CCData<Real> *u_pt = this->u_pt();
+  CCData *u_pt = this->u_pt();
   // Get the index of the history values at time 't+h'
   const unsigned k = this->history_index();
   
@@ -140,7 +140,7 @@ namespace chapchom
   
   // Temporary vector to store the evaluation of the odes at time
   // 't+h' (current Newton's iteration)
-  CCData<Real> dudt(n_dof);
+  CCData dudt(n_dof);
   
   // Time step weights
   const Real h_two_thirds = (2.0/3.0) * h;

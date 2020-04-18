@@ -61,7 +61,7 @@ namespace chapchom
  template<class MAT_TYPE, class VEC_TYPE>
  void ACNewtonsMethodForImplicitTimeStepper<MAT_TYPE, VEC_TYPE>::
  set_data_for_jacobian_and_residual(ACODEs *odes_pt, const Real h, const Real t,
-                                    CCData<Real> *u_pt, const unsigned k)
+                                    CCData *u_pt, const unsigned k)
  {
   // Set the odes
   ODEs_pt = odes_pt;

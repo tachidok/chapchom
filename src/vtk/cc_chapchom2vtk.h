@@ -63,28 +63,28 @@ namespace chapchom
   // 
   // where k is the number of data per particle
   void output_particles(Real time,
-                        CCData<Real> &particles_data,
+                        CCData &particles_data,
                         std::ostringstream &file_name,
                         const unsigned n_data_per_particle = 6);
   
   // In charge of output the node position and attributes (velocity,
   // temperature, mass, etc) as a cloud of points
-  void output_node(CCNode<Real> &node, std::ostringstream &file_name);
+  void output_node(CCNode &node, std::ostringstream &file_name);
   
   // In charge of output the nodes positions and attributes (velocity,
   // temperature, mass, etc) as a cloud of points
-  void output_nodes(std::vector<CCNode<Real> > &nodes, std::ostringstream &file_name); 
+  void output_nodes(std::vector<CCNode> &nodes, std::ostringstream &file_name); 
   
   // In charge of output the position and its corresponding attributes
   // (velocity, temperature, mass, etc)
-  void output_position_and_attribute_data(CCData<Real> &positions,
-                                          CCData<Real> &attributes,
+  void output_position_and_attribute_data(CCData &positions,
+                                          CCData &attributes,
                                           std::ostringstream &file_name);
   
   // In charge of output the vector positions and its corresponding
   // attributes (velocity, temperature, mass, etc)
-  void output_position_and_attribute_datas(std::vector<CCData<Real> >&positions,
-                                           std::vector<CCData<Real> >&attributes,
+  void output_position_and_attribute_datas(std::vector<CCData> &positions,
+                                           std::vector<CCData> &attributes,
                                            std::ostringstream &file_name); 
   
  private:
@@ -119,7 +119,7 @@ namespace chapchom
   
   // Transfer the data from particles_data to data_points and
   // data_set. Called from method output_partciles()
-  void add_particles_to_vtk_data_set_helper(CCData<Real> &particles_data,
+  void add_particles_to_vtk_data_set_helper(CCData &particles_data,
                                             vtkSmartPointer<vtkPoints> &data_points,
                                             vtkSmartPointer<vtkUnstructuredGrid> &data_set,
                                             const unsigned n_data_per_particle = 6);
@@ -129,8 +129,8 @@ namespace chapchom
   // data_set, respectively. Called from method
   // output_position_and_attribute_data()
   // ==================================================================
-  void add_data_point_and_attributes_to_vtk_data_set_helper(CCData<Real> &position,
-                                                            CCData<Real> &attributes,
+  void add_data_point_and_attributes_to_vtk_data_set_helper(CCData &position,
+                                                            CCData &attributes,
                                                             vtkSmartPointer<vtkPoints> &data_points,
                                                             vtkSmartPointer<vtkUnstructuredGrid> &data_set);
   
@@ -139,8 +139,8 @@ namespace chapchom
   // data_set, respectively. Called from method
   // output_position_and_attribute_datas()
   // ==================================================================
-  void add_data_points_and_attributes_to_vtk_data_set_helper(std::vector<CCData<Real> >&positions,
-                                                             std::vector<CCData<Real> >&attributes,
+  void add_data_points_and_attributes_to_vtk_data_set_helper(std::vector<CCData> &positions,
+                                                             std::vector<CCData> &attributes,
                                                              vtkSmartPointer<vtkPoints> &data_points,
                                                              vtkSmartPointer<vtkUnstructuredGrid> &data_set);
   

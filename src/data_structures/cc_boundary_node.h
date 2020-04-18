@@ -1,10 +1,11 @@
-// IN THIS FILE: The definition of a class to represent nodes
+/// IN THIS FILE: The definition of a class to represent boundary
+/// nodes
 
 // Check whether the class has been already defined
-#ifndef CCBOUNDARYNODE_TPL_H
-#define CCBOUNDARYNODE_TPL_H
+#ifndef CCBOUNDARYNODE_H
+#define CCBOUNDARYNODE_H
 
-#include "./cc_node.tpl.h"
+#include "./cc_node.h"
 
 namespace chapchom
 {
@@ -12,14 +13,14 @@ namespace chapchom
  /// @class CCBoundaryNode cc_boundary_node.h
  
  /// Abstract class to represent boundary nodes
- template<class T>
-  class CCBoundaryNode : public virtual CCNode<T>
+ class CCBoundaryNode : public virtual CCNode
  {
   
  public:
   
   /// Constructor
-  CCBoundaryNode(const unsigned boundary, const unsigned dimension, const unsigned n_variables, const unsigned n_history_values=1);
+  CCBoundaryNode(const unsigned boundary,
+                 const unsigned dimension, const unsigned n_variables, const unsigned n_history_values=1);
   
   /// Empty destructor
   virtual ~CCBoundaryNode();
@@ -59,7 +60,9 @@ namespace chapchom
   // it contains dynamically allocated variables, A in this
   // case). Check
   // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
-  CCBoundaryNode(const CCBoundaryNode& boundary_node) 
+  CCBoundaryNode(const CCBoundaryNode& boundary_node)
+   : CCNode(boundary_node.dimension(), boundary_node.n_variables(),
+            boundary_node.n_history_values())
    {
     BrokenCopy::broken_copy("CCBoundaryNode");
    }
@@ -83,4 +86,4 @@ namespace chapchom
  
 }
 
-#endif // #ifndef CCBOUNDARYNODE_TPL_H
+#endif // #ifndef CCBOUNDARYNODE_H

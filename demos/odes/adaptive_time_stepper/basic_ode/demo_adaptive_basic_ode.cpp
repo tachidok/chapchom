@@ -64,7 +64,7 @@ public:
  
  /// Evaluates the system of odes at time 't', using the history
  /// values of u at index k
- void evaluate_derivatives(const Real t, CCData<Real> &u, CCData<Real> &dudt, const unsigned k = 0)
+ void evaluate_derivatives(const Real t, CCData &u, CCData &dudt, const unsigned k = 0)
  {
   // \frac{du}{dt} = -u^{2}
   dudt(0) = -(u(0,k)*u(0,k));

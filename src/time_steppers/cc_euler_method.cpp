@@ -30,7 +30,7 @@ namespace chapchom
  // ===================================================================
  void CCEulerMethod::time_step(ACODEs &odes, const Real h,
                                const Real t,
-                               CCData<Real> &u,
+                               CCData &u,
                                const unsigned k)
  {
 #ifdef CHAPCHOM_PANIC_MODE
@@ -57,7 +57,7 @@ namespace chapchom
   const unsigned n_odes = odes.n_odes();
   
   // Temporary vector to store the evaluation of the odes.
-  CCData<Real> dudt(n_odes);
+  CCData dudt(n_odes);
   
   // Evaluate the ODE at time "t" using the values of "u" at index k
   odes.evaluate_derivatives(t, u, dudt, k);

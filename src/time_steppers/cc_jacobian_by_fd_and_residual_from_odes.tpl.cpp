@@ -32,7 +32,7 @@ namespace chapchom
   ACODEs *odes_pt = this->odes_pt();
   
   // Get a pointer to the u values
-  CCData<Real> *u_pt = this->u_pt();
+  CCData *u_pt = this->u_pt();
   
   // Check whether the data for the computation of the jacobian has
   // been set
@@ -67,7 +67,7 @@ namespace chapchom
   const unsigned k = this->history_index();
   
   // Store the evaluation of the odes
-  CCData<Real> dudt(n_dof);
+  CCData dudt(n_dof);
   
   // Evaluate the ODEs using the history values of u at time t+h'
   // indicated in the index k
@@ -80,13 +80,13 @@ namespace chapchom
     // the i-th DOF and histroy value k, then evaluate all the
     // equations (this will helps us to approximate the column i of
     // the Jacobian)
-    CCData<Real> u_plus((*u_pt));
+    CCData u_plus((*u_pt));
     const Real delta_u = 1.0e-8;
     // ... the perturbation
     u_plus(i,k)+=delta_u;
     
     // Evaluate the ODEs with the slighted perturbed data
-    CCData<Real> dudt_plus(n_dof);
+    CCData dudt_plus(n_dof);
     // Evaluate the ODEs using the history values indicated in the
     // index K
     odes_pt->evaluate_derivatives(t+h, u_plus, dudt_plus, k);

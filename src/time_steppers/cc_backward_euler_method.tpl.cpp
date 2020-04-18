@@ -38,7 +38,7 @@ namespace chapchom
  template<class MAT_TYPE, class VEC_TYPE>
  void CCBackwardEulerMethod<MAT_TYPE,VEC_TYPE>::time_step(ACODEs &odes, const Real h,
                                                           const Real t,
-                                                          CCData<Real> &u,
+                                                          CCData &u,
                                                           const unsigned k)
  {
 #ifdef CHAPCHOM_PANIC_MODE

@@ -39,7 +39,7 @@ namespace chapchom
   // Get the current time
   const Real t = this->current_time();
   // Get the u values
-  CCData<Real> *u_pt = this->u_pt();
+  CCData *u_pt = this->u_pt();
   // Get the index of the history values at time 't+h'
   const unsigned k = this->history_index();
   
@@ -117,7 +117,7 @@ namespace chapchom
   // Get the current time
   const Real t = this->current_time();
   // Get the u values
-  CCData<Real> *u_pt = this->u_pt();
+  CCData *u_pt = this->u_pt();
   // Get the index of the history values at time 't+h'
   const unsigned k = this->history_index();
   
@@ -152,7 +152,7 @@ namespace chapchom
     
     // Temporary vector to store the evaluation of the odes with u
     // values at time 't' (constant values)
-    DUDT_old = new CCData<Real>(n_dof);
+    DUDT_old = new CCData(n_dof);
     
     // Evaluate the ODEs with the values of u at time "t". Constant
     // during Newton's iteration
@@ -183,7 +183,7 @@ namespace chapchom
   
   // Temporary vector to store the evaluation of the odes with the
   // values of u at time 't+h' (current Newton's iteration)
-  CCData<Real> dudt(n_dof);
+  CCData dudt(n_dof);
   
   // Evaluate the ODE at time "t+h"
   odes_pt->evaluate_derivatives(t+h, (*u_pt), dudt, k);

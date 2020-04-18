@@ -30,7 +30,7 @@ namespace chapchom
  // ===================================================================
  void CCAdaptiveRK45FMethod::time_step(ACODEs &odes, const Real h,
                                        const Real t,
-                                       CCData<Real> &u,
+                                       CCData &u,
                                        const unsigned k)
  {
   // Check if the ode has the correct number of history values to
@@ -55,22 +55,22 @@ namespace chapchom
   const unsigned n_odes = odes.n_odes();
   
   // Temporary vector to store the evaluation of the odes.
-  CCData<Real> dudt(n_odes);
+  CCData dudt(n_odes);
   
   // Evaluate the ODE at time "t" using the current values of "u"
   odes.evaluate_derivatives(t, u, dudt, k);
   
   // Temporary vector to store the K_i evaluations proper of
   // Runge-Kutta methods
-  CCData<Real> K1(n_odes);
-  CCData<Real> K2(n_odes);
-  CCData<Real> K3(n_odes);
-  CCData<Real> K4(n_odes);
-  CCData<Real> K5(n_odes);
-  CCData<Real> K6(n_odes);
+  CCData K1(n_odes);
+  CCData K2(n_odes);
+  CCData K3(n_odes);
+  CCData K4(n_odes);
+  CCData K5(n_odes);
+  CCData K6(n_odes);
   
   // Create a copy of the u vector
-  CCData<Real> u_copy(u);
+  CCData u_copy(u);
   
   // Counter for iterations
   unsigned n_iterations = 0;
@@ -183,8 +183,8 @@ namespace chapchom
 #if 0
     // Create temporary storages for u, these temporary approximations
     // will be used at the error and time step computation stages.
-    CCData<Real> u_hat(n_odes);
-    CCData<Real> u_tilde(n_odes);
+    CCData u_hat(n_odes);
+    CCData u_tilde(n_odes);
     // Compute the hat and tilde u's
     for (unsigned i = 0; i < n_odes; i++)
      {
@@ -194,7 +194,7 @@ namespace chapchom
 #endif // #if 0
     
     // A storage for the error
-    CCData<Real> error(n_odes);
+    CCData error(n_odes);
     // Reset the error
     local_error = 0.0;
     for (unsigned i = 0; i < n_odes; i++)

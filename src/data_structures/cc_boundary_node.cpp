@@ -1,7 +1,7 @@
-// IN THIS FILE: Implementation of a concrete class to represent
-// data. This is the simplest implementation
+/// IN THIS FILE: Implementation of a concrete class to represent
+/// boundary nodes. This is the simplest implementation
 
-#include "cc_boundary_node.tpl.h"
+#include "cc_boundary_node.h"
 
 namespace chapchom
 {
@@ -9,12 +9,11 @@ namespace chapchom
  /// ===================================================================
  /// Constructor
  /// ===================================================================
- template<class T>
- CCBoundaryNode<T>::CCBoundaryNode(const unsigned boundary,
+ CCBoundaryNode::CCBoundaryNode(const unsigned boundary,
                                    const unsigned dimension,
                                    const unsigned n_variables,
                                    const unsigned n_history_values)
-  : CCNode<T>(dimension, n_variables, n_history_values)
+  : CCNode(dimension, n_variables, n_history_values)
  {
   // Add the node to the boundary
   add_to_boundary(boundary);
@@ -23,8 +22,7 @@ namespace chapchom
  /// ===================================================================
  /// Empty destructor
  /// ===================================================================
- template<class T>
- CCBoundaryNode<T>::~CCBoundaryNode()
+ CCBoundaryNode::~CCBoundaryNode()
  {
   
  }
@@ -32,8 +30,7 @@ namespace chapchom
  /// ===================================================================
  /// Add the node to the spefified boundary
  /// ===================================================================
- template<class T>
- void CCBoundaryNode<T>::add_to_boundary(const unsigned b)
+ void CCBoundaryNode::add_to_boundary(const unsigned b)
  {
   Boundaries.insert(b);
  }
@@ -41,8 +38,7 @@ namespace chapchom
  /// ===================================================================
  /// Remove the node from an specific boundary
  /// ===================================================================
- template<class T>
- void CCBoundaryNode<T>::remove_from_boundary(const unsigned b)
+ void CCBoundaryNode::remove_from_boundary(const unsigned b)
  {
 #ifdef CHAPCHOM_PANIC_MODE
   // First check whether the node lies on the given boundary
@@ -81,8 +77,7 @@ namespace chapchom
  /// ===================================================================
  /// Test whether the node is on any boundary
  /// ===================================================================
- template<class T>
- bool CCBoundaryNode<T>::is_on_boundary()
+ bool CCBoundaryNode::is_on_boundary()
  {
   if (Boundaries.size() != 0)
    {
@@ -96,15 +91,14 @@ namespace chapchom
  /// ===================================================================
  /// Test whether the node is on a given boundary
  /// ===================================================================
- template<class T>
- bool CCBoundaryNode<T>::is_on_boundary(const unsigned b)
+ bool CCBoundaryNode::is_on_boundary(const unsigned b)
  {
   std::set<unsigned>::iterator it = Boundaries.find(b);
   if (it != Boundaries.end())
    {
     return true;
    }
-
+  
   return false;
   
  }
@@ -112,8 +106,7 @@ namespace chapchom
  /// ===================================================================
  /// Set the boundary coordinates zeta of the node on boundary b
  /// ===================================================================
- template<class T>
- void CCBoundaryNode<T>::set_boundary_coordinates(const unsigned b, const std::vector<Real> &zeta)
+ void CCBoundaryNode::set_boundary_coordinates(const unsigned b, const std::vector<Real> &zeta)
  {
 #ifdef CHAPCHOM_PANIC_MODE
   // First check whether the node lies on the given boundary
@@ -140,8 +133,7 @@ namespace chapchom
  /// ===================================================================
  /// Get the boundary coordinates zeta of the node on boundary b
  /// ===================================================================
- template<class T>
- void CCBoundaryNode<T>::get_boundary_coordinates(const unsigned b, std::vector<Real> &zeta)
+ void CCBoundaryNode::get_boundary_coordinates(const unsigned b, std::vector<Real> &zeta)
  {
 #ifdef CHAPCHOM_PANIC_MODE
   // First check whether the node lies on the given boundary
@@ -196,8 +188,7 @@ namespace chapchom
  /// Output the data stored at the node (boundary ids, position and
  /// values at time t)
  /// ===================================================================
- template<class T>
- void CCBoundaryNode<T>::output_boundary_position_and_value(const unsigned t)
+ void CCBoundaryNode::output_boundary_position_and_value(const unsigned t)
  {
   std::set<unsigned>::iterator it;
   // Output boundaries
@@ -229,8 +220,7 @@ namespace chapchom
  /// Output the data stored at the node (boundary ids, position and
  /// values at time t)
  /// ===================================================================
- template<class T>
- void CCBoundaryNode<T>::output_boundary_position_and_value(std::ofstream &outfile, const unsigned t) const
+ void CCBoundaryNode::output_boundary_position_and_value(std::ofstream &outfile, const unsigned t) const
  {
   // Output boundaries
   std::cout << "B: ";

@@ -35,7 +35,7 @@ namespace chapchom
  // where k is the number of data per particle
  //========================================================================
  void CCChapchom2VTK::output_particles(Real time,
-                                       CCData<Real> &particles_data,
+                                       CCData &particles_data,
                                        std::ostringstream &file_name,
                                        const unsigned n_data_per_particle)
  {
@@ -86,7 +86,7 @@ namespace chapchom
  
  // In charge of output the node position and attributes (velocity,
  // temperature, mass, etc) as a cloud of points
- void CCChapchom2VTK::output_node(CCNode<Real> &node, std::ostringstream &file_name)
+ void CCChapchom2VTK::output_node(CCNode &node, std::ostringstream &file_name)
  {
   // Output data using the position and attribute method
   output_position_and_attribute_data(node.x(), node.u(), file_name);
@@ -94,7 +94,7 @@ namespace chapchom
  
  // In charge of output the nodes positions and attributes (velocity,
  // temperature, mass, etc) as a cloud of points
- void CCChapchom2VTK::output_nodes(std::vector<CCNode<Real> > &nodes, std::ostringstream &file_name)
+ void CCChapchom2VTK::output_nodes(std::vector<CCNode> &nodes, std::ostringstream &file_name)
  {
   // Get the number of nodes
   const unsigned long n_nodes = nodes.size();
@@ -108,8 +108,8 @@ namespace chapchom
  
  // In charge of output the position and its corresponding attributes
  // (velocity, temperature, mass, etc)
- void CCChapchom2VTK::output_position_and_attribute_data(CCData<Real> &position,
-                                                         CCData<Real> &attributes,
+ void CCChapchom2VTK::output_position_and_attribute_data(CCData &position,
+                                                         CCData &attributes,
                                                          std::ostringstream &file_name)
  {
   // Create a VTK writer
@@ -149,8 +149,8 @@ namespace chapchom
  // In charge of output the vector positions and its corresponding
  // attributes (velocity, temperature, mass, etc)
  // ========================================================================
- void CCChapchom2VTK::output_position_and_attribute_datas(std::vector<CCData<Real> >&positions,
-                                                          std::vector<CCData<Real> >&attributes,
+ void CCChapchom2VTK::output_position_and_attribute_datas(std::vector<CCData> &positions,
+                                                          std::vector<CCData> &attributes,
                                                           std::ostringstream &file_name)
  {
   // Create a VTK writer
@@ -238,7 +238,7 @@ namespace chapchom
  // Transfer the data from particles_data to data_points and
  // data_set. Called from method output_partciles()
  // ==================================================================
- void CCChapchom2VTK::add_particles_to_vtk_data_set_helper(CCData<Real> &particles_data,
+ void CCChapchom2VTK::add_particles_to_vtk_data_set_helper(CCData &particles_data,
                                                            vtkSmartPointer<vtkPoints> &data_points,
                                                            vtkSmartPointer<vtkUnstructuredGrid> &data_set,
                                                            const unsigned n_data_per_particle)
@@ -323,8 +323,8 @@ namespace chapchom
  // data_set, respectively. Called from method
  // output_position_and_attribute_data()
  // ==================================================================
- void CCChapchom2VTK::add_data_point_and_attributes_to_vtk_data_set_helper(CCData<Real> &position,
-                                                                           CCData<Real> &attributes,
+ void CCChapchom2VTK::add_data_point_and_attributes_to_vtk_data_set_helper(CCData &position,
+                                                                           CCData &attributes,
                                                                            vtkSmartPointer<vtkPoints> &data_points,
                                                                            vtkSmartPointer<vtkUnstructuredGrid> &data_set)
  {
@@ -402,8 +402,8 @@ namespace chapchom
  // data_set, respectively. Called from method
  // output_position_and_attribute_data()
  // ==================================================================
- void CCChapchom2VTK::add_data_points_and_attributes_to_vtk_data_set_helper(std::vector<CCData<Real> >&positions,
-                                                                            std::vector<CCData<Real> >&attributes,
+ void CCChapchom2VTK::add_data_points_and_attributes_to_vtk_data_set_helper(std::vector<CCData> &positions,
+                                                                            std::vector<CCData> &attributes,
                                                                             vtkSmartPointer<vtkPoints> &data_points,
                                                                             vtkSmartPointer<vtkUnstructuredGrid> &data_set)
  {

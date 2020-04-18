@@ -32,7 +32,7 @@ namespace chapchom
   /// values at time "t" will be at index k+1
   virtual void time_step(ACODEs &odes, const Real h,
                          const Real t,
-                         CCData<Real> &u,
+                         CCData &u,
                          unsigned k = 0) = 0;
   
   /// Resets the time stepper to its initial state.

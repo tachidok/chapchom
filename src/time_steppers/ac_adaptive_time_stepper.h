@@ -43,7 +43,7 @@ namespace chapchom
   /// time "t" to the time "t+h". The values of u at time t+h will be
   /// stored at index k (default k = 0).
   virtual void time_step(ACODEs &odes, const Real h, const Real t,
-                         CCData<Real> &u, const unsigned k = 0) = 0;
+                         CCData &u, const unsigned k = 0) = 0;
   
   /// Resets the time stepper to its initial state. Throw any
   /// automatically computed step size and use that given by the user

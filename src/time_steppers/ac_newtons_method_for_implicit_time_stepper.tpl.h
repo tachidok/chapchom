@@ -35,7 +35,7 @@ namespace chapchom
    // time step 'h', the current time 't', the values of 'u' and the
    // index where the values of 'u' at time 't+h' will be stored
    void set_data_for_jacobian_and_residual(ACODEs *odes_pt, const Real h, const Real t,
-                                           CCData<Real> *u_pt, const unsigned k);
+                                           CCData *u_pt, const unsigned k);
    
    // Set the strategy to compute the ODE's Jacobian
    void set_strategy_for_odes_jacobian(ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE> *jacobian_strategy_for_odes_pt);
@@ -61,7 +61,7 @@ namespace chapchom
    inline Real current_time() const {return Current_time;}
    
    // Gets access to the u values
-   inline CCData<Real> *u_pt() {return U_pt;}
+   inline CCData *u_pt() {return U_pt;}
    
    // Get access to the history index
    inline unsigned history_index() {return History_index;}
@@ -101,7 +101,7 @@ namespace chapchom
    Real Current_time; 
    
    // The U values of the function at the current time
-   CCData<Real> *U_pt;
+   CCData *U_pt;
    
    // The index of the values of u at time "Current_time + Time_step"
    unsigned History_index;

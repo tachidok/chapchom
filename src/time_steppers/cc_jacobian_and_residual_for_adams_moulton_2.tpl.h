@@ -58,7 +58,7 @@ namespace chapchom
    // Temporary vector to store the evaluation of the odes with the
    // values of u at time 't'. These are kept constant during Newton's
    // iterations
-   CCData<Real> *DUDT_old;
+   CCData *DUDT_old;
    
    // A flag to indicate whether to evaluate the odes with the values
    // of u at time 't'. These values are kept constant during Newton's

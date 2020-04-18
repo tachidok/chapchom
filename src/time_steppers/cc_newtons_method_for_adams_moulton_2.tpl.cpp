@@ -40,7 +40,7 @@ namespace chapchom
   // Get the current time
   const Real t = this->current_time();
   // Get the u values
-  CCData<Real> *u_pt = this->u_pt();
+  CCData *u_pt = this->u_pt();
   // Get the index of the history values at time 't+h'
   const unsigned k = this->history_index();
   // Set the data for the computation of the jacobian and the residual

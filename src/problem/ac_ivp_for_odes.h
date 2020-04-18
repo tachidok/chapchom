@@ -29,7 +29,7 @@ namespace chapchom
   virtual ~ACIVPForODEs();
   
   /// Get access to the U vector
-  CCData<Real> *u_pt() const {return U_pt;}
+  CCData *u_pt() const {return U_pt;}
   
   /// Read-only access to the vector U values
   inline const Real u(const unsigned i, const unsigned t = 0) const {return U_pt->value(i,t);}
@@ -98,7 +98,7 @@ namespace chapchom
   
   /// The storage for the approximated solution of the time integration
   /// of the ODEs
-  CCData<Real> *U_pt;
+  CCData *U_pt;
   
  };
  

@@ -35,7 +35,7 @@ namespace chapchom
   /// to the time "t+h". The values of u at time t+h will be stored at
   /// index k (default k = 0).
   void time_step(ACODEs &odes, const Real h, const Real t,
-                 CCData<Real> &u, const unsigned k = 0);
+                 CCData &u, const unsigned k = 0);
   
   /// Resets the time stepper to its initial state. For the BDF 2
   /// method we require to re-enable the computation of the initial

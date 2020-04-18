@@ -68,7 +68,7 @@ public:
  
  /// Evaluates the system of odes at time 't', using the history
  /// values of u at index k
- void evaluate_derivatives(const Real t, CCData<Real> &u, CCData<Real> &dudt, const unsigned k = 0)
+ void evaluate_derivatives(const Real t, CCData &u, CCData &dudt, const unsigned k = 0)
  {
   // \frac{du}{dt} = -u^{2}
   dudt(0) = -(u(0,k)*u(0,k));
@@ -134,7 +134,7 @@ public:
   ACODEs *odes_pt = this->odes_pt();
   
   // Get a pointer to the u values
-  CCData<Real> *u_pt = this->u_pt();
+  CCData *u_pt = this->u_pt();
   
   // Check whether the data for the computation of the jacobian has
   // been set

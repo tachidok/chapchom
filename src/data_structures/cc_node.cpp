@@ -1,7 +1,7 @@
-// IN THIS FILE: Implementation of a concrete class to represent
-// data. This is the simplest implementation
+/// IN THIS FILE: Implementation of a concrete class to represent
+/// nodes. This is the simplest implementation
 
-#include "cc_node.tpl.h"
+#include "cc_node.h"
 
 namespace chapchom
 {
@@ -9,9 +9,8 @@ namespace chapchom
  /// ===================================================================
  /// Empty constructor
  /// ===================================================================
- template<class T>
- CCNode<T>::CCNode(const unsigned dimension, const unsigned n_variables,
-                   const unsigned n_history_values)
+ CCNode::CCNode(const unsigned dimension, const unsigned n_variables,
+                const unsigned n_history_values)
   : Dimension(dimension), N_variables(n_variables),
     N_history_values(n_history_values), X(Dimension, N_history_values),
     U(N_variables, N_history_values)
@@ -20,17 +19,15 @@ namespace chapchom
  /// ===================================================================
  /// Empty destructor
  /// ===================================================================
- template<class T>
- CCNode<T>::~CCNode()
+ CCNode::~CCNode()
  { }
  
  /// ===================================================================
  /// Output the data stored at the node (output horizontally without
  /// position by default, otherwise output vertically with position)
  /// ===================================================================
- template<class T>
- void CCNode<T>::output(bool output_position,
-                        const unsigned t) const
+ void CCNode::output(bool output_position,
+                     const unsigned t) const
  {
   // Check whether we should output positions
   if (output_position)
@@ -53,8 +50,7 @@ namespace chapchom
  /// without position by default, otherwise output vertically with
  /// position)
  /// ===================================================================
- template<class T>
- void CCNode<T>::output(std::ofstream &outfile,
+ void CCNode::output(std::ofstream &outfile,
                         bool output_position,
                         const unsigned t) const
  {
