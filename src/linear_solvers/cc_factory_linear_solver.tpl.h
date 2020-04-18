@@ -25,7 +25,7 @@ namespace chapchom
   virtual ~CCFactoryLinearSolver();
   
   /// Returns the specified linear solver
-  ACLinearSolver* create_linear_solver(std::string linear_solver_name);
+  ACLinearSolver<MAT_TYPE, VEC_TYPE>* create_linear_solver(std::string linear_solver_name);
   
  protected:
   

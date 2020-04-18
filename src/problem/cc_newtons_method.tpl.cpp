@@ -196,9 +196,9 @@ namespace chapchom
   
   // Create the linear solver
 #ifdef CHAPCHOM_USES_ARMADILLO
-  Linear_solver_pt = factory_linear_solver.create_linear_solver("numerical_recipes");
-#else
   Linear_solver_pt = factory_linear_solver.create_linear_solver("armadillo");
+#else
+  Linear_solver_pt = factory_linear_solver.create_linear_solver("numerical_recipes");
 #endif
   
   // Set linear solver for Newton's method
