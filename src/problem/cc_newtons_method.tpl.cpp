@@ -58,7 +58,7 @@ namespace chapchom
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
  void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::
- set_linear_solver(ACLinearSolver<MAT_TYPE, VEC_TYPE> *linear_solver_pt)
+ set_linear_solver(ACLinearSolver *linear_solver_pt)
  {
   // Free memory for previous linear solver
   clean_up();
@@ -102,7 +102,7 @@ namespace chapchom
  /// Gets access to the linear solver
  // ===================================================================
  template<class MAT_TYPE, class VEC_TYPE>
- ACLinearSolver<MAT_TYPE, VEC_TYPE> *CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::linear_solver_pt()
+ ACLinearSolver *CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::linear_solver_pt()
  {
   if (Linear_solver_pt != NULL && Linear_solver_has_been_set)
    {
@@ -192,7 +192,10 @@ namespace chapchom
   clean_up();
   
   // Create a factor for the linear solver
-  CCFactoryLinearSolver<MAT_TYPE, VEC_TYPE> factory_linear_solver;
+  CCFactoryLinearSolver factory_linear_solver;
+  
+  // TODO JCPS Check whether we really need this ifdef, what happens
+  // if by default we always create the numerical recipes solver?????
   
   // Create the linear solver
 #ifdef CHAPCHOM_USES_ARMADILLO

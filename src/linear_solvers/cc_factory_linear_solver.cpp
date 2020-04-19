@@ -1,4 +1,7 @@
-#include "cc_factory_linear_solver.tpl.h"
+/// IN THIS FILE: The implementation of the factory for the creation
+/// of linear solvers
+
+#include "cc_factory_linear_solver.h"
 
 namespace chapchom
 {
@@ -6,8 +9,7 @@ namespace chapchom
  // ===================================================================
  // Empty constructor
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- CCFactoryLinearSolver<MAT_TYPE,VEC_TYPE>::CCFactoryLinearSolver()
+ CCFactoryLinearSolver::CCFactoryLinearSolver()
  {
   
  }
@@ -15,18 +17,15 @@ namespace chapchom
  // ===================================================================
  // Empty destructor
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- CCFactoryLinearSolver<MAT_TYPE,VEC_TYPE>::~CCFactoryLinearSolver()
+ CCFactoryLinearSolver::~CCFactoryLinearSolver()
  { 
-
+  
  }
-
+ 
  // ===================================================================
  // Returns the specified linear solver
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- ACLinearSolver<MAT_TYPE,VEC_TYPE>* CCFactoryLinearSolver<MAT_TYPE,VEC_TYPE>::
- create_linear_solver(std::string linear_solver_name)
+ ACLinearSolver* CCFactoryLinearSolver::create_linear_solver(std::string linear_solver_name)
  {
   // Get the string and change it to lower case 
   std::transform(linear_solver_name.begin(), linear_solver_name.end(),
@@ -35,19 +34,16 @@ namespace chapchom
   // ------------------------------------------------------
   // Check what linear solver we need to create
   // ------------------------------------------------------
-#ifdef CHAPCHOM_USES_ARMADILLO
   // Linear solver from Armadillo
   if (linear_solver_name.compare("armadillo")==0)
    {
-    return new CCSolverArmadillo<Real>();
+    return new CCSolverArmadillo();
    }
-#else
   // LU solver from numerical recipes
   else if (linear_solver_name.compare("numerical_recipes")==0)
    {
-    return new CCLUSolverNumericalRecipes<Real>();
+    return new CCLUSolverNumericalRecipes();
    }
-#endif
   else
    {
     std::ostringstream error_message;
@@ -63,6 +59,6 @@ namespace chapchom
    }
   
  }
-
+ 
 }
 

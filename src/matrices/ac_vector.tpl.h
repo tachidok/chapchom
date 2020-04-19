@@ -1,6 +1,6 @@
-// IN THIS FILE: The definition of an abstract class to store and work
-// with vectors. Most of the vectors implemented in this library use
-// this class as the base class
+/// IN THIS FILE: The definition of an abstract class to store and work
+/// with vectors. Most of the vectors implemented in this library use
+/// this class as the base class
 
 // Check whether the class has been already defined
 #ifndef ACVECTOR_TPL_H
@@ -8,6 +8,11 @@
 
 #include "../general/common_includes.h"
 #include "../general/utilities.h"
+
+#ifdef CHAPCHOM_USES_ARMADILLO
+// Add Armadillo's includes (only for the arma_vector methods)
+#include <armadillo>
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
 
 namespace chapchom
 {
@@ -136,6 +141,33 @@ namespace chapchom
    
    // Computes the minimum value
    virtual T min() = 0;
+   
+   // Get access to the Vector_pt
+   virtual T *vector_pt() const
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "Virtual function to resolve vector pointer, should be\n"
+                  << "implemented in derived class" << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+   
+#ifdef CHAPCHOM_USES_ARMADILLO
+   // Get access to the Armadillo's vector
+   virtual arma::Mat<T> *arma_vector_pt() const
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "Virtual function to resolve armadillo vector pointer, should be\n"
+                  << "implemented in derived class if you want to use the armadillo solver\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
    
   protected:
    

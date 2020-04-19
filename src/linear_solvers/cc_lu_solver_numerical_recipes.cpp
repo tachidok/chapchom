@@ -1,97 +1,89 @@
-// IN THIS FILE: Implementation of a concrete class to solve systems
-// of equations by LU decomposition. This class calls the methods
-// ludcmp() and lubksb() from numerical recipes to perform the LU
-// decomposition and back-substitution, respectively.
+/// IN THIS FILE: Implementation of a concrete class to solve systems
+/// of equations by LU decomposition. This class calls the methods
+/// ludcmp() and lubksb() from numerical recipes to perform the LU
+/// decomposition and back-substitution, respectively.
 
-#include "cc_lu_solver_numerical_recipes.tpl.h"
+#include "cc_lu_solver_numerical_recipes.h"
 
 namespace chapchom
 {
-
+ 
  // ===================================================================
- // Empty constructor
+ /// Empty constructor
  // ===================================================================
- template<class T>
- CCLUSolverNumericalRecipes<T>::CCLUSolverNumericalRecipes()
-  : ACLinearSolver<CCMatrix<T>, CCVector<T> >(),
-  Resolve_enabled(false) { }
-
+ CCLUSolverNumericalRecipes::CCLUSolverNumericalRecipes()
+  : ACLinearSolver(), Resolve_enabled(false) { }
+ 
  // ===================================================================
- // Constructor where we specify the matrix A of size m X n
+ /// Constructor where we specify the matrix A of size m X n
  // ===================================================================
- template<class T>
- CCLUSolverNumericalRecipes<T>::CCLUSolverNumericalRecipes(const CCMatrix<T> &A)
-  : ACLinearSolver<CCMatrix<T>, CCVector<T> >(A),
-  Resolve_enabled(false) { }
-
+ CCLUSolverNumericalRecipes::CCLUSolverNumericalRecipes(ACMatrix<Real> *const A_mat_pt)
+  : ACLinearSolver(A_mat_pt), Resolve_enabled(false) { }
+ 
  // ===================================================================
- // Empty destructor
+ /// Empty destructor
  // ===================================================================
- template<class T>
- CCLUSolverNumericalRecipes<T>::~CCLUSolverNumericalRecipes() { }
-
+ CCLUSolverNumericalRecipes::~CCLUSolverNumericalRecipes() { }
+ 
  // ===================================================================
- // Solves a system of equations with input A_mat. We specify the
- // right-hand side B and the X matrices where the results are
- // returned. We assume that the input/output matrices have the
- // correct dimensions: A_mat.n_columns() x A_mat.n_rows() for B, and
- // A_mat.n_rows() x A_mat.n_columns() for X.
+ /// Solves a system of equations with input A_mat. We specify the
+ /// right-hand side B and the X matrices where the results are
+ /// returned. We assume that the input/output matrices have the
+ /// correct dimensions: A_mat.n_columns() x A_mat.n_rows() for B, and
+ /// A_mat.n_rows() x A_mat.n_columns() for X.
  // ===================================================================
- template<class T>
- void CCLUSolverNumericalRecipes<T>::solve(const CCMatrix<T> &A_mat,
-                                           const CCMatrix<T> &B,
-                                           CCMatrix<T> &X)
+ void CCLUSolverNumericalRecipes::solve(ACMatrix<Real> *const A_mat_pt,
+                                        const ACMatrix<Real> *const B_pt,
+                                        ACMatrix<Real> *const X_pt)
  {
   // Set the matrix and its size
-  this->set_matrix_A(A_mat);
+  set_matrix_A(A_mat_pt);
   
   // Solve
-  solve(B, X);
+  solve(B_pt, X_pt);
   
- }
-
- // ===================================================================
- // Solves a system of equations with input A_mat. We specify the
- // right-hand side b and the x vector where the result is
- // returned. We assume that the input/output vectors have the correct
- // dimensions: A_mat.n_columns() for b, and A_mat.n_rows() for x.
- // ===================================================================
- template<class T>
- void CCLUSolverNumericalRecipes<T>::solve(const CCMatrix<T> &A_mat,
-                                           const CCVector<T> &b,
-                                           CCVector<T> &x)
- {
-  // Set the matrix and its size
-  this->set_matrix_A(A_mat);
-  
-  // Solve
-  solve(b, x);
  }
  
  // ===================================================================
- // Solve a system of equations with the already stored matrix A. We
- // specify the right-hand side B and the X matrices where the results
- // are returned. We assume that the input/output matrices have the
- // correct dimensions: A.n_columns() x A.n_rows() for B, and A.n_rows()
- // x A.n_columns() for X.
+ /// Solves a system of equations with input A_mat. We specify the
+ /// right-hand side b and the x vector where the result is
+ /// returned. We assume that the input/output vectors have the correct
+ /// dimensions: A_mat.n_columns() for b, and A_mat.n_rows() for x.
  // ===================================================================
- template<class T>
- void CCLUSolverNumericalRecipes<T>::solve(const CCMatrix<T> &B,
-                                           CCMatrix<T> &X)
+ void CCLUSolverNumericalRecipes::solve(ACMatrix<Real> *const A_mat_pt,
+                                        const ACVector<Real> *const b_pt,
+                                        ACVector<Real> *const x_pt)
+ {
+  // Set the matrix and its size
+  set_matrix_A(A_mat_pt);
+  
+  // Solve
+  solve(b_pt, x_pt);
+ }
+ 
+ // ===================================================================
+ /// Solve a system of equations with the already stored matrix A. We
+ /// specify the right-hand side B and the X matrices where the results
+ /// are returned. We assume that the input/output matrices have the
+ /// correct dimensions: A.n_columns() x A.n_rows() for B, and A.n_rows()
+ /// x A.n_columns() for X.
+ // ===================================================================
+ void CCLUSolverNumericalRecipes::solve(const ACMatrix<Real> *const B_pt,
+                                        ACMatrix<Real> *const X_pt)
  {
   // We can only call solve if the matrix A has been set
   if (this->Matrix_A_has_been_set)
    {
     // Check correct size of the matrix, right hand side and solution
     // vector    
-    if (this->A.n_columns() != B.n_rows())
+    if (this->A_pt->n_columns() != B_pt->n_rows())
      {
       // Error message
       std::ostringstream error_message;
       error_message << "The number of columns of the matrix and the number "
                     << "of rows of the rhs matrix are not the same:\n"
-                    << "A.n_columns() = (" << this->A.n_columns() << ")\n"
-                    << "B.n_rows() = (" << B.n_rows() << ")\n" << std::endl;
+                    << "A_pt->n_columns() = (" << this->A_pt->n_columns() << ")\n"
+                    << "B_pt->n_rows() = (" << B_pt->n_rows() << ")\n" << std::endl;
       throw ChapchomLibError(error_message.str(),
                              CHAPCHOM_CURRENT_FUNCTION,
                              CHAPCHOM_EXCEPTION_LOCATION);
@@ -99,34 +91,34 @@ namespace chapchom
     
     // Check whether the solution matrix has allocated memory,
     // otherwise allocate it here!!!
-    if (!X.is_own_memory_allocated())
+    if (!X_pt->is_own_memory_allocated())
      {
       // Allocate memory
-      X.allocate_memory(this->A.n_rows(), B.n_columns());
+      X_pt->allocate_memory(this->A_pt->n_rows(), B_pt->n_columns());
      }
     else
      {
-      if (this->A.n_rows() != X.n_rows())
+      if (this->A_pt->n_rows() != X_pt->n_rows())
        {
         // Error message
         std::ostringstream error_message;
         error_message << "The number of rows of the matrix and the number "
                       << "of rows of the solution matrix are not the same:\n"
-                      << "A.n_rows() = (" << this->A.n_rows() << ")\n"
-                      << "X.n_rows() = (" << X.n_rows() << ")\n" << std::endl;
+                      << "A_pt->n_rows() = (" << this->A_pt->n_rows() << ")\n"
+                      << "X_pt->n_rows() = (" << X_pt->n_rows() << ")\n" << std::endl;
         throw ChapchomLibError(error_message.str(),
                                CHAPCHOM_CURRENT_FUNCTION,
                                CHAPCHOM_EXCEPTION_LOCATION);
        }
       
-      if (B.n_columns() != X.n_columns())
+      if (B_pt->n_columns() != X_pt->n_columns())
        {
         // Error message
         std::ostringstream error_message;
         error_message << "The number of columns of the rhs matrix and the number"
                       << "of columns of the solution matrix are not the same:\n"
-                      << "n_rhs = (" << B.n_columns() << ")\n"
-                      << "X.n_columns() = (" << X.n_columns() << ")\n"
+                      << "n_rhs = (" << B_pt->n_columns() << ")\n"
+                      << "X_pt->n_columns() = (" << X_pt->n_columns() << ")\n"
                       << std::endl;
         throw ChapchomLibError(error_message.str(),
                                CHAPCHOM_CURRENT_FUNCTION,
@@ -142,7 +134,7 @@ namespace chapchom
     factorise();
    
     // ... and do back substitution
-    back_substitution(B, X);
+    back_substitution(B_pt, X_pt);
     
    }
   else
@@ -162,35 +154,34 @@ namespace chapchom
  }
  
  // ===================================================================
- // Solve a system of equations with the already stored matrix A. We
- // specify the right-hand side b and the x vectors where the result
- // is returned. We assume that the input/output vectors have the
- // correct dimensions: A.n_columns() for b, and A.n_rows() for x.
+ /// Solve a system of equations with the already stored matrix A. We
+ /// specify the right-hand side b and the x vectors where the result
+ /// is returned. We assume that the input/output vectors have the
+ /// correct dimensions: A.n_columns() for b, and A.n_rows() for x.
  // ===================================================================
- template<class T>
- void CCLUSolverNumericalRecipes<T>::solve(const CCVector<T> &b,
-                                           CCVector<T> &x)
+ void CCLUSolverNumericalRecipes::solve(const ACVector<Real> *const b_pt,
+                                        ACVector<Real> *const x_pt)
  {
   // We can only call solve if the matrix A has been set
   if (this->Matrix_A_has_been_set)
    {
     // Check correct size of the matrix, right hand side and solution
     // vector
-    if (this->A.n_columns() != b.n_values())
+    if (this->A_pt->n_columns() != b_pt->n_values())
      {
       // Error message
       std::ostringstream error_message;
       error_message << "The number of columns of the matrix and the number "
                     << "of rows of the rhs vector are not the same:\n"
-                    << "A.n_columns() = (" << this->A.n_columns() << ")\n"
-                    << "b.n_values() = (" << b.n_values() << ")\n" << std::endl;
+                    << "A_pt->n_columns() = (" << this->A_pt->n_columns() << ")\n"
+                    << "b_pt->n_values() = (" << b_pt->n_values() << ")\n" << std::endl;
       throw ChapchomLibError(error_message.str(),
                              CHAPCHOM_CURRENT_FUNCTION,
                              CHAPCHOM_EXCEPTION_LOCATION);
      }
     
     // Check whether the solution vector is a column vector
-    if (!x.is_column_vector())
+    if (!x_pt->is_column_vector())
      {
       // Error message
       std::ostringstream error_message;
@@ -203,24 +194,24 @@ namespace chapchom
     
     // Check whether the solution matrix has allocated memory,
     // otherwise allocate it here!!!
-    if (!x.is_own_memory_allocated())
+    if (!x_pt->is_own_memory_allocated())
      {
       // Allocate memory
-      x.allocate_memory(this->A.n_rows());
+      x_pt->allocate_memory(this->A_pt->n_rows());
      }
     else
      {
-      if (this->A.n_rows() != x.n_values())
+      if (this->A_pt->n_rows() != x_pt->n_values())
        {
         // Error message
         std::ostringstream error_message;
         error_message << "The number of rows of the matrix and the number "
                       << "of rows of the solution vector are not the same:\n"
-                      << "A.n_rows() = (" << this->A.n_rows() << ")\n"
-                      << "x.n_values() = (" << x.n_values() << ")\n" << std::endl;
+                      << "A_pt->n_rows() = (" << this->A_pt->n_rows() << ")\n"
+                      << "x_pt->n_values() = (" << x_pt->n_values() << ")\n" << std::endl;
         throw ChapchomLibError(error_message.str(),
                                CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+                               CHAPCHOM_EXCEPTION_LOCATION);
        }
       
      }
@@ -229,7 +220,7 @@ namespace chapchom
     factorise();
     
     // ... and do back substitution
-    back_substitution(b, x);
+    back_substitution(b_pt, x_pt);
     
    }
   else
@@ -249,49 +240,48 @@ namespace chapchom
  }
  
  // ===================================================================
- // Re-solve a system of equations with the already stored matrix
- // A. Reusing the LU decomposition. We specify the right-hand side B
- // and the X matrices where the results are returned. We assume that
- // the input/output vectors have the correct dimensions: A.n_columns()
- // x A.n_rows() for B, and A.n_rows() x A.n_columns() for X.
+ /// Re-solve a system of equations with the already stored matrix
+ /// A. Reusing the LU decomposition. We specify the right-hand side B
+ /// and the X matrices where the results are returned. We assume that
+ /// the input/output vectors have the correct dimensions: A.n_columns()
+ /// x A.n_rows() for B, and A.n_rows() x A.n_columns() for X.
  // ===================================================================
- template<class T>
- void CCLUSolverNumericalRecipes<T>::resolve(const CCMatrix<T> &B,
-                                             CCMatrix<T> &X)
+ void CCLUSolverNumericalRecipes::resolve(const ACMatrix<Real> *const B_pt,
+                                          ACMatrix<Real> *const X_pt)
  {
   // We can only do back-substitution if a matrix has been factorised
   if (Resolve_enabled)
    {
     // Check whether the solution matrix has allocated memory,
     // otherwise allocate it here!!!
-    if (!X.is_own_memory_allocated())
+    if (!X_pt->is_own_memory_allocated())
      {
       // Allocate memory
-      X.allocate_memory(this->A.n_rows(), B.n_columns());
+      X_pt->allocate_memory(this->A_pt->n_rows(), B_pt->n_columns());
      }
     else
      {
-      if (this->A.n_rows() != X.n_rows())
+      if (this->A_pt->n_rows() != X_pt->n_rows())
        {
         // Error message
         std::ostringstream error_message;
         error_message << "The number of rows of the matrix and the number "
                       << "of rows of the solution matrix are not the same:\n"
-                      << "A.n_rows() = (" << this->A.n_rows() << ")\n"
-                      << "X.n_rows() = (" << X.n_rows() << ")\n" << std::endl;
+                      << "A_pt->n_rows() = (" << this->A_pt->n_rows() << ")\n"
+                      << "X_pt->n_rows() = (" << X_pt->n_rows() << ")\n" << std::endl;
         throw ChapchomLibError(error_message.str(),
                                CHAPCHOM_CURRENT_FUNCTION,
                                CHAPCHOM_EXCEPTION_LOCATION);
        }
       
-      if (B.n_columns() != X.n_columns())
+      if (B_pt->n_columns() != X_pt->n_columns())
        {
         // Error message
         std::ostringstream error_message;
         error_message << "The number of columns of the rhs matrix and the number"
                       << "of columns of the solution matrix are not the same:\n"
-                      << "n_rhs = (" << B.n_columns() << ")\n"
-                      << "X.n_columns() = (" << X.n_columns() << ")\n"
+                      << "n_rhs = (" << B_pt->n_columns() << ")\n"
+                      << "X_pt->n_columns() = (" << X_pt->n_columns() << ")\n"
                       << std::endl;
         throw ChapchomLibError(error_message.str(),
                                CHAPCHOM_CURRENT_FUNCTION,
@@ -301,7 +291,7 @@ namespace chapchom
      }
     
     // Do the back substitution
-    back_substitution(B, X);
+    back_substitution(B_pt, X_pt);
     
    }
   else
@@ -315,25 +305,24 @@ namespace chapchom
    }
   
  }
-
+ 
  // ===================================================================
- // Re-solve a system of equations with the already stored matrix A
- // (re-use of the LU decomposition or call the solve method for an
- // iterative solver). BROKEN beacuse iterative solvers may not
- // implement it. We specify the right-hand side b and the x vector
- // where the result is returned. We assume that the input/output
- // vectors have the correct dimensions: A.n_columns() for b, and
- // A.n_rows() for x.
+ /// Re-solve a system of equations with the already stored matrix A
+ /// (re-use of the LU decomposition or call the solve method for an
+ /// iterative solver). BROKEN beacuse iterative solvers may not
+ /// implement it. We specify the right-hand side b and the x vector
+ /// where the result is returned. We assume that the input/output
+ /// vectors have the correct dimensions: A.n_columns() for b, and
+ /// A.n_rows() for x.
  // ===================================================================
- template<class T>
- void CCLUSolverNumericalRecipes<T>::resolve(const CCVector<T> &b,
-                                             CCVector<T> &x)
+ void CCLUSolverNumericalRecipes::resolve(const ACVector<Real> *const b_pt,
+                                          ACVector<Real> *const x_pt)
  {
   // We can only do back-substitution if a matrix has been factorised
   if (Resolve_enabled)
    {
     // Check whether the solution vector is a column vector
-    if (!x.is_column_vector())
+    if (!x_pt->is_column_vector())
      {
       // Error message
       std::ostringstream error_message;
@@ -346,30 +335,30 @@ namespace chapchom
     
     // Check whether the solution matrix has allocated memory,
     // otherwise allocate it here!!!
-    if (!x.is_own_memory_allocated())
+    if (!x_pt->is_own_memory_allocated())
      {
       // Allocate memory
-      x.allocate_memory(this->A.n_rows());
+      x_pt->allocate_memory(this->A_pt->n_rows());
      }
     else
      {
-      if (this->A.n_rows() != x.n_values())
+      if (this->A_pt->n_rows() != x_pt->n_values())
        {
         // Error message
         std::ostringstream error_message;
         error_message << "The number of rows of the matrix and the number "
                       << "of rows of the solution vector are not the same:\n"
-                      << "A.n_rows() = (" << this->A.n_rows() << ")\n"
-                      << "x.n_values() = (" << x.n_values() << ")\n" << std::endl;
+                      << "A_pt->n_rows() = (" << this->A_pt->n_rows() << ")\n"
+                      << "x_pt->n_values() = (" << x_pt->n_values() << ")\n" << std::endl;
         throw ChapchomLibError(error_message.str(),
                                CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+                               CHAPCHOM_EXCEPTION_LOCATION);
        }
 
      }
     
     // Do the back substitution
-    back_substitution(b, x);
+    back_substitution(b_pt, x_pt);
     
    }
   else
@@ -385,34 +374,32 @@ namespace chapchom
  }
  
  // ===================================================================
- // Performs LU factorisation of the input matrix, the factorisation is
- // internally stored such that it can be re-used when calling resolve
+ /// Performs LU factorisation of the input matrix, the factorisation is
+ /// internally stored such that it can be re-used when calling resolve
  // ===================================================================
- template<class T>
- void CCLUSolverNumericalRecipes<T>::factorise(const CCMatrix<T> &A_mat)
+ void CCLUSolverNumericalRecipes::factorise(ACMatrix<Real> *const A_mat_pt)
  {
   // Set the matrix and its size
-  set_matrix_A(A_mat);
- 
+  set_matrix_A(A_mat_pt);
+  
   // Factorise
   factorise();
- 
+  
  }
  
  // ===================================================================
- // Performs LU factorisation of already stored matrix A, the
- // factorisation is internally stored such that it can be re-used when
- // calling resolve
+ /// Performs LU factorisation of already stored matrix A, the
+ /// factorisation is internally stored such that it can be re-used when
+ /// calling resolve
  // ===================================================================
- template<class T>
- void CCLUSolverNumericalRecipes<T>::factorise()
+ void CCLUSolverNumericalRecipes::factorise()
  {
   // Prepare the matrix to call ludcmp() from Numerical Recipes
  
   // Check that we are working with an square matrix, otherwise this
   // will not work
-  const unsigned long n_rows = this->A.n_rows();
-  const unsigned long n_columns = this->A.n_columns();
+  const unsigned long n_rows = this->A_pt->n_rows();
+  const unsigned long n_columns = this->A_pt->n_columns();
   if (n_rows!=n_columns)
    {
     // Error message
@@ -427,7 +414,7 @@ namespace chapchom
   
   // The matrix used as input and output, after calling ludcmp it has
   // the LU factorisation
-  lu_a = new Mat_DP(this->A.matrix_pt(), n_rows, n_columns);
+  lu_a = new Mat_DP(this->A_pt->matrix_pt(), n_rows, n_columns);
   
   // Output vector of size n x 1 that records the row permutations
   // performed by partial pivoting.
@@ -443,7 +430,7 @@ namespace chapchom
    {
     for (unsigned j = 0; j < ncolumns; j++)
      {
-      *(*(lu_a)[i])[j] = this->A(i,j);
+      *(*(lu_a)[i])[j] = this->(*A_pt)(i,j);
      }
    }
 #endif // #if 0
@@ -454,24 +441,23 @@ namespace chapchom
   // Set the flag to indicate that resolve is enabled since we have
   // computed the LU decomposition
   Resolve_enabled = true; 
- 
+  
  }
-
+ 
  // ===================================================================
- // Performs the back substitution with the LU decomposed matrix
+ /// Performs the back substitution with the LU decomposed matrix
  // ===================================================================
- template<class T>
- void CCLUSolverNumericalRecipes<T>::back_substitution(const CCMatrix<T> &B,
-                                                       CCMatrix<T> &X_output)
+ void CCLUSolverNumericalRecipes::back_substitution(const ACMatrix<Real> *const B_pt,
+                                                    ACMatrix<Real> *const X_output_pt)
  {
   // Prepare the data to call lubksb()
   
   // The size of the right-hand side
-  const unsigned n_rows = B.n_rows();
+  const unsigned n_rows = B_pt->n_rows();
   
   // Number of right hand sizes (same as the number of output
   // X-vectors)
-  const unsigned n_rhs = B.n_columns();
+  const unsigned n_rhs = B_pt->n_columns();
   
   // The solution vector size n x 1 (Numerical Recipes definition)
   Vec_DP x(n_rows);
@@ -481,7 +467,7 @@ namespace chapchom
    {
     for (unsigned i = 0; i < n_rows; i++)
      {
-      x[i] = B(i,j);
+      x[i] = (*B_pt)(i,j);
      }
    
     // Back-substitution
@@ -490,24 +476,23 @@ namespace chapchom
     // Copy the solution into the output vector
     for (unsigned i = 0; i < n_rows; i++)
      {
-      X_output(i, j) =  x[i];
+      (*X_output_pt)(i, j) =  x[i];
      }
-   
+    
    }
- 
+  
  }
-
+ 
  // ===================================================================
- // Performs the back substitution with the LU decomposed matrix
+ /// Performs the back substitution with the LU decomposed matrix
  // ===================================================================
- template<class T>
- void CCLUSolverNumericalRecipes<T>::back_substitution(const CCVector<T> &b,
-                                                       CCVector<T> &x_output)
+ void CCLUSolverNumericalRecipes::back_substitution(const ACVector<Real> *const b_pt,
+                                                    ACVector<Real> *const x_output_pt)
  {
   // Prepare the data to call lubksb()
   
   // The size of the right-hand side
-  const unsigned n_rows = b.n_values();
+  const unsigned n_rows = b_pt->n_values();
   
   // The solution vector size n x 1 (Numerical Recipes definition)
   Vec_DP x(n_rows);
@@ -515,7 +500,7 @@ namespace chapchom
   // Copy the right-hand side into the solution vector
   for (unsigned i = 0; i < n_rows; i++)
    {
-    x[i] = b(i);
+    x[i] = (*b_pt)(i);
    }
    
   // Back-substitution
@@ -524,7 +509,7 @@ namespace chapchom
   // Copy the solution into the output vector
   for (unsigned i = 0; i < n_rows; i++)
    {
-    x_output(i) =  x[i];
+    (*x_output_pt)(i) =  x[i];
    }
   
  }

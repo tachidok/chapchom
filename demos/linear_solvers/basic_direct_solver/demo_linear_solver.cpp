@@ -10,6 +10,10 @@
 // implementation
 #include "../../../src/linear_solvers/cc_lu_solver_numerical_recipes.h"
 
+// The class for matrices and vectors
+#include "../../../src/matrices/cc_vector.h"
+#include "../../../src/matrices/cc_matrix.h"
+
 using namespace chapchom;
 
 int main(int argc, char *argv[])
@@ -71,14 +75,14 @@ int main(int argc, char *argv[])
   output_test << std::endl;
   
   // Create a linear solver
-  CCLUSolverNumericalRecipes<Real> linear_solver;
+  CCLUSolverNumericalRecipes linear_solver;
   
   // The solution vector (with the corresponding number of rows, that
   // in this case refers to the number of cols as well)
   CCVector<Real> sol(n_cols);
   
   // Solve the system of equations
-  linear_solver.solve(A, b, sol);
+  linear_solver.solve(&A, &b, &sol);
   
   // Print the solution
   std::cout << std::endl;
@@ -154,13 +158,13 @@ int main(int argc, char *argv[])
   output_test << std::endl;
   
   // Create a linear solver
-  CCLUSolverNumericalRecipes<Real> linear_solver;
+  CCLUSolverNumericalRecipes linear_solver;
   
   // The solution vector
   CCMatrix<Real> SOL(A.n_rows(), B.n_columns());
   
   // Solve the system of equations
-  linear_solver.solve(A, B, SOL);
+  linear_solver.solve(&A, &B, &SOL);
   
   // Print the solution
   std::cout << std::endl;

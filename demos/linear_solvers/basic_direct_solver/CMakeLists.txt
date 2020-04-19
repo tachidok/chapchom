@@ -9,7 +9,7 @@ ELSE(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
 ENDIF(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
 
 # Indicate linking libraries
-SET(LIB_demo_linear_solver numerical_recipes_lib general_lib matrices_lib linear_solvers_lib)
+SET(LIB_demo_linear_solver general_lib matrices_lib linear_solvers_lib numerical_recipes_lib)
 # ... and link againts them  
 TARGET_LINK_LIBRARIES(demo_linear_solver ${LIB_demo_linear_solver})
 

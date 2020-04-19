@@ -9,6 +9,11 @@
 #include "../general/common_includes.h"
 #include "../general/utilities.h"
 
+#ifdef CHAPCHOM_USES_ARMADILLO
+// Add Armadillo's includes (only for the arma_matrix_pt() method)
+#include <armadillo>
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+
 namespace chapchom
 {
  
@@ -124,6 +129,31 @@ namespace chapchom
    
    // Disables the deletion of the matrix by itself
    inline void disable_delete_matrix() {Delete_matrix=false;}
+   
+   // Get access to the Matrix_pt
+   virtual T *matrix_pt() const
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "Virtual function to resolve matrix pointer, should be\n"
+                  << "implemented in derived class" << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
+   
+   // Get access to the Armadillo's matrix
+   virtual arma::Mat<T> *arma_matrix_pt() const
+   {
+    // Error message
+    std::ostringstream error_message;
+    error_message << "Virtual function to resolve armadillo matrix pointer, should be\n"
+                  << "implemented in derived class if you want to use the armadillo solver\n"
+                  << std::endl;
+    throw ChapchomLibError(error_message.str(),
+                           CHAPCHOM_CURRENT_FUNCTION,
+                           CHAPCHOM_EXCEPTION_LOCATION);
+   }
    
   protected:
    

@@ -1,94 +1,88 @@
-// IN THIS FILE: Implementation of the concrete class
-// CCSolverArmadillo to solve systems of equations. This class calls
-// the methods solve() or spsolve() from Armadillo to perform the
-// solution of the system of equations.
+/// IN THIS FILE: Implementation of the concrete class
+/// CCSolverArmadillo to solve systems of equations. This class calls
+/// the methods solve() or spsolve() from Armadillo to perform the
+/// solution of the system of equations.
 
-#include "cc_solver_armadillo.tpl.h"
+#include "cc_solver_armadillo.h"
 
 namespace chapchom
 {
-
+ 
  // ===================================================================
- // Empty constructor
+ /// Empty constructor
  // ===================================================================
- template<class T>
- CCSolverArmadillo<T>::CCSolverArmadillo()
-  : ACLinearSolver<CCMatrixArmadillo<T>, CCVectorArmadillo<T> >()
- { }
-
- // ===================================================================
- // Constructor where we specify the matrix A of size m X n
- // ===================================================================
- template<class T>
- CCSolverArmadillo<T>::CCSolverArmadillo(const CCMatrixArmadillo<T> &A)
-  : ACLinearSolver<CCMatrixArmadillo<T>, CCVectorArmadillo<T> >(A)
+ CCSolverArmadillo::CCSolverArmadillo()
+  : ACLinearSolver()
  { }
  
  // ===================================================================
- // Empty destructor
+ /// Constructor where we specify the matrix A of size m X n
  // ===================================================================
- template<class T>
- CCSolverArmadillo<T>::~CCSolverArmadillo() { }
-
+ CCSolverArmadillo::CCSolverArmadillo(ACMatrix<Real> *const A_mat_pt)
+  : ACLinearSolver(A_mat_pt)
+ { }
+ 
  // ===================================================================
- // Solves a system of equations with input A_mat. We specify the
- // right-hand side B and the X matrices where the results are
- // returned. We assume that the input/output matrices have the
- // correct dimensions: A_mat.n_columns() x A_mat.n_rows() for B, and
- // A_mat.n_rows() x A_mat.n_columns() for X.
+ /// Empty destructor
  // ===================================================================
- template<class T>
- void CCSolverArmadillo<T>::solve(const CCMatrixArmadillo<T> &A_mat,
-                                  const CCMatrixArmadillo<T> &B,
-                                  CCMatrixArmadillo<T> &X)
+ CCSolverArmadillo::~CCSolverArmadillo() { }
+ 
+ // ===================================================================
+ /// Solves a system of equations with input A_mat. We specify the
+ /// right-hand side B and the X matrices where the results are
+ /// returned. We assume that the input/output matrices have the
+ /// correct dimensions: A_mat.n_columns() x A_mat.n_rows() for B, and
+ /// A_mat.n_rows() x A_mat.n_columns() for X.
+ // ===================================================================
+ void CCSolverArmadillo::solve(ACMatrix<Real> *const A_mat_pt,
+                               const ACMatrix<Real> *const B_pt,
+                               ACMatrix<Real> *const X_pt)
  {
   // Set the matrix and its size
-  this->set_matrix_A(A_mat);
+  this->set_matrix_A(A_mat_pt);
   // Call the solving method
-  this->solve(B, X);
+  this->solve(B_pt, X_pt);
  }
  
  // ===================================================================
- // Solves a system of equations with input A_mat. We specify the
- // right-hand side b and the x vector where the result is
- // returned. We assume that the input/output vectors have the correct
- // dimensions: A_mat.n_columns() for b, and A_mat.n_rows() for x.
+ /// Solves a system of equations with input A_mat. We specify the
+ /// right-hand side b and the x vector where the result is
+ /// returned. We assume that the input/output vectors have the correct
+ /// dimensions: A_mat.n_columns() for b, and A_mat.n_rows() for x.
  // ===================================================================
- template<class T>
- void CCSolverArmadillo<T>::solve(const CCMatrixArmadillo<T> &A_mat,
-                                  const CCVectorArmadillo<T> &b,
-                                  CCVectorArmadillo<T> &x)
+ void CCSolverArmadillo::solve(ACMatrix<Real> *const A_mat_pt,
+                               const ACVector<Real> *const b_pt,
+                               ACVector<Real> *const x_pt)
  {
   // Set the matrix and its size
-  this->set_matrix_A(A_mat);
+  this->set_matrix_A(A_mat_pt);
   // Call the solving method
-  this->solve(b, x);
+  this->solve(b_pt, x_pt);
  }
  
  // ===================================================================
- // Solve a system of equations with the already stored matrix A. We
- // specify the right-hand side B and the X matrices where the results
- // are returned. We assume that the input/output matrices have the
- // correct dimensions: A.n_columns() x A.n_rows() for B, and A.n_rows()
- // x A.n_columns() for X.
+ /// Solve a system of equations with the already stored matrix A. We
+ /// specify the right-hand side B and the X matrices where the results
+ /// are returned. We assume that the input/output matrices have the
+ /// correct dimensions: A.n_columns() x A.n_rows() for B, and A.n_rows()
+ /// x A.n_columns() for X.
  // ===================================================================
-  template<class T>
-    void CCSolverArmadillo<T>::solve(const CCMatrixArmadillo<T> &B,
-                                     CCMatrixArmadillo<T> &X)
-  {
-   // We can only call solve if the matrix A has been set
-   if (this->Matrix_A_has_been_set)
-    {
-     // Check correct size of the matrix, right hand side and solution
+ void CCSolverArmadillo::solve(const ACMatrix<Real> *const B_pt,
+                               ACMatrix<Real> *const X_pt)
+ {
+  // We can only call solve if the matrix A has been set
+  if (this->Matrix_A_has_been_set)
+   {
+    // Check correct size of the matrix, right hand side and solution
      // vector    
-     if (this->A.n_columns() != B.n_rows())
+    if (this->A_pt->n_columns() != B_pt->n_rows())
       {
        // Error message
        std::ostringstream error_message;
        error_message << "The number of columns of the matrix and the number "
                      << "of rows of the rhs matrix are not the same:\n"
-                     << "A.n_columns() = (" << this->A.n_columns() << ")\n"
-                     << "B.n_rows() = (" << B.n_rows() << ")\n" << std::endl;
+                     << "A_pt->n_columns() = (" << this->A_pt->n_columns() << ")\n"
+                     << "B_pt->n_rows() = (" << B_pt->n_rows() << ")\n" << std::endl;
        throw ChapchomLibError(error_message.str(),
                               CHAPCHOM_CURRENT_FUNCTION,
                               CHAPCHOM_EXCEPTION_LOCATION);
@@ -96,34 +90,34 @@ namespace chapchom
 
      // Check whether the solution matrix has allocated memory,
      // otherwise allocate it here!!!
-     if (!X.is_own_memory_allocated())
+     if (!X_pt->is_own_memory_allocated())
       {
        // Allocate memory
-       X.allocate_memory(this->A.n_rows(), B.n_columns());
+       X_pt->allocate_memory(this->A_pt->n_rows(), B_pt->n_columns());
       }
      else
       {
-       if (this->A.n_rows() != X.n_rows())
+       if (this->A_pt->n_rows() != X_pt->n_rows())
         {
          // Error message
          std::ostringstream error_message;
          error_message << "The number of rows of the matrix and the number "
                        << "of rows of the solution matrix are not the same:\n"
-                       << "A.n_rows() = (" << this->A.n_rows() << ")\n"
-                       << "X.n_rows() = (" << X.n_rows() << ")\n" << std::endl;
+                       << "A_pt->n_rows() = (" << this->A_pt->n_rows() << ")\n"
+                       << "X_pt->n_rows() = (" << X_pt->n_rows() << ")\n" << std::endl;
          throw ChapchomLibError(error_message.str(),
                                 CHAPCHOM_CURRENT_FUNCTION,
                                 CHAPCHOM_EXCEPTION_LOCATION);
         }
        
-       if (B.n_columns() != X.n_columns())
+       if (B_pt->n_columns() != X_pt->n_columns())
         {
          // Error message
          std::ostringstream error_message;
          error_message << "The number of columns of the rhs matrix and the number\n"
                        << "of columns of the solution matrix are not the same:\n"
-                       << "n_rhs = (" << B.n_columns() << ")\n"
-                       << "X.n_columns() = (" << X.n_columns() << ")\n"
+                       << "n_rhs = (" << B_pt->n_columns() << ")\n"
+                       << "X_pt->n_columns() = (" << X_pt->n_columns() << ")\n"
                        << std::endl;
          throw ChapchomLibError(error_message.str(),
                                 CHAPCHOM_CURRENT_FUNCTION,
@@ -133,9 +127,9 @@ namespace chapchom
       }
      
      // Get pointers to the Armadillo's matrices
-     arma::Mat<T> *arma_A_pt = this->A.arma_matrix_pt();
-     arma::Mat<T> *arma_B_pt = B.arma_matrix_pt();
-     arma::Mat<T> *arma_X_pt = X.arma_matrix_pt();
+     arma::Mat<Real> *arma_A_pt = this->A_pt->arma_matrix_pt();
+     arma::Mat<Real> *arma_B_pt = B_pt->arma_matrix_pt();
+     arma::Mat<Real> *arma_X_pt = X_pt->arma_matrix_pt();
      
      // Solve
      bool could_solve = arma::solve(*arma_X_pt, *arma_A_pt, *arma_B_pt);
@@ -173,23 +167,22 @@ namespace chapchom
                             CHAPCHOM_EXCEPTION_LOCATION);
     }
   
-  }
+ }
  
  // ===================================================================
- // Solve a system of equations with the already stored matrix A. We
- // specify the right-hand side b and the x vectors where the result
- // is returned. We assume that the input/output vectors have the
- // correct dimensions: A.n_columns() for b, and A.n_rows() for x.
+ /// Solve a system of equations with the already stored matrix A. We
+ /// specify the right-hand side b and the x vectors where the result
+ /// is returned. We assume that the input/output vectors have the
+ /// correct dimensions: A.n_columns() for b, and A.n_rows() for x.
  // ===================================================================
- template<class T>
- void CCSolverArmadillo<T>::solve(const CCVectorArmadillo<T> &b,
-                                  CCVectorArmadillo<T> &x)
+ void CCSolverArmadillo::solve(const ACVector<Real> *const b_pt,
+                               ACVector<Real> *const x_pt)
  {
   // We can only call solve if the matrix A has been set
   if (this->Matrix_A_has_been_set)
    {
     // The vectors b and x must be column vectors
-    if (!b.is_column_vector())
+    if (!b_pt->is_column_vector())
      {
       // Error message
       std::ostringstream error_message;
@@ -199,7 +192,7 @@ namespace chapchom
                              CHAPCHOM_EXCEPTION_LOCATION);
      }
     
-    if (!x.is_column_vector())
+    if (!x_pt->is_column_vector())
      {
       // Error message
       std::ostringstream error_message;
@@ -211,14 +204,14 @@ namespace chapchom
     
     // Check correct size of the matrix, right hand side and solution
     // vector
-    if (this->A.n_columns() != b.n_values())
+    if (this->A_pt->n_columns() != b_pt->n_values())
      {
       // Error message
       std::ostringstream error_message;
       error_message << "The number of columns of the matrix and the number "
                     << "of rows of the rhs vector are not the same:\n"
-                    << "A.n_columns() = (" << this->A.n_columns() << ")\n"
-                    << "b.n_values() = (" << b.n_values() << ")\n" << std::endl;
+                    << "A_pt->n_columns() = (" << this->A_pt->n_columns() << ")\n"
+                    << "b_pt->n_values() = (" << b_pt->n_values() << ")\n" << std::endl;
       throw ChapchomLibError(error_message.str(),
                              CHAPCHOM_CURRENT_FUNCTION,
                              CHAPCHOM_EXCEPTION_LOCATION);
@@ -226,21 +219,21 @@ namespace chapchom
     
     // Check whether the solution vector has allocated memory,
     // otherwise allocate it here!!!
-    if (!x.is_own_memory_allocated())
+    if (!x_pt->is_own_memory_allocated())
      {
       // Allocate memory
-      x.allocate_memory(this->A.n_rows());
+      x_pt->allocate_memory(this->A_pt->n_rows());
      }
     else
      {
-      if (this->A.n_rows() != x.n_values())
+      if (this->A_pt->n_rows() != x_pt->n_values())
        {
         // Error message
         std::ostringstream error_message;
         error_message << "The number of rows of the matrix and the number "
                       << "of rows of the solution vector are not the same:\n"
-                      << "A.n_rows() = (" << this->A.n_rows() << ")\n"
-                      << "x.n_values() = (" << x.n_values() << ")\n" << std::endl;
+                      << "A_pt->n_rows() = (" << this->A_pt->n_rows() << ")\n"
+                      << "x_pt->n_values() = (" << x_pt->n_values() << ")\n" << std::endl;
         throw ChapchomLibError(error_message.str(),
                                CHAPCHOM_CURRENT_FUNCTION,
                                CHAPCHOM_EXCEPTION_LOCATION);
@@ -249,9 +242,9 @@ namespace chapchom
      }
     
     // Get pointers to the Armadillo's matrices
-    arma::Mat<T> *arma_A_pt = this->A.arma_matrix_pt();
-    arma::Mat<T> *arma_b_pt = b.arma_vector_pt();
-    arma::Mat<T> *arma_x_pt = x.arma_vector_pt();
+    arma::Mat<Real> *arma_A_pt = this->A_pt->arma_matrix_pt();
+    arma::Mat<Real> *arma_b_pt = b_pt->arma_vector_pt();
+    arma::Mat<Real> *arma_x_pt = x_pt->arma_vector_pt();
     
     // Solve
     bool could_solve = arma::solve(*arma_x_pt, *arma_A_pt, *arma_b_pt);
@@ -292,4 +285,3 @@ namespace chapchom
  }
  
 }
-

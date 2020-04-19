@@ -9,6 +9,10 @@
 // The class to solve linear systems using Armadillo's type matrices
 #include "../../../src/linear_solvers/cc_solver_armadillo.h"
 
+// The class for matrices and vectors
+#include "../../../src/matrices/cc_vector_armadillo.h"
+#include "../../../src/matrices/cc_matrix_armadillo.h"
+
 using namespace chapchom;
 
 int main(int argc, char *argv[])
@@ -71,14 +75,14 @@ int main(int argc, char *argv[])
   output_test << std::endl;
   
   // Create an Armadillo linear solver
-  CCSolverArmadillo<Real> armadillo_linear_solver;
+  CCSolverArmadillo armadillo_linear_solver;
   
   // The solution vector (with the corresponding number of rows, that
   // in this case refers to the number of cols as well)
   CCVectorArmadillo<Real> sol(n_cols);
   
   // Solve the system of equations
-  armadillo_linear_solver.solve(A, b, sol);
+  armadillo_linear_solver.solve(&A, &b, &sol);
   
   // Print the solution
   std::cout << std::endl;
@@ -149,13 +153,13 @@ int main(int argc, char *argv[])
   output_test << std::endl;
   
   // Create an Armadillo linear solver
-  CCSolverArmadillo<Real> armadillo_linear_solver;
+  CCSolverArmadillo armadillo_linear_solver;
   
   // The solution vector
   CCMatrixArmadillo<Real> SOL(A.n_rows(), B.n_columns());
   
   // Solve the system of equations
-  armadillo_linear_solver.solve(A, B, SOL);
+  armadillo_linear_solver.solve(&A, &B, &SOL);
   
   // Print the solution
   std::cout << std::endl;

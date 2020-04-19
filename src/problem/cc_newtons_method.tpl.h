@@ -8,12 +8,11 @@
 #include "../general/common_includes.h"
 #include "../general/utilities.h"
 
+#include "../matrices/cc_matrix.h"
 #ifdef CHAPCHOM_USES_ARMADILLO
 // Include Armadillo type matrices since the templates may include
 // Armadillo type matrices
 #include "../matrices/cc_matrix_armadillo.h"
-#else
-#include "../matrices/cc_matrix.h"
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
 
 // Factory for linear solver
@@ -54,13 +53,13 @@ namespace chapchom
    void set_jacobian_and_residual_strategy(ACJacobianAndResidual<MAT_TYPE,VEC_TYPE> *jacobian_and_residual_strategy_pt);
    
    /// Set the Linear solver
-   void set_linear_solver(ACLinearSolver<MAT_TYPE, VEC_TYPE> *linear_solver_pt);
+   void set_linear_solver(ACLinearSolver *linear_solver_pt);
    
    /// Gets access to the Jacobian and residual computation strategy
    ACJacobianAndResidual<MAT_TYPE,VEC_TYPE> *jacobian_and_residual_strategy_pt();
    
    /// Gets access to the linear solver
-   ACLinearSolver<MAT_TYPE, VEC_TYPE> *linear_solver_pt();
+   ACLinearSolver *linear_solver_pt();
    
    /// Set the initial guess. You should override this method if you
    /// require to copy the initial guess to some other data structures
@@ -199,7 +198,7 @@ namespace chapchom
    ACJacobianAndResidual<MAT_TYPE,VEC_TYPE> *Jacobian_and_residual_strategy_pt;
    
    /// A pointer to the linear solver
-   ACLinearSolver<MAT_TYPE, VEC_TYPE> *Linear_solver_pt;
+   ACLinearSolver *Linear_solver_pt;
    
    /// A pointer to provide access to the current solution during
    /// newton steps

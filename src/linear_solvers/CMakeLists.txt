@@ -1,7 +1,7 @@
 # Add source files in order of dependence, the ones with no dependency
 # first then the others
-SET(BASE_SRC_FILES ac_linear_solver.tpl.cpp  cc_lu_solver_numerical_recipes.tpl.cpp)
-SET(ARMADILLO_SRC_FILES cc_solver_armadillo.tpl.cpp)
+SET(BASE_SRC_FILES ac_linear_solver.cpp  cc_lu_solver_numerical_recipes.cpp)
+SET(ARMADILLO_SRC_FILES cc_solver_armadillo.cpp)
 
 SET(SRC_FILES ${BASE_SRC_FILES})
 
