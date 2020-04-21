@@ -1,17 +1,16 @@
-// IN THIS FILE: Implementation of the concrete class
-// CCNewtonMethodForAdamsMoulton2
+/// IN THIS FILE: Implementation of the concrete class
+/// CCNewtonMethodForAdamsMoulton2
 
-#include "cc_newtons_method_for_adams_moulton_2.tpl.h"
+#include "cc_newtons_method_for_adams_moulton_2.h"
 
 namespace chapchom
 {
 
  // ===================================================================
- // Constructor
+ /// Constructor
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- CCNewtonsMethodForAdamsMoulton2<MAT_TYPE, VEC_TYPE>::CCNewtonsMethodForAdamsMoulton2()
-  : ACNewtonsMethodForImplicitTimeStepper<MAT_TYPE, VEC_TYPE>()
+ CCNewtonsMethodForAdamsMoulton2::CCNewtonsMethodForAdamsMoulton2()
+  : ACNewtonsMethodForImplicitTimeStepper()
  {
   // Set the Jacobian and residual strategy for Newton's method (used
   // for parent class)
@@ -19,19 +18,17 @@ namespace chapchom
  }
  
  // ===================================================================
- // Empty destructor
+ /// Empty destructor
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- CCNewtonsMethodForAdamsMoulton2<MAT_TYPE, VEC_TYPE>::~CCNewtonsMethodForAdamsMoulton2()
+ CCNewtonsMethodForAdamsMoulton2::~CCNewtonsMethodForAdamsMoulton2()
  {
   
  }
  
  // ===================================================================
- // Performs actions before initial convergence check
+ /// Performs actions before initial convergence check
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethodForAdamsMoulton2<MAT_TYPE, VEC_TYPE>::actions_before_initial_convergence_check()
+ void CCNewtonsMethodForAdamsMoulton2::actions_before_initial_convergence_check()
  {
   // Get the odes
   ACODEs *odes_pt = this->odes_pt();

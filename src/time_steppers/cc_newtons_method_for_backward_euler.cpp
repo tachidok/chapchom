@@ -1,17 +1,16 @@
-// IN THIS FILE: Implementation of the concrete class
-// CCNewtonMethodForBackwardEuler
+/// IN THIS FILE: Implementation of the concrete class
+/// CCNewtonMethodForBackwardEuler
 
-#include "cc_newtons_method_for_backward_euler.tpl.h"
+#include "cc_newtons_method_for_backward_euler.h"
 
 namespace chapchom
 {
 
  // ===================================================================
- // Constructor
+ /// Constructor
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::CCNewtonsMethodForBackwardEuler()
-  : ACNewtonsMethodForImplicitTimeStepper<MAT_TYPE, VEC_TYPE>()
+ CCNewtonsMethodForBackwardEuler::CCNewtonsMethodForBackwardEuler()
+  : ACNewtonsMethodForImplicitTimeStepper()
  {
   // Set the Jacobian and residual strategy for Newton's method (used
   // for parent class)
@@ -19,19 +18,17 @@ namespace chapchom
  }
  
  // ===================================================================
- // Empty destructor
+ /// Empty destructor
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::~CCNewtonsMethodForBackwardEuler()
+ CCNewtonsMethodForBackwardEuler::~CCNewtonsMethodForBackwardEuler()
  {
   
  }
  
  // ===================================================================
- // Performs actions before initial convergence check
+ /// Performs actions before initial convergence check
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethodForBackwardEuler<MAT_TYPE, VEC_TYPE>::actions_before_initial_convergence_check()
+ void CCNewtonsMethodForBackwardEuler::actions_before_initial_convergence_check()
  {
   // Get the odes
   ACODEs *odes_pt = this->odes_pt();

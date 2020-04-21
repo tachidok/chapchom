@@ -41,7 +41,7 @@ namespace chapchom
    
  protected:
   
-  /// Performs actions before initial converngence check
+  /// Performs actions before initial convergence check
   virtual void actions_before_initial_convergence_check() = 0;
   
   /// Performs actions before Newton's method step

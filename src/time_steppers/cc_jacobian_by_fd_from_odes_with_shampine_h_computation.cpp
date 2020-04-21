@@ -1,31 +1,28 @@
-#include "cc_jacobian_by_fd_from_odes.tpl.h"
+#include "cc_jacobian_by_fd_from_odes_with_shampine_h_computation.h"
 
 namespace chapchom
 {
  // ===================================================================
- // Constructor
+ /// Constructor
  // ===================================================================
- template<class MAT_TYPE>
- CCJacobianByFDFromODEs<MAT_TYPE>::CCJacobianByFDFromODEs()
+ CCJacobianByFDFromODEs::CCJacobianByFDFromODEs()
   : Set_of_ODEs_have_been_set(false)
  {
  
  }
  
  // ===================================================================
- // Destructor
+ /// Destructor
  // ===================================================================
- template<class MAT_TYPE>
- CCJacobianByFDFromODEs<MAT_TYPE>::~CCJacobianByFDFromODEs()
+ CCJacobianByFDFromODEs::~CCJacobianByFDFromODEs()
  {
  
  }
 
  // ===================================================================
- // In charge of computing the Jacobian using Finite Differences
+ /// In charge of computing the Jacobian using Finite Differences
  // ===================================================================
- template<class MAT_TYPE>
- void CCJacobianByFDFromODEs<MAT_TYPE>::compute_jacobian(const double time)
+ void CCJacobianByFDFromODEs::compute_jacobian(const double time)
  {
   // Check whether the ODEs have been set
   if (!Set_of_ODEs_have_been_set)
@@ -123,8 +120,7 @@ namespace chapchom
  // ===================================================================
  // Set the ODEs to compute the Jacobian
  // ===================================================================
- template<class MAT_TYPE>
- void CCJacobianByFDFromODEs<MAT_TYPE>::set_ODEs(const ACODEs &odes)
+ void CCJacobianByFDFromODEs::set_ODEs(const ACODEs &odes)
  {
   // Set a pointer to the odes
   ODEs = odes;

@@ -1,32 +1,28 @@
-#include "cc_factory_time_stepper.tpl.h"
+#include "cc_factory_time_stepper.h"
 
 namespace chapchom
 {
 
  // ===================================================================
- // Empty constructor
+ /// Empty constructor
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- CCFactoryTimeStepper<MAT_TYPE,VEC_TYPE>::CCFactoryTimeStepper()
+ CCFactoryTimeStepper::CCFactoryTimeStepper()
  { 
 
  }
 
  // ===================================================================
- // Empty destructor
+ /// Empty destructor
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- CCFactoryTimeStepper<MAT_TYPE,VEC_TYPE>::~CCFactoryTimeStepper()
+ CCFactoryTimeStepper::~CCFactoryTimeStepper()
  { 
 
  }
 
  // ===================================================================
- // Returns the specified time stepper (integration method)
+ /// Returns the specified time stepper (integration method)
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- ACTimeStepper* CCFactoryTimeStepper<MAT_TYPE,VEC_TYPE>::
- create_time_stepper(std::string time_stepper_name)
+ ACTimeStepper* CCFactoryTimeStepper::create_time_stepper(std::string time_stepper_name)
  {
   // Get the string and change it to lower case 
   std::transform(time_stepper_name.begin(), time_stepper_name.end(),
@@ -58,17 +54,17 @@ namespace chapchom
   // Backward Euler method
   else if (time_stepper_name.compare("bdf1")==0)
    {
-    return new CCBackwardEulerMethod<MAT_TYPE,VEC_TYPE>();
+    return new CCBackwardEulerMethod();
    }
   // Adams-Moulton 2 or Trapezoidal Rule method
   else if (time_stepper_name.compare("am2")==0)
    {
-    return new CCAdamsMoulton2Method<MAT_TYPE,VEC_TYPE>();
+    return new CCAdamsMoulton2Method();
    }
   // BDF 2 method
   else if (time_stepper_name.compare("bdf2")==0)
    {
-    return new CCBDF2Method<MAT_TYPE,VEC_TYPE>();
+    return new CCBDF2Method();
    }
   // Runge-Kutta 4(5) Fehlberg method
   else if (time_stepper_name.compare("rk45f")==0)

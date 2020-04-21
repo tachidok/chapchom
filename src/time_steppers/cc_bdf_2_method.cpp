@@ -1,19 +1,20 @@
-#include "cc_adams_moulton_2_method.tpl.h"
+#include "cc_bdf_2_method.h"
 
 namespace chapchom
 {
  
  // ===================================================================
- // Constructor
+ /// Constructor
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- CCAdamsMoulton2Method<MAT_TYPE,VEC_TYPE>::CCAdamsMoulton2Method()
-  : ACTimeStepper()
- {  
+ CCBDF2Method::CCBDF2Method()
+  : ACTimeStepper(),
+    Compute_u_at_time_t_plus_h(true)
+ {
   // Sets the number of history values
-  N_history_values = 2;
+  N_history_values = 3;
   
-  //Newtons_method.set_newton_solver_tolerance(1.0e-3);
+  //Newtons_method.set_newton_absolute_solver_tolerance(1.0e-3);
+  //Newtons_method.set_maximum_allowed_residual(1.0e-1);
   
   // Disable output for Newton's method and relative tolerance
   Newtons_method.disable_output_messages();
@@ -21,35 +22,33 @@ namespace chapchom
  }
  
  // ===================================================================
- // Empty destructor
+ /// Empty destructor
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- CCAdamsMoulton2Method<MAT_TYPE,VEC_TYPE>::~CCAdamsMoulton2Method()
+ CCBDF2Method::~CCBDF2Method()
  {
   
  }
  
  // ===================================================================
- // Applies Adams-Moulton 2 method to the given odes from the current
- // time "t" to the time "t+h". The values of u at time t+h will be
- // stored at index k (default k = 0).
+ /// Applies BDF2 method to the given odes from the current time "t" to
+ /// the time "t+h". The values of u at time t+h will be stored at
+ /// index k (default k = 0).
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCAdamsMoulton2Method<MAT_TYPE,VEC_TYPE>::time_step(ACODEs &odes, const Real h,
-                                                          const Real t,
-                                                          CCData &u,
-                                                          const unsigned k)
+ void CCBDF2Method::time_step(ACODEs &odes, const Real h,
+                              const Real t,
+                              CCData &u,
+                              const unsigned k)
  {
 #ifdef CHAPCHOM_PANIC_MODE
   // Check if the ode has the correct number of history values to
-  // apply Euler's method
+  // apply Backward-Euler's method
   const unsigned n_history_values = u.n_history_values();
   if (n_history_values < N_history_values)
    {
     // Error message
     std::ostringstream error_message;
     error_message << "The number of history values is less than\n"
-                  << "the required by Adams-Moulton 2 method" << std::endl
+                  << "the required by Backward Euler's method" << std::endl
                   << "Required number of history values: "
                   << N_history_values << std::endl
                   << "Number of history values: "
@@ -59,12 +58,29 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
 #endif // #ifdef CHAPCHOM_PANIC_MODE
+  
+  // -----------------------------------------------------------------
+  // Compute the value of u_{t+h} if this is the first time
+  if (Compute_u_at_time_t_plus_h)
+   {
+    // Compute the values for u_{t+h} using the same time stepper to
+    // compute the initial guess for Newton's method
+    Time_stepper_initial_guess.time_step(odes, h, t, u, k);
+    
+    // This should be performed only once
+    Compute_u_at_time_t_plus_h = false;
+    
+    // Return. The next time we will have the required values for BDF2
+    // u_{t} and u_{t+h}
+    return;
+   }
+  
   // -----------------------------------------------------------------
   // Compute initial guess
   // -----------------------------------------------------------------  
   // Compute the initial guess for Newton's method using the values of
   // u at time 't', the values of u at time 't+h' are automatically
-  // shifted at index k 
+  // shifted at index k
   Time_stepper_initial_guess.time_step(odes, h, t, u, k);
   
   // ---------------------------------------------------
@@ -72,11 +88,16 @@ namespace chapchom
   // ---------------------------------------------------
   // Get the number of odes
   const unsigned n_odes = odes.n_odes();
-
+  
   // Create a vector with the initial guess from the first row (0)
   // since the values have been shift
-  VEC_TYPE u_initial_guess(u.history_values_row_pt(0), n_odes);
-
+#ifdef CHAPCHOM_USES_ARMADILLO
+  CCVectorArmadillo<Real> u_initial_guess(u.history_values_row_pt(0), n_odes);
+#else
+  CCVector<Real> u_initial_guess(u.history_values_row_pt(0), n_odes);
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+  
+  
   // It is not required to shift the values to the right to provide
   // storage for the new values since they were shift when computing
   // the initial guess
@@ -88,9 +109,9 @@ namespace chapchom
   
   // Solve using Newton's method, the solution is automatically copied
   // back at the u data structure
-  Newtons_method.solve(u_initial_guess);
-    
+  Newtons_method.solve(&u_initial_guess);
+  
  }
-
+ 
 }
 
