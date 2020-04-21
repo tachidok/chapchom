@@ -9,7 +9,7 @@ ELSE(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
 ENDIF(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
 
 # Indicate linking libraries
-SET(LIB_demo_basic_newtons_method data_structures_lib numerical_recipes_lib matrices_lib linear_solvers_lib problem_lib general_lib)
+SET(LIB_demo_basic_newtons_method data_structures_lib matrices_lib equations_lib problem_lib linear_solvers_lib general_lib numerical_recipes_lib)
 
 # Check whether chapchom is using Armadillo
 IF (CHAPCHOM_USES_ARMADILLO)

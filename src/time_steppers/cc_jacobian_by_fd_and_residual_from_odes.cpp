@@ -1,32 +1,29 @@
-#include "cc_jacobian_by_fd_and_residual_from_odes.tpl.h"
+#include "cc_jacobian_by_fd_and_residual_from_odes.h"
 
 namespace chapchom
 {
  // ===================================================================
- // Empty constructor
+ /// Empty constructor
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::CCJacobianByFDAndResidualFromODEs()
-  : ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE>()
+ CCJacobianByFDAndResidualFromODEs::CCJacobianByFDAndResidualFromODEs()
+  : ACJacobianAndResidualForImplicitTimeStepper()
  {
   
  }
  
  // ===================================================================
- // Empty destructor
+ /// Empty destructor
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::~CCJacobianByFDAndResidualFromODEs()
+ CCJacobianByFDAndResidualFromODEs::~CCJacobianByFDAndResidualFromODEs()
  {
  
  }
  
  // ===================================================================
- // In charge of computing the Jacobian using Finite Differences
- // (virtual function implementation)
+ /// In charge of computing the Jacobian using Finite Differences
+ /// (virtual function implementation)
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::compute_jacobian()
+ void CCJacobianByFDAndResidualFromODEs::compute_jacobian()
  {
   // Get a pointer to the ODEs
   ACODEs *odes_pt = this->odes_pt();
@@ -54,7 +51,7 @@ namespace chapchom
   const unsigned n_dof = odes_pt->n_odes();
   
   // Allocate memory for the Jacobian (delete previous data)
-  this->Jacobian.allocate_memory(n_dof, n_dof);
+  this->Jacobian_pt->allocate_memory(n_dof, n_dof);
   
   // Get the current time
   const Real t = this->current_time();
@@ -98,17 +95,16 @@ namespace chapchom
       // The indices are reversed because we are computing the
       // approximation to the i-th column of the Jacobian (all
       // equations -index j- with a perturbation in the i-th dof)
-      this->Jacobian(j, i) = (dudt_plus(j) - dudt(j)) / delta_u;
+      (*this->Jacobian_pt)(j, i) = (dudt_plus(j) - dudt(j)) / delta_u;
      }
    }
   
  }
  
  // ===================================================================
- // In charge of computing the residual
+ /// In charge of computing the residual
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianByFDAndResidualFromODEs<MAT_TYPE, VEC_TYPE>::compute_residual()
+ void CCJacobianByFDAndResidualFromODEs::compute_residual()
  {
   
  } 

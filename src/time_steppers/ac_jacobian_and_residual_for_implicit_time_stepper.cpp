@@ -1,38 +1,35 @@
-#include "ac_jacobian_and_residual_for_implicit_time_stepper.tpl.h"
+#include "ac_jacobian_and_residual_for_implicit_time_stepper.h"
 
 namespace chapchom
 {
  // ===================================================================
- // Empty constructor
+ /// Empty constructor
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE>::ACJacobianAndResidualForImplicitTimeStepper()
-  : ACJacobianAndResidual<MAT_TYPE, VEC_TYPE>(),
-  ODEs_pt(NULL),
-  U_pt(NULL),
-  Data_for_jacobian_and_residual_has_been_set(false),
-  Jacobian_FY_strategy_pt(NULL)
+ ACJacobianAndResidualForImplicitTimeStepper::ACJacobianAndResidualForImplicitTimeStepper()
+  : ACJacobianAndResidual(),
+    ODEs_pt(NULL),
+    U_pt(NULL),
+    Data_for_jacobian_and_residual_has_been_set(false),
+    Jacobian_FY_strategy_pt(NULL)
  {
   
  }
  
  // ===================================================================
- // Destructor
+ /// Destructor
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE>::~ACJacobianAndResidualForImplicitTimeStepper()
+ ACJacobianAndResidualForImplicitTimeStepper::~ACJacobianAndResidualForImplicitTimeStepper()
  {
   // Free the pointer
   Jacobian_FY_strategy_pt = NULL;
  }
  
  // ===================================================================
- // Set data for Jacobian and residual computation. The odes, the time
- // step 'h', the current time 't', the values of 'u' and the index
- // where the values of 'u' at time 't+h' will be stored
+ /// Set data for Jacobian and residual computation. The odes, the time
+ /// step 'h', the current time 't', the values of 'u' and the index
+ /// where the values of 'u' at time 't+h' will be stored
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE>::
+ void ACJacobianAndResidualForImplicitTimeStepper::
  set_data_for_jacobian_and_residual(ACODEs *odes_pt, const Real h, const Real t,
                                     CCData *u_pt, const unsigned k)
  {
@@ -59,11 +56,10 @@ namespace chapchom
  }
  
  // ===================================================================
- // Set the strategy to compute the ODE's Jacobian
+ /// Set the strategy to compute the ODE's Jacobian
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE>::
- set_strategy_for_odes_jacobian(ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE> *jacobian_strategy_for_odes_pt)
+ void ACJacobianAndResidualForImplicitTimeStepper::
+ set_strategy_for_odes_jacobian(ACJacobianAndResidualForImplicitTimeStepper *jacobian_strategy_for_odes_pt)
  {
   if (jacobian_strategy_for_odes_pt != NULL)
    {
@@ -84,10 +80,10 @@ namespace chapchom
  }
  
  // =================================================================== 
- // Get access to the strategy to compute the Jacobian of the ODEs
+ /// Get access to the strategy to compute the Jacobian of the ODEs
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE> *ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE>::jacobian_FY_strategy_pt()
+ ACJacobianAndResidualForImplicitTimeStepper *ACJacobianAndResidualForImplicitTimeStepper::
+ jacobian_FY_strategy_pt()
  {
   if (Jacobian_FY_strategy_pt != NULL)
    {

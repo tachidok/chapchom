@@ -2,13 +2,20 @@
 #+TITLE: TODO list for CHAPCHOM
 #+AUTHOR: Julio César Pérez Sansalvador
 
-* TODO Chapchom
-** Implement full demo for Poisson Equation
-** Integrate the use of Triangle for the generation of points/nodes
-** TODO Work on the linear solver factory
-** Delete templates from matrices and linear solvers.
-*** There is really no need for templates since we have a typedef to define whether use float or doubles
-
+* Tuesday, April 21/2020
+** TODO
++ After deleting innecessary templates it seems necessary to create a
+  matrices and vectors generator based on whether armadillo library is
+  used or not
++ Implement full demo for Poisson Equation
++ Integrate the use of Triangle for the generation of points/nodes
++ Work on documentation (How to git with CHAPCHOM and README.md)
+** WORKING ON
+*** Delete templates from matrices and linear solvers
+   There is really no need for templates since we have a typedef to
+   define whether use float or doubles
+* Chapchom
+** DONE Work on the linear solver factory
 * DONE Work on Mesh Free Methods
 ** Need to modify the strategy for memory allocation of matrices and vectors
 - [DONE] IF WE DO ALL THE FOLLOWING THE WE WILL NOT REQUIRE TO EXPLICITLY
@@ -33,7 +40,7 @@
 - [DONE] Check how the method for matrices concatenation (armadillo) are
   working in order to know how to do this!!!
 ** DONE Demos
-- WORKING ON THIS - Working on Distance Matrix taken from book Mesh Free Approximation
+- DONE Working on Distance Matrix taken from book Mesh Free Approximation
   Methods with MATLAB
 - DONE Working on problem of chapter 1
  - 1D
@@ -46,8 +53,6 @@
   - Random nodes position
 - DONE Then move to Chapter 2 of the book and implement the same stuff as
   above
-- [DONE] - Then move to Chapter 6 of the book and implement
-  the same stuff as above
-* TODO Work on Documentation
-- How to git with CHAPCHOM
+- [DONE] - Then move to Chapter 6 of the book and implement the same
+  stuff as above
 

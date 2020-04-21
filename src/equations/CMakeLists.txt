@@ -1,6 +1,6 @@
 # Add source files in order of dependence, the ones with no dependency
 # first then the others
-SET(SRC_FILES ac_jacobian_and_residual.tpl.cpp)
+SET(SRC_FILES ac_jacobian_and_residual.cpp)
 
 # Include current directory to the path
 #INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})

@@ -1,13 +1,12 @@
-#include "cc_jacobian_and_residual_for_bdf_2.tpl.h"
+#include "cc_jacobian_and_residual_for_bdf_2.h"
 
 namespace chapchom
 {
  // ===================================================================
- // Constructor
+ /// Constructor
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- CCJacobianAndResidualForBDF2<MAT_TYPE, VEC_TYPE>::CCJacobianAndResidualForBDF2()
-  : ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE>()
+ CCJacobianAndResidualForBDF2::CCJacobianAndResidualForBDF2()
+  : ACJacobianAndResidualForImplicitTimeStepper()
  {
   // Assign the default strategy (the Finite Differences strategy) for
   // computation of the Jacobian of the ODEs
@@ -15,20 +14,18 @@ namespace chapchom
  }
  
  // ===================================================================
- // Empty destructor
+ /// Empty destructor
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- CCJacobianAndResidualForBDF2<MAT_TYPE, VEC_TYPE>::~CCJacobianAndResidualForBDF2()
+ CCJacobianAndResidualForBDF2::~CCJacobianAndResidualForBDF2()
  {
   
  }
  
  // ===================================================================
- // In charge of computing the Jacobian
- // (virtual function implementation)
- // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianAndResidualForBDF2<MAT_TYPE, VEC_TYPE>::compute_jacobian()
+ /// In charge of computing the Jacobian (virtual function
+ /// implementation)
+ //===================================================================
+ void CCJacobianAndResidualForBDF2::compute_jacobian()
  {
   // Get the odes
   ACODEs *odes_pt = this->odes_pt();
@@ -62,7 +59,7 @@ namespace chapchom
   // -------------------------------------------
 
   // Get a pointer to the strategy to compute the Jacobian of the ODEs
-  ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE> *jacobian_strategy_odes_pt =
+  ACJacobianAndResidualForImplicitTimeStepper *jacobian_strategy_odes_pt =
    this->jacobian_FY_strategy_pt();
   
   // Set the data for the computation of the jacobian and the residual
@@ -73,13 +70,13 @@ namespace chapchom
   
   // Store the Jacobian for FY, used in the computation of the
   // backward Euler Jacobian $J = I - (h * Jacobian_{FY})$
-  MAT_TYPE Jacobian_FY = jacobian_strategy_odes_pt->jacobian();
+  ACMatrix<Real> *Jacobian_FY_pt = jacobian_strategy_odes_pt->jacobian_pt();
   
   // Get the number of ODEs
   const unsigned n_dof = odes_pt->n_odes();
   
   // Allocate memory for the Jacobian (delete previous data)
-  this->Jacobian.allocate_memory(n_dof, n_dof);
+  this->Jacobian_pt->allocate_memory(n_dof, n_dof);
   
   // Two thirds of the time step
   const Real h_two_thirds = (2.0/3.0) * h;
@@ -91,11 +88,11 @@ namespace chapchom
      {
       if (i == j)
        {
-        this->Jacobian(i, j) = 1.0 - (h_two_thirds * Jacobian_FY(i, j));
+        (*this->Jacobian_pt)(i, j) = 1.0 - (h_two_thirds * Jacobian_FY_pt->value(i, j));
        }
       else
        {
-        this->Jacobian(i, j) = 0.0 - (h_two_thirds * Jacobian_FY(i, j));
+        (*this->Jacobian_pt)(i, j) = 0.0 - (h_two_thirds * Jacobian_FY_pt->value(i, j));
        }
      }
    }
@@ -105,8 +102,7 @@ namespace chapchom
  // ===================================================================
  // In charge of computing the residual
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCJacobianAndResidualForBDF2<MAT_TYPE, VEC_TYPE>::compute_residual()
+ void CCJacobianAndResidualForBDF2::compute_residual()
  {
   // Get the odes
   ACODEs *odes_pt = this->odes_pt();
@@ -149,12 +145,12 @@ namespace chapchom
   odes_pt->evaluate_derivatives(t+h, (*u_pt), dudt, k);
   
   // Allocate memory for the Residual (delete previous data)
-  this->Residual.allocate_memory(n_dof);
+  this->Residual_pt->allocate_memory(n_dof);
   
   // F(Y) - (u_{t+h} - \frac{4}{3} u_{t} + \frac{1}{3} u_{t-h} - \frac{2}{3} h f(t+h,u_{t+h}))
   for (unsigned i = 0; i < n_dof; i++)
    {
-    this->Residual(i) =
+    this->Residual_pt->value(i) =
      -(u_pt->value(i,k) - ((4.0/3.0) * u_pt->value(i,k+1)) + ((1.0/3.0) * u_pt->value(i,k+2)) - (h_two_thirds * dudt(i)));
    }
   

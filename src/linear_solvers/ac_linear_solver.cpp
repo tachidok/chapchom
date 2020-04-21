@@ -58,7 +58,11 @@ namespace chapchom
   if (Matrix_A_has_been_set)
    {
     // Delete the content of the matrix
-    A_pt->clean_up();
+    //A_pt->clean_up();
+    
+    // We do not have to delete the values of the matrix A, we only
+    // unset the pointer
+    A_pt = 0;
     
     // Mark the matrix as not been set
     Matrix_A_has_been_set = false;

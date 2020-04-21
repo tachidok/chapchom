@@ -1,47 +1,43 @@
-// IN THIS FILE: Implementation of the abstract class
-// ACNewtonMethodForImplicitTimeStepper
+/// IN THIS FILE: Implementation of the abstract class
+/// ACNewtonMethodForImplicitTimeStepper
 
-#include "ac_newtons_method_for_implicit_time_stepper.tpl.h"
+#include "ac_newtons_method_for_implicit_time_stepper.h"
 
 namespace chapchom
 {
  
  // ===================================================================
- // Empty constructor
+ /// Empty constructor
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- ACNewtonsMethodForImplicitTimeStepper<MAT_TYPE, VEC_TYPE>::ACNewtonsMethodForImplicitTimeStepper()
-  : CCNewtonsMethod<MAT_TYPE, VEC_TYPE>(),
-  ODEs_pt(NULL),
-  U_pt(NULL),
-  Data_for_jacobian_and_residual_has_been_set(false)
+ ACNewtonsMethodForImplicitTimeStepper::ACNewtonsMethodForImplicitTimeStepper()
+  : CCNewtonsMethod(),
+    ODEs_pt(NULL),
+    U_pt(NULL),
+    Data_for_jacobian_and_residual_has_been_set(false)
  {
   
  }
  
  // ===================================================================
- // Empty destructor
+ /// Empty destructor
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- ACNewtonsMethodForImplicitTimeStepper<MAT_TYPE, VEC_TYPE>::~ACNewtonsMethodForImplicitTimeStepper()
+ ACNewtonsMethodForImplicitTimeStepper::~ACNewtonsMethodForImplicitTimeStepper()
  {
   
  }
  
  // ===================================================================
- // Performs actions before Newton's method step
+ /// Performs actions before Newton's method step
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void ACNewtonsMethodForImplicitTimeStepper<MAT_TYPE, VEC_TYPE>::actions_before_newton_step()
+ void ACNewtonsMethodForImplicitTimeStepper::actions_before_newton_step()
  {
   
  }
  
  // ===================================================================
- // Performs actions after Newton's method step
+ /// Performs actions after Newton's method step
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void ACNewtonsMethodForImplicitTimeStepper<MAT_TYPE, VEC_TYPE>::actions_after_newton_step()
+ void ACNewtonsMethodForImplicitTimeStepper::actions_after_newton_step()
  {
   // Update U, store the new values at index 'History_index'
   const unsigned k = History_index;
@@ -54,12 +50,11 @@ namespace chapchom
  }
  
  // ===================================================================
- // Set data for Jacobian and residual computation. The odes, the time
- // step 'h', the current time 't', the values of 'u' and the index
- // where the values of 'u' at time 't+h' will be stored
+ /// Set data for Jacobian and residual computation. The odes, the time
+ /// step 'h', the current time 't', the values of 'u' and the index
+ /// where the values of 'u' at time 't+h' will be stored
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void ACNewtonsMethodForImplicitTimeStepper<MAT_TYPE, VEC_TYPE>::
+ void ACNewtonsMethodForImplicitTimeStepper::
  set_data_for_jacobian_and_residual(ACODEs *odes_pt, const Real h, const Real t,
                                     CCData *u_pt, const unsigned k)
  {
@@ -86,12 +81,11 @@ namespace chapchom
  }
  
  // ===================================================================
- // Set the strategy to compute the ODE's Jacobian
+ /// Set the strategy to compute the ODE's Jacobian
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void ACNewtonsMethodForImplicitTimeStepper<MAT_TYPE, VEC_TYPE>::set_strategy_for_odes_jacobian(ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE> *jacobian_strategy_for_odes_pt)
+ void ACNewtonsMethodForImplicitTimeStepper::set_strategy_for_odes_jacobian(ACJacobianAndResidualForImplicitTimeStepper *jacobian_strategy_for_odes_pt)
  {
-  ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE> *cache_jacobian_strategy_pt = dynamic_cast<ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE> *>(this->jacobian_and_residual_strategy_pt());
+  ACJacobianAndResidualForImplicitTimeStepper *cache_jacobian_strategy_pt = dynamic_cast<ACJacobianAndResidualForImplicitTimeStepper *>(this->jacobian_and_residual_strategy_pt());
   if (cache_jacobian_strategy_pt != NULL)
    {
     cache_jacobian_strategy_pt->set_strategy_for_odes_jacobian(jacobian_strategy_for_odes_pt);

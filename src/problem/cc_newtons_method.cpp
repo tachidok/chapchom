@@ -1,7 +1,7 @@
 // IN THIS FILE: Implementation of the concrete class CCNewtonMethod
 // to solve a given problem by means of Newton's method
 
-#include "cc_newtons_method.tpl.h"
+#include "cc_newtons_method.h"
 
 namespace chapchom
 {
@@ -9,8 +9,7 @@ namespace chapchom
  // ===================================================================
  /// Constructor
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::CCNewtonsMethod()
+ CCNewtonsMethod::CCNewtonsMethod()
   : Newton_absolute_solver_tolerance(DEFAULT_NEWTON_ABSOLUTE_SOLVER_TOLERANCE),
     Newton_relative_solver_tolerance(DEFAULT_NEWTON_RELATIVE_SOLVER_TOLERANCE),
     Maximum_newton_iterations(DEFAULT_MAXIMUM_NEWTON_ITERATIONS),
@@ -32,8 +31,7 @@ namespace chapchom
  // ===================================================================
  /// Destructor
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::~CCNewtonsMethod()
+ CCNewtonsMethod::~CCNewtonsMethod()
  {
   // Performs clean up
   clean_up();
@@ -42,8 +40,7 @@ namespace chapchom
  // ===================================================================
  /// Set the Jacobian matrix
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::set_jacobian_and_residual_strategy(ACJacobianAndResidual<MAT_TYPE,VEC_TYPE> *jacobian_and_residual_strategy_pt)
+ void CCNewtonsMethod::set_jacobian_and_residual_strategy(ACJacobianAndResidual *jacobian_and_residual_strategy_pt)
  {
   // Set the Jacobian and residual computation strategy
   Jacobian_and_residual_strategy_pt = jacobian_and_residual_strategy_pt;
@@ -56,9 +53,7 @@ namespace chapchom
  // ===================================================================
  /// Set the Linear solver
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::
- set_linear_solver(ACLinearSolver *linear_solver_pt)
+ void CCNewtonsMethod::set_linear_solver(ACLinearSolver *linear_solver_pt)
  {
   // Free memory for previous linear solver
   clean_up();
@@ -77,9 +72,7 @@ namespace chapchom
  // ===================================================================
  /// Gets access to the Jacobian and residual computation strategy
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- ACJacobianAndResidual<MAT_TYPE,VEC_TYPE> *CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::
- jacobian_and_residual_strategy_pt()
+ ACJacobianAndResidual *CCNewtonsMethod::jacobian_and_residual_strategy_pt()
  {
   if (Jacobian_and_residual_strategy_pt != NULL && Jacobian_and_residual_strategy_has_been_set)
    {
@@ -101,8 +94,7 @@ namespace chapchom
  // ===================================================================
  /// Gets access to the linear solver
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- ACLinearSolver *CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::linear_solver_pt()
+ ACLinearSolver *CCNewtonsMethod::linear_solver_pt()
  {
   if (Linear_solver_pt != NULL && Linear_solver_has_been_set)
    {
@@ -125,11 +117,10 @@ namespace chapchom
  /// Set the initial guess. You should override this method if you
  /// require to copy the initial guess to some other data structures
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::set_initial_guess(VEC_TYPE &x)
+ void CCNewtonsMethod::set_initial_guess(ACVector<Real> *x_vec_pt)
  {
   // Create a pointer to the initial guess vector
-  X_pt = &x;
+  X_pt = x_vec_pt;
   
   // Update flag to indicate initial guess has been set
   Initial_guess_has_been_set = true;
@@ -138,8 +129,7 @@ namespace chapchom
  // ===================================================================
  /// Gets access to the last stored solution vector
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- const VEC_TYPE *CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::x_pt()
+ const ACVector<Real> *CCNewtonsMethod::x_pt()
  {
   if (X_pt != NULL)
    {
@@ -161,8 +151,7 @@ namespace chapchom
  // ===================================================================
  /// Clean up, free allocated memory
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::clean_up()
+ void CCNewtonsMethod::clean_up()
  {
   // Check whether we should free the memory associated for the linear
   // solver
@@ -185,8 +174,7 @@ namespace chapchom
  // ===================================================================
  /// Sets default configuration
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::set_default_configuration()
+ void CCNewtonsMethod::set_default_configuration()
  {
   // Cleans up
   clean_up();
@@ -219,8 +207,7 @@ namespace chapchom
  /// function set_initial_guess(). The final solution (if any) is
  /// stored in the X_pt vector
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::solve()
+ void CCNewtonsMethod::solve()
  {
   // We need to check whether a Jacobian computation strategy has been
   // set
@@ -277,10 +264,10 @@ namespace chapchom
   Jacobian_and_residual_strategy_pt->compute_residual();
   
   // The residual vector
-  VEC_TYPE residual = Jacobian_and_residual_strategy_pt->residual();
+  ACVector<Real> *residual_pt = Jacobian_and_residual_strategy_pt->residual_pt();
   
   // Compute the norm of the residual
-  const Real initial_residual_norm = residual.norm_inf();
+  const Real initial_residual_norm = residual_pt->norm_inf();
 
   // Is output message enabled?
   if (Output_messages)
@@ -324,9 +311,14 @@ namespace chapchom
   // ---------------------------------------------------------------
   // Get the number of variables
   const unsigned n_dof = X_pt->n_values();
+  
   // Create the vector to store the solution of the system of
   // equations during Newton's steps
-  VEC_TYPE dx(n_dof);
+#ifdef CHAPCHOM_USES_ARMADILLO
+  CCVectorArmadillo<Real> dx(n_dof);
+#else
+  CCVector<Real> dx(n_dof);
+#endif // #ifdef CHAPCHOM_USES_ARMADILOL
   
   // Time Newton's method
   clock_t initial_clock_time_for_newtons_method = Timing::cpu_clock_time();
@@ -377,7 +369,7 @@ namespace chapchom
      }
     
     // Get a pointer to the Jacobian
-    MAT_TYPE Jacobian = Jacobian_and_residual_strategy_pt->jacobian();
+    ACMatrix<Real> *Jacobian_pt = Jacobian_and_residual_strategy_pt->jacobian_pt();
     
     // ---------------------------------------------------------------------
     // Linear solver
@@ -387,7 +379,7 @@ namespace chapchom
     clock_t initial_clock_time_for_linear_solver = Timing::cpu_clock_time();
     
     // Solve the system of equations
-    Linear_solver_pt->solve(Jacobian, residual, dx);
+    Linear_solver_pt->solve(Jacobian_pt, residual_pt, &dx);
     
     // Time the linear solver
     clock_t final_clock_time_for_linear_solver = Timing::cpu_clock_time();
@@ -419,10 +411,10 @@ namespace chapchom
     Jacobian_and_residual_strategy_pt->compute_residual();
     
     // Get a pointer to the residual
-    residual = Jacobian_and_residual_strategy_pt->residual();
+    residual_pt = Jacobian_and_residual_strategy_pt->residual_pt();
     
     // Compute the norm of the residual
-    current_residual_norm = residual.norm_inf();
+    current_residual_norm = residual_pt->norm_inf();
     
     // Is output message enabled?
     if (Output_messages)
@@ -487,11 +479,10 @@ namespace chapchom
  /// guess is set in the input/output x vector where the final solution
  /// (if any) is returned
  // ===================================================================
- template<class MAT_TYPE, class VEC_TYPE>
- void CCNewtonsMethod<MAT_TYPE, VEC_TYPE>::solve(VEC_TYPE &x)
+ void CCNewtonsMethod::solve(ACVector<Real> *x_vec_pt)
  {
   // Set the initial guess and perform Newton's method
-  set_initial_guess(x);
+  set_initial_guess(x_vec_pt);
   
   // Newton's method
   solve();
