@@ -28,8 +28,8 @@ namespace chapchom
  /// Evaluates the system of odes at time "t".
  // ===================================================================
  void CCLotkaVolterraODEs::evaluate_derivatives(const Real t,
-                                                CCData<Real> &u,
-                                                CCData<Real> &dudt,
+                                                CCData &u,
+                                                CCData &dudt,
                                                 const unsigned k)
  {
   // -----------------

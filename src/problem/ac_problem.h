@@ -62,7 +62,16 @@ namespace chapchom
   inline unsigned output_file_index() const {return Output_file_index;}
   
   /// Document solution
-  virtual void document_solution() = 0;
+  virtual void document_solution()
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Virtual function in ACProblem class, you should implement\n"
+                 << "it to document your solution" << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
   
  protected:
   

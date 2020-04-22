@@ -32,8 +32,8 @@ namespace chapchom
  /// so on. The evaluation produces results in the vector dudt.
  // ===================================================================
  void CCODEsBasicNBody::evaluate_derivatives(const Real t,
-                                             CCData<Real> &u,
-                                             CCData<Real> &dudt,
+                                             CCData &u,
+                                             CCData &dudt,
                                              const unsigned k)
  {
   // -----------------

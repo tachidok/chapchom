@@ -71,8 +71,9 @@ public:
  // Document the solution
  void document_solution()
  {
+  const Real t = this->time();
   // Initial problem configuration
-  Output_file << Time << "\t" << u(0) << "\t" << u(1) << std::endl;
+  Output_file << t << "\t" << u(0) << "\t" << u(1) << std::endl;
  }
  
 protected:
@@ -93,11 +94,7 @@ int main(int argc, char *argv[])
 {
  
  // Create the factory for the time steppers (integration methods)
-#ifdef CHAPCHOM_USES_ARMADILLO
- CCFactoryTimeStepper<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > factory_time_stepper;
-#else 
- CCFactoryTimeStepper<CCMatrix<Real>, CCVector<Real> > factory_time_stepper;
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+ CCFactoryTimeStepper factory_time_stepper;
  
  // Euler method test
  {
@@ -154,7 +151,7 @@ int main(int argc, char *argv[])
   while(LOOP)
    {
     // Performs an unsteady solve
-    lotka_volterra_problem.unsteady_solve();
+    lotka_volterra_problem.solve();
     
     // Update time of the problem
     lotka_volterra_problem.time()+=lotka_volterra_problem.time_step();
@@ -230,7 +227,7 @@ int main(int argc, char *argv[])
   while(LOOP)
    {
     // Performs an unsteady solve
-    lotka_volterra_problem.unsteady_solve();
+    lotka_volterra_problem.solve();
     
     // Update time of the problem
     lotka_volterra_problem.time()+=lotka_volterra_problem.time_step();
@@ -306,7 +303,7 @@ int main(int argc, char *argv[])
   while(LOOP)
    {
     // Performs an unsteady solve
-    lotka_volterra_problem.unsteady_solve();
+    lotka_volterra_problem.solve();
     
     // Update time of the problem
     lotka_volterra_problem.time()+=lotka_volterra_problem.time_step();
@@ -382,7 +379,7 @@ int main(int argc, char *argv[])
    while(LOOP)
     {
      // Performs an unsteady solve
-     lotka_volterra_problem.unsteady_solve();
+     lotka_volterra_problem.solve();
     
      // Update time of the problem
      lotka_volterra_problem.time()+=lotka_volterra_problem.time_step();
@@ -458,7 +455,7 @@ int main(int argc, char *argv[])
    while(LOOP)
     {
      // Performs an unsteady solve
-     lotka_volterra_problem.unsteady_solve();
+     lotka_volterra_problem.solve();
     
      // Update time of the problem
      lotka_volterra_problem.time()+=lotka_volterra_problem.time_step();
@@ -534,7 +531,7 @@ int main(int argc, char *argv[])
    while(LOOP)
     {
      // Performs an unsteady solve
-     lotka_volterra_problem.unsteady_solve();
+     lotka_volterra_problem.solve();
     
      // Update time of the problem
      lotka_volterra_problem.time()+=lotka_volterra_problem.time_step();

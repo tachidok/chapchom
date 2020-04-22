@@ -5,7 +5,7 @@ SET(SRC_lotka_volterra demo_lotka_volterra.cpp cc_lotka_volterra_odes.cpp)
 ADD_EXECUTABLE(julio_demo_lotka_volterra EXCLUDE_FROM_ALL ${SRC_lotka_volterra})
 
 # Indicate linking libraries
-SET(LIB_lotka_volterra data_structures_lib numerical_recipes_lib matrices_lib linear_solvers_lib time_stepper_lib problem_lib general_lib)
+SET(LIB_lotka_volterra data_structures_lib matrices_lib time_stepper_lib equations_lib problem_lib general_lib linear_solvers_lib numerical_recipes_lib)
 
 # Check whether chapchom is using Armadillo
 IF (CHAPCHOM_USES_ARMADILLO)

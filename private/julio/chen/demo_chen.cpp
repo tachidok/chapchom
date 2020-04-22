@@ -77,23 +77,24 @@ public:
  // Document the solution
  void document_solution()
  {
+  const Real t = this->time();
   Counter++;
   if (Counter >= 5000000)
    {
     Counter = 0;
-    std::cout << "Current time: " << Time << std::endl;
+    std::cout << "Current time: " << t << std::endl;
    }
   
   //Counter_output++;
   //  if (Counter_output >= 100)
   {
-   if (Time >= 0 && Time <= 200)
+   if (t >= 0 && t <= 200)
     {
-     Output_file1 << Time << "\t" << u(0) << "\t" << u(1) << "\t" << u(2) << std::endl;
+     Output_file1 << t << "\t" << u(0) << "\t" << u(1) << "\t" << u(2) << std::endl;
     }
-   else if (Time >= 49800 && Time <= 50000)
+   else if (t >= 49800 && t <= 50000)
     {
-     Output_file2 << Time << "\t" << u(0) << "\t" << u(1) << "\t" << u(2) << std::endl;
+     Output_file2 << t << "\t" << u(0) << "\t" << u(1) << "\t" << u(2) << std::endl;
     }
    //Counter_output = 0;
   }
@@ -121,11 +122,7 @@ int main(int argc, char *argv[])
 {
  
  // Create the factory for the time steppers (integration methods)
-#ifdef CHAPCHOM_USES_ARMADILLO
- CCFactoryTimeStepper<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > factory_time_stepper;
-#else 
- CCFactoryTimeStepper<CCMatrix<Real>, CCVector<Real> > factory_time_stepper;
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+ CCFactoryTimeStepper factory_time_stepper;
  
  const unsigned Fixed_number_of_prediction_correction_steps = 2;
  
@@ -184,7 +181,7 @@ int main(int argc, char *argv[])
    while(LOOP)
     {
      // Performs an unsteady solve
-     chen_problem.unsteady_solve();
+     chen_problem.solve();
     
      // Update time of the problem
      chen_problem.time()+=chen_problem.time_step();
@@ -261,7 +258,7 @@ int main(int argc, char *argv[])
    while(LOOP)
     {
      // Performs an unsteady solve
-     chen_problem.unsteady_solve();
+     chen_problem.solve();
     
      // Update time of the problem
      chen_problem.time()+=chen_problem.time_step();
@@ -356,7 +353,7 @@ int main(int argc, char *argv[])
   while(LOOP)
     {
      // Performs an unsteady solve
-     chen_problem.unsteady_solve();
+     chen_problem.solve();
     
      // Update time of the problem
      chen_problem.time()+=chen_problem.time_step();
@@ -451,7 +448,7 @@ int main(int argc, char *argv[])
   while(LOOP)
    {
     // Performs an unsteady solve
-    chen_problem.unsteady_solve();
+    chen_problem.solve();
     
     // Update time of the problem
     chen_problem.time()+=chen_problem.time_step();
@@ -528,7 +525,7 @@ int main(int argc, char *argv[])
   while(LOOP)
    {
     // Performs an unsteady solve
-    chen_problem.unsteady_solve();
+    chen_problem.solve();
     
     // Update time of the problem
     chen_problem.time()+=chen_problem.time_step();
@@ -605,7 +602,7 @@ int main(int argc, char *argv[])
   while(LOOP)
    {
     // Performs an unsteady solve
-    chen_problem.unsteady_solve();
+    chen_problem.solve();
     
     // Update time of the problem
     chen_problem.time()+=chen_problem.time_step();
@@ -682,7 +679,7 @@ int main(int argc, char *argv[])
   while(LOOP)
    {
     // Performs an unsteady solve
-    chen_problem.unsteady_solve();
+    chen_problem.solve();
     
     // Update time of the problem
     chen_problem.time()+=chen_problem.time_step();

@@ -5,7 +5,7 @@ SET(SRC_chen demo_chen.cpp cc_chen_odes.cpp)
 ADD_EXECUTABLE(julio_demo_chen EXCLUDE_FROM_ALL ${SRC_chen})
 
 # Indicate linking libraries
-SET(LIB_chen data_structures_lib numerical_recipes_lib matrices_lib linear_solvers_lib time_stepper_lib problem_lib general_lib)
+SET(LIB_chen data_structures_lib matrices_lib time_stepper_lib equations_lib problem_lib general_lib linear_solvers_lib numerical_recipes_lib)
 
 # Check whether chapchom is using Armadillo
 IF (CHAPCHOM_USES_ARMADILLO)

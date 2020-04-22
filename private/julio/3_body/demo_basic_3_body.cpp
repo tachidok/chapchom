@@ -291,11 +291,12 @@ public:
  void document_solution(std::ostringstream &output_filename)
  {
   const unsigned n_data_per_particle = 6;
-  CCChapchom2VTK::get_instance().output_particles(Time, (*U_pt), output_filename, n_data_per_particle);
+  const Real t = this->time();
+  CCChapchom2VTK::get_instance().output_particles(t, (*U_pt), output_filename, n_data_per_particle);
   
   // Output
   std::cout.precision(8);
-  std::cout << "t: " << Time
+  std::cout << "t: " << t
             << "\t" << U_pt->value(0) << "\t" << U_pt->value(2) << "\t" << U_pt->value(6) << "\t" << U_pt->value(8) << "\t" << U_pt->value(12) << "\t" << U_pt->value(14) << std::endl;
   
   // Document raw data
@@ -303,7 +304,7 @@ public:
   // x_1, vx_1, y_1, vy_1, z_1, vz_1,
   // x_2, vx_2, y_2, vy_2, z_2, vz_2,
   // x_3, vx_3, y_3, vy_3, z_3, vz_3
-  Output_file << Time << "\t"
+  Output_file << t << "\t"
               << u(0) << "\t" << u(1) << "\t" << u(2) << "\t" << u(3) << "\t" << u(4) << "\t" << u(5) << "\t"
               << u(6) << "\t" << u(7) << "\t" << u(8) << "\t" << u(9) << "\t" << u(10) << "\t" << u(11) << "\t"
               << u(12) << "\t" << u(13) << "\t" << u(14) << "\t" << u(15) << "\t" << u(16) << "\t" << u(17) <<  std::endl;
@@ -339,7 +340,7 @@ int main(int argc, char *argv[])
  // Time stepper
  // ----------------------------------------------------------------
  // Create the factory for the time steppers (integration methods)
- CCFactoryTimeStepper<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > factory_time_stepper;
+ CCFactoryTimeStepper factory_time_stepper;
  //CCFactoryTimeStepper<CCMatrix<Real>, CCVector<Real> > factory_time_stepper;
  // Create an instance of the integration method
  //ACTimeStepper *time_stepper_pt =
@@ -393,7 +394,7 @@ int main(int argc, char *argv[])
  while(LOOP)
   {
    // Performs an unsteady solve
-   three_body_problem.unsteady_solve();
+   three_body_problem.solve();
    
    // Update time of the problem
    three_body_problem.time()+=three_body_problem.time_step();

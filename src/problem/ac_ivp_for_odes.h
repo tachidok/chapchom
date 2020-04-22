@@ -44,7 +44,16 @@ namespace chapchom
   virtual void set_initial_conditions() = 0;
   
   /// Document solution
-  virtual void document_solution() = 0;
+  virtual void document_solution()
+  {
+   // Error message
+   std::ostringstream error_message;
+   error_message << "Virtual function in ACIVPForODEs class, you should implement\n"
+                 << "it to document your solution" << std::endl;
+   throw ChapchomLibError(error_message.str(),
+                          CHAPCHOM_CURRENT_FUNCTION,
+                          CHAPCHOM_EXCEPTION_LOCATION);
+  }
   // -------------------------------------------------------------------------
   // THESE METHODS MUST BE IMPLEMENTED IN THE CONCRETE PROBLEM CLASS [END]
   // -------------------------------------------------------------------------
