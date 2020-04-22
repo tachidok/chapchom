@@ -89,11 +89,7 @@ protected:
 int main(int argc, char *argv[])
 {
  // Create the factory for the time steppers (integration methods)
-#ifdef CHAPCHOM_USES_ARMADILLO
- CCFactoryTimeStepper<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > factory_time_stepper;
-#else 
- CCFactoryTimeStepper<CCMatrix<Real>, CCVector<Real> > factory_time_stepper;
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+ CCFactoryTimeStepper factory_time_stepper;
  
  // Euler method test
  {

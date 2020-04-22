@@ -19,12 +19,11 @@
 #include "../../../src/time_steppers/cc_adams_moulton_2_method.h"
 #include "../../../src/time_steppers/cc_bdf_2_method.h"
 
-#include "../../../src/matrices/cc_matrix.h"
-
 #ifdef CHAPCHOM_USES_ARMADILLO
-// Include Armadillo type matrices since the templates may include
-// Armadillo type matrices
+// Include Armadillo type matrices
 #include "../../../src/matrices/cc_matrix_armadillo.h"
+#else
+#include "../../../src/matrices/cc_matrix.h"
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
 
 // The class used to store the values of u and dudt
@@ -108,15 +107,14 @@ protected:
 // =================================================================
 // =================================================================
 // =================================================================
-template<class MAT_TYPE, class VEC_TYPE>
-class CCJacobianStrategyForMyODEs : public virtual ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE,VEC_TYPE>
+class CCJacobianStrategyForMyODEs : public virtual ACJacobianAndResidualForImplicitTimeStepper
 {
  
 public:
  
  // Empty constructor
  CCJacobianStrategyForMyODEs()
-  : ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE>()
+  : ACJacobianAndResidualForImplicitTimeStepper()
  {
   
  }
@@ -168,14 +166,14 @@ public:
    }
   
   // Allocate memory for the Jacobian (delete previous data)
-  this->Jacobian.allocate_memory(n_dof, n_dof);
+  this->Jacobian_pt->allocate_memory(n_dof, n_dof);
   
   // Get the index of history values of the u vector at time 't+h'
   // that should be used to compute the values of the Jacobian
   const unsigned k = this->history_index();
   
   // Fill in the Jacobian
-  this->Jacobian(0, 0) = -(2*u_pt->value(0,k));
+  this->Jacobian_pt->value(0, 0) = -(2*u_pt->value(0,k));
   
  }
  
@@ -191,7 +189,7 @@ private:
  // it contains dynamically allocated variables, A in this
  // case). Check
  // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CCJacobianStrategyForMyODEs(const CCJacobianStrategyForMyODEs <MAT_TYPE,VEC_TYPE> &copy)
+ CCJacobianStrategyForMyODEs(const CCJacobianStrategyForMyODEs &copy)
  {
   BrokenCopy::broken_copy("CCJacobianStrategyForMyODEs");
  }
@@ -200,7 +198,7 @@ private:
  // it contains dynamically allocated variables, A in this
  // case). Check
  // http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- void operator=(const CCJacobianStrategyForMyODEs<MAT_TYPE,VEC_TYPE> &copy)
+ void operator=(const CCJacobianStrategyForMyODEs &copy)
  {
   BrokenCopy::broken_assign("CCJacobianStrategyForMyODEs");
  }
@@ -284,11 +282,7 @@ private:
  int main(int argc, char *argv[])
  {
   // Create the factory for the time steppers (integration methods)
-#ifdef CHAPCHOM_USES_ARMADILLO
-  CCFactoryTimeStepper<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > factory_time_stepper;
-#else 
-  CCFactoryTimeStepper<CCMatrix<Real>, CCVector<Real> > factory_time_stepper;
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+  CCFactoryTimeStepper factory_time_stepper;
   
   // Euler method test
   {
@@ -638,20 +632,11 @@ private:
     factory_time_stepper.create_time_stepper("BDF1");
    
    // Create an instance of the strategy to compute the Jacobian
-#ifdef CHAPCHOM_USES_ARMADILLO
-   CCJacobianStrategyForMyODEs<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > my_jacobian_strategy;
-#else
-   CCJacobianStrategyForMyODEs<CCMatrix<Real>, CCVector<Real> > my_jacobian_strategy;
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+   CCJacobianStrategyForMyODEs my_jacobian_strategy;
    
    // Get a pointer to the specific time stepper
-#ifdef CHAPCHOM_USES_ARMADILLO
-   CCBackwardEulerMethod<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > *backward_euler_time_stepper_pt =
-    dynamic_cast<CCBackwardEulerMethod<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > *>(time_stepper_pt);
-#else
-   CCBackwardEulerMethod<CCMatrix<Real>, CCVector<Real> > *backward_euler_time_stepper_pt =
-    dynamic_cast<CCBackwardEulerMethod<CCMatrix<Real>, CCVector<Real> > *>(time_stepper_pt);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+   CCBackwardEulerMethod *backward_euler_time_stepper_pt =
+    dynamic_cast<CCBackwardEulerMethod*>(time_stepper_pt);
    
    // Set the Jacobian strategy for the time stepper
    backward_euler_time_stepper_pt->set_strategy_for_odes_jacobian(&my_jacobian_strategy);
@@ -740,20 +725,11 @@ private:
     factory_time_stepper.create_time_stepper("AM2");
    
    // Create an instance of the strategy to compute the Jacobian 
-#ifdef CHAPCHOM_USES_ARMADILLO
-   CCJacobianStrategyForMyODEs<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > my_jacobian_strategy;
-#else
-   CCJacobianStrategyForMyODEs<CCMatrix<Real>, CCVector<Real> > my_jacobian_strategy;
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+   CCJacobianStrategyForMyODEs my_jacobian_strategy;
    
    // Get a pointer to the specific time stepper   
-#ifdef CHAPCHOM_USES_ARMADILLO
-   CCAdamsMoulton2Method<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > *amd2_time_stepper_pt =
-    dynamic_cast<CCAdamsMoulton2Method<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > *>(time_stepper_pt);
-#else
-   CCAdamsMoulton2Method<CCMatrix<Real>, CCVector<Real> > *amd2_time_stepper_pt =
-    dynamic_cast<CCAdamsMoulton2Method<CCMatrix<Real>, CCVector<Real> > *>(time_stepper_pt);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+   CCAdamsMoulton2Method *amd2_time_stepper_pt =
+    dynamic_cast<CCAdamsMoulton2Method*>(time_stepper_pt);
    
    // Set the Jacobian strategy for the time stepper
    amd2_time_stepper_pt->set_strategy_for_odes_jacobian(&my_jacobian_strategy);
@@ -842,20 +818,10 @@ private:
     factory_time_stepper.create_time_stepper("BDF2");
    
    // Create an instance of the strategy to compute the Jacobian 
-#ifdef CHAPCHOM_USES_ARMADILLO
-   CCJacobianStrategyForMyODEs<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > my_jacobian_strategy;
-#else
-   CCJacobianStrategyForMyODEs<CCMatrix<Real>, CCVector<Real> > my_jacobian_strategy;
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+   CCJacobianStrategyForMyODEs my_jacobian_strategy;
    
    // Get a pointer to the specific time stepper
-#ifdef CHAPCHOM_USES_ARMADILLO
-   CCBDF2Method<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > *bdf2_time_stepper_pt =
-    dynamic_cast<CCBDF2Method<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > *>(time_stepper_pt);
-#else
-   CCBDF2Method<CCMatrix<Real>, CCVector<Real> > *bdf2_time_stepper_pt =
-    dynamic_cast<CCBDF2Method<CCMatrix<Real>, CCVector<Real> > *>(time_stepper_pt);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+   CCBDF2Method *bdf2_time_stepper_pt = dynamic_cast<CCBDF2Method*>(time_stepper_pt);
    
    // Set the Jacobian strategy for the time stepper
    bdf2_time_stepper_pt->set_strategy_for_odes_jacobian(&my_jacobian_strategy);

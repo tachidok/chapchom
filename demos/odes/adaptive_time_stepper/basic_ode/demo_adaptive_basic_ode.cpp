@@ -18,12 +18,11 @@
 #include "../../../../src/time_steppers/cc_adaptive_runge_kutta_45F_method.h"
 #include "../../../../src/time_steppers/cc_adaptive_runge_kutta_45DP_method.h"
 
-#include "../../../../src/matrices/cc_matrix.h"
-
 #ifdef CHAPCHOM_USES_ARMADILLO
-// Include Armadillo type matrices since the templates may include
-// Armadillo type matrices
+// Include Armadillo type matrices
 #include "../../../../src/matrices/cc_matrix_armadillo.h"
+#else
+#include "../../../../src/matrices/cc_matrix.h"
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
 
 // The class used to store the values of u and dudt
@@ -333,11 +332,7 @@ protected:
 int main(int argc, char *argv[])
 {
  // Create the factory for the time steppers (integration methods)
-#ifdef CHAPCHOM_USES_ARMADILLO
- CCFactoryTimeStepper<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> > factory_time_stepper;
-#else 
- CCFactoryTimeStepper<CCMatrix<Real>, CCVector<Real> > factory_time_stepper;
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+ CCFactoryTimeStepper factory_time_stepper;
  
  {
   std::cout << "Adaptive Runge-Kutta 4(5) Fehlberg test" << std::endl;
