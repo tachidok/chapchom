@@ -271,7 +271,7 @@ public:
   odes_pt->g(0) = -1.0;
   odes_pt->g(1) = -1.0;
   odes_pt->g(2) = -1.0;
-#endif // #ifdef TRIPLE_RINGS_SOLUTINO
+#endif // #ifdef TRIPLE_RINGS_SOLUTION
 
 #ifdef TRIANGLES_INSIDE_OVAL_SOLUTION
   // Nested oval
@@ -321,6 +321,11 @@ protected:
   
 }; // class CC3BodyProblem
 
+struct Args {
+ argparse::ArgValue<bool> test;
+ argparse::ArgValue<std::string> string_argument;
+};
+
 // ==================================================================
 // ==================================================================
 // ==================================================================
@@ -330,9 +335,31 @@ protected:
 // ==================================================================
 int main(int argc, char *argv[])
 {
+
+ // Initialise chapcom
+ initialise_chapchom();
+ 
+ // Instantiate parser
+ Args args;
+ auto parser = argparse::ArgumentParser(argv[0], "Description of application");
+ 
+ // Add arguments
+ 
+ // Positional
+ parser.add_argument(args.string_argument, "string_argument")
+  .help("File to process");
+ 
+ // Optional
+ parser.add_argument(args.test, "--test")
+  .help("Boolean argument")
+  .default_value("false")
+  .action(argparse::Action::STORE_TRUE);
+ 
+ // Parse the input arguments
+ parser.parse_args(argc, argv);
  
  // -----------------------------------------------------------------
- // Instantiation of the problem
+ // Instantiation of the odes associated with the problem
  // -----------------------------------------------------------------
  CCODEsBasic3Body odes(3);
  
@@ -341,7 +368,6 @@ int main(int argc, char *argv[])
  // ----------------------------------------------------------------
  // Create the factory for the time steppers (integration methods)
  CCFactoryTimeStepper factory_time_stepper;
- //CCFactoryTimeStepper<CCMatrix<Real>, CCVector<Real> > factory_time_stepper;
  // Create an instance of the integration method
  //ACTimeStepper *time_stepper_pt =
  //  factory_time_stepper.create_time_stepper("Euler");
@@ -349,12 +375,12 @@ int main(int argc, char *argv[])
   factory_time_stepper.create_time_stepper("RK4"); 
  //ACTimeStepper *time_stepper_pt =
  //factory_time_stepper.create_time_stepper("BDF1");
-
+ 
  // ----------------------------------------------------------------
- // Prepare the output file
+ // Prepare the output filename
  // ----------------------------------------------------------------
  std::ostringstream raw_output_filename;
- raw_output_filename << "RESLT/raw_output";
+ raw_output_filename << "RESLT/output_test.dat";
  
  // Create an instance of the problem
  CC3BodyProblem three_body_problem(&odes, time_stepper_pt, raw_output_filename);
@@ -419,6 +445,9 @@ int main(int argc, char *argv[])
  // Free memory
  delete time_stepper_pt;
  time_stepper_pt = 0;
+ 
+ // Finalise chapcom
+ finalise_chapchom();
  
  return 0;
  
