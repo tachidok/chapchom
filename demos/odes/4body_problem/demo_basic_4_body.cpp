@@ -30,20 +30,20 @@
 
 // Base class for the concrete problem
 #include "../../../src/problem/ac_ivp_for_odes.h"
-// Odes for N body problem
-#include "cc_odes_basic_n_body.h"
+// Odes for 4 body problem
+#include "cc_odes_basic_4_body.h"
 
 using namespace chapchom;
 
 /// This class implements inherits from the ACIVPForODEs class, we
-/// implement specific functions to solve the n body problem
-class CCNBodyProblem : public virtual ACIVPForODEs
+/// implement specific functions to solve the 4 body problem
+class CC4BodyProblem : public virtual ACIVPForODEs
 {
   
 public:
  
  /// Constructor
- CCNBodyProblem(ACODEs *odes_pt, ACTimeStepper *time_stepper_pt, std::ostringstream &output_filename)
+ CC4BodyProblem(ACODEs *odes_pt, ACTimeStepper *time_stepper_pt, std::ostringstream &output_filename)
   : ACIVPForODEs(odes_pt, time_stepper_pt),
     Output_filename(output_filename.str())
  {
@@ -53,7 +53,7 @@ public:
  }
  
  /// Destructor
- ~CCNBodyProblem()
+ ~CC4BodyProblem()
  {
   Output_file.close();
  }
@@ -154,7 +154,11 @@ protected:
  // The output file
  std::ofstream Output_file;
  
-}; // class CCNBodyProblem
+}; // class CC4BodyProblem
+
+struct Args {
+ argparse::ArgValue<bool> test;
+};
 
 // ==================================================================
 // ==================================================================
@@ -164,12 +168,26 @@ protected:
 // ==================================================================
 // ==================================================================
 int main(int argc, char *argv[])
-{
+{ 
+ // Instantiate parser
+ Args args;
+ auto parser = argparse::ArgumentParser(argv[0], "Description of application");
+ 
+ // Add arguments
+ 
+ // Optional
+ parser.add_argument(args.test, "--test")
+  .help("Boolean argument")
+  .default_value("false")
+  .action(argparse::Action::STORE_TRUE);
+ 
+ // Parse the input arguments
+ parser.parse_args(argc, argv);
  
  // -----------------------------------------------------------------
  // Instantiation of the problem
  // -----------------------------------------------------------------
- CCODEsBasicNBody odes(4);
+ CCODEsBasic4Body odes(4);
  
  odes.set_odes_parameters();
  
@@ -178,7 +196,7 @@ int main(int argc, char *argv[])
  // ----------------------------------------------------------------
  // Create the factory for the time steppers (integration methods)
  CCFactoryTimeStepper factory_time_stepper;
- //CCFactoryTimeStepper<CCMatrix<Real>, CCVector<Real> > factory_time_stepper;
+ 
  // Create an instance of the integration method
  //ACTimeStepper *time_stepper_pt =
  //  factory_time_stepper.create_time_stepper("Euler");
@@ -191,10 +209,10 @@ int main(int argc, char *argv[])
  // Prepare the output file
  // ----------------------------------------------------------------
  std::ostringstream raw_output_filename;
- raw_output_filename << "RESLT/raw_output";
+ raw_output_filename << "output_test";
  
  // Create an instance of the problem
- CCNBodyProblem n_body_problem(&odes, time_stepper_pt, raw_output_filename);
+ CC4BodyProblem four_body_problem(&odes, time_stepper_pt, raw_output_filename);
  
  // Prepare time integration data
  const Real initial_time = 0.0; // years
@@ -205,24 +223,27 @@ int main(int argc, char *argv[])
  // Configure problem
  // ----------------------------------------------------------------
  // Initial time
- n_body_problem.time() = initial_time;
+ four_body_problem.time() = initial_time;
  
  // Initial time step
- n_body_problem.time_step() = (final_time - initial_time) / n_time_steps; // years
+ four_body_problem.time_step() = (final_time - initial_time) / n_time_steps; // years
  
  // Set initial conditions
- n_body_problem.set_initial_conditions();
+ four_body_problem.set_initial_conditions();
  
  // Complete setup
- n_body_problem.complete_problem_setup();
+ four_body_problem.complete_problem_setup();
  
  // Output to file
  std::ostringstream output_filename;
- output_filename
-  << "./RESLT/soln" << "_" << std::setfill('0') << std::setw(5) << n_body_problem.output_file_index()++;
+ if (!args.test)
+  {
+   output_filename
+    << "./RESLT/soln" << "_" << std::setfill('0') << std::setw(5) << four_body_problem.output_file_index()++;
+  }
  
  // Document initial configuration
- n_body_problem.document_solution(output_filename);
+ four_body_problem.document_solution(output_filename);
  
  // Flag to indicate whether to continue processing
  bool LOOP = true;
@@ -231,23 +252,26 @@ int main(int argc, char *argv[])
  while(LOOP)
   {
    // Performs an unsteady solve
-   n_body_problem.solve();
+   four_body_problem.solve();
    
    // Update time of the problem
-   n_body_problem.time()+=n_body_problem.time_step();
+   four_body_problem.time()+=four_body_problem.time_step();
    
    // Check whether we have reached the final time
-   if (n_body_problem.time() >= final_time)
+   if (four_body_problem.time() >= final_time)
     {
      LOOP = false;
     }
    
    // Output to file
    std::ostringstream ioutput_filename;
-   ioutput_filename
-    << "./RESLT/soln" << "_" << std::setfill('0') << std::setw(5) << n_body_problem.output_file_index()++;
+   if (!args.test)
+    {
+     ioutput_filename
+      << "./RESLT/soln" << "_" << std::setfill('0') << std::setw(5) << four_body_problem.output_file_index()++;
+    }
    
-   n_body_problem.document_solution(ioutput_filename);
+   four_body_problem.document_solution(ioutput_filename);
    
   } // while(LOOP)
  

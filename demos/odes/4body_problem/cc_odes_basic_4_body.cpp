@@ -1,13 +1,13 @@
-/** \file This file implements the CCODEsBasicNBody class
+/** \file This file implements the CCODEsBasic4Body class
  */
-#include "cc_odes_basic_n_body.h"
+#include "cc_odes_basic_4_body.h"
 
 namespace chapchom
 {
  // ===================================================================
  // Constructor, sets the number of odes. We currently have 10 odes
  // ===================================================================
- CCODEsBasicNBody::CCODEsBasicNBody(const unsigned n_bodies)
+ CCODEsBasic4Body::CCODEsBasic4Body(const unsigned n_bodies)
   : ACODEs(n_bodies*DIM*2), // The times 2 is because we are storing
                             // the position and the velocity of each
                             // body
@@ -23,7 +23,7 @@ namespace chapchom
  // ===================================================================
  // Empty destructor
  // ===================================================================
- CCODEsBasicNBody::~CCODEsBasicNBody()
+ CCODEsBasic4Body::~CCODEsBasic4Body()
  { }
  
  // ===================================================================
@@ -31,7 +31,7 @@ namespace chapchom
  /// function at previous times are accessible via u(i,1), u(i,2) and
  /// so on. The evaluation produces results in the vector dudt.
  // ===================================================================
- void CCODEsBasicNBody::evaluate_derivatives(const Real t,
+ void CCODEsBasic4Body::evaluate_derivatives(const Real t,
                                              CCData &u,
                                              CCData &dudt,
                                              const unsigned k)
@@ -185,7 +185,7 @@ namespace chapchom
  // ===================================================================
  // Set parameters for odes
  // ===================================================================
- void CCODEsBasicNBody::set_odes_parameters()
+ void CCODEsBasic4Body::set_odes_parameters()
  {
   // Set the masses of the objects
   m(0) = 100.0;

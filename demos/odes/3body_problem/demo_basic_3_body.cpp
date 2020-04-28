@@ -323,7 +323,6 @@ protected:
 
 struct Args {
  argparse::ArgValue<bool> test;
- argparse::ArgValue<std::string> string_argument;
 };
 
 // ==================================================================
@@ -334,20 +333,12 @@ struct Args {
 // ==================================================================
 // ==================================================================
 int main(int argc, char *argv[])
-{
-
- // Initialise chapcom
- initialise_chapchom();
- 
+{ 
  // Instantiate parser
  Args args;
  auto parser = argparse::ArgumentParser(argv[0], "Description of application");
  
  // Add arguments
- 
- // Positional
- parser.add_argument(args.string_argument, "string_argument")
-  .help("File to process");
  
  // Optional
  parser.add_argument(args.test, "--test")
@@ -380,7 +371,7 @@ int main(int argc, char *argv[])
  // Prepare the output filename
  // ----------------------------------------------------------------
  std::ostringstream raw_output_filename;
- raw_output_filename << "RESLT/output_test.dat";
+ raw_output_filename << "output_test";
  
  // Create an instance of the problem
  CC3BodyProblem three_body_problem(&odes, time_stepper_pt, raw_output_filename);
@@ -407,8 +398,11 @@ int main(int argc, char *argv[])
  
  // Output to file
  std::ostringstream output_filename;
- output_filename
-  << "./RESLT/soln" << "_" << std::setfill('0') << std::setw(5) << three_body_problem.output_file_index()++;
+ if (!args.test)
+  {
+   output_filename
+    << "./RESLT/soln" << "_" << std::setfill('0') << std::setw(5) << three_body_problem.output_file_index()++;
+  }
  
  // Document initial configuration
  three_body_problem.document_solution(output_filename);
@@ -433,8 +427,11 @@ int main(int argc, char *argv[])
    
    // Output to file
    std::ostringstream ioutput_filename;
-   ioutput_filename
-    << "./RESLT/soln" << "_" << std::setfill('0') << std::setw(5) << three_body_problem.output_file_index()++;
+   if (!args.test)
+    {
+     ioutput_filename
+      << "./RESLT/soln" << "_" << std::setfill('0') << std::setw(5) << three_body_problem.output_file_index()++;
+    }
    
    three_body_problem.document_solution(ioutput_filename);
    
@@ -445,9 +442,6 @@ int main(int argc, char *argv[])
  // Free memory
  delete time_stepper_pt;
  time_stepper_pt = 0;
- 
- // Finalise chapcom
- finalise_chapchom();
  
  return 0;
  

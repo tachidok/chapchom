@@ -1,5 +1,5 @@
-#ifndef CCODESBASICNBODY_H
-#define CCODESBASICNBODY_H
+#ifndef CCODESBASIC4BODY_H
+#define CCODESBASIC4BODY_H
 
 // Include general/common includes, utilities and initialisation
 #include "../../../src/general/common_includes.h"
@@ -20,22 +20,22 @@
 namespace chapchom
 {
 
- /// \class CCODEsBasicNBody cc_odes_basic_n_body.h
-    
+ /// \class CCODEsBasic4Body cc_odes_basic_n_body.h
+ 
  /// This class implements a set of odes associated with the n-body
  /// problem
- class CCODEsBasicNBody : public virtual ACODEs
+ class CCODEsBasic4Body : public virtual ACODEs
  {
- 
+  
  public:
   
   /// Constructor, sets the number of bodies (this specialised
   // implementation assumes we are working with 4 bodies in 3
   // dimensions)
-  CCODEsBasicNBody(const unsigned n_bodies = NBODIES);
+  CCODEsBasic4Body(const unsigned n_bodies = NBODIES);
   
   /// Empty destructor
-  virtual ~CCODEsBasicNBody();
+  virtual ~CCODEsBasic4Body();
   
   /// Evaluates the system of odes at time "t". The values of the i-th
   /// function at previous times are accessible via u(i,1), u(i,2) and
@@ -62,18 +62,18 @@ namespace chapchom
   /// Copy constructor (we do not want this class to be
   /// copiable). Check
   /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
- CCODEsBasicNBody(const CCODEsBasicNBody &copy)
+ CCODEsBasic4Body(const CCODEsBasic4Body &copy)
   : ACODEs(copy), N_bodies(0)
    {
-    BrokenCopy::broken_copy("CCODEsBasicNBody");
+    BrokenCopy::broken_copy("CCODEsBasic4Body");
    }
   
   /// Assignment operator (we do not want this class to be
   /// copiable. Check
   /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
-  void operator=(const CCODEsBasicNBody &copy)
+  void operator=(const CCODEsBasic4Body &copy)
    {
-    BrokenCopy::broken_assign("CCODEsBasicNBody");
+    BrokenCopy::broken_assign("CCODEsBasic4Body");
    }
   
   // The number of bodies
@@ -89,4 +89,4 @@ namespace chapchom
  
 }
 
-#endif // #ifndef CCODESBASICNBODY_H
+#endif // #ifndef CCODESBASIC4BODY_H
