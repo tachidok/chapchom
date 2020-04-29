@@ -36,7 +36,7 @@ lib_name=chapchom
 lib_ext=*
 # The type of the library is given by the choosing of STATIC or SHARED
 # library
-lib_type=*
+#lib_type=*
 # The version of the library is given by whether the user choose to
 # build the DEBUG or the RELEASE version of the library
 lib_version=*
@@ -72,12 +72,12 @@ else
     echo " "
 fi
 
-if test $input_arguments -eq 1 -a $# -ne 6; then
+if test $input_arguments -eq 1 -a $# -ne 5; then
     echo ""
     echo "============================================================= "
     echo ""
     echo "FATAL ERROR: The number of expected arguments (if given) "
-    echo "should be six, but we only got "$#". Please carefully"
+    echo "should be five, but we only got "$#". Please carefully"
     echo "check you are passing the right number of arguments"
     echo ""
     echo "============================================================= "
@@ -112,28 +112,28 @@ echo ""
 #====================================================================
 # Library type
 #====================================================================
-echo "Which library type do you want to build?"
-OptionPrompt "The a)STATIC or the b)SHARED type library? [a/b -- default: a]"
-
-static_or_shared='a'
-
-if test $input_arguments = 1; then
-    static_or_shared=$1
-else
-    static_or_shared=`OptionRead`
-fi
-
-if test "$static_or_shared" = "b" -o "$static_or_shared" = "B" ; then 
-    lib_type=SHARED
-    lib_ext=.so
-else
-    lib_type=STATIC
-    lib_ext=.a
-fi
-
-echo ""
-echo "============================================================= "
-echo ""
+#echo "Which library type do you want to build?"
+#OptionPrompt "The a)STATIC or the b)SHARED type library? [a/b -- default: a]"
+#
+#static_or_shared='a'
+#
+#if test $input_arguments = 1; then
+#    static_or_shared=$1
+#else
+#    static_or_shared=`OptionRead`
+#fi
+#
+#if test "$static_or_shared" = "b" -o "$static_or_shared" = "B" ; then 
+#    lib_type=SHARED
+#    lib_ext=.so
+#else
+#    lib_type=STATIC
+#    lib_ext=.a
+#fi
+#
+#echo ""
+#echo "============================================================= "
+#echo ""
 
 #====================================================================
 # Library version
@@ -144,7 +144,7 @@ OptionPrompt "The a)DEBUG or the b)RELEASE version of the library ? [a/b -- defa
 debug_or_release='a'
 
 if test $input_arguments = 1; then
-    debug_or_release=$2
+    debug_or_release=$1
 else
     debug_or_release=`OptionRead`
 fi
@@ -163,19 +163,19 @@ echo ""
 # Number of processors to build library
 #====================================================================
 echo "How many processor to use to build $lib_name?"
-OptionPrompt "[1] [2] [4] [default: 4]"
+OptionPrompt "[1] [2] [4] [8] [default: 4]"
 
 number_of_processors_to_build_library=4
 
 if test $input_arguments = 1; then
-    number_of_processors_to_build_library=$3
+    number_of_processors_to_build_library=$2
 else
     number_of_processors_to_build_library=`OptionRead`
 fi
 
-if test "$number_of_processors_to_build_library" != 1 -a "$number_of_processors_to_build_library" != 2 -a "$number_of_processors_to_build_library" != 4; then
+if test "$number_of_processors_to_build_library" != 1 -a "$number_of_processors_to_build_library" != 2 -a "$number_of_processors_to_build_library" != 4 -a "$number_of_processors_to_build_library" != 8; then
     number_of_processors_to_build_library=4
-    echo "Setting the number of processors to build library to [4]" 
+    echo "Setting the number of processors to build library to [4]"
     echo "We do not currently support the number of processors you"
     echo "specified!"
 fi
@@ -193,7 +193,7 @@ OptionPrompt "[default: ./configs/current]"
 extra_config_file="./configs/current"
 
 if test $input_arguments = 1; then
-    extra_config_file=$4
+    extra_config_file=$3
 else
     extra_config_file=`OptionRead`
 fi
@@ -218,7 +218,7 @@ OptionPrompt "a)DO BUILD/RUN demos b)DO NOT BUILD/RUN demos [a/b -- default: a]"
 build_and_run_demos='a'
 
 if test $input_arguments = 1; then
-    build_and_run_demos=$5
+    build_and_run_demos=$4
 else
     build_and_run_demos=`OptionRead`
 fi
@@ -228,19 +228,19 @@ if test "$build_and_run_demos" = "b" -o "$build_and_run_demos" = "B" ; then
 else
     build_demos=TRUE
     echo "How many processor use to run tests?"
-    OptionPrompt "[1] [2] [4] [default: 4]"
+    OptionPrompt "[1] [2] [4] [8] [default: 4]"
     
     number_of_processors_to_run_demos=4
     
     if test $input_arguments = 1; then
-        number_of_processors_to_run_demos=$6
+        number_of_processors_to_run_demos=$5
     else
         number_of_processors_to_run_demos=`OptionRead`
     fi
     
-    if test "$number_of_processors_to_run_demos" != 1 -a "$number_of_processors_to_run_demos" != 2 -a "$number_of_processors_to_run_demos" != 4; then
+    if test "$number_of_processors_to_run_demos" != 1 -a "$number_of_processors_to_run_demos" != 2 -a "$number_of_processors_to_run_demos" != 4 -a "$number_of_processors_to_run_demos" != 8; then
         number_of_processors_to_run_demos=4
-        echo "Setting the number of processors to run tests to [1]" 
+        echo "Setting the number of processors to run tests to [4]"
         echo "We do not currently support the number of processors you"
         echo "specified!"
     fi
@@ -254,8 +254,8 @@ echo ""
 echo "============================================================= "
 echo "************************************************************* "
 echo "============================================================= "
-echo "Building the " $lib_type "/" $lib_version " version of the library"
-echo "Using ["$number_of_processors_to_build_library"] processor(s) to build library"
+echo "Building the " $lib_version " version of the library"
+echo "using ["$number_of_processors_to_build_library"] processor(s)"
 echo "BUILD_DEMOS="$build_demos
 if test "$build_demos" = "TRUE" ; then
     echo "Using ["$number_of_processors_to_run_demos"] processor(s) to run tests"
@@ -273,8 +273,18 @@ echo "I am going to run CMake ..."
 echo "============================================================= "
 echo ""
 # Go one folder up since we did a cd into ./build
+#if ! cmake ../ \
+#     -DCHAPCHOM_LIB_TYPE=$lib_type \
+#     -DCHAPCHOM_BUILD_VERSION=$lib_version \
+#     -DCHAPCHOM_BUILD_DEMOS=$build_demos \
+#     -DCHAPCHOM_CONFIGURATION_FILE=$configuration_file \
+#     -DCMAKE_EXPORT_COMPILE_COMMANDS=1 ; then # Added to create the
+                                              # 'compile_commands.json
+                                              # file for emacs
+                                              # autocompletion in
+                                              # irony mode'
+
 if ! cmake ../ \
-     -DCHAPCHOM_LIB_TYPE=$lib_type \
      -DCHAPCHOM_BUILD_VERSION=$lib_version \
      -DCHAPCHOM_BUILD_DEMOS=$build_demos \
      -DCHAPCHOM_CONFIGURATION_FILE=$configuration_file \
@@ -283,6 +293,7 @@ if ! cmake ../ \
                                               # file for emacs
                                               # autocompletion in
                                               # irony mode'
+    
     echo ""
     echo "============================================================= "
     echo "[ERROR] CMake"
