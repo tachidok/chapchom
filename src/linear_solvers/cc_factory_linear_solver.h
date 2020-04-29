@@ -1,4 +1,4 @@
-/// IN THIS FILE: A factory to help un on the creation of linear
+/// IN THIS FILE: A factory to help us on the creation of linear
 /// solvers
 
 #ifndef CCFACTORYLINEARSOLVER_H
@@ -7,7 +7,9 @@
 // Include the linear solver
 #include "ac_linear_solver.h"
 #include "cc_lu_solver_numerical_recipes.h"
+#ifdef CHAPCHOM_USES_ARMADILLO
 #include "cc_solver_armadillo.h"
+#endif // #ifdef CHAPCHOM_USES_ARMADILO
 
 namespace chapchom
 {

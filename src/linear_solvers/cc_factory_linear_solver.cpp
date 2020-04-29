@@ -34,16 +34,18 @@ namespace chapchom
   // ------------------------------------------------------
   // Check what linear solver we need to create
   // ------------------------------------------------------
-  // Linear solver from Armadillo
-  if (linear_solver_name.compare("armadillo")==0)
-   {
-    return new CCSolverArmadillo();
-   }
   // LU solver from numerical recipes
-  else if (linear_solver_name.compare("numerical_recipes")==0)
+  if (linear_solver_name.compare("numerical_recipes")==0)
    {
     return new CCLUSolverNumericalRecipes();
    }
+#ifdef CHAPCHOM_USES_ARMADILLO
+  // Linear solver from Armadillo
+  else if (linear_solver_name.compare("armadillo")==0)
+   {
+    return new CCSolverArmadillo();
+   }
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
   else
    {
     std::ostringstream error_message;
