@@ -142,6 +142,7 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
    
+#ifdef CHAPCHOM_USES_ARMADILLO
    // Get access to the Armadillo's matrix
    virtual arma::Mat<T> *arma_matrix_pt() const
    {
@@ -154,6 +155,7 @@ namespace chapchom
                            CHAPCHOM_CURRENT_FUNCTION,
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
    
   protected:
    
