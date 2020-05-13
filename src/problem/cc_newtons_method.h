@@ -18,6 +18,9 @@
 #include "../matrices/cc_matrix_armadillo.h"
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
 
+// Factory for matrices
+#include "../matrices/cc_factory_matrices.h"
+
 // Factory for linear solver
 #include "../linear_solvers/cc_factory_linear_solver.h"
 

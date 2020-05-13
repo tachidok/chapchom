@@ -22,7 +22,7 @@ MESSAGE( STATUS "---------------------------------------------------------------
 MESSAGE( STATUS "** GENERAL LIBRARY INFORMATION **" )
 MESSAGE( STATUS "-----------------------------------------------------------------------" )
 #MESSAGE( STATUS "CHAPCHOM_LIB_TYPE:            " ${CHAPCHOM_LIB_TYPE} )
-#MESSAGE( STATUS "CHAPCHOM_BUILD_VERSION:       " ${CHAPCHOM_BUILD_VERSION} )
+MESSAGE( STATUS "CHAPCHOM_BUILD_VERSION:       " ${CHAPCHOM_BUILD_VERSION} )
 MESSAGE( STATUS "CHAPCHOM_BUILD_DEMOS:         " ${CHAPCHOM_BUILD_DEMOS} )
 MESSAGE( STATUS "PROJECT_NAME:                 " ${PROJECT_NAME})
 MESSAGE( STATUS "PROJECT_MAJOR_VERSION:        " ${chapchom_MAJOR_VERSION})

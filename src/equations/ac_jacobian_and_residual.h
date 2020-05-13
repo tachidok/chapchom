@@ -16,6 +16,8 @@
 #include "../matrices/cc_matrix_armadillo.h"
 #endif // #ifdef CHAPCHOM_USES_ARMADILLO
 
+#include "../matrices/cc_factory_matrices.h"
+
 namespace chapchom
 {
  /// An abstract class used as a template for the algorithms to

@@ -1,6 +1,6 @@
 # Add source files in order of dependence, the ones with no dependency
 # first then the others
-SET(BASE_SRC_FILES ac_vector.tpl.cpp cc_vector.tpl.cpp ac_matrix.tpl.cpp cc_matrix.tpl.cpp)
+SET(BASE_SRC_FILES ac_vector.tpl.cpp cc_vector.tpl.cpp ac_matrix.tpl.cpp cc_matrix.tpl.cpp cc_factory_matrices.tpl.cpp)
 SET(ARMADILLO_SRC_FILES cc_vector_armadillo.tpl.cpp cc_matrix_armadillo.tpl.cpp)
 
 SET(SRC_FILES ${BASE_SRC_FILES})

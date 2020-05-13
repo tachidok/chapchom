@@ -22,11 +22,16 @@ namespace chapchom
   
  public:
   
+  
   /// Empty constructor
   CCFactoryLinearSolver();
   
   /// Empty destructor
   virtual ~CCFactoryLinearSolver();
+  
+  /// Returns the corresponding linear solver based on compilation
+  /// options
+  ACLinearSolver* create_linear_solver();
   
   /// Returns the specified linear solver
   ACLinearSolver* create_linear_solver(std::string linear_solver_name);

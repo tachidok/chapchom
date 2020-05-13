@@ -10,7 +10,7 @@ Hi there, this is the official git repository for the **chapchom**
 project.
 
 ## What the project is about?
-We intent to develop a **Object-Oriented-Parallel numerical library**
+We intent to develop a **Object-Oriented-Parallel numerical framework**
 with aims to solve PDE's by Mesh Free/Finite Element Method.
 
 ## Fast installation and starting up!!!
@@ -41,11 +41,12 @@ You need **git** installed in your computer, then type in a terminal
 ```shell
 git clone https://github.com/tachidok/chapchom
 cd chapchom
-git checkout bob
+git checkout -b bob
 ```
 
-The second line generates your fully customised branch and assumes
-your name is _bob_
+After executing the first line you will be prompted with your github
+user name and your password. The third line generates your fully
+customised branch and assumes your name is _bob_
 
 ### How to configure it?
 * In a terminal (shell command line) go into the `chapchom` folder
@@ -57,6 +58,9 @@ your name is _bob_
 
 * Follow up the instructions on screen to configure your own copy of
 the project.
+
+* From here on you can continue with the `starting_up` document in the
+`doc` folder.
 
 **For full details and additional features please check the full
 documentation in the `doc` folder.**

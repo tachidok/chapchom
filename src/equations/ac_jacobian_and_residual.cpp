@@ -8,15 +8,13 @@ namespace chapchom
  // ===================================================================
  ACJacobianAndResidual::ACJacobianAndResidual()
  {
+  // Create an instance of the factory for matrices and vectors
+  CCFactoryMatrices<Real> factory_matrices_and_vectors;
+  
   /// Instantiate Jacobian and Residual based on the type of libraries
   /// we are using.
-#ifdef CHAPCHOM_USES_ARMADILLO
-  Jacobian_pt = new CCMatrixArmadillo<Real>();
-  Residual_pt = new CCVectorArmadillo<Real>();
-#else
-  Jacobian_pt = new CCMatrix<Real>();
-  Residual_pt = new CCVector<Real>();
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+  Jacobian_pt = factory_matrices_and_vectors.create_matrix();
+  Residual_pt = factory_matrices_and_vectors.create_vector();
   
  }
 

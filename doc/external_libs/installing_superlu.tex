@@ -1,0 +1,143 @@
+% Created 2020-05-12 mar 16:45
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\tolerance=1000
+\author{Julio C.}
+\date{\today}
+\title{Installing SuperLU}
+\hypersetup{
+  pdfkeywords={},
+  pdfsubject={},
+  pdfcreator={Emacs 25.2.2 (Org mode 8.2.10)}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+This guide is to allow \href{https://github.com/tachidok/chapchom}{chapchom} to work with \texttt{SuperLU 5.2.0} in
+\begin{itemize}
+\item \texttt{Ubuntu 16.04 LTS 64 bits},
+\item \texttt{Ubuntu 18.04.2 LTS 64 bits}.
+\end{itemize}
+If you find any problem or something in this guide makes no sense
+please contact the author.
+
+Please also refer to the \href{http://crd-legacy.lbl.gov/~xiaoye/SuperLU/}{original documentation} in case you are having
+troubles with the installation.
+
+\section{Requirements}
+\label{sec-1}
+Before installing this version of SuperLU please check that you have
+not any other version of SuperLU already installed in your system. If
+that is the case then proceed to uninstall it.
+
+Once you ensure that SuperLU is not already installed in your system
+then proceed to check that you have the following packages installed
+in your system.
+\begin{itemize}
+\item In \texttt{Ubuntu 16.04 LTS 64 bits}
+\begin{itemize}
+\item \texttt{cmake 3.5.1-1ubuntu3}
+\end{itemize}
+\item In \texttt{Ubuntu 18.04.2 LTS 64 bits}
+\begin{itemize}
+\item \texttt{cmake 3.10.2}
+\end{itemize}
+\end{itemize}
+
+\section{Installation}
+\label{sec-2}
+
+\begin{itemize}
+\item Extract the compressed file
+\texttt{/external\_src/superLU/superlu\_5.2.0.tar.gz} in a folder of your
+preference. We recommend you to extract it out of the chapchom
+project folder to avoid adding the files to the git repository. If
+you do extract it inside the chapchom project folder please extreme
+precautions when adding your files to the git repository.
+
+\item Go to the folder where you extracted the files and type
+\end{itemize}
+
+\begin{verbatim}
+mkdir build
+cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=../lib
+\end{verbatim}
+
+\begin{verbatim}
+mkdir build
+cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=../lib
+\end{verbatim}
+
+the last line indicates where to perform the installation, I use to
+install it in the \texttt{lib} directory of the SuperLU folder, that is why
+that value. However, if you have root privileges then you may not need
+to specify a value for the \texttt{CMAKE\_INSTALL\_PREFIX} variable.
+
+NOTE: If you are installing \texttt{Armadillo} with \texttt{SuperLU} support then
+you may need to install \texttt{SuperLU} with the flag \texttt{-fPIC} (which stands
+for 'Position Independent Code'), to do so open the \texttt{CMakeLists.txt}
+file in the main folder of \texttt{SuperLU} and edit the line where \texttt{CFLAGS}
+are added (in \texttt{SuperLU 5.2.0} it is in line \texttt{68}). This is how it
+looks for \texttt{version 5.2.0}.
+
+\begin{verbatim}
+set(CMAKE_C_FLAGS "-fPIC -DPRNTlevel=0 -DAdd_ ${CMAKE_C_FLAGS}")
+\end{verbatim}
+
+\begin{itemize}
+\item When the process finish then type
+\end{itemize}
+
+\begin{verbatim}
+make
+\end{verbatim}
+
+You can try \texttt{make -j \# of processors} instead of \texttt{make} to use more
+processors at compilation time.
+
+\begin{itemize}
+\item Install it \ldots{}
+\end{itemize}
+
+\begin{verbatim}
+make install
+\end{verbatim}
+
+\begin{itemize}
+\item And finally, run the test by typing
+\end{itemize}
+
+\begin{verbatim}
+ctest
+\end{verbatim}
+
+You can check the results of the testing process in the following
+files
+
+\begin{center}
+\begin{tabular}{ll}
+\texttt{build/TESTING/s\_test.out} & \texttt{single precision, real}\\
+\texttt{build/TESTING/d\_test.out} & \texttt{double precision, real}\\
+\texttt{build/TESTING/c\_test.out} & \texttt{single precision, complex}\\
+\texttt{build/TESTING/z\_test.out} & \texttt{double precision, complex}\\
+\end{tabular}
+\end{center}
+% Emacs 25.2.2 (Org mode 8.2.10)
+\end{document}

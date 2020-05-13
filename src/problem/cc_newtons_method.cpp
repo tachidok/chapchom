@@ -182,15 +182,8 @@ namespace chapchom
   // Create a factor for the linear solver
   CCFactoryLinearSolver factory_linear_solver;
   
-  // TODO JCPS Check whether we really need this ifdef, what happens
-  // if by default we always create the numerical recipes solver?????
-  
   // Create the linear solver
-#ifdef CHAPCHOM_USES_ARMADILLO
-  Linear_solver_pt = factory_linear_solver.create_linear_solver("armadillo");
-#else
-  Linear_solver_pt = factory_linear_solver.create_linear_solver("numerical_recipes");
-#endif
+  Linear_solver_pt = factory_linear_solver.create_linear_solver();
   
   // Set linear solver for Newton's method
   Linear_solver_has_been_set = true;
@@ -255,6 +248,9 @@ namespace chapchom
                            CHAPCHOM_EXCEPTION_LOCATION);
    }
   
+  // Create an instance of a factory for matrices and vectors
+  CCFactoryMatrices<Real> factory_matrices_and_vectors;
+  
   // ----------------------------------------------------------------
   // Initial residual convergence check
   // ----------------------------------------------------------------
@@ -314,11 +310,8 @@ namespace chapchom
   
   // Create the vector to store the solution of the system of
   // equations during Newton's steps
-#ifdef CHAPCHOM_USES_ARMADILLO
-  CCVectorArmadillo<Real> dx(n_dof);
-#else
-  CCVector<Real> dx(n_dof);
-#endif // #ifdef CHAPCHOM_USES_ARMADILOL
+  ACVector<Real> *dx_pt = factory_matrices_and_vectors.create_vector();
+  dx_pt->allocate_memory(n_dof);
   
   // Time Newton's method
   clock_t initial_clock_time_for_newtons_method = Timing::cpu_clock_time();
@@ -379,7 +372,7 @@ namespace chapchom
     clock_t initial_clock_time_for_linear_solver = Timing::cpu_clock_time();
     
     // Solve the system of equations
-    Linear_solver_pt->solve(Jacobian_pt, residual_pt, &dx);
+    Linear_solver_pt->solve(Jacobian_pt, residual_pt, dx_pt);
     
     // Time the linear solver
     clock_t final_clock_time_for_linear_solver = Timing::cpu_clock_time();
@@ -398,7 +391,7 @@ namespace chapchom
     // Update initial guess
     for (unsigned i_dof = 0; i_dof < n_dof; i_dof++)
      {
-      X_pt->value(i_dof)+=dx(i_dof);
+      X_pt->value(i_dof)+=dx_pt->value(i_dof);
      }
     
     // Perform actions after Newton's step

@@ -7,7 +7,7 @@ namespace chapchom
 {
  
  // ===================================================================
- // Empty constructor
+ /// Empty constructor
  // ===================================================================
  CCFactoryLinearSolver::CCFactoryLinearSolver()
  {
@@ -15,15 +15,31 @@ namespace chapchom
  }
  
  // ===================================================================
- // Empty destructor
+ /// Empty destructor
  // ===================================================================
  CCFactoryLinearSolver::~CCFactoryLinearSolver()
  { 
   
  }
+
+ // ===================================================================
+ /// Returns the corresponding linear solver (based on compilation
+ /// options)
+ //===================================================================
+ ACLinearSolver* CCFactoryLinearSolver::create_linear_solver()
+ {
+  // ------------------------------------------------------
+  // Check what linear solver we need to create
+  // ------------------------------------------------------
+#ifdef CHAPCHOM_USES_ARMADILLO
+  return new CCSolverArmadillo();
+#else
+  return new CCLUSolverNumericalRecipes();
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+ }
  
  // ===================================================================
- // Returns the specified linear solver
+ /// Returns the specified linear solver
  // ===================================================================
  ACLinearSolver* CCFactoryLinearSolver::create_linear_solver(std::string linear_solver_name)
  {

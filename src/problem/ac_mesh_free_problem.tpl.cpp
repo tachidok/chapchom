@@ -64,11 +64,7 @@ namespace chapchom
   CCFactoryLinearSolver<MAT_TYPE, VEC_TYPE> factory_linear_solver;
   
   // Create the linear solver
-#ifdef CHAPCHOM_USES_ARMADILLO
-  Linear_solver_pt = factory_linear_solver.create_linear_solver("numerical_recipes");
-#else
-  Linear_solver_pt = factory_linear_solver.create_linear_solver("armadillo");
-#endif
+  Linear_solver_pt = factory_linear_solver.create_linear_solver();
   
   // In charge of free the memory for linear solver
   Free_memory_for_linear_solver = true;
