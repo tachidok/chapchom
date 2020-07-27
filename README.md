@@ -41,12 +41,12 @@ You need **git** installed in your computer, then type in a terminal
 ```shell
 git clone https://github.com/tachidok/chapchom
 cd chapchom
-git checkout -b bob
+git checkout -b john
 ```
 
 After executing the first line you will be prompted with your github
 user name and your password. The third line generates your fully
-customised branch and assumes your name is _bob_
+customised branch and assumes your name is _john_
 
 ### How to configure it?
 * In a terminal (shell command line) go into the `chapchom` folder

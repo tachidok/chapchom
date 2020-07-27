@@ -63,6 +63,21 @@
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
   (message "org-bullets ... [DONE]"))
 
+(setq org-latex-pdf-process
+      '("pdflatex -interaction nonstopmode -output-directory %o %f"
+	"bibtex %b"
+	"pdflatex -interaction nonstopmode -output-directory %o %f"
+	"pdflatex -interaction nonstopmode -output-directory %o %f"))
+
+;;;(setq org-latex-pdf-process (list "latexmk -pdf %f"))
+
+;;;(setq org-latex-pdf-process (quote ("texi2dvi --pdf --clean --verbose
+;;;--batch %f" "bibtex %b" "texi2dvi --pdf --clean --verbose --batch %f"
+;;;"texi2dvi --pdf --clean --verbose --batch %f")))
+
+;;;(require 'org)
+;;;(require 'ox-bibtex)
+
 ;;; Adds the ability to redo in emacs, hit C-/ or C-_ to undo but hit
 ;;; C-shift-/ to redo. You can bring an undo tree to navigate through
 ;;; the undos by hitting C-x u
@@ -93,6 +108,21 @@
   :config
   (message "magit ... [DONE]"))
 
+;;; Git gutter - Shows modifications or changes from current version
+;;; to previous version on git repositories
+(use-package git-gutter
+  :ensure t
+  :init
+  (global-git-gutter-mode +1)
+  :config
+  (message "git-gutter ... [DONE]"))
+
+(use-package git-timemachine
+  :ensure t
+  :config
+  (message "git-timemachine ... [DONE]")
+  )
+ 
 ;;; Latex (using auctex)
 (use-package tex
   :ensure auctex
@@ -369,6 +399,20 @@
   :config
   (message "elpy ... [DONE]"))
 
+(use-package web-mode
+  :ensure t
+  :config
+  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+  (setq web-mode-engines-alist
+        '(("django"    . "\\.html\\'")))
+  (setq web-mode-ac-sources-alist
+        '(("css" . (ac-source-css-property))
+          ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
+  
+  (setq web-mode-enable-auto-closing t)
+  (setq web-mode-enable-auto-quoting t) ; this fixes the quote problem I mentioned
+  (message "web-mode ... [DONE]"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Personal emacs editor configuration
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -469,7 +513,7 @@
  '(mouse-wheel-scroll-amount (quote (1 ((shift) . 1) ((control)))))
  '(package-selected-packages
    (quote
-    (elpy cmake-font-lock cmake-mode geben-helm-projectile iedit expand-region aggressive-indent flycheck company-c-headers company-irony dumb-jump ggtags markdown-mode gnuplot-mode counsel-projectile projectile auctex magit counsel undo-tree org-bullets ace-window which-key use-package)))
+    (web-mode git-timemachine elpy cmake-font-lock cmake-mode geben-helm-projectile iedit expand-region aggressive-indent flycheck company-c-headers company-irony dumb-jump ggtags markdown-mode gnuplot-mode counsel-projectile projectile auctex magit counsel undo-tree org-bullets ace-window which-key use-package)))
  '(text-mode-hook (quote (turn-on-auto-fill text-mode-hook-identify))))
 
 (custom-set-faces

@@ -1,0 +1,23 @@
+# Indicate source files
+SET(SRC_demo_john demo_john.cpp)
+
+# Create executable (name of your executable)
+ADD_EXECUTABLE(demo_john ${SRC_demo_john})
+
+# Indicate linking libraries
+SET(LIB_demo_john general_lib problem_lib)
+
+# ... and link againts them
+TARGET_LINK_LIBRARIES(demo_john ${LIB_demo_john})
+
+# Check if the bin directory exists
+IF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+  # Then create the directory
+  FILE(MAKE_DIRECTORY "${bin}")
+ENDIF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bin)
+
+# Set directory where to create the executables
+set_target_properties(demo_john
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin"
+)

@@ -64,6 +64,11 @@ doc/**/*.htm
 doc/*doxy_doc
 
 # ==============================================================
+# Ignore tar files, compressed versions
+# ==============================================================
+*.tar.gz
+
+# ==============================================================
 # Latex generated files in doc directoy
 # ==============================================================
 ## Core latex/pdflatex auxiliary files:
@@ -91,7 +96,7 @@ doc/**/*-converted-to.*
 # these rules might exclude image files for figures etc.
 # doc/**/*.ps
 # doc/**/*.eps
-doc/**/*.pdf
+# doc/**/*.pdf
 
 ## Bibliography auxiliary files (bibtex/biblatex/biber):
 doc/**/*.bbl

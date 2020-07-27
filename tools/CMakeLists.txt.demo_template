@@ -1,18 +1,18 @@
 # Indicate source files
-SET(SRC_demo_bob demo_bob.cpp)
+SET(SRC_demo_john demo_john.cpp)
 
 # Create executable (check whether compilation was requested or not)
 IF(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
-  ADD_EXECUTABLE(demo_bob ${SRC_demo_bob})
+  ADD_EXECUTABLE(demo_john ${SRC_demo_john})
 ELSE(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
-  ADD_EXECUTABLE(demo_bob EXCLUDE_FROM_ALL ${SRC_demo_bob})
+  ADD_EXECUTABLE(demo_john EXCLUDE_FROM_ALL ${SRC_demo_john})
 ENDIF(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
 
 # Indicate linking libraries
-SET(LIB_demo_bob general_lib problem_lib)
+SET(LIB_demo_john general_lib problem_lib)
 
 # ... and link againts them
-TARGET_LINK_LIBRARIES(demo_bob ${LIB_demo_bob})
+TARGET_LINK_LIBRARIES(demo_john ${LIB_demo_john})
 
 # Check if the bin directory exists
 IF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bin)
@@ -21,7 +21,7 @@ IF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 ENDIF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
 # Set directory where to create the executables
-set_target_properties(demo_bob
+set_target_properties(demo_john
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin"
 )
@@ -30,18 +30,18 @@ set_target_properties(demo_bob
 # Tests section
 # ===========================================
 # Run the application to check it works
-ADD_TEST(NAME TEST_demo_bob_run
-          COMMAND demo_bob)
+ADD_TEST(NAME TEST_demo_john_run
+          COMMAND demo_john)
 # Validate output
 IF (CHAPCHOM_USES_DOUBLE_PRECISION)
-   SET (VALIDATE_FILENAME_demo_bob "validate_double_demo_bob.dat")
+   SET (VALIDATE_FILENAME_demo_john "validate_double_demo_john.dat")
 ELSE (CHAPCHOM_USES_DOUBLE_PRECISION)
-     SET (VALIDATE_FILENAME_demo_bob "validate_demo_bob.dat")
+     SET (VALIDATE_FILENAME_demo_john "validate_demo_john.dat")
 ENDIF (CHAPCHOM_USES_DOUBLE_PRECISION)
-ADD_TEST(NAME TEST_demo_bob_check_output
-         COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_bob} ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)
+ADD_TEST(NAME TEST_demo_john_check_output
+         COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_john} ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)
 
 # ===========================================
 # Test execution order
 # ===========================================
-SET_TESTS_PROPERTIES(TEST_demo_bob_check_output PROPERTIES DEPENDS TEST_demo_bob_run)
+SET_TESTS_PROPERTIES(TEST_demo_john_check_output PROPERTIES DEPENDS TEST_demo_john_run)
