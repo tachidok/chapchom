@@ -17,7 +17,7 @@ IF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 ENDIF(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
 # Set directory where to create the executables
-set_target_properties(demo_john
+set_target_properties(demo_johnq
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin"
 )
