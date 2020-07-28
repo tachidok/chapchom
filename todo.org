@@ -4,9 +4,6 @@
 
 * Tuesday, April 21/2020
 ** TODO
-+ After deleting innecessary templates it seems necessary to create a
-  matrices and vectors generator based on whether armadillo library is
-  used or not
 + Implement full demo for Poisson Equation
 + Integrate the use of Triangle for the generation of points/nodes
 + Work on documentation (How to git with CHAPCHOM and README.md)
@@ -15,6 +12,10 @@
    There is really no need for templates since we have a typedef to
    define whether use float or doubles
 * Chapchom
+** DONE Create factory for matrices and vector
+- [DONE] After deleting innecessary templates it seems necessary to
+  create a matrices and vectors generator based on whether armadillo
+  library is used or not
 ** DONE Work on the linear solver factory
 * DONE Work on Mesh Free Methods
 ** Need to modify the strategy for memory allocation of matrices and vectors

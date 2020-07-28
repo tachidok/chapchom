@@ -64,14 +64,9 @@ namespace chapchom
   const unsigned n_odes = odes.n_odes();
   
   // The residual vector
-#ifdef CHAPCHOM_USES_ARMADILLO
-  CCVectorArmadillo<Real> local_error_vector(n_odes);
-#else 
-  CCVector<Real> local_error_vector(n_odes);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+  ACVector<Real> *local_error_vector_pt = this->Factory_matrices_and_vectors.create_vector();
+  local_error_vector_pt->allocate_memory(n_odes);
   
-  // Allocate memory for the local error vector
-  //local_error_vector.allocate_memory();
   // Initialise local error with 0
   Real local_error = 0;
   
@@ -117,11 +112,11 @@ namespace chapchom
    // Compute error
    for (unsigned i = 0; i < n_odes; i++)
     {
-     local_error_vector(i) = (u_p(i,k) - u(i,k)) / u_p(i,k);
+     local_error_vector_pt->value(i) = (u_p(i,k) - u(i,k)) / u_p(i,k);
     }
    
    // Get the maximum norm
-   local_error = local_error_vector.norm_inf();
+   local_error = local_error_vector_pt->norm_inf();
    // Is local error smaller than allowed tolerance
    if (local_error < minimum_tolerance())
     {
