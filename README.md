@@ -13,9 +13,20 @@ project.
 We intent to develop a **Object-Oriented-Parallel numerical framework**
 with aims to solve PDE's by Mesh Free/Finite Element Method.
 
+## Ultra-fast installation!!!
+We are adopting containers to ease the installation and release of
+versions so you do not need to worry about any dependencies.
+
+Follow the instructions in
+[here](https://docs.docker.com/engine/install/) to get Docker
+installed in your system.
+
+Then get the image from our Docker repository and ta-dah, you are
+ready to go.
+
 ## Fast installation and starting up!!!
 
-### What you need to have it working nicely?
+### What you need to have it running and working nicely?
 * A C++ compiler - demo drivers and library built with version
   7.4.0. It may work with previous versions as well.
   
@@ -35,7 +46,7 @@ with aims to solve PDE's by Mesh Free/Finite Element Method.
 
 * MPI support for parallel features - `not currently supported`.
 
-### How to get your own copy of the project?
+### Get your own copy of the project
 You need **git** installed in your computer, then type in a terminal
 
 ```shell
@@ -48,7 +59,7 @@ After executing the first line you will be prompted with your github
 user name and your password. The third line generates your fully
 customised branch and assumes your name is _john_
 
-### How to configure it?
+### Configuration
 * In a terminal (shell command line) go into the `chapchom` folder
   then type
 
@@ -78,7 +89,7 @@ the documentation will be automatically generated into the
 `doc/doxy_doc/html` folder, then open the `index.html` file in a
 web-browser.
 
-## Additional and recommended external libraries
+### Additional and recommended external libraries
 If you want to get the maximum performance you will need to install
 the following external packages. You can find information on how to
 configure them in the `doc` folder.

@@ -10,8 +10,7 @@ namespace chapchom
  typedef float Real;
 #endif // #ifdef TYPEDEF_REAL_IS_DOUBLE
  
-#define PANIC_MODE
-#ifdef PANIC_MODE
+#ifdef CHAPCHOM_PANIC_MODE
  // =======================================================================
  /// Macros for debugging
  // =======================================================================
@@ -24,7 +23,7 @@ namespace chapchom
 #define DEB_TO_FILE2(F,x,y) F<<x<<" "<<y<<std::endl<<std::flush;
 #define DEB_TO_FILE3(F,x,y,z) F<<x<<" "<<y<<" "<<z<<std::endl<<std::flush;
 #define DEB_TO_FILE4(F,t,x,y,z) F<<t<<" "<<x<<" "<<y<<" "<<z<<std::endl<<std::flush;
-#endif // #ifdef PANIC_MODE
+#endif // #ifdef CHAPCHOM_PANIC_MODE
  
  // =======================================================================
  /// Macros to transform from degrees to radians and vice versa
@@ -76,7 +75,7 @@ namespace chapchom
 
 #endif
 
-}
+} // namespace chapchom
  
 #endif // #ifdef DEFINITIONS_H
 
