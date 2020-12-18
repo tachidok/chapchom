@@ -1,3 +1,10 @@
+<<<<<<< HEAD
 os: linux
 language: cpp
 script: ./autogen.sh b 8 ./configs/default a 8
+=======
+language: cpp
+os: linux
+script: 
+ - 4 | a | .configs/current | 4 | a | a | ./autogen.sh
+>>>>>>> origin/master

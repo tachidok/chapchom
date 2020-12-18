@@ -136,8 +136,9 @@ Mmm ... that is something we need to carefully think about.
 
 ## How to contribute
 
-Get your own copy and have fun. Do not hesitate to contact the
-developers at :envelope: (jcp.sansalvador.at.inaoep.mx) :envelope:
+Once we have something intereseting to share with you we will  make the
+project public. Please check continuously for updates or contact the
+developers :construction: :envelope: (jcp.sansalvador.at.inaoe.mx) :envelope: :
 
 ### Notes for contributors
 For full details on contributions please check the documentation in
