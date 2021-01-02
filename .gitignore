@@ -62,6 +62,7 @@ private/**/*.png
 doc/**/*.html
 doc/**/*.htm
 doc/*doxy_doc
+**/*doxy_doc
 
 # ==============================================================
 # Ignore tar files, compressed versions
