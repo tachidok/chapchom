@@ -116,7 +116,7 @@ do
              echo "============================================================= "
              echo ""
              usage
-             exit
+             exit 1
              ;;
      esac
 done
@@ -416,22 +416,15 @@ echo ""
 echo "Finishing library built process ... (cmake and make have"
 echo "finished!)"
 echo "If you can not spot any error messages above this, the" 
-echo $lib_name" library should now be ready to use... " 
-echo " "
-echo "If you want to run the test type 'make test' and hit enter in"
-echo "the build folder=$build_dir"
-echo "If you want to use more than one processor, then type"
-echo "'make test ARGS=-j#', where # represents the number of"
-echo "processors you want to use to run the tests"
-echo ""
-echo "Please contact the developers if you encountered any"
-echo "building problem!"
+echo $lib_name" library should now be ready to RUN TEST UNITS"
 echo ""
 echo "============================================================= "
 echo ""
+echo ""
+echo ""
 
 #====================================================================
-# Run tests
+# Run tests?
 #====================================================================
 
 if test "$build_demos" = "TRUE" ; then
@@ -450,8 +443,23 @@ if test "$build_demos" = "TRUE" ; then
     cd $build_dir
     # Call the make test function instead of ctest (make test enables
     # testing and then calls ctest)
-    # Use four processors to run tests in parallel
-    make test ARGS=-j"$number_of_processors_to_run_demos"
+    # Use as many processors as requested to run tests in parallel
+    if ! make test ARGS=-j"$number_of_processors_to_run_demos" ; then
+        echo ""
+        echo ""
+        echo ""
+        echo "============================================================= "
+        echo ""
+        echo "Do not commit any broken version of the library."
+        echo "If any build/test fails try to fix it and report back to the"
+        echo "developers."
+        echo ""
+        echo "============================================================= "
+        echo "[FAILED] make test"
+        echo "============================================================= "
+        echo ""
+        exit 1 # Add this flag for TravisCS report
+    fi
     cd ..
     # Once all test have been run, copy the file with the results of
     # the test to the root directoy
@@ -471,19 +479,40 @@ if test "$build_demos" = "TRUE" ; then
     echo "Check the validation files for information regarding"
     echo "PASSED/FAILED tests."
     echo ""
-    echo "============================================================= "    
-    echo "If you can't spot any error messages above this, the" 
-    echo $lib_name" library should now be ready to use and free of errors" 
-    echo " "
-    echo "Do not commit any broken version of the library. If any test "
-    echo "fails and you know what the problem is about then try to fix "
-    echo "it and report back to the developers."
+    echo "============================================================= "
     echo ""
-    echo "Your contributions are very welcome!"
+else
     echo ""
-    echo "Please contact the developers if you encountered any"
-    echo "test/building problem."
+    echo ""
+    echo ""
+    echo "============================================================= "
+    echo ""
+    echo "You did not requested for RUN TEST UNITS."
+    echo ""
+    echo "We highly recommend to RUN TEST UNITS before continue"
+    echo "Type 'make test' and hit enter inside the build folder=$build_dir"
+    echo "If you want to use more than one processor, then type"
+    echo "'make test ARGS=-j#', where # represents the number of"
+    echo "processors you want to use to run the tests"
     echo ""
     echo "============================================================= "
     echo ""
 fi
+
+echo "If you can't spot any error messages above this, the" 
+echo $lib_name" library should now be ready to use and free of errors" 
+echo " "
+echo "Do not commit any broken version of the library."
+echo "If any build/test fails try to fix it and report back to the"
+echo "developers."
+echo ""
+echo "Your contributions are very welcome!"
+echo ""
+echo "Please contact the developers if you encountered any"
+echo "build/test problem."
+echo ""
+echo "============================================================= "
+echo ""
+
+# If reaching this point then everything should be OK
+exit 0

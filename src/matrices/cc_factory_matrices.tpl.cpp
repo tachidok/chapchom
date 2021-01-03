@@ -71,16 +71,18 @@ namespace chapchom
    {
     return new CCMatrix<T>();
    }
+#ifdef CHAPCHOM_USES_ARMADILLO
   // Armadillo type
   else if (matrix_type_name.compare("armadillo")==0)
    {
     return new CCMatrixArmadillo<T>();
    }
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
   else
    {
     std::ostringstream error_message;
     error_message << "The matrix time you want to use is not implemented yet.\n"
-                  << "Please implement it yourself or select from the availables ones\n\n"
+                  << "Please implement it yourself or select from the available ones\n\n"
                   << "- Default (default)\n"
                   << "- Armadillo matrices (armadillo) - only supported when armadillo library is enabled\n"
                   << std::endl;
@@ -109,11 +111,13 @@ namespace chapchom
    {
     return new CCMatrix<T>(m, n);
    }
+#ifdef CHAPCHOM_USES_ARMADILLO
   // Armadillo type
   else if (matrix_type_name.compare("armadillo")==0)
    {
     return new CCMatrixArmadillo<T>(m, n);
    }
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
   else
    {
     std::ostringstream error_message;
@@ -173,11 +177,13 @@ namespace chapchom
    {
     return new CCVector<T>();
    }
+#ifdef CHAPCHOM_USES_ARMADILLO
   // Armadillo type
   else if (vector_type_name.compare("armadillo")==0)
    {
     return new CCVectorArmadillo<T>();
    }
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
   else
    {
     std::ostringstream error_message;
@@ -211,11 +217,13 @@ namespace chapchom
    {
     return new CCVector<T>(n, is_column_vector);
    }
+#ifdef CHAPCHOM_USES_ARMADILLO
   // Armadillo type
   else if (vector_type_name.compare("armadillo")==0)
    {
     return new CCVectorArmadillo<T>(n, is_column_vector);
    }
+#endif // #ifdef CHAPCHOM_USES_ARMADILLO
   else
    {
     std::ostringstream error_message;
