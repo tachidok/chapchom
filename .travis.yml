@@ -1,3 +1,3 @@
 os: linux
 language: cpp
-script: ./autogen.sh b 8 ./configs/default a 8
+script: ./autogen.sh -t STATIC -b RELEASE -n 16 -c ./configs/default -d 16 -v
