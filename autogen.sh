@@ -4,6 +4,26 @@
 # A few helper functions
 #====================================================================
 
+# Usage function
+usage()
+{
+cat << EOF
+usage: $0 [OPTIONS]
+
+This script run the test1 or test2 over a machine.
+
+OPTIONS:
+   -h      Show this message
+   -t      Indicates a 'STATIC' or 'SHARED' library files
+   -b      Build version 'DEBUG' or 'RELEASE'
+   -n      Number of processors to build the library
+   -c      Configuration file
+   -d      Indicates the number of processors to run demos. Set to '0' to skip running the demos
+   -F      If given then prompts for FULL configuration options (other parameters are ignored)
+   -v      Verbose
+EOF
+}
+
 # An small function 'borrowed' from the oomph-lib installation
 # script...
 OptionPrompt() 
@@ -23,32 +43,84 @@ OptionRead()
 }
 
 #====================================================================
-# Variables
+# Variables (and default values)
 #====================================================================
 build_dir=build
 src_dir=src
 external_src_dir=external_src
 
 # The name of the library
-lib_name=chapchom
+lib_name=SciCell++
 # The extension of the library is given by the choosing of STATIC or
 # SHARED library
-lib_ext=*
+#lib_ext=*
 # The type of the library is given by the choosing of STATIC or SHARED
 # library
-#lib_type=*
+lib_type=STATIC
 # The version of the library is given by whether the user choose to
 # build the DEBUG or the RELEASE version of the library
-lib_version=*
-# Indicates whether to build/compile demos
-build_demos=TRUE
-# Indicates the number of processors to build the demos
-number_of_processors_to_run_demos=1
+lib_build=DEBUG
 # Indicates the number of processors to build the library
-number_of_processors_to_build_library=4
+default_number_of_processors_to_build_library=4
+number_of_processors_to_build_library=$default_number_of_processors_to_build_library
 # Indicates the configuration file with variables for paths for
 # external libraries
 configuration_file=./configs/current
+# Indicates whether to build/compile demos
+build_demos=TRUE
+# Indicates the number of processors to build the demos
+default_number_of_processors_to_run_demos=4
+number_of_processors_to_run_demos=$default_number_of_processors_to_run_demos
+# Prompts for FULL configuration
+full_configuration=FALSE
+# Indicates whether to output building information (currently not in use)
+verbose=TRUE
+
+#====================================================================
+# Parse arguments
+#====================================================================
+while getopts “ht:b:n:c:d:Fv” OPTION
+do
+     case $OPTION in
+         h)
+             usage
+             exit 1
+             ;;
+         t)
+             lib_type=$OPTARG
+             ;;
+         b)
+             lib_build=$OPTARG
+             ;;
+         n)
+             number_of_processors_to_build_library=$OPTARG
+             ;;
+         c)
+             configuration_file=$OPTARG
+             ;;
+         d)
+             number_of_processors_to_run_demos=$OPTARG
+             ;;
+         F)
+             full_configuration=TRUE
+             ;;
+         v)
+             verbose=TRUE
+             ;;
+         ?)
+             echo ""
+             echo "============================================================= "
+             echo ""
+             echo "ERROR: No recognized parameter"
+             echo ""
+             echo "============================================================= "
+             echo ""
+             usage
+             exit
+             ;;
+     esac
+done
+
 
 #====================================================================
 # The building script
@@ -59,31 +131,6 @@ echo "============================================================= "
 echo "            "$lib_name" installation script" 
 echo "============================================================= "
 echo " "
-
-#====================================================================
-# Check whether input argument where given or not
-#====================================================================
-input_arguments=1
-if test $# -eq 0; then
-    input_arguments=0
-else
-    echo " "
-    echo "Number of input arguments "$#
-    echo " "
-fi
-
-if test $input_arguments -eq 1 -a $# -ne 5; then
-    echo ""
-    echo "============================================================= "
-    echo ""
-    echo "FATAL ERROR: The number of expected arguments (if given) "
-    echo "should be five, but we only got "$#". Please carefully"
-    echo "check you are passing the right number of arguments"
-    echo ""
-    echo "============================================================= "
-    echo ""
-    exit 1
-fi
 
 echo ""
 echo "============================================================= "
@@ -112,150 +159,167 @@ echo ""
 #====================================================================
 # Library type
 #====================================================================
-#echo "Which library type do you want to build?"
-#OptionPrompt "The a)STATIC or the b)SHARED type library? [a/b -- default: a]"
-#
-#static_or_shared='a'
-#
-#if test $input_arguments = 1; then
-#    static_or_shared=$1
-#else
-#    static_or_shared=`OptionRead`
-#fi
-#
-#if test "$static_or_shared" = "b" -o "$static_or_shared" = "B" ; then 
-#    lib_type=SHARED
-#    lib_ext=.so
-#else
-#    lib_type=STATIC
-#    lib_ext=.a
-#fi
-#
-#echo ""
-#echo "============================================================= "
-#echo ""
+
+# Check whether FULL CONFIGURATION was requested
+if test "$full_configuration" = "TRUE" ; then
+
+    # Answer's default value
+    static_or_shared='a'
+    
+    echo "Which library type do you want to build?"
+    OptionPrompt "The a)STATIC or the b)SHARED type library? [a/b -- default: a]"
+    static_or_shared=`OptionRead`
+
+    if test "$static_or_shared" = "b" -o "$static_or_shared" = "B" ; then 
+        lib_type=SHARED
+        #lib_ext=.so
+    else
+        lib_type=STATIC
+        #lib_ext=.a
+    fi
+
+    echo ""
+    echo "============================================================= "
+    echo ""
+    
+fi
 
 #====================================================================
-# Library version
+# Build version
 #====================================================================
-echo "Which library version do you want to build?"
-OptionPrompt "The a)DEBUG or the b)RELEASE version of the library ? [a/b -- default: a]"
 
-debug_or_release='a'
+# Check whether FULL CONFIGURATION was requested
+if test "$full_configuration" = "TRUE" ; then
 
-if test $input_arguments = 1; then
-    debug_or_release=$1
-else
+    # Answer's default value
+    debug_or_release='a'
+    
+    echo "Which library version do you want to build?"
+    OptionPrompt "The a)DEBUG or the b)RELEASE version of the library ? [a/b -- default: a]"
     debug_or_release=`OptionRead`
-fi
 
-if test "$debug_or_release" = "b" -o "$debug_or_release" = "B" ; then 
-    lib_version=RELEASE
-else
-    lib_version=DEBUG
-fi
+    if test "$debug_or_release" = "b" -o "$debug_or_release" = "B" ; then 
+        lib_build=RELEASE
+    else
+        lib_build=DEBUG
+    fi
 
-echo ""
-echo "============================================================= "
-echo ""
+    echo ""
+    echo "============================================================= "
+    echo ""
+    
+fi
 
 #====================================================================
 # Number of processors to build library
 #====================================================================
-echo "How many processor to use to build $lib_name?"
-OptionPrompt "[1] [2] [4] [8] [default: 4]"
 
-number_of_processors_to_build_library=4
+# Check whether FULL CONFIGURATION was requested
+if test "$full_configuration" = "TRUE" ; then
 
-if test $input_arguments = 1; then
-    number_of_processors_to_build_library=$2
-else
+    echo "How many processor to use to build $lib_name?"
+    OptionPrompt "[1] [2] [4] [8] [16] [default: $default_number_of_processors_to_build_library]"
     number_of_processors_to_build_library=`OptionRead`
-fi
 
-if test "$number_of_processors_to_build_library" != 1 -a "$number_of_processors_to_build_library" != 2 -a "$number_of_processors_to_build_library" != 4 -a "$number_of_processors_to_build_library" != 8; then
-    number_of_processors_to_build_library=4
-    echo "Setting the number of processors to build library to [4]"
-    echo "We do not currently support the number of processors you"
-    echo "specified!"
-fi
+    if test "$number_of_processors_to_build_library" != 1 -a "$number_of_processors_to_build_library" != 2 -a "$number_of_processors_to_build_library" != 4 -a "$number_of_processors_to_build_library" != 8 -a "$number_of_processors_to_build_library" != 16; then
+        number_of_processors_to_build_library=$default_number_of_processors_to_build_library
+        echo "Setting the number of processors to build library to [$default_number_of_processors_to_build_library]"
+        echo "We do not currently support the number of processors you"
+        echo "specified!"
+    fi
 
-echo ""
-echo "============================================================= "
-echo ""
+    echo ""
+    echo "============================================================= "
+    echo ""
+    
+fi
 
 #====================================================================
 # Configuration file for extra configuration
 #====================================================================
-echo "Specify the path config file with extra configuration flags:"
-OptionPrompt "[default: ./configs/current]"
 
-extra_config_file="./configs/current"
+# Check whether FULL CONFIGURATION was requested
+if test "$full_configuration" = "TRUE" ; then
 
-if test $input_arguments = 1; then
-    extra_config_file=$3
-else
-    extra_config_file=`OptionRead`
+    # Default configuration file
+    default_config_file="./configs/current"
+
+    # Answer's default value
+    your_config_file=""
+
+    echo "Specify the path config file with extra configuration flags:"
+    OptionPrompt "[default: ${default_config_file}]"
+    your_config_file=`OptionRead`
+
+    if test "$your_config_file" = ""; then 
+        configuration_file=${default_config_file}
+    else
+        configuration_file=${your_config_file}
+    fi
+
+    echo ""
+    echo "============================================================= "
+    echo ""
+
 fi
-
-if test "$extra_config_file" = ""; then 
-    configuration_file=./configs/current
-else
-    configuration_file=${extra_config_file}
-fi
-
-echo ""
-echo "============================================================= "
-echo ""
 
 #====================================================================
 # Build demos
 #====================================================================
 
-echo "Do you want to build and run the demos?"
-OptionPrompt "a)DO BUILD/RUN demos b)DO NOT BUILD/RUN demos [a/b -- default: a]"
+# Check whether FULL CONFIGURATION was requested
+if test "$full_configuration" = "TRUE" ; then
 
-build_and_run_demos='a'
-
-if test $input_arguments = 1; then
-    build_and_run_demos=$4
-else
+    # Answer's default value
+    build_and_run_demos='a'
+    
+    echo "Do you want to build and run the demos?"
+    OptionPrompt "a)DO BUILD/RUN demos b)DO NOT BUILD/RUN demos [a/b -- default: a]"
     build_and_run_demos=`OptionRead`
-fi
-
-if test "$build_and_run_demos" = "b" -o "$build_and_run_demos" = "B" ; then 
-    build_demos=FALSE
-else
-    build_demos=TRUE
-    echo "How many processor use to run tests?"
-    OptionPrompt "[1] [2] [4] [8] [default: 4]"
     
-    number_of_processors_to_run_demos=4
-    
-    if test $input_arguments = 1; then
-        number_of_processors_to_run_demos=$5
+    if test "$build_and_run_demos" = "b" -o "$build_and_run_demos" = "B" ; then 
+        build_demos=FALSE
     else
+        build_demos=TRUE
+        
+        echo "How many processor use to run tests?"
+        OptionPrompt "[1] [2] [4] [8] [16] [default: $default_number_of_processors_to_run_demos]"
         number_of_processors_to_run_demos=`OptionRead`
+
+        if test "$number_of_processors_to_run_demos" != 1 -a "$number_of_processors_to_run_demos" != 2 -a "$number_of_processors_to_run_demos" != 4 -a "$number_of_processors_to_run_demos" != 8 -a "$number_of_processors_to_run_demos" != 16; then
+            number_of_processors_to_run_demos=$default_number_of_processors_to_run_demos
+            echo "Setting the number of processors to run tests to [$default_number_of_processors_to_run_demos]"
+            echo "We do not currently support the number of processors you"
+            echo "specified!"
+        fi
+        
     fi
-    
-    if test "$number_of_processors_to_run_demos" != 1 -a "$number_of_processors_to_run_demos" != 2 -a "$number_of_processors_to_run_demos" != 4 -a "$number_of_processors_to_run_demos" != 8; then
-        number_of_processors_to_run_demos=4
-        echo "Setting the number of processors to run tests to [4]"
-        echo "We do not currently support the number of processors you"
-        echo "specified!"
+
+    echo ""
+    echo "============================================================= "
+    echo ""
+
+else
+    # If no FULL CONFIGURATION was requested then check for number of
+    # processors to run demos, if zero is set then do not run demos
+    if test $number_of_processors_to_run_demos = 0; then
+        build_demos=FALSE
     fi
+
 fi
 
-echo ""
-echo "============================================================= "
-echo ""
+#====================================================================
+# Summary for building process to run
+#====================================================================
 
 echo ""
 echo "============================================================= "
 echo "************************************************************* "
 echo "============================================================= "
-echo "Building the " $lib_version " version of the library"
+echo "Building the " $lib_type "/" $lib_build" version of the library"
 echo "using ["$number_of_processors_to_build_library"] processor(s)"
+echo "with configuration file ["$configuration_file"]"
+echo ""
 echo "BUILD_DEMOS="$build_demos
 if test "$build_demos" = "TRUE" ; then
     echo "Using ["$number_of_processors_to_run_demos"] processor(s) to run tests"
@@ -275,7 +339,7 @@ echo ""
 # Go one folder up since we did a cd into ./build
 #if ! cmake ../ \
 #     -DCHAPCHOM_LIB_TYPE=$lib_type \
-#     -DCHAPCHOM_BUILD_VERSION=$lib_version \
+#     -DCHAPCHOM_BUILD_VERSION=$lib_build \
 #     -DCHAPCHOM_BUILD_DEMOS=$build_demos \
 #     -DCHAPCHOM_CONFIGURATION_FILE=$configuration_file \
 #     -DCMAKE_EXPORT_COMPILE_COMMANDS=1 ; then # Added to create the
@@ -284,8 +348,10 @@ echo ""
                                               # autocompletion in
                                               # irony mode'
 
+# Run CMake and test for any error
 if ! cmake ../ \
-     -DCHAPCHOM_BUILD_VERSION=$lib_version \
+     -DCHAPCHOM_LIB_TYPE=$lib_type \
+     -DCHAPCHOM_BUILD_VERSION=$lib_build \
      -DCHAPCHOM_BUILD_DEMOS=$build_demos \
      -DCHAPCHOM_CONFIGURATION_FILE=$configuration_file \
      -DCMAKE_EXPORT_COMPILE_COMMANDS=1 ; then # Added to create the
