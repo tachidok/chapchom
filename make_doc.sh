@@ -25,11 +25,9 @@ OptionRead()
 #====================================================================
 # Variables
 #====================================================================
-build_dir=build
-doc_dir=doc
 doc_doxy_dir=doxy_doc
 # The name of the library
-lib_name=chapchom
+lib_name=SciCell++
 
 #====================================================================
 # The building script
@@ -52,12 +50,12 @@ echo ""
 #====================================================================
 # Check whether the doc folder exists
 #====================================================================
-if (test -d  $doc_dir/$doc_doxy_dir); then
+if (test -d  $doc_doxy_dir); then
     echo "Cleaning up ..."
-    rm -r $doc_dir/$doc_doxy_dir/*
+    rm -r $doc_doxy_dir/*
     echo "Done"
 else
-    mkdir $doc_dir/$doc_doxy_dir
+    mkdir $doc_doxy_dir
 fi
 echo ""
 
@@ -76,4 +74,4 @@ echo "============================================================= "
 echo "[Done] doxygen"
 echo "============================================================= "
 echo ""
-echo "The documentation is in the $doc_dir/$doc_doxy_dir folder"
+echo "The documentation is in the $doc_doxy_dir folder"
