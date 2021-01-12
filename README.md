@@ -6,8 +6,7 @@
 ---
 
 ## Welcome!
-Hi there, this is the official git repository for the **chapchom**
-project.
+This is the official git repository for the **SciCell++** project.
 
 ## What the project is about?
 We intent to develop a **Object-Oriented-Parallel numerical framework**
