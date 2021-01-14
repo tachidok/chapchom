@@ -1,13 +1,19 @@
 # SciCell++
 
+New and shields images
 [![Build Status](https://travis-ci.org/tachidok/scicellxx.svg?branch=master)](https://img.shields.io/travis/tachidok/scicellxx?label=master)
 
 [![Build Status](https://travis-ci.org/tachidok/scicellxx.svg?branch=julio)](https://img.shields.io/travis/tachidok/scicellxx/julio?label=julio)
 
+Old with modifications
+![Travis(.org)](https://img.shields.io/travis/tachidok/scicellxx?label=master)
+![Travis(.org)branch](https://img.shields.io/travis/tachidok/scicellxx/julio?label=julio)
+
+New originals
 [![Build Status](https://travis-ci.org/tachidok/scicellxx.svg?branch=master)](https://travis-ci.org/tachidok/scicellxx)
+[![Build Status](https://travis-ci.org/tachidok/scicellxx.svg?branch=julio)](https://travis-ci.org/tachidok/scicellxx)
 
-[![Build Status](https://travis-ci.org/tachidok/scicellxx.svg?branch=julio&label=julio)](https://travis-ci.org/tachidok/scicellxx)
-
+Previous
 ![Travis(.org)](https://img.shields.io/travis/tachidok/chapchom?label=master)
 ![Travis (.org)branch](https://img.shields.io/travis/tachidok/chapchom/julio?label=julio)
 
