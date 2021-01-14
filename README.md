@@ -1,4 +1,8 @@
-# Chapchom
+# SciCell++
+
+[![Build Status](https://travis-ci.org/tachidok/scicellxx.svg?branch=master)](https://travis-ci.org/tachidok/scicellxx)
+
+[![Build Status](https://travis-ci.org/tachidok/scicellxx.svg?branch=julio)](https://travis-ci.org/tachidok/scicellxx)
 
 ![Travis(.org)](https://img.shields.io/travis/tachidok/chapchom?label=master)
 ![Travis (.org)branch](https://img.shields.io/travis/tachidok/chapchom/julio?label=julio)
@@ -49,8 +53,8 @@ ready to go.
 You need **git** installed in your computer, then type in a terminal
 
 ```shell
-git clone https://github.com/tachidok/chapchom
-cd chapchom
+git clone https://github.com/tachidok/scicellxx
+cd scicellxx
 git checkout -b john
 ```
 
@@ -59,7 +63,7 @@ user name and your password. The third line generates your fully
 customised branch and assumes your name is _john_
 
 ### Configuration
-* In a terminal (shell command line) go into the `chapchom` folder
+* In a terminal (shell command line) go into the `scicellxx` folder
   then type
 
 ```shell
