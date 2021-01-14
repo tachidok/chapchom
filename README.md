@@ -1,5 +1,9 @@
 # SciCell++
 
+[![Build Status](https://travis-ci.org/tachidok/scicellxx.svg?branch=master)](https://img.shields.io/travis/tachidok/scicellxx?label=master)
+
+[![Build Status](https://travis-ci.org/tachidok/scicellxx.svg?branch=julio)](https://img.shields.io/travis/tachidok/scicellxx/julio?label=julio)
+
 [![Build Status](https://travis-ci.org/tachidok/scicellxx.svg?branch=master)](https://travis-ci.org/tachidok/scicellxx)
 
 [![Build Status](https://travis-ci.org/tachidok/scicellxx.svg?branch=julio)](https://travis-ci.org/tachidok/scicellxx)
