@@ -6,7 +6,7 @@
 
 [![Build Status](https://travis-ci.org/tachidok/scicellxx.svg?branch=master)](https://travis-ci.org/tachidok/scicellxx)
 
-[![Build Status](https://travis-ci.org/tachidok/scicellxx.svg?branch=julio)](https://travis-ci.org/tachidok/scicellxx)
+[![Build Status](https://travis-ci.org/tachidok/scicellxx.svg?branch=julio&label=julio)](https://travis-ci.org/tachidok/scicellxx)
 
 ![Travis(.org)](https://img.shields.io/travis/tachidok/chapchom?label=master)
 ![Travis (.org)branch](https://img.shields.io/travis/tachidok/chapchom/julio?label=julio)
