@@ -7,7 +7,7 @@ name: Build-and-Test
 on:
   push:
     branches: 
-      - julio
+      - master
   pull_request:
     branches: 
       - master
