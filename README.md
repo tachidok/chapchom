@@ -1,7 +1,6 @@
-# Chapchom
+# SciCell++
 
-![Travis(.org)](https://img.shields.io/travis/tachidok/chapchom?label=master)
-![Travis (.org)branch](https://img.shields.io/travis/tachidok/chapchom/julio?label=julio)
+![GitHub-master-push](https://github.com/tachidok/scicellxx/workflows/Build-and-Test/badge.svg?branch=master&event=push)
 
 ---
 
