@@ -6,7 +6,11 @@ name: Build-and-Test
 # Triggers the workflow on push
 on:
   push:
-    branches: [master, julio]
+    branches: 
+      - julio
+  pull_request:
+    branches: 
+      - master
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
