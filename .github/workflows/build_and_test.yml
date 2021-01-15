@@ -3,8 +3,10 @@
 name: Build-and-Test
 
 # Controls when the action will run. 
-# Triggers the workflow on push or pull request events
-on: [push, pull_request]
+# Triggers the workflow on push
+on:
+  push:
+    branches: [master, julio]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
