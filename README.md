@@ -1,22 +1,4 @@
 # SciCell++
-
-New and shields images
-[![Build Status](https://travis-ci.org/tachidok/scicellxx.svg?branch=master)](https://img.shields.io/travis/tachidok/scicellxx?label=master)
-
-[![Build Status](https://travis-ci.org/tachidok/scicellxx.svg?branch=julio)](https://img.shields.io/travis/tachidok/scicellxx/julio?label=julio)
-
-Old with modifications
-![Travis(.org)](https://img.shields.io/travis/tachidok/scicellxx?label=master)
-![Travis(.org)branch](https://img.shields.io/travis/tachidok/scicellxx/julio?label=julio)
-
-New originals
-[![Build Status](https://travis-ci.org/tachidok/scicellxx.svg?branch=master)](https://travis-ci.org/tachidok/scicellxx)
-[![Build Status](https://travis-ci.org/tachidok/scicellxx.svg?branch=julio)](https://travis-ci.org/tachidok/scicellxx)
-
-Previous
-![Travis(.org)](https://img.shields.io/travis/tachidok/chapchom?label=master)
-![Travis (.org)branch](https://img.shields.io/travis/tachidok/chapchom/julio?label=julio)
-
 ---
 
 ## Welcome!
@@ -176,3 +158,23 @@ This project was initially uploaded to GitHub on Friday, 11 March 2016
 https://en.wikipedia.org/wiki/List_of_finite_element_software_packages
 
 ## Have fun and enjoy .... !!!
+
+---
+
+## DELETE?
+
+New and shields images
+[![Build Status](https://img.shields.io/travis/tachidok/scicellxx?label=master)](https://travis-ci.org/tachidok/scicellxx)
+[![Build Status](https://img.shields.io/travis/tachidok/scicellxx/julio?label=julio)](https://travis-ci.org/tachidok/scicellxx)
+
+Old with modifications
+![Travis(.org)](https://img.shields.io/travis/tachidok/scicellxx?label=master)
+![Travis(.org)branch](https://img.shields.io/travis/tachidok/scicellxx/julio?label=julio)
+
+New originals
+[![Build Status](https://travis-ci.org/tachidok/scicellxx.svg?branch=master)](https://travis-ci.org/tachidok/scicellxx)
+[![Build Status](https://travis-ci.org/tachidok/scicellxx.svg?branch=julio)](https://travis-ci.org/tachidok/scicellxx)
+
+Previous
+![Travis(.org)](https://img.shields.io/travis/tachidok/chapchom?label=master)
+![Travis (.org)branch](https://img.shields.io/travis/tachidok/chapchom/julio?label=julio)
