@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/tachidok/scicellxx/branch/master/graph/badge.svg?token=JAAOFSS1IQ)](https://codecov.io/gh/tachidok/scicellxx)
+
 # Chapchom
 
 ![Travis(.org)](https://img.shields.io/travis/tachidok/chapchom?label=master)
