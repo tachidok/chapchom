@@ -1,28 +1,6 @@
 #! /bin/sh
 
 #====================================================================
-# A few helper functions
-#====================================================================
-
-# An small function 'borrowed' from the oomph-lib installation
-# script...
-OptionPrompt() 
-{ 
- printf "%s " "$1" 
-}
-
-# Another small function 'borrowed' from the oomph-lib installation
-# script...
-OptionRead()
-{
- read Opt
- if test "$Opt" = "" ; then
-  Opt=$1
- fi
- echo $Opt
-}
-
-#====================================================================
 # Variables
 #====================================================================
 doc_doxy_dir=doxy_doc
@@ -35,7 +13,7 @@ lib_name=SciCell++
 
 echo " "
 echo "============================================================= "
-echo "        "$lib_name" make doc script" 
+echo "        $lib_name make doc script" 
 echo "============================================================= "
 echo " "
 
@@ -67,11 +45,22 @@ echo "I am going to run doxygen ..."
 echo "============================================================= "
 echo ""
 # Go one folder up since we did a cd into ./build
-doxygen ./tools/doxyfile.config 
-
+if ! doxygen ./tools/doxyfile.config ; then
+    echo ""
+    echo ""
+    echo ""
+    echo "========================================================= "
+    echo "[FAIL] doxygen"
+    echo "========================================================= "
+    echo ""
+    exit 1
+fi
 echo ""
 echo "============================================================= "
 echo "[Done] doxygen"
 echo "============================================================= "
 echo ""
 echo "The documentation is in the $doc_doxy_dir folder"
+
+# Done
+exit 1
