@@ -124,8 +124,8 @@ MESSAGE( STATUS "---------------------------------------------------------------
 # Modify compilation variables
 # ----------------------------------------------------------------------
 IF(${CHAPCHOM_BUILD_VERSION} STREQUAL DEBUG)
-  SET(CHAPCHOM_C_FLAGS "-O0 -g -Wall -Wshadow")
-  SET(CHAPCHOM_CXX_FLAGS "-O0 -g -Wall -Wshadow -std=c++11")
+  SET(CHAPCHOM_C_FLAGS "-O0 -g -Wall -Wshadow --coverage")
+  SET(CHAPCHOM_CXX_FLAGS "-O0 -g -Wall -Wshadow -std=c++11 --coverage")
 ELSEIF(${CHAPCHOM_BUILD_VERSION} STREQUAL RELEASE)
   SET(CHAPCHOM_C_FLAGS "-O3 -Wall -Wshadow -DNDEBUG")
   SET(CHAPCHOM_CXX_FLAGS "-O3 -Wall -Wshadow -DNDEBUG -std=c++11")

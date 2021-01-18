@@ -1,3 +1,0 @@
-os: linux
-language: cpp
-script: ./autogen.sh -t STATIC -b RELEASE -n 16 -c ./configs/default -d 16 -v
