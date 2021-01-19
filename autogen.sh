@@ -20,6 +20,7 @@ OPTIONS:
    -n      Number of processors to build the framework
    -d      Number of processors to run demos (set to '0' to skip demos testing)
    -i      Interative mode, launches the interactive mode to prompt for FULL configuration options (any other parameters are ignored)
+   -r      Generate code coverage report
    -v      Verbose
 EOF
 }
@@ -73,6 +74,8 @@ default_number_of_processors_to_run_demos=4
 number_of_processors_to_run_demos=$default_number_of_processors_to_run_demos
 # Prompts for FULL configuration
 full_configuration=FALSE
+# Generate code coverage report (default to FALSE)
+generate_code_coverage_report=FALSE
 # Indicates whether to output building information (currently not in use)
 verbose=TRUE
 
@@ -81,8 +84,8 @@ verbose=TRUE
 # ====================================================================
 # The ':' followed by the argument letter indicates that it requires
 # an argument value. Example: 't:' indicates that 't' is followed by
-# an argument value. 'h', 'i' and 'v' do not require arguments.
-while getopts “ht:b:c:n:d:iv” OPTION
+# an argument value. 'h', 'i', 'r' and 'v' do not require arguments.
+while getopts “ht:b:c:n:d:irv” OPTION
 do
      case $OPTION in
          h)
@@ -106,6 +109,9 @@ do
              ;;
          i)
              full_configuration=TRUE
+             ;;
+         r)
+             generate_code_coverage_report=TRUE
              ;;
          v)
              verbose=TRUE
@@ -436,7 +442,8 @@ if test "$build_test_demos" = "TRUE" ; then
     echo ""
     echo "============================================================= "
     echo ""
-    echo "I am going to run the tests as you requested."
+    echo "I am going to run the tests as requested"
+    echo "----------------------------------------"
     echo "Using ["$number_of_processors_to_run_demos"] processor(s)"
     echo ""
     echo "============================================================= "
@@ -509,7 +516,38 @@ else
     echo ""
 fi
 
-echo " "
+#====================================================================
+# Generate code coverage report?
+#====================================================================
+
+if test "$generate_code_coverage_report" = "TRUE" ; then
+    echo ""
+    echo ""
+    echo ""
+    echo "============================================================= "
+    echo ""
+    echo "I am going to generate the code coverage report as requested"
+    echo ""
+    echo "============================================================= "
+    echo ""
+    echo ""
+        
+    if ! ./tools/run_codecov.sh ; then
+        echo ""
+        echo ""
+        echo ""
+        echo "========================================================= "
+        echo "[FAIL] './tools/run_codecov.sh'"
+        echo "========================================================= "
+        echo ""
+        exit 1
+    fi
+
+fi
+
+echo ""
+echo "============================================================= "
+echo ""
 echo "Do not commit any broken version of the library."
 echo "If any build/test fails try to fix it and report back to the"
 echo "developers."

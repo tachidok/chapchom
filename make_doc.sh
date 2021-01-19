@@ -63,4 +63,4 @@ echo ""
 echo "The documentation is in the $doc_doxy_dir folder"
 
 # Done
-exit 1
+exit 0
