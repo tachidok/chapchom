@@ -14,8 +14,8 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build_and_test:
+  # This workflow contains tow jobs, one for each build version of the framework
+  debug:
     # The type of runner that the job will run on
     runs-on: ubuntu-18.04
 
@@ -33,3 +33,17 @@ jobs:
         uses: codecov/codecov-action@v1.2.1
         #with:
         #  directory: ./code_report/
+
+  release:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-18.04
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Runs a single command using the specified shell
+      - name: Run autogen.sh script
+        run: ./autogen.sh -t STATIC -b RELEASE -n 16 -c ./configs/default -d 16 -v
+        shell: bash
