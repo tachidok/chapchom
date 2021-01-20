@@ -10,17 +10,16 @@ usage()
 cat << EOF
 usage: $0 [OPTIONS]
 
-This script run the test1 or test2 over a machine.
+This script builds and runs the test of SciCell++
 
 OPTIONS:
    -h      Show this message
-   -t      Indicates a 'STATIC' or 'SHARED' library files
+   -t      Indicates to generate a 'STATIC' or 'SHARED' version of library files
    -b      Build version 'DEBUG' or 'RELEASE'
-   -c      Configuration file
+   -c      Configuration file for additional building tools
    -n      Number of processors to build the framework
    -d      Number of processors to run demos (set to '0' to skip demos testing)
    -i      Interative mode, launches the interactive mode to prompt for FULL configuration options (any other parameters are ignored)
-   -r      Generate code coverage report
    -v      Verbose
 EOF
 }
@@ -74,8 +73,6 @@ default_number_of_processors_to_run_demos=4
 number_of_processors_to_run_demos=$default_number_of_processors_to_run_demos
 # Prompts for FULL configuration
 full_configuration=FALSE
-# Generate code coverage report (default to FALSE)
-generate_code_coverage_report=FALSE
 # Indicates whether to output building information (currently not in use)
 verbose=TRUE
 
@@ -110,9 +107,6 @@ do
          i)
              full_configuration=TRUE
              ;;
-         r)
-             generate_code_coverage_report=TRUE
-             ;;
          v)
              verbose=TRUE
              ;;
@@ -129,7 +123,6 @@ do
              ;;
      esac
 done
-
 
 #====================================================================
 # The building script
@@ -514,35 +507,6 @@ else
     echo ""
     echo "============================================================= "
     echo ""
-fi
-
-#====================================================================
-# Generate code coverage report?
-#====================================================================
-
-if test "$generate_code_coverage_report" = "TRUE" ; then
-    echo ""
-    echo ""
-    echo ""
-    echo "============================================================= "
-    echo ""
-    echo "I am going to generate the code coverage report as requested"
-    echo ""
-    echo "============================================================= "
-    echo ""
-    echo ""
-        
-    if ! ./tools/run_codecov.sh ; then
-        echo ""
-        echo ""
-        echo ""
-        echo "========================================================= "
-        echo "[FAIL] './tools/run_codecov.sh'"
-        echo "========================================================= "
-        echo ""
-        exit 1
-    fi
-
 fi
 
 echo ""
