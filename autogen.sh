@@ -20,6 +20,7 @@ OPTIONS:
    -n      Number of processors to build the framework
    -d      Number of processors to run demos (set to '0' to skip demos testing)
    -i      Interative mode, launches the interactive mode to prompt for FULL configuration options (any other parameters are ignored)
+   -r      Generate code coverage report
    -v      Verbose
 EOF
 }
@@ -73,6 +74,8 @@ default_number_of_processors_to_run_demos=4
 number_of_processors_to_run_demos=$default_number_of_processors_to_run_demos
 # Prompts for FULL configuration
 full_configuration=FALSE
+# Generate code coverage report (default to FALSE)
+generate_code_coverage_report=FALSE
 # Indicates whether to output building information (currently not in use)
 verbose=TRUE
 
@@ -106,6 +109,9 @@ do
              ;;
          i)
              full_configuration=TRUE
+             ;;
+         r)
+             generate_code_coverage_report=TRUE
              ;;
          v)
              verbose=TRUE
