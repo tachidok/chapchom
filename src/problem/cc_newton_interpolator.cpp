@@ -1,6 +1,6 @@
 #include "cc_newton_interpolator.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  // ===================================================================

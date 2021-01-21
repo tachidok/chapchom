@@ -1,6 +1,6 @@
 #include "cc_jacobian_by_fd_and_residual_from_odes.h"
 
-namespace chapchom
+namespace scicellxx
 {
  // ===================================================================
  /// Empty constructor

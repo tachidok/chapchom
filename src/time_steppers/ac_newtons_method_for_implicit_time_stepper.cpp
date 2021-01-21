@@ -3,7 +3,7 @@
 
 #include "ac_newtons_method_for_implicit_time_stepper.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  // ===================================================================

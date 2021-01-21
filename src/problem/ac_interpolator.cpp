@@ -1,6 +1,6 @@
 #include "ac_interpolator.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  // ===================================================================

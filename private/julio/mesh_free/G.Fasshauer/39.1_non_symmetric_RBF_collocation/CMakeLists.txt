@@ -7,7 +7,7 @@ ADD_EXECUTABLE(julio_demo_non_symmetric_RBF EXCLUDE_FROM_ALL ${SRC_demo_non_symm
 # Indicate linking libraries
 SET(LIB_demo_non_symmetric_RBF numerical_recipes_lib argparse_lib general_lib matrices_lib ${ARMADILLO_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} linear_solvers_lib vtk_lib)
 
-# Check whether chapchom is using VTK (either way this demo is not
+# Check whether scicellxx is using VTK (either way this demo is not
 # going to work without VTK support, so it should be selected in the
 # ./configs/default file)
 IF (SCICELLXX_USES_VTK)

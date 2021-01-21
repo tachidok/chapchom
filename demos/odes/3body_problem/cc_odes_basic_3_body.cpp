@@ -2,7 +2,7 @@
  */
 #include "cc_odes_basic_3_body.h"
 
-namespace chapchom
+namespace scicellxx
 {
  // ===================================================================
  // Constructor, sets the number of odes. We currently have 18 odes

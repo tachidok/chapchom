@@ -1,6 +1,6 @@
 #include "ac_adaptive_time_stepper.h"
 
-namespace chapchom
+namespace scicellxx
 {
  // ===================================================================
  // Constructor

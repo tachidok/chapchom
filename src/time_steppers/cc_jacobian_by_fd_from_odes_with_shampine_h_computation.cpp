@@ -1,6 +1,6 @@
 #include "cc_jacobian_by_fd_from_odes_with_shampine_h_computation.h"
 
-namespace chapchom
+namespace scicellxx
 {
  // ===================================================================
  /// Constructor

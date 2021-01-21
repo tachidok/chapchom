@@ -1,6 +1,6 @@
 #include "cc_bdf_2_method.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  // ===================================================================

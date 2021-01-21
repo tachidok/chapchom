@@ -4,7 +4,7 @@
 
 #include "ac_linear_solver.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  // ===================================================================

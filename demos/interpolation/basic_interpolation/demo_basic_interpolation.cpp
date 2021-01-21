@@ -9,7 +9,7 @@
 // The interpolator
 #include "../../../src/problem/cc_newton_interpolator.h"
 
-using namespace chapchom;
+using namespace scicellxx;
 
 inline Real f(const Real x)
 {return sin(x);}
@@ -17,7 +17,7 @@ inline Real f(const Real x)
 int main(int argc, char *argv[])
 {
  // Initialise chapcom
- initialise_chapchom();
+ initialise_scicellxx();
  
  // Output for testing/validation
  std::ofstream output_test("output_test.dat", std::ios_base::out);
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
  deb.close();
  
  // Finalise chapcom
- finalise_chapchom();
+ finalise_scicellxx();
  
  return 0;
  

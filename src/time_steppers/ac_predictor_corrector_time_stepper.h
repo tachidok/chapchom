@@ -16,7 +16,7 @@
 
 #include "./ac_time_stepper.h"
 
-namespace chapchom
+namespace scicellxx
 {
 #define DEFAULT_PREDICTOR_CORRECTOR_TIME_STEPPER_MAXIMUM_ITERATIONS 10
 #ifdef TYPEDEF_REAL_IS_DOUBLE

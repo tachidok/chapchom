@@ -11,7 +11,7 @@
 #include "cc_solver_armadillo.h"
 #endif // #ifdef SCICELLXX_USES_ARMADILO
 
-namespace chapchom
+namespace scicellxx
 {
  
  /// @class CCFactoryLinearSolver cc_factory_linear_solver.h

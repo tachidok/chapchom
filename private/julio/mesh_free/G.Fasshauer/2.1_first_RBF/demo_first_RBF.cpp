@@ -24,10 +24,10 @@
 #endif // #ifdef SCICELLXX_USES_ARMADILLO
 
 #ifdef SCICELLXX_USES_VTK
-#include "../../../../../src/vtk/cc_chapchom2vtk.h"
+#include "../../../../../src/vtk/cc_scicellxx2vtk.h"
 #endif // #ifdef SCICELLXX_USES_VTK
 
-using namespace chapchom;
+using namespace scicellxx;
 
 // Franke's function (2D version)
 template<class VEC_TYPE>
@@ -137,8 +137,8 @@ struct Args {
 // ==================================================================
 int main(int argc, char *argv[])
 {
- // Initialise chapchom
- initialise_chapchom();
+ // Initialise scicellxx
+ initialise_scicellxx();
 
  // Instantiate parser
  Args args;
@@ -649,7 +649,7 @@ int main(int argc, char *argv[])
   }
  
  // Finalise chapcom
- finalise_chapchom();
+ finalise_scicellxx();
  
  return 0;
  

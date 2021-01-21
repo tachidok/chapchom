@@ -1,6 +1,6 @@
 #include "utilities.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  // =======================================================================
@@ -224,6 +224,6 @@ namespace chapchom
  /// Single (global) instantiation of the SciCellxxOutput class -- this
  /// is used throughout the library as a "replacement" for std::cout
  // ========================================================================
- SciCellxxOutput chapchom_output;
+ SciCellxxOutput scicellxx_output;
   
 }

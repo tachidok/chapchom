@@ -7,7 +7,7 @@
 
 #include "./cc_node.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  /// @class CCBoundaryNode cc_boundary_node.h

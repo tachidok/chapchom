@@ -14,7 +14,7 @@
 // Jacobian of the ODEs
 #include "ac_jacobian_and_residual_for_implicit_time_stepper.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  /// @class CCBDF2Method cc_bdf2_method.h This class implements

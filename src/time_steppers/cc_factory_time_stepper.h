@@ -13,7 +13,7 @@
 #include "cc_adaptive_runge_kutta_45F_method.h"
 #include "cc_adaptive_runge_kutta_45DP_method.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  /// @class CCFactoryTimeStepper cc_factory_time_stepper.h

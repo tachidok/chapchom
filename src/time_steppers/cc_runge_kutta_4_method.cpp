@@ -1,6 +1,6 @@
 #include "cc_runge_kutta_4_method.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  // ===================================================================

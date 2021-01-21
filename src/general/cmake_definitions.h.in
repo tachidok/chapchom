@@ -5,7 +5,7 @@
 // cmake_definitions.h, the variables in between "@"s are substituted
 // for values assigned in the "CMakeLists.txt" files
 
-namespace chapchom
+namespace scicellxx
 {
  
 #define MAJOR_VERSION @SCICELLXX_MAJOR_VERSION@

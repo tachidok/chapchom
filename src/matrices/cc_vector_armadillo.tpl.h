@@ -16,7 +16,7 @@
 // Add Armadillo's includes
 #include <armadillo>
 
-namespace chapchom
+namespace scicellxx
 {
  
  // forward CCMatrixArmadillo class declaration, required for vector

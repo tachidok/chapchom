@@ -1,6 +1,6 @@
 #include "cc_jacobian_and_residual_for_adams_moulton_2.h"
 
-namespace chapchom
+namespace scicellxx
 {
  // ===================================================================
  /// Constructor

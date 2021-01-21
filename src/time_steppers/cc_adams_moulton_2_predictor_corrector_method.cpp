@@ -1,6 +1,6 @@
 #include "cc_adams_moulton_2_predictor_corrector_method.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  // ===================================================================
@@ -123,7 +123,7 @@ namespace chapchom
     {
      if (output_messages())
       {
-       chapchom_output << "Local error is smaller than minimum tolerance value ["
+       scicellxx_output << "Local error is smaller than minimum tolerance value ["
                        << local_error << "] < [" << minimum_tolerance() << "]" << std::endl;
       }
     }
@@ -135,7 +135,7 @@ namespace chapchom
     {
      if (output_messages())
       {
-       chapchom_output << "Maximum number of iterations reached ["<< maximum_iterations()
+       scicellxx_output << "Maximum number of iterations reached ["<< maximum_iterations()
                        <<"], local error [" << local_error << "], maximum_tolerance ["
                        << maximum_tolerance() << "]\n"
                        << "You can change the maximum number of iterations by calling the method\n"

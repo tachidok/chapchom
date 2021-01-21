@@ -10,7 +10,7 @@
 // Include the header from inherited class
 #include "ac_linear_solver.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  /// A concrete class for solving a linear system of equations. This

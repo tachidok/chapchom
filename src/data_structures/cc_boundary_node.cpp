@@ -3,7 +3,7 @@
 
 #include "cc_boundary_node.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  /// ===================================================================

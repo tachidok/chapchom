@@ -14,7 +14,7 @@
 // The LU factorisation and back-substitution from Numerical Recipes
 #include "../../external_src/numerical_recipes/nr.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  /// A concrete class for solving a linear system of equations. This

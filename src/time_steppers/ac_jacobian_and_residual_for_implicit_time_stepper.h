@@ -5,7 +5,7 @@
 #include "../data_structures/ac_odes.h"
 #include "../data_structures/cc_data.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  /// An abstract class to define the interfaces for the computation of

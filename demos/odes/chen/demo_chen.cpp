@@ -33,7 +33,7 @@
 // Odes for Chen problem
 #include "cc_chen_odes.h"
 
-using namespace chapchom;
+using namespace scicellxx;
 
 /// This class implements inherits from the ACIVPForODEs class, we
 /// implement specific functions to solve the Lotka-Volterra equations

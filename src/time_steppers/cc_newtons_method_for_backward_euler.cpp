@@ -3,7 +3,7 @@
 
 #include "cc_newtons_method_for_backward_euler.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  // ===================================================================

@@ -1,6 +1,6 @@
 #include "cc_factory_time_stepper.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  // ===================================================================

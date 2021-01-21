@@ -11,7 +11,7 @@
 // operations
 #include "cc_vector.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  // Concrete class to represent matrices

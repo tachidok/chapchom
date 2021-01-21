@@ -9,7 +9,7 @@
 // The class to create a matrix
 #include "../../../src/matrices/cc_matrix.h"
 
-using namespace chapchom;
+using namespace scicellxx;
 
 // -------------------------------------------------------------------
 // 1 - Show assignment of data to matrices from arrays and vectors
@@ -19,7 +19,7 @@ using namespace chapchom;
 int main(int argc, char *argv[])
 {
  // Initialise chapcom
- initialise_chapchom();
+ initialise_scicellxx();
  
  // Output for testing/validation
  std::ofstream output_test("output_test.dat", std::ios_base::out);
@@ -203,7 +203,7 @@ int main(int argc, char *argv[])
  matrix_pt = 0;
  
  // Finalise chapcom
- finalise_chapchom();
+ finalise_scicellxx();
  
  return 0;
  

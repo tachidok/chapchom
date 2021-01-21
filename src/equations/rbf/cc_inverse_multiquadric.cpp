@@ -1,6 +1,6 @@
 #include "cc_inverse_multiquadric.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  // ===================================================================

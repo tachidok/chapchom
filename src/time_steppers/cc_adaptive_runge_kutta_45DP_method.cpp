@@ -1,6 +1,6 @@
 #include "cc_adaptive_runge_kutta_45DP_method.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  // ===================================================================
@@ -215,7 +215,7 @@ namespace chapchom
       break_loop = true;
       if (Output_messages)
        {
-        chapchom_output << "Runge-Kutta 4(5) Dormand-Prince MAXIMUM STEP SIZE reached ["<<this->Maximum_step_size<<"]\n"
+        scicellxx_output << "Runge-Kutta 4(5) Dormand-Prince MAXIMUM STEP SIZE reached ["<<this->Maximum_step_size<<"]\n"
                         << "If you consider you require a larger step size you can\n"
                         << "set your own by calling the method\n\n"
                         << "set_maximum_step_size()\n"
@@ -228,7 +228,7 @@ namespace chapchom
       break_loop = true;
       if (Output_messages)
        {
-        chapchom_output << "Runge-Kutta 4(5) Dormand-Prince MINIMUM STEP SIZE reached ["<<this->Minimum_step_size<<"]\n"
+        scicellxx_output << "Runge-Kutta 4(5) Dormand-Prince MINIMUM STEP SIZE reached ["<<this->Minimum_step_size<<"]\n"
                         << "If you consider you require an smaller step size you can\n"
                         << "set your own by calling the method\n\n"
                         << "set_minimum_step_size()\n"
@@ -247,7 +247,7 @@ namespace chapchom
      {
       if (Output_messages)
        {
-        chapchom_output << "Runge-Kutta 4(5) Dormand-Prince MAXIMUM NUMBER OF ITERATIONS reached ["<<this->Maximum_iterations<<"]\n"
+        scicellxx_output << "Runge-Kutta 4(5) Dormand-Prince MAXIMUM NUMBER OF ITERATIONS reached ["<<this->Maximum_iterations<<"]\n"
                         << "If you consider you require more iterations you can\n"
                         << "set your own by calling the method\n\n"
                         << "set_maximum_interations()\n"

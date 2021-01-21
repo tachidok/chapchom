@@ -23,7 +23,7 @@
 #include "../../../../../src/linear_solvers/cc_solver_armadillo.h"
 #endif // #ifdef SCICELLXX_USES_ARMADILLO
 
-using namespace chapchom;
+using namespace scicellxx;
 
 // This fucntion has it maximum value at the center, depending on the
 // dimension s. At the boundaries it is zero.
@@ -100,8 +100,8 @@ struct Args {
 // ==================================================================
 int main(int argc, char *argv[])
 {
- // Initialise chapchom
- initialise_chapchom();
+ // Initialise scicellxx
+ initialise_scicellxx();
 
  // Instantiate parser
  Args args;
@@ -493,7 +493,7 @@ int main(int argc, char *argv[])
   }
  
  // Finalise chapcom
- finalise_chapchom();
+ finalise_scicellxx();
  
  return 0;
  

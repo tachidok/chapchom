@@ -6,7 +6,7 @@
 
 #include "ac_jacobian_and_residual_for_implicit_time_stepper.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  /// A concrete class to compute the Jacobian matrix using Finite

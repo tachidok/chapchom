@@ -7,7 +7,7 @@
 #include "cc_runge_kutta_4_method.h"
 #endif // #if 0
 
-namespace chapchom
+namespace scicellxx
 {
 
  /// @class CCAdamsMoulton2PCMethod

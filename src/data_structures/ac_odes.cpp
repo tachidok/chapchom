@@ -1,6 +1,6 @@
 #include "ac_odes.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  /// ===================================================================

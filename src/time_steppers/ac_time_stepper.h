@@ -10,7 +10,7 @@
 // Include factory for matrices and vectors
 #include "../matrices/cc_factory_matrices.h"
 
-namespace chapchom
+namespace scicellxx
 { 
  /// @class ACTimeStepper ac_time_stepper.h
 

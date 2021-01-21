@@ -22,7 +22,7 @@
 #include "../../../src/equations/ac_jacobian_and_residual.h"
 #include "../../../src/problem/cc_newtons_method.h"
 
-using namespace chapchom;
+using namespace scicellxx;
 
 /// This demo solves the nonlinear problem
 /// x^3 = 27
@@ -101,7 +101,7 @@ private:
 int main(int argc, char *argv[])
 {
  // Initialise chapcom
- initialise_chapchom();
+ initialise_scicellxx();
    
  // Output for testing/validation
  std::ofstream output_test("output_test.dat", std::ios_base::out);
@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
  std::cout << "[FINISHING UP] ... " << std::endl;
  
  // Finalise chapcom
- finalise_chapchom();
+ finalise_scicellxx();
  
  return 0;
  

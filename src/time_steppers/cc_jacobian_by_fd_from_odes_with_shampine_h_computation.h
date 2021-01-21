@@ -4,7 +4,7 @@
 #include "ac_jacobian.h"
 #include "../data_structures/ac_odes.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  // A concrete class to compute the Jacobian matrix using Finite

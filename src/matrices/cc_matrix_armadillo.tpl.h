@@ -21,7 +21,7 @@
 // Add Armadillo's includes
 #include <armadillo>
 
-namespace chapchom
+namespace scicellxx
 {
  
  // Concrete class to represent matrices

@@ -7,7 +7,7 @@
 
 #include "../time_steppers/ac_time_stepper.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  /// @class ACProblem ac_problem.h

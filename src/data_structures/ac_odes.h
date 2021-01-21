@@ -6,7 +6,7 @@
 
 #include "cc_data.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  /// @class ACODEs ac_odes.h

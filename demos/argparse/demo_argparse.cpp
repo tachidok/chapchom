@@ -3,7 +3,7 @@
 #include "../../src/general/initialise.h"
 
 // Use the namespace of the framework
-using namespace chapchom;
+using namespace scicellxx;
 
 struct Args {
  argparse::ArgValue<bool> boolean_argument;
@@ -17,7 +17,7 @@ struct Args {
 int main(int argc, const char** argv)
 {
  // Initialise chapcom
- initialise_chapchom();
+ initialise_scicellxx();
  
  // Output for testing/validation
  std::ofstream output_test("output_test.dat", std::ios_base::out);
@@ -83,7 +83,7 @@ int main(int argc, const char** argv)
  output_test.close();
   
  // Finalise chapcom
- finalise_chapchom();
+ finalise_scicellxx();
  
  return 0;
  

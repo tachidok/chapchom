@@ -29,10 +29,10 @@
 #endif // #ifdef SCICELLXX_USES_ARMADILLO
 
 #ifdef SCICELLXX_USES_VTK
-#include "../../../../../src/vtk/cc_chapchom2vtk.h"
+#include "../../../../../src/vtk/cc_scicellxx2vtk.h"
 #endif // #ifdef SCICELLXX_USES_VTK
 
-using namespace chapchom;
+using namespace scicellxx;
 
 // f function
 template<class VEC_TYPE>

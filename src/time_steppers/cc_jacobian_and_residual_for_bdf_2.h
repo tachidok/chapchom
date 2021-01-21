@@ -6,7 +6,7 @@
 // One of the possible Jacobian strategies to compute FY
 #include "cc_jacobian_by_fd_and_residual_from_odes.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  /// A concrete class to compute the Jacobian matrix and the residual

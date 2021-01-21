@@ -1,6 +1,6 @@
 #include "cc_backward_euler_method.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  // ===================================================================

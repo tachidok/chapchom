@@ -12,7 +12,7 @@
 #include "cc_jacobian_and_residual_for_backward_euler.h"
 #include "ac_newtons_method_for_implicit_time_stepper.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  /// A concrete class that implements Newton's method for time stepping

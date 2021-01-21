@@ -1,6 +1,6 @@
 #include "ac_problem.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  // ===================================================================
@@ -34,8 +34,8 @@ namespace chapchom
  // ===================================================================
  void ACProblem::initialise_problem()
  {
-  // Initialise chapchom
-  initialise_chapchom();
+  // Initialise scicellxx
+  initialise_scicellxx();
  }
 
  // =================================================================== 
@@ -44,7 +44,7 @@ namespace chapchom
  void ACProblem::finalise_problem()
  {
   // Finalise chapcom
-  finalise_chapchom();
+  finalise_scicellxx();
  }
 
  // ===================================================================

@@ -1,6 +1,6 @@
 #include "cc_jacobian_and_residual_for_backward_euler.h"
 
-namespace chapchom
+namespace scicellxx
 {
  // ===================================================================
  /// Constructor

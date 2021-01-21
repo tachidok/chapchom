@@ -14,7 +14,7 @@
 #include "../problem/cc_newtons_method.h"
 #include "ac_jacobian_and_residual_for_implicit_time_stepper.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  /// An abstract class that implements Newton's method for implicit

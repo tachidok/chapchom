@@ -11,7 +11,7 @@ ENDIF(${SCICELLXX_BUILD_DEMOS} STREQUAL TRUE)
 # Indicate linking libraries
 SET(LIB_demo_basic_ode_stability_analysis data_structures_lib matrices_lib time_stepper_lib equations_lib problem_lib linear_solvers_lib numerical_recipes_lib general_lib)
 
-# Check whether chapchom is using Armadillo
+# Check whether scicellxx is using Armadillo
 IF (SCICELLXX_USES_ARMADILLO)
  LIST(APPEND LIB_demo_basic_ode_stability_analysis ${ARMADILLO_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 ENDIF (SCICELLXX_USES_ARMADILLO)

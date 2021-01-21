@@ -3,7 +3,7 @@
 
 #include "cc_newtons_method_for_adams_moulton_2.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  // ===================================================================

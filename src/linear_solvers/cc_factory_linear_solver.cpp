@@ -3,7 +3,7 @@
 
 #include "cc_factory_linear_solver.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  // ===================================================================

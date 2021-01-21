@@ -3,7 +3,7 @@
 
 #include "ac_interpolator.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  /// @class CCNewtonInterpolator cc_newton_interpolator.h

@@ -6,7 +6,7 @@
 
 #include "ac_radial_base_function.h"
 
-namespace chapchom
+namespace scicellxx
 {
  /// A class than implements the Inverse Muliquadric RBF
  class CCInverseMultiquadric : public virtual ACRadialBaseFunction

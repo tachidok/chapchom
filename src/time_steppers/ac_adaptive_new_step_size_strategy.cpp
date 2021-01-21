@@ -1,6 +1,6 @@
 #include "ac_adaptive_new_step_size_strategy.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  // ===================================================================

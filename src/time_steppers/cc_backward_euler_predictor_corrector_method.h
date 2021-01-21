@@ -3,7 +3,7 @@
 
 #include "ac_predictor_corrector_time_stepper.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  /// @class CCBackwardEulerPCMethod

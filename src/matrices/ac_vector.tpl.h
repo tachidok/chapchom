@@ -14,7 +14,7 @@
 #include <armadillo>
 #endif // #ifdef SCICELLXX_USES_ARMADILLO
 
-namespace chapchom
+namespace scicellxx
 {
  
  /// @class ACVector ac_vector.h

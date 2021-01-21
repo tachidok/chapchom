@@ -3,7 +3,7 @@
 
 #include "ac_adaptive_new_step_size_strategy.h"
 
-namespace chapchom
+namespace scicellxx
 { 
  /// @class CCAdaptiveNewStepSizeHalfDouble cc_adaptive_new_step_size_half_double.h
  

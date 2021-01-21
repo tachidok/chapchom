@@ -16,7 +16,7 @@
               // working with 3 bodies in 3 dimensions
 #define NBODIES 3
 
-namespace chapchom
+namespace scicellxx
 {
 
  /// \class CCODEsBasic3Body cc_odes_basic_3_body.h

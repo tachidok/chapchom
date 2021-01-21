@@ -37,7 +37,7 @@
 // Base class for the concrete problem
 #include "../../../src/problem/ac_ivp_for_odes.h"
 
-using namespace chapchom;
+using namespace scicellxx;
 // =================================================================
 // =================================================================
 // =================================================================

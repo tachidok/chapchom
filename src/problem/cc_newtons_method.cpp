@@ -3,7 +3,7 @@
 
 #include "cc_newtons_method.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  // ===================================================================
@@ -268,7 +268,7 @@ namespace chapchom
   // Is output message enabled?
   if (Output_messages)
    {
-    chapchom_output << "Initial residual norm: " << initial_residual_norm << std::endl;
+    scicellxx_output << "Initial residual norm: " << initial_residual_norm << std::endl;
    }
   
   // Check for convergence
@@ -278,7 +278,7 @@ namespace chapchom
     if (Output_messages)
      {
       // Finish Newton iteration
-      chapchom_output << "The initial residual is smaller than the newton's absolute residual tolerance\n"
+      scicellxx_output << "The initial residual is smaller than the newton's absolute residual tolerance\n"
                       << "Newton_absolute_solver_tolerance: " << Newton_absolute_solver_tolerance << "\n"
                       << "Initial residual: " << initial_residual_norm
                       << std::endl;
@@ -357,7 +357,7 @@ namespace chapchom
     // Is output message enabled?
     if (Output_messages)
      {
-      chapchom_output << "CPU time for Jacobian in Newton solve: ["
+      scicellxx_output << "CPU time for Jacobian in Newton solve: ["
                       << total_cpu_clock_time_for_jacobian << "]" << std::endl;
      }
     
@@ -384,7 +384,7 @@ namespace chapchom
     // Is output message enabled?
     if (Output_messages)
      {
-      chapchom_output << "CPU time for linear solver in Newton solve: ["
+      scicellxx_output << "CPU time for linear solver in Newton solve: ["
                       << total_cpu_clock_time_for_linear_solver << "]" << std::endl;
      }
     
@@ -412,7 +412,7 @@ namespace chapchom
     // Is output message enabled?
     if (Output_messages)
      {
-      chapchom_output << "Newton iteration " << n_newton_iterations
+      scicellxx_output << "Newton iteration " << n_newton_iterations
                       << ": Residual norm (termination tolerance) " << current_residual_norm << " (" << termination_tolerance << ")"<< std::endl;
      }
     
@@ -456,7 +456,7 @@ namespace chapchom
   // Is output message enabled?
   if (Output_messages)
    {
-    chapchom_output << "CPU time for Newton's method: ["
+    scicellxx_output << "CPU time for Newton's method: ["
                     << total_cpu_clock_time_for_newtons_method << "]" << std::endl;
    }
   
