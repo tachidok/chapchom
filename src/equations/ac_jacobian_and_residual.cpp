@@ -1,6 +1,6 @@
 #include "ac_jacobian_and_residual.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  // ===================================================================

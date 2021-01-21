@@ -6,7 +6,7 @@
 
 #include "../rbf/cc_inverse_multiquadric.h"
 
-namespace chapchom
+namespace scicellxx
 {
  /// A class than implements an Inverse Muliquadric RBF Node for the
  /// solution of the Poisson equation

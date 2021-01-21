@@ -1,7 +1,7 @@
 #ifndef DEFINITIONS_H
 #define DEFINITIONS_H
 
-namespace chapchom
+namespace scicellxx
 {
 
 #ifdef TYPEDEF_REAL_IS_DOUBLE
@@ -75,7 +75,7 @@ namespace chapchom
 
 #endif
 
-} // namespace chapchom
+} // namespace scicellxx
  
 #endif // #ifdef DEFINITIONS_H
 

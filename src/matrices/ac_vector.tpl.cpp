@@ -3,7 +3,7 @@
 
 #include "ac_vector.tpl.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  // ===================================================================

@@ -17,7 +17,7 @@
 #include <vtkFieldData.h>
 #include <vtkPointData.h>
 
-namespace chapchom
+namespace scicellxx
 {
  
  //========================================================================
@@ -150,7 +150,7 @@ namespace chapchom
  // Single (global) instantiation of the CCSciCellxx2VTK class -- this is
  // used throughout the library to generate VTK output for Paraview
  // ========================================================================
- //extern CCSciCellxx2VTK chapchom2vtk;
+ //extern CCSciCellxx2VTK scicellxx2vtk;
 
 }
 

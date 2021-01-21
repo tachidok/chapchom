@@ -14,12 +14,12 @@
 #include "../../../src/matrices/cc_vector.h"
 #include "../../../src/matrices/cc_matrix.h"
 
-using namespace chapchom;
+using namespace scicellxx;
 
 int main(int argc, char *argv[])
 {
  // Initialise chapcom
- initialise_chapchom();
+ initialise_scicellxx();
  
  // Output for testing/validation
  std::ofstream output_test("output_test.dat", std::ios_base::out);
@@ -194,7 +194,7 @@ int main(int argc, char *argv[])
  output_test.close();
  
  // Finalise chapcom
- finalise_chapchom(); 
+ finalise_scicellxx(); 
  
  return 0;
  

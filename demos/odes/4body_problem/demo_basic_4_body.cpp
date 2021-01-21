@@ -25,7 +25,7 @@
 #endif // #ifdef SCICELLXX_USES_ARMADILLO
 
 #ifdef SCICELLXX_USES_VTK
-#include "../../../src/vtk/cc_chapchom2vtk.h"
+#include "../../../src/vtk/cc_scicellxx2vtk.h"
 #endif // #ifdef SCICELLXX_USES_VTK
 
 // Base class for the concrete problem
@@ -33,7 +33,7 @@
 // Odes for 4 body problem
 #include "cc_odes_basic_4_body.h"
 
-using namespace chapchom;
+using namespace scicellxx;
 
 /// This class implements inherits from the ACIVPForODEs class, we
 /// implement specific functions to solve the 4 body problem

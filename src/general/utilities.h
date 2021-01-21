@@ -3,7 +3,7 @@
 
 #include "common_includes.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  // ======================================================================
@@ -171,7 +171,7 @@ namespace chapchom
  
  //========================================================================
  // Wrapper to a stream and an output modifier used to control the
- // output from chapchom. Its instantiation can be used like std::cout.
+ // output from scicellxx. Its instantiation can be used like std::cout.
  // =======================================================================
  class SciCellxxOutput
  {
@@ -219,7 +219,7 @@ namespace chapchom
  // Single (global) instantiation of the SciCellxxOutput object -- this
  // is used throughout the library as a "replacement" for std::cout
  //========================================================================
- extern SciCellxxOutput chapchom_output;
+ extern SciCellxxOutput scicellxx_output;
  
  //==================================================================
  // Utility method to time a program

@@ -4,7 +4,7 @@
 #include "../general/common_includes.h"
 #include "../general/utilities.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  /// @class ACInterpolator ac_interpolator.h

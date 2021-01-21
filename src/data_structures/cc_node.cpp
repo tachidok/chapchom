@@ -3,7 +3,7 @@
 
 #include "cc_node.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  /// ===================================================================

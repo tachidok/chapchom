@@ -3,7 +3,7 @@
 
 #include "ac_time_stepper.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  /// @class CCEulerMethod cc_euler_method.h

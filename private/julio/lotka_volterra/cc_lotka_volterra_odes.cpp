@@ -2,7 +2,7 @@
  */
 #include "cc_lotka_volterra_odes.h"
 
-namespace chapchom
+namespace scicellxx
 {
  // ===================================================================
  // Constructor, sets the number of odes.

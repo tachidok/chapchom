@@ -3,7 +3,7 @@
 
 #include "cc_vector.tpl.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  // ===================================================================

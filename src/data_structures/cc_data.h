@@ -7,7 +7,7 @@
 #include "../general/common_includes.h"
 #include "../general/utilities.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  /// Enumerator to indicate whether the associated value is pinned or

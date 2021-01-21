@@ -5,7 +5,7 @@
 
 #include "cc_solver_armadillo.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  // ===================================================================

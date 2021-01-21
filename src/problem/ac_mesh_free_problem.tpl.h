@@ -18,7 +18,7 @@
 // Factory for linear solver
 #include "../linear_solvers/cc_factory_linear_solver.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  /// @class ACMeshFreeProblem ac_mesh_free_problem.h

@@ -1,6 +1,6 @@
 #include "cc_adaptive_new_step_size_half_double.h"
 
-namespace chapchom
+namespace scicellxx
 {
  // ===================================================================
  // Constructor (empty)

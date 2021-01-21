@@ -13,7 +13,7 @@
 #include "../matrices/ac_matrix.h"
 #include "../matrices/ac_vector.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  /// Abstract class to solve linear systems of equations, this class is

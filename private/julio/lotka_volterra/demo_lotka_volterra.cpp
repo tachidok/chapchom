@@ -31,7 +31,7 @@
 // Odes for Lotka-Volkaterra problem
 #include "cc_lotka_volterra_odes.h"
 
-using namespace chapchom;
+using namespace scicellxx;
 
 /// This class implements inherits from the ACIVPForODEs class, we
 /// implement specific functions to solve the Lotka-Volterra equations

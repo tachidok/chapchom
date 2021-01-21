@@ -1,6 +1,6 @@
 #include "ac_ivp_for_odes.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  // ===================================================================

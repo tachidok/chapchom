@@ -7,7 +7,7 @@
 #include "../data_structures/ac_odes.h"
 #include "../data_structures/cc_data.h"
 
-namespace chapchom
+namespace scicellxx
 {
 #ifdef TYPEDEF_REAL_IS_DOUBLE
 #define DEFAULT_ADAPTIVE_NEW_STEP_SIZE_MAXIMUM_TOLERANCE 1.0e-3

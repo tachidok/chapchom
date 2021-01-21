@@ -1,6 +1,6 @@
-#include "cc_chapchom2vtk.h"
+#include "cc_scicellxx2vtk.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  // ==================================================================

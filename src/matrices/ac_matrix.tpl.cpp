@@ -3,7 +3,7 @@
 
 #include "ac_matrix.tpl.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  // ===================================================================

@@ -8,7 +8,7 @@
 #include "../data_structures/cc_data.h"
 #include "ac_problem.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  /// @class ACIVPForODEs ac_ivp_for_odes.h

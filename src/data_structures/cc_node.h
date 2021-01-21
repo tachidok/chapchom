@@ -8,7 +8,7 @@
 #include "../general/utilities.h"
 #include "./cc_data.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  /// @class CCNode cc_node.h

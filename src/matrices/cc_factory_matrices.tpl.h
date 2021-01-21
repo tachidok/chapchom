@@ -14,7 +14,7 @@
 #include "../matrices/cc_matrix_armadillo.h"
 #endif // #ifdef SCICELLXX_USES_ARMADILLO
 
-namespace chapchom
+namespace scicellxx
 {
  
  /// @class CCFactoryMatrices cc_factory_matrices.h

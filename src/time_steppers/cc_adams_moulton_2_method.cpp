@@ -1,6 +1,6 @@
 #include "cc_adams_moulton_2_method.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  // ===================================================================

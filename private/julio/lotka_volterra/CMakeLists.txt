@@ -7,7 +7,7 @@ ADD_EXECUTABLE(julio_demo_lotka_volterra EXCLUDE_FROM_ALL ${SRC_lotka_volterra})
 # Indicate linking libraries
 SET(LIB_lotka_volterra data_structures_lib matrices_lib time_stepper_lib equations_lib problem_lib general_lib linear_solvers_lib numerical_recipes_lib)
 
-# Check whether chapchom is using Armadillo
+# Check whether scicellxx is using Armadillo
 IF (SCICELLXX_USES_ARMADILLO)
  LIST(APPEND LIB_lotka_volterra ${ARMADILLO_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 ENDIF (SCICELLXX_USES_ARMADILLO)

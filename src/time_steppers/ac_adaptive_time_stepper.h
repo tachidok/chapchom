@@ -6,7 +6,7 @@
 // Default strategy for adaptive time stepper
 #include "cc_adaptive_new_step_size_half_double.h"
 
-namespace chapchom
+namespace scicellxx
 { 
 #define DEFAULT_ADAPTIVE_TIME_STEPPER_MAXIMUM_ITERATIONS 5
 #ifdef TYPEDEF_REAL_IS_DOUBLE

@@ -4,15 +4,15 @@
 #include "common_includes.h"
 #include "utilities.h"
 
-namespace chapchom
+namespace scicellxx
 {
- /// Initialisation function, everything required before using chapchom
+ /// Initialisation function, everything required before using scicellxx
  /// should be called here
- bool initialise_chapchom();
+ bool initialise_scicellxx();
  
  /// Finalise function, call all finalisation methods, free memory
- /// allocated by chapchom
- bool finalise_chapchom();
+ /// allocated by scicellxx
+ bool finalise_scicellxx();
  
 }
 

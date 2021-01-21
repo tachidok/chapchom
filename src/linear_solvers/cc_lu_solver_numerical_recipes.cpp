@@ -5,7 +5,7 @@
 
 #include "cc_lu_solver_numerical_recipes.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  // ===================================================================

@@ -4,7 +4,7 @@
 #include "../general/common_includes.h"
 #include "../general/utilities.h"
 
-namespace chapchom
+namespace scicellxx
 {
  /// An abstract class used as a template for the radial base function
  class ACRadialBaseFunction

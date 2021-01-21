@@ -4,7 +4,7 @@
 
 #include "cc_matrix_armadillo.tpl.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  // ===================================================================

@@ -1,6 +1,6 @@
 #include "ac_mesh_free_problem.tpl.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  // ===================================================================
@@ -503,4 +503,4 @@ namespace chapchom
   
  }
  
-} // namespace chapchom
+} // namespace scicellxx

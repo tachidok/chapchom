@@ -3,7 +3,7 @@
 
 #include "ac_time_stepper.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  /// @class CCRK4Method cc_runge_kutta_4_method.h

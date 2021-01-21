@@ -17,7 +17,7 @@
 #define NBODIES 4
 #define GRAVITY -1.0
 
-namespace chapchom
+namespace scicellxx
 {
 
  /// \class CCODEsBasic4Body cc_odes_basic_n_body.h

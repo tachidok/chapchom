@@ -1,6 +1,6 @@
 #include "cc_factory_matrices.tpl.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  // ===================================================================

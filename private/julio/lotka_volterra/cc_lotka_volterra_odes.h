@@ -10,7 +10,7 @@
 // The class implementing the interfaces for the ODEs
 #include "../../../src/data_structures/ac_odes.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
  /// \class CCLotkaVolterraODEs cc_lotka_volterra_odes.h

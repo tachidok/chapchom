@@ -25,7 +25,7 @@
 #endif // #ifdef SCICELLXX_USES_ARMADILLO
 
 #ifdef SCICELLXX_USES_VTK
-#include "../../../src/vtk/cc_chapchom2vtk.h"
+#include "../../../src/vtk/cc_scicellxx2vtk.h"
 #endif // #ifdef SCICELLXX_USES_VTK
 
 // Base class for the concrete problem
@@ -39,7 +39,7 @@
 //#define TRIPLE_RINGS_SOLUTION
 //#define TRIANGLES_INSIDE_OVAL_SOLUTION
 
-using namespace chapchom;
+using namespace scicellxx;
 
 // The VTK output object
 //CCSciCellxx2VTK VTK_helper = CCSciCellxx2VTK::get_instance();

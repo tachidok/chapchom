@@ -3,7 +3,7 @@
 
 #include "ac_adaptive_time_stepper.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  /// @class CCAdaptiveRK45FMethod cc_adaptive_runge_kutta_45F_method.h

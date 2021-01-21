@@ -28,7 +28,7 @@
 // and the residual
 #include "../equations/ac_jacobian_and_residual.h"
 
-namespace chapchom
+namespace scicellxx
 {
 
 #ifdef TYPEDEF_REAL_IS_DOUBLE

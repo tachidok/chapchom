@@ -8,7 +8,7 @@
 // The parent class
 #include "ac_vector.h"
 
-namespace chapchom
+namespace scicellxx
 {
  
  // forward CCMatrix class declaration, required for vector

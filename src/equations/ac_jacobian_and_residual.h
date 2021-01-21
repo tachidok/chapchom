@@ -18,7 +18,7 @@
 
 #include "../matrices/cc_factory_matrices.h"
 
-namespace chapchom
+namespace scicellxx
 {
  /// An abstract class used as a template for the algorithms to
  /// compute the Jacobian matrix

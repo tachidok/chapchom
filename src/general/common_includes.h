@@ -75,7 +75,7 @@
 // Include ArgParse
 #include "../../external_src/argparse/src/argparse.hpp"
 
-// Own chapchom definitions
+// Own scicellxx definitions
 #include "definitions.h"
 #include "cmake_definitions.h"
 

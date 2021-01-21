@@ -2,7 +2,7 @@
  */
 #include "cc_chen_odes.h"
 
-namespace chapchom
+namespace scicellxx
 {
  // ===================================================================
  // Constructor, sets the number of odes.
