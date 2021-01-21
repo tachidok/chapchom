@@ -2,26 +2,26 @@
 SET(SRC_demo_basic_3_body demo_basic_3_body.cpp cc_odes_basic_3_body.cpp)
 
 # Create executable (check whether compilation was requested or not)
-IF(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
+IF(${SCICELLXX_BUILD_DEMOS} STREQUAL TRUE)
   ADD_EXECUTABLE(demo_basic_3_body ${SRC_demo_basic_3_body})
-ELSE(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
+ELSE(${SCICELLXX_BUILD_DEMOS} STREQUAL TRUE)
   ADD_EXECUTABLE(demo_basic_3_body EXCLUDE_FROM_ALL ${SRC_demo_basic_3_body})
-ENDIF(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
+ENDIF(${SCICELLXX_BUILD_DEMOS} STREQUAL TRUE)
 
 # Indicate linking libraries
 SET(LIB_demo_basic_3_body data_structures_lib matrices_lib time_stepper_lib equations_lib vtk_lib problem_lib linear_solvers_lib numerical_recipes_lib argparse_lib general_lib)
 
 # Check whether chapchom is using Armadillo
-IF (CHAPCHOM_USES_ARMADILLO)
+IF (SCICELLXX_USES_ARMADILLO)
  LIST(APPEND LIB_demo_basic_3_body ${ARMADILLO_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
-ENDIF (CHAPCHOM_USES_ARMADILLO)
+ENDIF (SCICELLXX_USES_ARMADILLO)
 
 # Check whether chapchom is using VTK (either way this demo is not
 # going to work without VTK support, so it should be selected in the
 # ./configs/default file)
-IF (CHAPCHOM_USES_VTK)
+IF (SCICELLXX_USES_VTK)
   LIST(APPEND LIB_demo_basic_3_body ${VTK_LIBRARIES})
-ENDIF (CHAPCHOM_USES_VTK)
+ENDIF (SCICELLXX_USES_VTK)
 
 # ... and link againts them  
 TARGET_LINK_LIBRARIES(demo_basic_3_body ${LIB_demo_basic_3_body})
@@ -44,11 +44,11 @@ set_target_properties( demo_basic_3_body
 # Run the application to check it works
 ADD_TEST(NAME TEST_demo_basic_3_body_run
           COMMAND demo_basic_3_body --test)
-IF (CHAPCHOM_USES_DOUBLE_PRECISION)
+IF (SCICELLXX_USES_DOUBLE_PRECISION)
    SET (VALIDATE_FILENAME_demo_basic_3_body "validate_3_body.dat")
-ELSE (CHAPCHOM_USES_DOUBLE_PRECISION)
+ELSE (SCICELLXX_USES_DOUBLE_PRECISION)
      SET (VALIDATE_FILENAME_demo_basic_3_body "validate_3_body.dat")
-ENDIF (CHAPCHOM_USES_DOUBLE_PRECISION)
+ENDIF (SCICELLXX_USES_DOUBLE_PRECISION)
 
 ADD_TEST(NAME TEST_demo_basic_3_body_check_output
          COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_basic_3_body} ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)

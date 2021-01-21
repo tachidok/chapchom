@@ -3,13 +3,13 @@ SET(SRC_demo_matrix_basic_operations demo_matrix_basic_operations.cpp)
 SET(SRC_demo_copy_matrices demo_copy_matrices.cpp)
 
 # Create executable (check whether compilation was requested or not)
-IF(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
+IF(${SCICELLXX_BUILD_DEMOS} STREQUAL TRUE)
   ADD_EXECUTABLE(demo_matrix_basic_operations ${SRC_demo_matrix_basic_operations})
   ADD_EXECUTABLE(demo_copy_matrices ${SRC_demo_copy_matrices})
-ELSE(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
+ELSE(${SCICELLXX_BUILD_DEMOS} STREQUAL TRUE)
   ADD_EXECUTABLE(demo_matrix_basic_operations EXCLUDE_FROM_ALL ${SRC_demo_matrix_basic_operations})
   ADD_EXECUTABLE(demo_copy_matrices EXCLUDE_FROM_ALL ${SRC_demo_copy_matrices})  
-ENDIF(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
+ENDIF(${SCICELLXX_BUILD_DEMOS} STREQUAL TRUE)
 
 # Indicate linking libraries
 SET(LIB_demo_matrix_basic_operations general_lib matrices_lib)
@@ -41,22 +41,22 @@ set_target_properties( demo_copy_matrices
 ADD_TEST(NAME TEST_demo_matrix_basic_operations_run
          COMMAND demo_matrix_basic_operations)
 # Validate output
-IF (CHAPCHOM_USES_DOUBLE_PRECISION)
+IF (SCICELLXX_USES_DOUBLE_PRECISION)
    SET (VALIDATE_FILENAME_demo_matrix_basic_operations "validate_double_demo_matrix_basic_operations.dat")
-ELSE (CHAPCHOM_USES_DOUBLE_PRECISION)
+ELSE (SCICELLXX_USES_DOUBLE_PRECISION)
    SET (VALIDATE_FILENAME_demo_matrix_basic_operations "validate_demo_matrix_basic_operations.dat")
-ENDIF (CHAPCHOM_USES_DOUBLE_PRECISION)
+ENDIF (SCICELLXX_USES_DOUBLE_PRECISION)
 ADD_TEST(NAME TEST_demo_matrix_basic_operations_check_output
          COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_matrix_basic_operations} ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)
 # Run the application to check it works
 ADD_TEST(NAME TEST_demo_copy_matrices_run
          COMMAND demo_copy_matrices)
 # Validate output
-IF (CHAPCHOM_USES_DOUBLE_PRECISION)
+IF (SCICELLXX_USES_DOUBLE_PRECISION)
    SET (VALIDATE_FILENAME_demo_copy_matrices "validate_double_demo_copy_matrices.dat")
-ELSE (CHAPCHOM_USES_DOUBLE_PRECISION)
+ELSE (SCICELLXX_USES_DOUBLE_PRECISION)
    SET (VALIDATE_FILENAME_demo_copy_matrices "validate_demo_copy_matrices.dat")
-ENDIF (CHAPCHOM_USES_DOUBLE_PRECISION)
+ENDIF (SCICELLXX_USES_DOUBLE_PRECISION)
 ADD_TEST(NAME TEST_demo_copy_matrices_check_output
          COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_copy_matrices} ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)
 

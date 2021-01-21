@@ -83,9 +83,9 @@ namespace chapchom
                      << "of rows of the rhs matrix are not the same:\n"
                      << "A_pt->n_columns() = (" << this->A_pt->n_columns() << ")\n"
                      << "B_pt->n_rows() = (" << B_pt->n_rows() << ")\n" << std::endl;
-       throw ChapchomLibError(error_message.str(),
-                              CHAPCHOM_CURRENT_FUNCTION,
-                              CHAPCHOM_EXCEPTION_LOCATION);
+       throw SciCellxxLibError(error_message.str(),
+                              SCICELLXX_CURRENT_FUNCTION,
+                              SCICELLXX_EXCEPTION_LOCATION);
       }
 
      // Check whether the solution matrix has allocated memory,
@@ -105,9 +105,9 @@ namespace chapchom
                        << "of rows of the solution matrix are not the same:\n"
                        << "A_pt->n_rows() = (" << this->A_pt->n_rows() << ")\n"
                        << "X_pt->n_rows() = (" << X_pt->n_rows() << ")\n" << std::endl;
-         throw ChapchomLibError(error_message.str(),
-                                CHAPCHOM_CURRENT_FUNCTION,
-                                CHAPCHOM_EXCEPTION_LOCATION);
+         throw SciCellxxLibError(error_message.str(),
+                                SCICELLXX_CURRENT_FUNCTION,
+                                SCICELLXX_EXCEPTION_LOCATION);
         }
        
        if (B_pt->n_columns() != X_pt->n_columns())
@@ -119,9 +119,9 @@ namespace chapchom
                        << "n_rhs = (" << B_pt->n_columns() << ")\n"
                        << "X_pt->n_columns() = (" << X_pt->n_columns() << ")\n"
                        << std::endl;
-         throw ChapchomLibError(error_message.str(),
-                                CHAPCHOM_CURRENT_FUNCTION,
-                                CHAPCHOM_EXCEPTION_LOCATION);
+         throw SciCellxxLibError(error_message.str(),
+                                SCICELLXX_CURRENT_FUNCTION,
+                                SCICELLXX_EXCEPTION_LOCATION);
         }
        
       }
@@ -146,9 +146,9 @@ namespace chapchom
                      << "solve_opts::equilibrate\n"
                      << "solve_opts::no_approx\n"
                      << std::endl;
-       throw ChapchomLibError(error_message.str(),
-                              CHAPCHOM_CURRENT_FUNCTION,
-                              CHAPCHOM_EXCEPTION_LOCATION);
+       throw SciCellxxLibError(error_message.str(),
+                              SCICELLXX_CURRENT_FUNCTION,
+                              SCICELLXX_EXCEPTION_LOCATION);
       
       }
     
@@ -162,9 +162,9 @@ namespace chapchom
                    << "set_matrix() method or use the solve() method where\n"
                    << "you can specify the matrix associated to the system\n"
                    << "of equations." << std::endl;
-     throw ChapchomLibError(error_message.str(),
-                            CHAPCHOM_CURRENT_FUNCTION,
-                            CHAPCHOM_EXCEPTION_LOCATION);
+     throw SciCellxxLibError(error_message.str(),
+                            SCICELLXX_CURRENT_FUNCTION,
+                            SCICELLXX_EXCEPTION_LOCATION);
     }
   
  }
@@ -187,9 +187,9 @@ namespace chapchom
       // Error message
       std::ostringstream error_message;
       error_message << "The vector b must be a column vector" << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
      }
     
     if (!x_pt->is_column_vector())
@@ -197,9 +197,9 @@ namespace chapchom
       // Error message
       std::ostringstream error_message;
       error_message << "The vector x (solution) must be a column vector" << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
      }
     
     // Check correct size of the matrix, right hand side and solution
@@ -212,9 +212,9 @@ namespace chapchom
                     << "of rows of the rhs vector are not the same:\n"
                     << "A_pt->n_columns() = (" << this->A_pt->n_columns() << ")\n"
                     << "b_pt->n_values() = (" << b_pt->n_values() << ")\n" << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
      }
     
     // Check whether the solution vector has allocated memory,
@@ -234,9 +234,9 @@ namespace chapchom
                       << "of rows of the solution vector are not the same:\n"
                       << "A_pt->n_rows() = (" << this->A_pt->n_rows() << ")\n"
                       << "x_pt->n_values() = (" << x_pt->n_values() << ")\n" << std::endl;
-        throw ChapchomLibError(error_message.str(),
-                               CHAPCHOM_CURRENT_FUNCTION,
-                               CHAPCHOM_EXCEPTION_LOCATION);
+        throw SciCellxxLibError(error_message.str(),
+                               SCICELLXX_CURRENT_FUNCTION,
+                               SCICELLXX_EXCEPTION_LOCATION);
        }
       
      }
@@ -261,9 +261,9 @@ namespace chapchom
                     << "solve_opts::equilibrate\n"
                     << "solve_opts::no_approx\n"
                     << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
       
      }
     
@@ -277,9 +277,9 @@ namespace chapchom
                   << "set_matrix() method or use the solve() method where\n"
                   << "you can specify the matrix associated to the system\n"
                   << "of equations." << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
  }

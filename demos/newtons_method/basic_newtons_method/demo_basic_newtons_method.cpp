@@ -12,12 +12,12 @@
 #include "../../../src/matrices/cc_vector.h"
 #include "../../../src/matrices/cc_matrix.h"
 
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
 // Include Armadillo type matrices in case that the example wants to
 // use them
 #include "../../../src/matrices/cc_vector_armadillo.h"
 #include "../../../src/matrices/cc_matrix_armadillo.h"
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
 
 #include "../../../src/equations/ac_jacobian_and_residual.h"
 #include "../../../src/problem/cc_newtons_method.h"
@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
  const Real initial_guess = 5.0;
  
  // Create a vector with the initial guess
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  CCVectorArmadillo<Real> x(n_dof);
 #else 
  CCVector<Real> x(n_dof);

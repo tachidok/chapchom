@@ -15,18 +15,18 @@
 // The class to solve linear systems using numerical recipes
 #include "../../../../../src/linear_solvers/cc_lu_solver_numerical_recipes.h"
 
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
 // Include Armadillo type matrices since the templates may include
 // Armadillo type matrices
 #include "../../../../../src/matrices/cc_matrix_armadillo.h"
 
 // The class to solve linear systems using Armadillo's type matrices
 #include "../../../../../src/linear_solvers/cc_solver_armadillo.h"
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
 
-#ifdef CHAPCHOM_USES_VTK
+#ifdef SCICELLXX_USES_VTK
 #include "../../../../../src/vtk/cc_chapchom2vtk.h"
-#endif // #ifdef CHAPCHOM_USES_VTK
+#endif // #ifdef SCICELLXX_USES_VTK
 
 using namespace chapchom;
 
@@ -60,9 +60,9 @@ void compute_distance_matrix(MAT_TYPE &data_sites, MAT_TYPE &centers,
                  << "dim(data_site):" << dimension
                  << "\ndim(centers):" << tmp_dimension
                  << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
+   throw SciCellxxLibError(error_message.str(),
+                          SCICELLXX_CURRENT_FUNCTION,
+                          SCICELLXX_EXCEPTION_LOCATION);
   }
  
  // Loop over all the data points in the first matrix
@@ -103,9 +103,9 @@ void psi(MAT_TYPE &distance_matrix,
                  << "distance_matrix: " << n_rows_src << " x " << n_columns_src << "\n"
                  << "interpolation_matrix: " << n_rows_dst << " x " << n_columns_dst << "\n"
                  << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
+   throw SciCellxxLibError(error_message.str(),
+                          SCICELLXX_CURRENT_FUNCTION,
+                          SCICELLXX_EXCEPTION_LOCATION);
   }
  
  for (unsigned i = 0; i < n_rows_dst; i++)
@@ -256,11 +256,11 @@ int main(int argc, char *argv[])
  // Loop over the nodes and extract their position and store them in a
  // matrix
  // --------------------------------------------------------------
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  CCMatrixArmadillo<Real> nodes_position(dim, n_nodes);
 #else
  CCMatrix<Real> nodes_position(dim, n_nodes);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  // Each column stores the vector position of a node
  //nodes_position.allocate_memory();
  for (unsigned i = 0; i < n_nodes; i++)
@@ -274,56 +274,56 @@ int main(int argc, char *argv[])
  // -------------------------------------------------------------- 
  // Create the distance matrix
  // --------------------------------------------------------------
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  CCMatrixArmadillo<Real> distance_matrix(n_nodes, n_nodes);
 #else
  CCMatrix<Real> distance_matrix(n_nodes, n_nodes);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  // --------------------------------------------------------------
  // Generate the distance matrix using the nodes position centers
  // shifted by the same nodes position
  // --------------------------------------------------------------
  //distance_matrix.allocate_memory();
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  compute_distance_matrix<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> >(nodes_position, nodes_position, distance_matrix);
 #else
  compute_distance_matrix<CCMatrix<Real>, CCVector<Real> >(nodes_position, nodes_position, distance_matrix);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  
  // -------------------------------------------------------------- 
  // Create the interpolation matrix (the one that applies the RBF)
  // --------------------------------------------------------------
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  CCMatrixArmadillo<Real> interpolation_matrix(n_nodes, n_nodes);
 #else
  CCMatrix<Real> interpolation_matrix(n_nodes, n_nodes);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  // --------------------------------------------------------------
  // Generate the interpolation matrix using the RBF PSI
  // --------------------------------------------------------------
  //interpolation_matrix.allocate_memory();
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  psi<CCMatrixArmadillo<Real> >(distance_matrix, interpolation_matrix, epsilon);
 #else
  psi<CCMatrix<Real> >(distance_matrix, interpolation_matrix, epsilon);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  
  // --------------------------------------------------------------
  // Set right-hand side
  // --------------------------------------------------------------
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  CCVectorArmadillo<Real> rhs(n_nodes);
 #else 
  CCVector<Real> rhs(n_nodes);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  //rhs.allocate_memory();
  for (unsigned i = 0; i < n_nodes; i++)
   {
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
    CCVectorArmadillo<Real> tmp_v(dim);
 #else
    CCVector<Real> tmp_v(dim);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
    //tmp_v.allocate_memory();
    for (unsigned j = 0; j < dim; j++)
     {
@@ -332,22 +332,22 @@ int main(int argc, char *argv[])
    // --------------------------------------------------------------
    // Evaluate the KNOWN function at the centers positions
    // --------------------------------------------------------------
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
    rhs(i) = test_function<CCVectorArmadillo<Real> >(tmp_v);
 #else
    rhs(i) = test_function<CCVector<Real> >(tmp_v);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
   }
  
  // ================================================================
  // Create the additional entries for the matrices considering the
  // number of entries set by the interpolation polynomial (M = 3)
  // ================================================================
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  CCVectorArmadillo<Real> additional_rhs(M);
 #else
  CCVector<Real> additional_rhs(M);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  //additional_rhs.allocate_memory();
  // Set the constraints given in page 55 and 56, where the sum is
  // equal to zero, thus
@@ -358,11 +358,11 @@ int main(int argc, char *argv[])
  
  // Create the block version of the rhs concatenating the original rhs
  // and the additional rhs
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  CCVectorArmadillo<Real> block_rhs(n_nodes + M);
 #else 
  CCVector<Real> block_rhs(n_nodes + M);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  // Concatenate
  concatenate_vectors_vertically(rhs, additional_rhs, block_rhs);
  
@@ -370,11 +370,11 @@ int main(int argc, char *argv[])
  // Create the matrix P / Additional matrix with polynomial
  // information to ensure matrix inversion
  // -------------------------------------------------------------
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  CCMatrixArmadillo<Real> P(n_nodes, M);
 #else
  CCMatrix<Real> P(n_nodes, M);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  //P.allocate_memory();
  for (unsigned i = 0; i < n_nodes; i++)
   {
@@ -384,20 +384,20 @@ int main(int argc, char *argv[])
   }
  
  // The transposed P
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  CCMatrixArmadillo<Real> P_t;
 #else
  CCMatrix<Real> P_t;
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  // Get the transpose of P
  P.transpose(P_t);
  
  // Create the zero matrix
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  CCMatrixArmadillo<Real> Zeroes(M, M);
 #else
  CCMatrix<Real> Zeroes(M, M);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  // Fill it with zeroes
  //Zeroes.allocate_memory();
  Zeroes.fill_with_zeroes();
@@ -405,49 +405,49 @@ int main(int argc, char *argv[])
  // ---------------------------------------------------------
  // Create the block matrix
  // ---------------------------------------------------------
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  CCMatrixArmadillo<Real> block_upper_interpolation_matrix;
 #else
  CCMatrix<Real> block_upper_interpolation_matrix;
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  
  // Concatenate upper parts
  concatenate_matrices_horizontally(interpolation_matrix, P, block_upper_interpolation_matrix);
  
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  CCMatrixArmadillo<Real> block_lower_interpolation_matrix;
 #else
  CCMatrix<Real> block_lower_interpolation_matrix;
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  concatenate_matrices_horizontally(P_t, Zeroes, block_lower_interpolation_matrix);
  
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  CCMatrixArmadillo<Real> block_interpolation_matrix;
 #else
  CCMatrix<Real> block_interpolation_matrix;
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  
  // Concatenate upper parts
  concatenate_matrices_vertically(block_upper_interpolation_matrix, block_lower_interpolation_matrix, block_interpolation_matrix);
  
  // The solution vector (with the respective number of rows) stores
  // the coefficients for the interpolant polynomials
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  CCVectorArmadillo<Real> sol(n_nodes + M);
 #else
  CCVector<Real> sol(n_nodes + M);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  
  // --------------------------------------------------------------
  // Solve
  // --------------------------------------------------------------
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
   // Create an Armadillo linear solver
   CCSolverArmadillo<Real> linear_solver;
 #else
  // Create a linear solver
  CCLUSolverNumericalRecipes<Real> linear_solver;
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  
  //std::cerr << "Distance matrix" << std::endl;
  //distance_matrix.print();
@@ -509,11 +509,11 @@ int main(int argc, char *argv[])
   }
  
  // Compute approximated solution at new positions
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  CCMatrixArmadillo<Real> evaluation_nodes_position(dim, n_evaluation_nodes);
 #else
  CCMatrix<Real> evaluation_nodes_position(dim, n_evaluation_nodes);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  //evaluation_nodes_position.allocate_memory();
  // --------------------------------------------------------------
  // Assign positions
@@ -525,49 +525,49 @@ int main(int argc, char *argv[])
   }
  
  // Compute distance matrix with new positions
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  CCMatrixArmadillo<Real> evaluation_distance_matrix(n_evaluation_nodes, n_nodes);
 #else
  CCMatrix<Real> evaluation_distance_matrix(n_evaluation_nodes, n_nodes);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  // --------------------------------------------------------------
  // Generate the distance matrix using the evaluation nodes position
  // and the original nodes positions
  // --------------------------------------------------------------
  //evaluation_distance_matrix.allocate_memory();
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  compute_distance_matrix<CCMatrixArmadillo<Real>, CCVectorArmadillo<Real> >(evaluation_nodes_position, nodes_position, evaluation_distance_matrix);
 #else
  compute_distance_matrix<CCMatrix<Real>, CCVector<Real> >(evaluation_nodes_position, nodes_position, evaluation_distance_matrix);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  //approx_distance_matrix.print();
  
  // --------------------------------------------------------------
  // Create the interpolation matrix for evaluation nodes
  // --------------------------------------------------------------
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  CCMatrixArmadillo<Real> interpolation_evaluation_matrix(n_evaluation_nodes, n_nodes);
 #else
  CCMatrix<Real> interpolation_evaluation_matrix(n_evaluation_nodes, n_nodes);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  // --------------------------------------------------------------
  // Generate the interpolation matrix using the RBF psi
  // --------------------------------------------------------------
  //interpolation_evaluation_matrix.allocate_memory();
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  psi<CCMatrixArmadillo<Real> >(evaluation_distance_matrix, interpolation_evaluation_matrix, epsilon);
 #else
  psi<CCMatrix<Real> >(evaluation_distance_matrix, interpolation_evaluation_matrix, epsilon);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  
  // -------------------------------
  // Create the matrix Pe
  // -------------------------------
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  CCMatrixArmadillo<Real> Pe(n_evaluation_nodes, M);
 #else
  CCMatrix<Real> Pe(n_evaluation_nodes, M);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  //Pe.allocate_memory();
  for (unsigned i = 0; i < n_evaluation_nodes; i++)
   {
@@ -579,19 +579,19 @@ int main(int argc, char *argv[])
  // ---------------------------------------------------------
  // Create the block matrix
  // --------------------------------------------------------- 
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  CCMatrixArmadillo<Real> block_interpolation_evaluation_matrix;
 #else
  CCMatrix<Real> block_interpolation_evaluation_matrix;
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  concatenate_matrices_horizontally(interpolation_evaluation_matrix, Pe, block_interpolation_evaluation_matrix); 
  
  // Approximated solution
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  CCVectorArmadillo<Real> approx_sol(n_evaluation_nodes);
 #else
  CCVector<Real> approx_sol(n_evaluation_nodes);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  // Approximate solution at given points
  multiply_matrix_times_vector(block_interpolation_evaluation_matrix, sol, approx_sol);
  
@@ -618,7 +618,7 @@ int main(int argc, char *argv[])
  output_filename
   << "./RESLT/soln" << "_" << std::setfill('0') << "0";
  
- CCChapchom2VTK::get_instance().output_position_and_attribute_datas(positions, values, output_filename);
+ CCSciCellxx2VTK::get_instance().output_position_and_attribute_datas(positions, values, output_filename);
  
  /*
  // --------------------------------------------------------------
@@ -643,19 +643,19 @@ int main(int argc, char *argv[])
  // --------------------------------------------------------------
  // Get real solution at given points and get the error 
  // --------------------------------------------------------------
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  CCVectorArmadillo<Real> real_sol(n_evaluation_nodes);
 #else 
  CCVector<Real> real_sol(n_evaluation_nodes);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  //real_sol.allocate_memory();
  for (unsigned i = 0; i < n_evaluation_nodes; i++)
   {
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
    CCVectorArmadillo<Real> tmp_v(dim);
 #else
    CCVector<Real> tmp_v(dim);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
    //tmp_v.allocate_memory();
    for (unsigned j = 0; j < dim; j++)
     {
@@ -682,17 +682,17 @@ int main(int argc, char *argv[])
    output_sol_filename
    << "./RESLT/soln_real" << "_" << std::setfill('0') << "0";
   
-   CCChapchom2VTK::get_instance().output_position_and_attribute_datas(positions, solution_values, output_sol_filename);
+   CCSciCellxx2VTK::get_instance().output_position_and_attribute_datas(positions, solution_values, output_sol_filename);
    }
  */
  // --------------------------------------------------------------
  // Compute error
  // --------------------------------------------------------------
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
  CCVectorArmadillo<Real> error(n_evaluation_nodes);
 #else
  CCVector<Real> error(n_evaluation_nodes);
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  //error.allocate_memory();
  std::cerr << "ERRORS" << std::endl;
  for (unsigned i = 0; i < n_evaluation_nodes; i++)
@@ -717,7 +717,7 @@ int main(int argc, char *argv[])
  error_filename
   << "./RESLT/errorn" << "_" << std::setfill('0') << "0";
 
- CCChapchom2VTK::get_instance().output_position_and_attribute_datas(positions, error_to_plot, error_filename);
+ CCSciCellxx2VTK::get_instance().output_position_and_attribute_datas(positions, error_to_plot, error_filename);
  
  const Real rms_error = error.norm_2() / sqrt(n_evaluation_nodes);
  

@@ -18,12 +18,12 @@
 #include "../../../../src/time_steppers/cc_adaptive_runge_kutta_45F_method.h"
 #include "../../../../src/time_steppers/cc_adaptive_runge_kutta_45DP_method.h"
 
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
 // Include Armadillo type matrices
 #include "../../../../src/matrices/cc_matrix_armadillo.h"
 #else
 #include "../../../../src/matrices/cc_matrix.h"
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
 
 // The class used to store the values of u and dudt
 #include "../../../../src/data_structures/cc_data.h"
@@ -123,9 +123,9 @@ public:
     std::ostringstream error_message;
     error_message << "The time stepper is not adaptive or of type ACAdaptiveTimeStepper*\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Disable fixed ouptut by default
@@ -210,9 +210,9 @@ public:
     std::ostringstream error_message;
     error_message << "There are no data to perform interpolation\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   else if (T_values_for_interpolator.size() == 1)
    {

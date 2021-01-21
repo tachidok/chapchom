@@ -40,17 +40,17 @@ namespace chapchom
  /// ===================================================================
  void CCBoundaryNode::remove_from_boundary(const unsigned b)
  {
-#ifdef CHAPCHOM_PANIC_MODE
+#ifdef SCICELLXX_PANIC_MODE
   // First check whether the node lies on the given boundary
   if(!is_on_boundary(b))
    {
     std::ostringstream error_message;
     error_message << "The node is not on boundary " << b << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
-#endif // #ifdef CHAPCHOM_PANIC_MODE
+#endif // #ifdef SCICELLXX_PANIC_MODE
   
   //Remove the boundary from the set 
   Boundaries.erase(b);
@@ -67,9 +67,9 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "The node is on boundary " << b << " but has no"
                   << "boundary coordinates assigned\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
  }
@@ -108,17 +108,17 @@ namespace chapchom
  /// ===================================================================
  void CCBoundaryNode::set_boundary_coordinates(const unsigned b, const std::vector<Real> &zeta)
  {
-#ifdef CHAPCHOM_PANIC_MODE
+#ifdef SCICELLXX_PANIC_MODE
   // First check whether the node lies on the given boundary
   if(!is_on_boundary(b))
    {
     std::ostringstream error_message;
     error_message << "The node is not on boundary " << b << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
-#endif // #ifdef CHAPCHOM_PANIC_MODE
+#endif // #ifdef SCICELLXX_PANIC_MODE
   
   // Get the number of boundary coordinates and copy them
   const unsigned n_boundary_coordinates = zeta.size();
@@ -135,15 +135,15 @@ namespace chapchom
  /// ===================================================================
  void CCBoundaryNode::get_boundary_coordinates(const unsigned b, std::vector<Real> &zeta)
  {
-#ifdef CHAPCHOM_PANIC_MODE
+#ifdef SCICELLXX_PANIC_MODE
   // First check whether the node lies on the given boundary
   if(!is_on_boundary(b))
    {
     std::ostringstream error_message;
     error_message << "The node is not on boundary " << b << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether there are boundary coordinates for this boundary
@@ -153,16 +153,16 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "The node is on boundary " << b << " but has no"
                   << "boundary coordinates assigned\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
-#endif // #ifdef CHAPCHOM_PANIC_MODE
+#endif // #ifdef SCICELLXX_PANIC_MODE
   
   // Check whether the number of boundary coordinates matches that of
   // the output vector
   const unsigned n_boundary_coordinates = Boundary_coordinates[b].size();
-#ifdef CHAPCHOM_PANIC_MODE
+#ifdef SCICELLXX_PANIC_MODE
   const unsigned n_output_boundary_coordinates = zeta.size();
   if (n_boundary_coordinates != n_output_boundary_coordinates)
    {
@@ -170,11 +170,11 @@ namespace chapchom
     error_message << "The number of boundary coordinates of the output vector is\n"
                   << "not the same as the number of boundary coordinates for\n"
                   << "boundary " << b << ".\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
-#endif // #ifdef CHAPCHOM_PANIC_MODE
+#endif // #ifdef SCICELLXX_PANIC_MODE
   
   // Copy the boundary coordinates
   for (unsigned i = 0; i < n_boundary_coordinates; i++)

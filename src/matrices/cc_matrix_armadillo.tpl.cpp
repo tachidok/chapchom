@@ -320,9 +320,9 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "You are trying to free the memory of a matrix that is\n"
                   << "not marked as deletable" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
  }
@@ -344,9 +344,9 @@ namespace chapchom
                   << this->Is_own_memory_allocated << "\n"
                   << "matrix.is_own_memory_allocated() = "
                   << matrix.is_own_memory_allocated() << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the dimensions of the matrices are the same
@@ -363,9 +363,9 @@ namespace chapchom
                   << n_columns_input_matrix << ")\n"
                   << "dim(this) = (" << n_rows << ", " << n_columns
                   << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
 
   // Check whether the solution matrix has allocated memory, otherwise
@@ -389,9 +389,9 @@ namespace chapchom
                     << n_columns << ")\n"
                     << "dim(solution_matrix) = (" << n_rows_solution_matrix
                     << ", " << n_columns_solution_matrix << ")\n" << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
      }
     
    }
@@ -424,9 +424,9 @@ namespace chapchom
                   << this->Is_own_memory_allocated << "\n"
                   << "matrix.is_own_memory_allocated() = "
                   << matrix.is_own_memory_allocated() << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the dimensions of the matrices are the same
@@ -443,9 +443,9 @@ namespace chapchom
                   << n_columns_input_matrix << ")\n"
                   << "dim(this) = (" << n_rows << ", " << n_columns
                   << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
 
   // Check whether the solution matrix has allocated memory, otherwise
@@ -469,9 +469,9 @@ namespace chapchom
                     << n_columns << ")\n"
                     << "dim(solution_matrix) = (" << n_rows_solution_matrix
                     << ", " << n_columns_solution_matrix << ")\n" << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
      }
     
    }
@@ -504,9 +504,9 @@ namespace chapchom
                   << this->Is_own_memory_allocated << "\n"
                   << "right_matrix.is_own_memory_allocated() = "
                   << right_matrix.is_own_memory_allocated() << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the dimensions of the matrices allow for
@@ -525,9 +525,9 @@ namespace chapchom
                   << n_columns_left_matrix << ")\n"
                   << "dim(right_matrix) = (" << n_rows_right_matrix << ", "
                   << n_columns_right_matrix << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
 
   // Check whether the solution matrix has allocated memory, otherwise
@@ -555,9 +555,9 @@ namespace chapchom
                     << n_columns_right_matrix << ")\n"
                     << "dim(solution_matrix) = (" << n_rows_solution_matrix
                     << ", " << n_columns_solution_matrix << ")\n" << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
      }
     
    }
@@ -599,9 +599,9 @@ namespace chapchom
     error_message << "THIS matrix has no memory allocated\n"
                   << "this->Is_own_memory_allocated = "
                   << this->Is_own_memory_allocated << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Transpose itself
@@ -620,16 +620,16 @@ namespace chapchom
  template<class T>
  const T CCMatrixArmadillo<T>::value(const unsigned long i, const unsigned long j) const
  {
-#ifdef CHAPCHOM_RANGE_CHECK
+#ifdef SCICELLXX_RANGE_CHECK
   if (!(this->is_own_memory_allocated()))
    {
     // Error message
     std::ostringstream error_message;
     error_message << "The matrix has no memory allocated"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   if (i > this->n_rows())
@@ -639,9 +639,9 @@ namespace chapchom
     error_message << "The row you are trying to access is out of range\n"
                   << "Number of rows: " << this->n_rows() << std::endl
                   << "Requested row: " << i << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   if (j > this->n_columns())
@@ -651,11 +651,11 @@ namespace chapchom
     error_message << "The column you are trying to access is out of range\n"
                   << "Number of columns: " << this->n_columns() << std::endl
                   << "Requested column: " << j << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
-#endif // #ifdef CHAPCHOM_RANGE_CHECK
+#endif // #ifdef SCICELLXX_RANGE_CHECK
   // Return the value at row i and column j
   return (*Arma_matrix_pt)(i, j);
  }
@@ -666,16 +666,16 @@ namespace chapchom
  template<class T>
  T &CCMatrixArmadillo<T>::value(const unsigned long i, const unsigned long j)
  {
-#ifdef CHAPCHOM_RANGE_CHECK
+#ifdef SCICELLXX_RANGE_CHECK
   if (!(this->is_own_memory_allocated()))
    {
     // Error message
     std::ostringstream error_message;
     error_message << "The matrix has no memory allocated"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   if (i > this->n_rows())
@@ -685,9 +685,9 @@ namespace chapchom
     error_message << "The row you are trying to access is out of range\n"
                   << "Number of rows: " << this->n_rows() << std::endl
                   << "Requested row: " << i << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   if (j > this->n_columns())
@@ -697,11 +697,11 @@ namespace chapchom
     error_message << "The column you are trying to access is out of range\n"
                   << "Number of columns: " << this->n_columns() << std::endl
                   << "Requested column: " << j << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
-#endif // #ifdef CHAPCHOM_RANGE_CHECK
+#endif // #ifdef SCICELLXX_RANGE_CHECK
   // Return the value at row i and column j
   return (*Arma_matrix_pt)(i, j);
  }
@@ -726,9 +726,9 @@ namespace chapchom
                     << "are out of the range of the number of rows of the matrix"
                     << "permute_list[i].first: " << permute_list[i].first
                     << "permute_list[i].second: " << permute_list[i].second << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
      }
     
    }
@@ -780,9 +780,9 @@ namespace chapchom
                     << "are out of the range of the number of columns of the matrix"
                     << "permute_list[i].first: " << permute_list[i].first
                     << "permute_list[i].second: " << permute_list[i].second << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
      }
     
    }
@@ -842,9 +842,9 @@ namespace chapchom
     error_message << "One of the selected rows to permute is larger than\n"
                   << "the number of rows of the matrix"
                   << "i: " << i << " j: " << j << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
  }
@@ -877,9 +877,9 @@ namespace chapchom
     error_message << "One of the selected columns to permute is larger than\n"
                   << "the number of columns of the matrix"
                   << "i: " << i << " j: " << j << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
    
  }
@@ -895,9 +895,9 @@ namespace chapchom
     // Error message
     std::ostringstream error_message;
     error_message << "The matrix has no memory allocated. It is empty" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   else
    {
@@ -934,9 +934,9 @@ namespace chapchom
     // Error message
     std::ostringstream error_message;
     error_message << "The matrix has no memory allocated. It is empty" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   else
    {
@@ -1020,9 +1020,9 @@ namespace chapchom
     error_message << "The matrix has no memory allocated\n"
                   << "this->Is_own_memory_allocated = "
                   << this->Is_own_memory_allocated << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);    
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);    
    }
   
  }
@@ -1051,9 +1051,9 @@ namespace chapchom
                   << matrix_one.is_own_memory_allocated() << "\n"
                   << "matrix_two.is_own_memory_allocated() = "
                   << matrix_two.is_own_memory_allocated() << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the dimensions of the matrices are the same
@@ -1072,9 +1072,9 @@ namespace chapchom
                   << "dim(matrix_two) = (" << n_rows_matrix_two << ", "
                   << n_columns_matrix_two
                   << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
 
   // Check whether the solution matrix has allocated memory, otherwise
@@ -1099,9 +1099,9 @@ namespace chapchom
                     << n_columns_matrix_one << ")\n"
                     << "dim(solution_matrix) = (" << n_rows_solution_matrix
                     << ", " << n_columns_solution_matrix << ")\n" << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
      }
 
    }
@@ -1136,9 +1136,9 @@ namespace chapchom
                   << matrix_one.is_own_memory_allocated() << "\n"
                   << "matrix_two.is_own_memory_allocated() = "
                   << matrix_two.is_own_memory_allocated() << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the dimensions of the matrices are the same
@@ -1157,9 +1157,9 @@ namespace chapchom
                   << "dim(matrix_two) = (" << n_rows_matrix_two << ", "
                   << n_columns_matrix_two
                   << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the solution matrix has allocated memory, otherwise
@@ -1184,9 +1184,9 @@ namespace chapchom
                     << n_columns_matrix_one << ")\n"
                     << "dim(solution_matrix) = (" << n_rows_solution_matrix
                     << ", " << n_columns_solution_matrix << ")\n" << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
      }
 
    }
@@ -1221,9 +1221,9 @@ namespace chapchom
                   << left_matrix.is_own_memory_allocated() << "\n"
                   << "right_matrix.is_own_memory_allocated() = "
                   << right_matrix.is_own_memory_allocated() << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the dimensions of the matrices allow for
@@ -1242,9 +1242,9 @@ namespace chapchom
                   << n_columns_left_matrix << ")\n"
                   << "dim(right_matrix) = (" << n_rows_right_matrix << ", "
                   << n_columns_right_matrix << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the solution matrix has allocated memory, otherwise
@@ -1272,9 +1272,9 @@ namespace chapchom
                     << n_columns_right_matrix << ")\n"
                     << "dim(solution_matrix) = (" << n_rows_solution_matrix
                     << ", " << n_columns_solution_matrix << ")\n" << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
      }
     
    }
@@ -1309,9 +1309,9 @@ namespace chapchom
                   << left_matrix.is_own_memory_allocated() << "\n"
                   << "right_matrix.is_own_memory_allocated() = "
                   << right_matrix.is_own_memory_allocated() << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the number of rows of the matrices are the same
@@ -1325,9 +1325,9 @@ namespace chapchom
                   << "n_rows(left_matrix) = (" << n_rows_left_matrix << ")\n"
                   << "n_rows(right_matrix) = (" << n_rows_right_matrix << ")\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Get the number of columns of each matrix and compute the new
@@ -1360,9 +1360,9 @@ namespace chapchom
                   << n_columns_concatenated_matrix << ")\n"
                   << "dim(expected_matrix) = (" << n_rows_new_concatenated_matrix
                   << ", " << n_columns_new_concatenated_matrix << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Get the matrix pointer of the concatenated matrix
@@ -1395,9 +1395,9 @@ namespace chapchom
                   << upper_matrix.is_own_memory_allocated() << "\n"
                   << "lower_matrix.is_own_memory_allocated() = "
                   << lower_matrix.is_own_memory_allocated() << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the number of columns of the matrices are the same
@@ -1411,9 +1411,9 @@ namespace chapchom
                   << "n_columns(upper_matrix) = (" << n_columns_upper_matrix << ")\n"
                   << "n_columns(lower_matrix) = (" << n_columns_lower_matrix << ")\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Get the number of rows of each matrix and compute the new number
@@ -1446,9 +1446,9 @@ namespace chapchom
                   << n_columns_concatenated_matrix << ")\n"
                   << "dim(expected_matrix) = (" << n_rows_new_concatenated_matrix
                   << ", " << n_columns_new_concatenated_matrix << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Get the matrix pointer of the concatenated matrix
@@ -1487,9 +1487,9 @@ namespace chapchom
                   << left_vector.is_own_memory_allocated() << "\n"
                   << "right_vector.is_own_memory_allocated() = "
                   << right_vector.is_own_memory_allocated() << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the dimensions of the vectors allow the operation
@@ -1530,9 +1530,9 @@ namespace chapchom
                   << n_columns_left_vector << ")\n"
                   << "dim(right_vector) = (" << n_rows_right_vector << ", "
                   << n_columns_right_vector << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
 
   // Check whether the solution matrix has allocated memory, otherwise
@@ -1560,9 +1560,9 @@ namespace chapchom
                     << n_columns_right_vector << ")\n"
                     << "dim(solution_matrix) = (" << n_rows_solution_matrix
                     << ", " << n_columns_solution_matrix << ")\n" << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
      }
     
    }
@@ -1597,9 +1597,9 @@ namespace chapchom
                   << vector.is_own_memory_allocated() << "\n"
                   << "matrix.is_own_memory_allocated() = "
                   << matrix.is_own_memory_allocated() << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the dimensions of the vector and the matrix allow
@@ -1632,9 +1632,9 @@ namespace chapchom
                   << n_columns_vector << ")\n"
                   << "dim(matrix) = (" << n_rows_matrix << ", "
                   << n_columns_matrix << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the solution matrix has allocated memory, otherwise
@@ -1662,9 +1662,9 @@ namespace chapchom
                     << n_columns_matrix << ")\n"
                     << "dim(solution_matrix) = (" << n_rows_solution_matrix
                     << ", " << n_columns_solution_matrix << ")\n" << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
      }
     
    }
@@ -1697,9 +1697,9 @@ namespace chapchom
                   << matrix.is_own_memory_allocated() << "\n"
                   << "vector.is_own_memory_allocated() = "
                   << vector.is_own_memory_allocated() << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
 
   // Check whether the vector is a column vector
@@ -1710,9 +1710,9 @@ namespace chapchom
     error_message << "The vector to multiply the matrix is not a column vector\n"
                   << "vector.is_column_vector(): " << vector.is_column_vector()
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the dimensions of the matrix and the vector allow
@@ -1735,9 +1735,9 @@ namespace chapchom
                   << n_columns_matrix << ")\n"
                   << "dim(vector) = (" << n_rows_vector << ", "
                   << n_columns_vector << ")\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the solution vector is a column vector
@@ -1749,9 +1749,9 @@ namespace chapchom
                   << "solution_vector.is_column_vector(): "
                   << solution_vector.is_column_vector()
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Compute the dimensions for the solution vector
@@ -1779,9 +1779,9 @@ namespace chapchom
                     << n_columns_vector << ")\n"
                     << "dim(solution_vector) = (" << n_rows_solution_vector
                     << ", " << n_columns_solution_vector << ")\n" << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
      }
     
    }

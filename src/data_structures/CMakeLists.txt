@@ -7,13 +7,13 @@ SET(SRC_FILES cc_data.cpp cc_node.cpp cc_boundary_node.cpp ac_odes.cpp)
 
 # Create a library with the above files based on the requested library
 # version
-IF(${CHAPCHOM_LIB_TYPE} STREQUAL STATIC)
+IF(${SCICELLXX_LIB_TYPE} STREQUAL STATIC)
  ADD_LIBRARY(data_structures_lib STATIC ${SRC_FILES})
-ELSEIF(${CHAPCHOM_LIB_TYPE} STREQUAL SHARED)
+ELSEIF(${SCICELLXX_LIB_TYPE} STREQUAL SHARED)
  ADD_LIBRARY(data_structures_lib SHARED ${SRC_FILES})
-ELSE(${CHAPCHOM_LIB_TYPE} STREQUAL STATIC)
+ELSE(${SCICELLXX_LIB_TYPE} STREQUAL STATIC)
  ADD_LIBRARY(data_structures_lib ${SRC_FILES})
-ENDIF(${CHAPCHOM_LIB_TYPE} STREQUAL STATIC)
+ENDIF(${SCICELLXX_LIB_TYPE} STREQUAL STATIC)
 
 # Indicate dependencies within libraries (it seems not to be necessary)
 #TARGET_LINK_LIBRARIES(data_lib general_lib)

@@ -119,7 +119,7 @@ namespace chapchom
  template<class MAT_TYPE, class VEC_TYPE>
  void ACMeshFreeProblem<MAT_TYPE, VEC_TYPE>::unsteady_solve()
  {
-#ifdef CHAPCHOM_PANIC_MODE
+#ifdef SCICELLXX_PANIC_MODE
   // We need to check whether a Time Stepper has been set for the
   // unsteady solveJacobian computation strategy has been set
   if (Time_stepper_pt == NULL)
@@ -129,11 +129,11 @@ namespace chapchom
     error_message << "You need to specify a Time_stepper to approximate\n"
                   << "a solution for the time dependent problem.\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);  
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);  
    }
-#endif // #ifdef CHAPCHOM_PANIC_MODE
+#endif // #ifdef SCICELLXX_PANIC_MODE
   
   // This feature has not been tested and it possibly wont work at all, 
   // please carefully implement any necessary changes
@@ -145,9 +145,9 @@ namespace chapchom
                 << "time stepper and implement the necessary changes to\n"
                 << "the code.\n"
                 << std::endl;
-  throw ChapchomLibError(error_message.str(),
-                         CHAPCHOM_CURRENT_FUNCTION,
-                         CHAPCHOM_EXCEPTION_LOCATION);
+  throw SciCellxxLibError(error_message.str(),
+                         SCICELLXX_CURRENT_FUNCTION,
+                         SCICELLXX_EXCEPTION_LOCATION);
   
   // Perform an steady solve
   steady_solve();
@@ -238,9 +238,9 @@ namespace chapchom
     error_message << "The number of nodes leave for creation is not the same as\n"
                   << "the number of boundary nodes to create\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // A vector of boundary nodes
@@ -299,7 +299,7 @@ namespace chapchom
  template<class MAT_TYPE, class VEC_TYPE>
  const CCNode<Real> *ACMeshFreeProblem<MAT_TYPE, VEC_TYPE>::node_pt(const unsigned i)
  {
-#ifdef CHAPCHOM_PANIC_MODE
+#ifdef SCICELLXX_PANIC_MODE
   // We need to check whether the nodes vector has nodes in it
   const unsigned n = n_nodes();
   if (n == 0)
@@ -311,9 +311,9 @@ namespace chapchom
                   << "to access its components, to do so call or implement\n"
                   << "the method 'create_nodes()'.\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
 
   if (i >= n)
@@ -325,11 +325,11 @@ namespace chapchom
                   << "Number of nodes in the Nodes_pt vector: [" << n <<"]\n"
                   << "Node number you want to get access: [" << i << "]\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
-#endif // #ifdef CHAPCHOM_PANIC_MODE
+#endif // #ifdef SCICELLXX_PANIC_MODE
   return Nodes_pt[i];
  }
 
@@ -339,7 +339,7 @@ namespace chapchom
  template<class MAT_TYPE, class VEC_TYPE>
  const CCBoundaryNode<Real> *ACMeshFreeProblem<MAT_TYPE, VEC_TYPE>::boundary_node_pt(const unsigned i)
  {
-#ifdef CHAPCHOM_PANIC_MODE
+#ifdef SCICELLXX_PANIC_MODE
   // We need to check whether the nodes vector has nodes in it
   const unsigned n = n_boundary_nodes();
   if (n == 0)
@@ -351,9 +351,9 @@ namespace chapchom
                   << "to access its components, to do so call or implement\n"
                   << "the method 'create_nodes()'.\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   if (i >= n)
@@ -365,15 +365,15 @@ namespace chapchom
                   << "Number of boundary nodes in the Boundary_nodes_pt vector: [" << n <<"]\n"
                   << "Boundary node number you want to get access: [" << i << "]\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
-#endif // #ifdef CHAPCHOM_PANIC_MODE
+#endif // #ifdef SCICELLXX_PANIC_MODE
   return Boundary_nodes_pt[i];
  }
  
-#ifdef CHAPCHOM_PANIC_MODE
+#ifdef SCICELLXX_PANIC_MODE
  // ===================================================================
  /// Output nodes information (for debugging purposes)
  // ===================================================================
@@ -409,7 +409,7 @@ namespace chapchom
   // Close boundary nodes file
   boundary_nodes_file.close();
  }
-#endif // #ifdef CHAPCHOM_PANIC_MODE
+#endif // #ifdef SCICELLXX_PANIC_MODE
  
  // ===================================================================
  // Generate the interpolation matrix and the right-hand side vector
@@ -427,7 +427,7 @@ namespace chapchom
   
   // Get the dimension of the nodes and centers
   const unsigned dimension = node_pt(0)->dimension();
-#ifdef CHAPCHOM_PANIC_MODE
+#ifdef SCICELLXX_PANIC_MODE
   const unsigned tmp_dimension = center_nodes[0]->dimension();
   
   if (dimension != tmp_dimension)
@@ -439,11 +439,11 @@ namespace chapchom
                   << "dim(nodes):" << dimension
                   << "\ndim(centers):" << tmp_dimension
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
-#endif // #ifdef CHAPCHOM_PANIC_MODE
+#endif // #ifdef SCICELLXX_PANIC_MODE
   
   // Loop over all nodes
   for (unsigned m = 0; m < n_node; m++)

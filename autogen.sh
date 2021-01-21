@@ -349,10 +349,10 @@ echo ""
 # Go one folder up since we did a cd into ./build
 # Run CMake and test for any error
 if ! cmake ../ \
-     -DCHAPCHOM_LIB_TYPE=$lib_type \
-     -DCHAPCHOM_BUILD_VERSION=$lib_build \
-     -DCHAPCHOM_BUILD_DEMOS=$build_test_demos \
-     -DCHAPCHOM_CONFIGURATION_FILE=$configuration_file \
+     -DSCICELLXX_LIB_TYPE=$lib_type \
+     -DSCICELLXX_BUILD_VERSION=$lib_build \
+     -DSCICELLXX_BUILD_DEMOS=$build_test_demos \
+     -DSCICELLXX_CONFIGURATION_FILE=$configuration_file \
      -DCMAKE_EXPORT_COMPILE_COMMANDS=1 ; then # Added to create the
                                               # 'compile_commands.json
                                               # file for emacs

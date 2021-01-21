@@ -2,11 +2,11 @@
 SET(SRC_demo_argparse demo_argparse.cpp)
 
 # Create executable (check whether compilation was requested or not)
-IF(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
+IF(${SCICELLXX_BUILD_DEMOS} STREQUAL TRUE)
   ADD_EXECUTABLE(demo_argparse ${SRC_demo_argparse})
-ELSE(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
+ELSE(${SCICELLXX_BUILD_DEMOS} STREQUAL TRUE)
   ADD_EXECUTABLE(demo_argparse EXCLUDE_FROM_ALL ${SRC_demo_argparse})
-ENDIF(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
+ENDIF(${SCICELLXX_BUILD_DEMOS} STREQUAL TRUE)
 
 # Indicate linking libraries
 SET(LIB_demo_argparse argparse_lib general_lib)
@@ -32,11 +32,11 @@ set_target_properties( demo_argparse
 # Run the application to check it works
 ADD_TEST(NAME TEST_demo_argparse_run
           COMMAND demo_argparse HELLO --boolean_argument --real_argument 0.33 --vector_real_arguments_one_or_more 0.2 0.4 0.5 --vector_real_arguments_none_or_more 5.8 4.2 1 20.6)
-IF (CHAPCHOM_USES_DOUBLE_PRECISION)
+IF (SCICELLXX_USES_DOUBLE_PRECISION)
    SET (VALIDATE_FILENAME_demo_argparse "validate_demo_argparse.dat")
-ELSE (CHAPCHOM_USES_DOUBLE_PRECISION)
+ELSE (SCICELLXX_USES_DOUBLE_PRECISION)
      SET (VALIDATE_FILENAME_demo_argparse "validate_demo_argparse.dat")
-ENDIF (CHAPCHOM_USES_DOUBLE_PRECISION)
+ENDIF (SCICELLXX_USES_DOUBLE_PRECISION)
 
 ADD_TEST(NAME TEST_demo_argparse_check_output
          COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_argparse} ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)

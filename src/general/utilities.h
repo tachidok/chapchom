@@ -53,8 +53,8 @@ namespace chapchom
  //=====================================================================
 
  /// The class can only be instantiated by the derived classes
- /// ChapchomLibError and ChapchomLibWarning.
- class ChapchomLibException : public std::runtime_error
+ /// SciCellxxLibError and SciCellxxLibWarning.
+ class SciCellxxLibException : public std::runtime_error
  {
  
  public:
@@ -66,12 +66,12 @@ namespace chapchom
  protected:
  
   /// Constructor takes the error description, function name and a
-  /// location string provided by the CHAPCHOM_EXCEPTION_LOCATION macro
+  /// location string provided by the SCICELLXX_EXCEPTION_LOCATION macro
   /// and combines them into a standard header. The exception type will
   /// be the string "WARNING" or "ERROR" and the message is written to
   /// the exception_stream, with a specified output_width. Optionally
   /// provide a traceback of the function calls.
-  ChapchomLibException(const std::string &error_description,
+  SciCellxxLibException(const std::string &error_description,
                        const std::string &function_name,
                        const char *location,
                        const std::string &exception_type,
@@ -79,7 +79,7 @@ namespace chapchom
                        const unsigned &output_width);
  
   /// The destructor cannot throw an exception (C++ STL standard)
-  ~ChapchomLibException() throw(); 
+  ~SciCellxxLibException() throw(); 
  
   /// Exception stream to which we write message in destructor        
   std::ostream* Exception_stream_pt;
@@ -98,7 +98,7 @@ namespace chapchom
  /// error stream and stream width can be specified. The default is
  /// cerr with a width of 70 characters.
  /// ====================================================================
- class ChapchomLibError : public ChapchomLibException
+ class SciCellxxLibError : public SciCellxxLibException
  {
   /// Output stream that is used to write the errors
   static std::ostream *Stream_pt;
@@ -110,11 +110,11 @@ namespace chapchom
 
   /// Constructor requires the error description and the function in
   /// which the error occured and the location provided by the
-  /// CHAPCHOM_EXCEPTION_LOCATION macro
- ChapchomLibError(const std::string &error_description,
+  /// SCICELLXX_EXCEPTION_LOCATION macro
+ SciCellxxLibError(const std::string &error_description,
 		  const std::string &function_name,
 		  const char *location) :
-  ChapchomLibException(error_description,function_name,location,"ERROR",
+  SciCellxxLibException(error_description,function_name,location,"ERROR",
                        *Stream_pt, Output_width) 
    { }
  
@@ -131,11 +131,11 @@ namespace chapchom
  };
 
  //====================================================================
- /// An ChapchomLibWarning object which should be created as a temporary
+ /// An SciCellxxLibWarning object which should be created as a temporary
  /// object to issue a warning. The warning stream and stream width can
  /// be specified. The default is cerr with a width of 70 characters.
  //====================================================================
- class ChapchomLibWarning : public ChapchomLibException
+ class SciCellxxLibWarning : public SciCellxxLibException
  {
   /// Output stream that is used to write the errors
   static std::ostream *Stream_pt;
@@ -147,10 +147,10 @@ namespace chapchom
 
   /// Constructor requires the warning description and the function
   /// in which the warning occurred.
- ChapchomLibWarning(const std::string &warning_description,
+ SciCellxxLibWarning(const std::string &warning_description,
 		    const std::string &function_name,
 		    const char* location) :
-  ChapchomLibException(warning_description,function_name, location,
+  SciCellxxLibException(warning_description,function_name, location,
                        "WARNING",*Stream_pt,Output_width) { }
  
   /// Static member function used to specify the error stream, which
@@ -173,7 +173,7 @@ namespace chapchom
  // Wrapper to a stream and an output modifier used to control the
  // output from chapchom. Its instantiation can be used like std::cout.
  // =======================================================================
- class ChapchomOutput
+ class SciCellxxOutput
  {
   
  private:
@@ -185,7 +185,7 @@ namespace chapchom
   
   ///\short Set default values for the output stream (cout)
   ///and modifier (no modification)
-  ChapchomOutput();
+  SciCellxxOutput();
   
 #if 0
   ///\short Overload the << operator, writing output to the stream addressed by
@@ -216,10 +216,10 @@ namespace chapchom
  };
  
  //========================================================================
- // Single (global) instantiation of the ChapchomOutput object -- this
+ // Single (global) instantiation of the SciCellxxOutput object -- this
  // is used throughout the library as a "replacement" for std::cout
  //========================================================================
- extern ChapchomOutput chapchom_output;
+ extern SciCellxxOutput chapchom_output;
  
  //==================================================================
  // Utility method to time a program

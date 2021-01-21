@@ -28,9 +28,9 @@ namespace chapchom
    error_message << "use of the inappropriate C++ default.\n";
    error_message << "If you really need an assignment operator\n";
    error_message << "for this class, write it yourself...\n";
-   throw ChapchomLibError(error_message.str(),
-			  CHAPCHOM_CURRENT_FUNCTION,
-			  CHAPCHOM_EXCEPTION_LOCATION);
+   throw SciCellxxLibError(error_message.str(),
+			  SCICELLXX_CURRENT_FUNCTION,
+			  SCICELLXX_EXCEPTION_LOCATION);
   }
  
   /// Issue error message and terminate execution
@@ -48,9 +48,9 @@ namespace chapchom
    error_message <<
     "constant reference. If you really need a copy constructor\n";
    error_message << "for this class, write it yourself...\n";
-   throw ChapchomLibError(error_message.str(),
-			  CHAPCHOM_CURRENT_FUNCTION,
-			  CHAPCHOM_EXCEPTION_LOCATION);
+   throw SciCellxxLibError(error_message.str(),
+			  SCICELLXX_CURRENT_FUNCTION,
+			  SCICELLXX_EXCEPTION_LOCATION);
   }
 
  }
@@ -103,7 +103,7 @@ namespace chapchom
  /// exception_stream, with a specified output_width. Optionally
  /// provide a traceback of the function calls.
  //==========================================================================
- ChapchomLibException::ChapchomLibException(const std::string &error_description,
+ SciCellxxLibException::SciCellxxLibException(const std::string &error_description,
                                             const std::string &function_name,
                                             const char *location,
                                             const std::string &exception_type,
@@ -162,10 +162,10 @@ namespace chapchom
  }
 
  //========================================================================
- /// The ChapchomLibException destructor actually spawns the error message
+ /// The SciCellxxLibException destructor actually spawns the error message
  /// created in the constructor (unless suppresed)
  //==========================================================================
- ChapchomLibException::~ChapchomLibException() throw()
+ SciCellxxLibException::~SciCellxxLibException() throw()
  {
   if (!Suppress_error_message)
    {
@@ -176,24 +176,24 @@ namespace chapchom
  }
 
  //========================================================================
- /// Default output stream for ChapchomLibErrors (cerr)
+ /// Default output stream for SciCellxxLibErrors (cerr)
  //========================================================================
- std::ostream *ChapchomLibError::Stream_pt = &std::cerr;
+ std::ostream *SciCellxxLibError::Stream_pt = &std::cerr;
 
  //=======================================================================
- /// Default output width for ChapchomLibErrors (70)
+ /// Default output width for SciCellxxLibErrors (70)
  //=======================================================================
- unsigned ChapchomLibError::Output_width = 70;
+ unsigned SciCellxxLibError::Output_width = 70;
 
  //=======================================================================
- /// Default output stream for ChapchomLibWarnings (cerr)
+ /// Default output stream for SciCellxxLibWarnings (cerr)
  //=======================================================================
- std::ostream *ChapchomLibWarning::Stream_pt = &std::cerr;
+ std::ostream *SciCellxxLibWarning::Stream_pt = &std::cerr;
 
  //=======================================================================
- /// Default output width for ChapchomLibWarnings (70)
+ /// Default output width for SciCellxxLibWarnings (70)
  //=======================================================================
- unsigned ChapchomLibWarning::Output_width = 70;
+ unsigned SciCellxxLibWarning::Output_width = 70;
 
  ////////////////////////////////////////////////////////////////////////
  ////////////////////////////////////////////////////////////////////////
@@ -203,7 +203,7 @@ namespace chapchom
  /// Set default values for the output stream (cout) and modifier (no
  /// modification)
  // =======================================================================
- ChapchomOutput::ChapchomOutput() : Stream_pt(&std::cout)
+ SciCellxxOutput::SciCellxxOutput() : Stream_pt(&std::cout)
  { }
 
 #if 0
@@ -213,7 +213,7 @@ namespace chapchom
  /// by Output_modifier_pt
  // =======================================================================
  template<class _Tp>
- std::ostream &ChapchomOutput::operator<<(_Tp argument)
+ std::ostream &SciCellxxOutput::operator<<(_Tp argument)
  {
   *Stream_pt << argument;
   return (*Stream_pt);
@@ -221,9 +221,9 @@ namespace chapchom
 #endif // #if 0
  
  //========================================================================
- /// Single (global) instantiation of the ChapchomOutput class -- this
+ /// Single (global) instantiation of the SciCellxxOutput class -- this
  /// is used throughout the library as a "replacement" for std::cout
  // ========================================================================
- ChapchomOutput chapchom_output;
+ SciCellxxOutput chapchom_output;
   
 }

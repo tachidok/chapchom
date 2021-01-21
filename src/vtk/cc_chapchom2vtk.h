@@ -1,5 +1,5 @@
-#ifndef CCCHAPCHOM2VTK_H
-#define CCCHAPCHOM2VTK_H
+#ifndef CCSCICELLXX2VTK_H
+#define CCSCICELLXX2VTK_H
 
 #include "../general/common_includes.h"
 #include "../general/utilities.h"
@@ -24,12 +24,12 @@ namespace chapchom
  // Wrapper to provide access to VTK ploting tools (implemented as a
  // Singleton)
  // =======================================================================
- class CCChapchom2VTK 
+ class CCSciCellxx2VTK 
  {
  public:
-  static CCChapchom2VTK& get_instance()
+  static CCSciCellxx2VTK& get_instance()
   {
-   static CCChapchom2VTK instance;
+   static CCSciCellxx2VTK instance;
    return instance;
   }
   
@@ -90,7 +90,7 @@ namespace chapchom
  private:
   
   // Empty constructor
-  CCChapchom2VTK()
+  CCSciCellxx2VTK()
    {
     
    } 
@@ -98,17 +98,17 @@ namespace chapchom
   /// Copy constructor (we do not want this class to be
   /// copiable). Check
   /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
-  CCChapchom2VTK(CCChapchom2VTK const&)
+  CCSciCellxx2VTK(CCSciCellxx2VTK const&)
    {
-    BrokenCopy::broken_copy("CCChapchom2VTK");
+    BrokenCopy::broken_copy("CCSciCellxx2VTK");
    } // Don't Implement.
   
   /// Assignment operator (we do not want this class to be
   /// copiable. Check
   /// http://www.learncpp.com/cpp-tutorial/912-shallow-vs-deep-copying/
-  void operator=(CCChapchom2VTK const&)
+  void operator=(CCSciCellxx2VTK const&)
    {
-    BrokenCopy::broken_assign("CCChapchom2VTK");
+    BrokenCopy::broken_assign("CCSciCellxx2VTK");
    }// Don't implement
   
   // Transfer the data from the input variable time, to the
@@ -147,11 +147,11 @@ namespace chapchom
  };
  
  //========================================================================
- // Single (global) instantiation of the CCChapchom2VTK class -- this is
+ // Single (global) instantiation of the CCSciCellxx2VTK class -- this is
  // used throughout the library to generate VTK output for Paraview
  // ========================================================================
- //extern CCChapchom2VTK chapchom2vtk;
+ //extern CCSciCellxx2VTK chapchom2vtk;
 
 }
 
-#endif // #ifndef CCCHAPCHOM2VTK_H
+#endif // #ifndef CCSCICELLXX2VTK_H

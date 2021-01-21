@@ -80,9 +80,9 @@ namespace chapchom
    std::ostringstream error_message;
    error_message << "Virtual function to resolve systems of equations should be\n"
                  << "implemented in derived class" << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
+   throw SciCellxxLibError(error_message.str(),
+                          SCICELLXX_CURRENT_FUNCTION,
+                          SCICELLXX_EXCEPTION_LOCATION);
   }
   
   /// Virtual function to re-solve a system of equations with the
@@ -98,9 +98,9 @@ namespace chapchom
    std::ostringstream error_message;
    error_message << "Virtual function to resolve systems of equations should be\n"
                  << "implemented in derived class" << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
+   throw SciCellxxLibError(error_message.str(),
+                          SCICELLXX_CURRENT_FUNCTION,
+                          SCICELLXX_EXCEPTION_LOCATION);
   }
   
  protected:

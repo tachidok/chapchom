@@ -38,7 +38,7 @@ namespace chapchom
                                        CCData &u,
                                        const unsigned k)
  {
-#ifdef CHAPCHOM_PANIC_MODE
+#ifdef SCICELLXX_PANIC_MODE
   // Check if the ode has the correct number of history values to
   // apply Backward-Euler's method
   const unsigned n_history_values = u.n_history_values();
@@ -52,11 +52,11 @@ namespace chapchom
                   << N_history_values << std::endl
                   << "Number of history values: "
                   << n_history_values << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
-#endif // #ifdef CHAPCHOM_PANIC_MODE
+#endif // #ifdef SCICELLXX_PANIC_MODE
   
   // -----------------------------------------------------------------
   // Compute initial guess

@@ -10,9 +10,9 @@ SET(LIB_demo_first_RBF numerical_recipes_lib argparse_lib general_lib matrices_l
 # Check whether chapchom is using VTK (either way this demo is not
 # going to work without VTK support, so it should be selected in the
 # ./configs/default file)
-IF (CHAPCHOM_USES_VTK)
+IF (SCICELLXX_USES_VTK)
   LIST(APPEND LIB_demo_first_RBF ${VTK_LIBRARIES})
-ENDIF (CHAPCHOM_USES_VTK)
+ENDIF (SCICELLXX_USES_VTK)
 
 # ... and link againts them
 TARGET_LINK_LIBRARIES(julio_demo_first_RBF ${LIB_demo_first_RBF})

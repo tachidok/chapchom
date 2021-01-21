@@ -9,7 +9,7 @@
 # gitignore files
 
 # ==============================================================
-# Chapchom files
+# SciCell++ files
 # ==============================================================
 src/general/cmake_definitions.h
 

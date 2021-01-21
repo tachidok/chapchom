@@ -15,18 +15,18 @@ namespace chapchom
   : Is_values_empty(true), Is_status_empty(true), Delete_values_storage(true),
     N_values(n_values), N_history_values(n_history_values)
  {
-#ifdef CHAPCHOM_PANIC_MODE
+#ifdef SCICELLXX_PANIC_MODE
   if (N_history_values == 0)
    {
     // Error message
     std::ostringstream error_message;
     error_message << "The number of history values can not be zero\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
-#endif // #ifdef CHAPCHOM_PANIC_MODE
+#endif // #ifdef SCICELLXX_PANIC_MODE
   
   // Delete any data in memory
   clean_up();
@@ -46,18 +46,18 @@ namespace chapchom
   : Is_values_empty(true), Is_status_empty(true), Delete_values_storage(true),
     N_values(n_values), N_history_values(n_history_values)
  {
-#ifdef CHAPCHOM_PANIC_MODE
+#ifdef SCICELLXX_PANIC_MODE
   if (N_history_values == 0)
    {
     // Error message
     std::ostringstream error_message;
     error_message << "The number of history values can not be zero\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
-#endif // #ifdef CHAPCHOM_PANIC_MODE
+#endif // #ifdef SCICELLXX_PANIC_MODE
   
   // Delete any data in memory
   clean_up();
@@ -83,18 +83,18 @@ namespace chapchom
   : Is_values_empty(true), Is_status_empty(true), Delete_values_storage(true),
     N_values(copy.n_values()), N_history_values(copy.n_history_values())
  {
-#ifdef CHAPCHOM_PANIC_MODE
+#ifdef SCICELLXX_PANIC_MODE
   if (N_history_values == 0)
    {
     // Error message
     std::ostringstream error_message;
     error_message << "The number of history values can not be zero\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
-#endif // #ifdef CHAPCHOM_PANIC_MODE
+#endif // #ifdef SCICELLXX_PANIC_MODE
   
   // Copy the data from the copy object to the Values_pt vector
   set_values(copy.values_pt());
@@ -124,7 +124,7 @@ namespace chapchom
  /// ===================================================================
  CCData& CCData::operator=(const CCData &source_values)
  {
-#ifdef CHAPCHOM_RANGE_CHECK
+#ifdef SCICELLXX_RANGE_CHECK
   if (N_values != source_values.n_values())
    {
     // Error message
@@ -134,9 +134,9 @@ namespace chapchom
                   << "N_values: " << N_values << "\n"
                   << "source_values.n_values(): " << source_values.n_values() << "\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   if (N_history_values != source_values.n_history_values())
@@ -148,11 +148,11 @@ namespace chapchom
                   << "N_history_values: " << N_history_values << "\n"
                   << "source_values.n_history_values(): " << source_values.n_history_values() << "\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
-#endif // #ifdef CHAPCHOM_RANGE_CHECK
+#endif // #ifdef SCICELLXX_RANGE_CHECK
   
   // Clean-up and set values
   set_values(source_values.values_pt());
@@ -235,9 +235,9 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "You are trying to free the memory of a data object that is\n"
                   << "not marked as deletable" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
  }
@@ -248,7 +248,7 @@ namespace chapchom
  /// ===================================================================
  void CCData::shift_history_values(const unsigned n_shift_positions)
  {
-#ifdef CHAPCHOM_RANGE_CHECK
+#ifdef SCICELLXX_RANGE_CHECK
   if (n_shift_positions > N_history_values)
    {
     // Error message
@@ -260,11 +260,11 @@ namespace chapchom
                   << "If you are asking to shift the same number of history values\n"
                   << "then you will get a 0-vector since you would get rid of ALL\n"
                   << "the history values\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
-#endif // #ifdef CHAPCHOM_RANGE_CHECK
+#endif // #ifdef SCICELLXX_RANGE_CHECK
   
   // Loop over the history values
   for (int i = N_history_values-1; i >= static_cast<int>(n_shift_positions); i--)
@@ -283,7 +283,7 @@ namespace chapchom
  /// ===================================================================
  Real *CCData::history_values_row_pt(const unsigned t)
  {
-#ifdef CHAPCHOM_RANGE_CHECK
+#ifdef SCICELLXX_RANGE_CHECK
   if (t > N_history_values)
    {
     // Error message
@@ -291,11 +291,11 @@ namespace chapchom
     error_message << "The history values row you are trying to access is out of range\n"
                   << "Number of history values: " << N_history_values << std::endl
                   << "Requested entry: " << t << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
-#endif // #ifdef CHAPCHOM_RANGE_CHECK
+#endif // #ifdef SCICELLXX_RANGE_CHECK
   return &(Values_pt[t*N_values]);
  }
  
@@ -304,15 +304,15 @@ namespace chapchom
  /// ===================================================================
  const Real CCData::value(const unsigned &i, const unsigned t) const
  {
-#ifdef CHAPCHOM_RANGE_CHECK
+#ifdef SCICELLXX_RANGE_CHECK
   if (is_empty())
    {
     // Error message
     std::ostringstream error_message;
     error_message << "The values vector or the status vector are empty\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   if (i > N_values)
@@ -322,9 +322,9 @@ namespace chapchom
     error_message << "The entry you are trying to access is out of range\n"
                   << "Number of values: " << N_values << std::endl
                   << "Requested entry: " << i << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   if (t > N_history_values)
@@ -334,11 +334,11 @@ namespace chapchom
     error_message << "The history value you are trying to access is out of range\n"
                   << "Number of history values: " << N_history_values << std::endl
                   << "Requested entry: " << t << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
-#endif // #ifdef CHAPCHOM_RANGE_CHECK
+#endif // #ifdef SCICELLXX_RANGE_CHECK
   return Values_pt[t*N_values+i];
  }
  
@@ -347,15 +347,15 @@ namespace chapchom
  /// ===================================================================
  Real &CCData::value(const unsigned &i, const unsigned t)
  {
-#ifdef CHAPCHOM_RANGE_CHECK
+#ifdef SCICELLXX_RANGE_CHECK
   if (is_empty())
    {
     // Error message
     std::ostringstream error_message;
     error_message << "The values vector or the status vector are empty\n" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   if (i > N_values)
@@ -365,9 +365,9 @@ namespace chapchom
     error_message << "The entry you are trying to access is out of range\n"
                   << "Number of values: " << N_values << std::endl
                   << "Requested entry: " << i << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   if (t > N_history_values)
@@ -377,11 +377,11 @@ namespace chapchom
     error_message << "The history value you are trying to access is out of range\n"
                   << "Number of history values: " << N_history_values << std::endl
                   << "Requested entry: " << t << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
-#endif // #ifdef CHAPCHOM_RANGE_CHECK
+#endif // #ifdef SCICELLXX_RANGE_CHECK
   return Values_pt[t*N_values+i];
  }
  

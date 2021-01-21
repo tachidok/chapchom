@@ -9,11 +9,11 @@
 #include "ac_problem.h"
 
 // Matrices
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
 #include "../matrices/cc_matrix_armadillo.h"
 #else // If armadillo is not used then use the default solver
 #include "../matrices/cc_matrix.h"
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
 
 // Factory for linear solver
 #include "../linear_solvers/cc_factory_linear_solver.h"
@@ -103,13 +103,13 @@ namespace chapchom
   /// Get access to i-th boundary node
   const CCBoundaryNode<Real> *boundary_node_pt(const unsigned i);
   
-#ifdef CHAPCHOM_PANIC_MODE
+#ifdef SCICELLXX_PANIC_MODE
   /// Output nodes information (for debugging purposes)
   void output_nodes_information();
   
   /// Output boundary nodes information (for debugging purposes)
   void output_boundary_nodes_information();  
-#endif // #ifdef CHAPCHOM_PANIC_MODE
+#endif // #ifdef SCICELLXX_PANIC_MODE
   
  protected:
   

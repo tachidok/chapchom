@@ -92,9 +92,9 @@ namespace chapchom
                   << "- Adaptive Runge-Kutta 4(5) Fehlberg (rk45f)\n"
                   << "- Adaptive Runge-Kutta 4(5) Dormand-Prince (rk45dp)\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
  }

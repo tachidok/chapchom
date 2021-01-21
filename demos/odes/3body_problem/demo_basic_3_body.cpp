@@ -18,15 +18,15 @@
 // Matrices representations
 #include "../../../src/matrices/cc_matrix.h"
 
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
 // Include Armadillo type matrices since the templates may include
 // Armadillo type matrices
 #include "../../../src/matrices/cc_matrix_armadillo.h"
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
 
-#ifdef CHAPCHOM_USES_VTK
+#ifdef SCICELLXX_USES_VTK
 #include "../../../src/vtk/cc_chapchom2vtk.h"
-#endif // #ifdef CHAPCHOM_USES_VTK
+#endif // #ifdef SCICELLXX_USES_VTK
 
 // Base class for the concrete problem
 #include "../../../src/problem/ac_ivp_for_odes.h"
@@ -42,7 +42,7 @@
 using namespace chapchom;
 
 // The VTK output object
-//CCChapchom2VTK VTK_helper = CCChapchom2VTK::get_instance();
+//CCSciCellxx2VTK VTK_helper = CCSciCellxx2VTK::get_instance();
 
 /// This class inherits from the ACIVPForODEs class, we implement
 /// specific functions to solve the 3 body problem
@@ -222,9 +222,9 @@ public:
     error_message << "It was not possible to dynamic cast the ODEs to the CCODEsBasic3Body ODEs class\n"
                   << "and residual computation."
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
 #ifdef EIGHT_SHAPE_SOLUTION
@@ -292,7 +292,7 @@ public:
  {
   const unsigned n_data_per_particle = 6;
   const Real t = this->time();
-  CCChapchom2VTK::get_instance().output_particles(t, (*U_pt), output_filename, n_data_per_particle);
+  CCSciCellxx2VTK::get_instance().output_particles(t, (*U_pt), output_filename, n_data_per_particle);
   
   // Output
   std::cout.precision(8);

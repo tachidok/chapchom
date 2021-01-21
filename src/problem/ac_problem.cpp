@@ -52,7 +52,7 @@ namespace chapchom
  // ===================================================================
  Real &ACProblem::time(const unsigned i)
  {
-#ifdef CHAPCHOM_PANIC_MODE
+#ifdef SCICELLXX_PANIC_MODE
   // Get the size of the time container
   const unsigned n_time = Time.size();
   if (i >= n_time)
@@ -64,11 +64,11 @@ namespace chapchom
                   << "Maximum index of the time container: ["<<n_time<<"]\n"
                   << "The index on the container you want to access: ["<<i<<"]\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
-#endif // #ifdef CHAPCHOM_PANIC_MODE
+#endif // #ifdef SCICELLXX_PANIC_MODE
   return Time[i];
  }
  
@@ -77,7 +77,7 @@ namespace chapchom
  // ===================================================================
  Real ACProblem::time(const unsigned i) const
  {
-#ifdef CHAPCHOM_PANIC_MODE
+#ifdef SCICELLXX_PANIC_MODE
   // Get the size of the time container
   const unsigned n_time = Time.size();
   if (i >= n_time)
@@ -89,11 +89,11 @@ namespace chapchom
                   << "Maximum index of the time container: ["<<n_time<<"]\n"
                   << "The index on the container you want to access: ["<<i<<"]\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
-#endif // #ifdef CHAPCHOM_PANIC_MODE
+#endif // #ifdef SCICELLXX_PANIC_MODE
   return Time[i];
  }
  
@@ -102,7 +102,7 @@ namespace chapchom
  // ===================================================================
  Real &ACProblem::time_step(const unsigned i)
  {
-#ifdef CHAPCHOM_PANIC_MODE
+#ifdef SCICELLXX_PANIC_MODE
   // Get the size of the time step container
   const unsigned n_time_step = Time_step.size();
   if (i >= n_time_step)
@@ -114,11 +114,11 @@ namespace chapchom
                   << "Maximum index of the time step container: ["<<n_time_step<<"]\n"
                   << "The index on the container you want to access: ["<<i<<"]\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
-#endif // #ifdef CHAPCHOM_PANIC_MODE
+#endif // #ifdef SCICELLXX_PANIC_MODE
   return Time_step[i];
  }
  
@@ -127,7 +127,7 @@ namespace chapchom
  // ===================================================================
  Real ACProblem::time_step(const unsigned i) const
  {
-#ifdef CHAPCHOM_PANIC_MODE
+#ifdef SCICELLXX_PANIC_MODE
   // Get the size of the time step container
   const unsigned n_time_step = Time_step.size();
   if (i >= n_time_step)
@@ -139,11 +139,11 @@ namespace chapchom
                   << "Maximum index of the time step container: ["<<n_time_step<<"]\n"
                   << "The index on the container you want to access: ["<<i<<"]\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
-#endif // #ifdef CHAPCHOM_PANIC_MODE
+#endif // #ifdef SCICELLXX_PANIC_MODE
   return Time_step[i];
  }
  
@@ -165,7 +165,7 @@ namespace chapchom
  /// Read-only access to the time i-th stepper pointer
  ACTimeStepper *ACProblem::time_stepper_pt(const unsigned i) const
  {
-#ifdef CHAPCHOM_PANIC_MODE
+#ifdef SCICELLXX_PANIC_MODE
   // Get the number of time steppers
   const unsigned n_time_steppers = Time_stepper_pt.size();
   if (i >= n_time_steppers)
@@ -177,11 +177,11 @@ namespace chapchom
                   << "Maximum index of time steppers in the container: ["<<n_time_steppers<<"]\n"
                   << "The index of the time stepper you want to access: ["<<i<<"]\n"
                   << std::endl;
-                     throw ChapchomLibError(error_message.str(),
-                                            CHAPCHOM_CURRENT_FUNCTION,
-                                            CHAPCHOM_EXCEPTION_LOCATION);
+                     throw SciCellxxLibError(error_message.str(),
+                                            SCICELLXX_CURRENT_FUNCTION,
+                                            SCICELLXX_EXCEPTION_LOCATION);
    }
-#endif // #ifdef CHAPCHOM_PANIC_MODE
+#endif // #ifdef SCICELLXX_PANIC_MODE
   return Time_stepper_pt[i];
  }
   

@@ -98,9 +98,9 @@ namespace chapchom
                   << "From [ACJacobianAndResidual<MAT_TYPE,VEC_TYPE> *]\n"
                   << "To [ACJacobianAndResidualForImplicitTimeStepper<MAT_TYPE, VEC_TYPE> *]\n" 
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
  }
