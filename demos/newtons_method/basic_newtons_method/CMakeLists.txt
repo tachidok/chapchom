@@ -2,19 +2,19 @@
 SET(SRC_demo_basic_newtons_method demo_basic_newtons_method.cpp)
 
 # Create executable (check whether compilation was requested or not)
-IF(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
+IF(${SCICELLXX_BUILD_DEMOS} STREQUAL TRUE)
   ADD_EXECUTABLE(demo_basic_newtons_method ${SRC_demo_basic_newtons_method})
-ELSE(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
+ELSE(${SCICELLXX_BUILD_DEMOS} STREQUAL TRUE)
   ADD_EXECUTABLE(demo_basic_newtons_method EXCLUDE_FROM_ALL ${SRC_demo_basic_newtons_method})
-ENDIF(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
+ENDIF(${SCICELLXX_BUILD_DEMOS} STREQUAL TRUE)
 
 # Indicate linking libraries
 SET(LIB_demo_basic_newtons_method data_structures_lib matrices_lib equations_lib problem_lib linear_solvers_lib general_lib numerical_recipes_lib)
 
 # Check whether chapchom is using Armadillo
-IF (CHAPCHOM_USES_ARMADILLO)
+IF (SCICELLXX_USES_ARMADILLO)
  LIST(APPEND LIB_demo_basic_newtons_method ${ARMADILLO_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
-ENDIF (CHAPCHOM_USES_ARMADILLO)
+ENDIF (SCICELLXX_USES_ARMADILLO)
 
 # ... and link againts them  
 TARGET_LINK_LIBRARIES(demo_basic_newtons_method ${LIB_demo_basic_newtons_method})

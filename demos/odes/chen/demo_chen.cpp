@@ -21,11 +21,11 @@
 
 #include "../../../src/matrices/cc_matrix.h"
 
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
 // Include Armadillo type matrices since the templates may include
 // Armadillo type matrices
 #include "../../../src/matrices/cc_matrix_armadillo.h"
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
 
 // Base class for the concrete problem
 #include "../../../src/problem/ac_ivp_for_odes.h"
@@ -257,9 +257,9 @@ int main(int argc, char *argv[])
     std::ostringstream error_message;
     error_message << "The dynamic cast was not succesfull."
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Set a fixed number of prediction-correction steps
@@ -349,9 +349,9 @@ int main(int argc, char *argv[])
     std::ostringstream error_message;
     error_message << "The dynamic cast was not succesfull."
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Set a fixed number of prediction-correction steps

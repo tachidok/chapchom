@@ -2,11 +2,11 @@
 SET(SRC_demo_matrix_basic_operations_armadillo demo_matrix_basic_operations_armadillo.cpp)
 
 # Create executable (check whether compilation was requested or not)
-IF(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
+IF(${SCICELLXX_BUILD_DEMOS} STREQUAL TRUE)
   ADD_EXECUTABLE(demo_matrix_basic_operations_armadillo ${SRC_demo_matrix_basic_operations_armadillo})
-ELSE(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
+ELSE(${SCICELLXX_BUILD_DEMOS} STREQUAL TRUE)
   ADD_EXECUTABLE(demo_matrix_basic_operations_armadillo EXCLUDE_FROM_ALL ${SRC_demo_matrix_basic_operations_armadillo})
-ENDIF(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
+ENDIF(${SCICELLXX_BUILD_DEMOS} STREQUAL TRUE)
 
 # Indicate linking libraries
 SET(LIB_demo_matrix_basic_operations_armadillo general_lib matrices_lib ${ARMADILLO_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
@@ -32,11 +32,11 @@ set_target_properties( demo_matrix_basic_operations_armadillo
 ADD_TEST(NAME TEST_demo_matrix_basic_operations_armadillo_run
   COMMAND demo_matrix_basic_operations_armadillo)
 # Validate output
-IF (CHAPCHOM_USES_DOUBLE_PRECISION)
+IF (SCICELLXX_USES_DOUBLE_PRECISION)
    SET (VALIDATE_FILENAME_demo_matrix_basic_operations_armadillo "validate_double_demo_matrix_basic_operations_armadillo.dat")
-ELSE (CHAPCHOM_USES_DOUBLE_PRECISION)
+ELSE (SCICELLXX_USES_DOUBLE_PRECISION)
      SET (VALIDATE_FILENAME_demo_matrix_basic_operations_armadillo "validate_demo_matrix_basic_operations_armadillo.dat")
-ENDIF (CHAPCHOM_USES_DOUBLE_PRECISION)
+ENDIF (SCICELLXX_USES_DOUBLE_PRECISION)
 ADD_TEST(NAME TEST_demo_matrix_basic_operations_armadillo_check_output
   COMMAND ${PROJECT_SOURCE_DIR}/tools/fpdiff.py ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_matrix_basic_operations_armadillo} ${CMAKE_CURRENT_BINARY_DIR}/output_test.dat)
 

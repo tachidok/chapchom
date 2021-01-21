@@ -34,7 +34,7 @@ namespace chapchom
  // 
  // where k is the number of data per particle
  //========================================================================
- void CCChapchom2VTK::output_particles(Real time,
+ void CCSciCellxx2VTK::output_particles(Real time,
                                        CCData &particles_data,
                                        std::ostringstream &file_name,
                                        const unsigned n_data_per_particle)
@@ -86,7 +86,7 @@ namespace chapchom
  
  // In charge of output the node position and attributes (velocity,
  // temperature, mass, etc) as a cloud of points
- void CCChapchom2VTK::output_node(CCNode &node, std::ostringstream &file_name)
+ void CCSciCellxx2VTK::output_node(CCNode &node, std::ostringstream &file_name)
  {
   // Output data using the position and attribute method
   output_position_and_attribute_data(node.x(), node.u(), file_name);
@@ -94,7 +94,7 @@ namespace chapchom
  
  // In charge of output the nodes positions and attributes (velocity,
  // temperature, mass, etc) as a cloud of points
- void CCChapchom2VTK::output_nodes(std::vector<CCNode> &nodes, std::ostringstream &file_name)
+ void CCSciCellxx2VTK::output_nodes(std::vector<CCNode> &nodes, std::ostringstream &file_name)
  {
   // Get the number of nodes
   const unsigned long n_nodes = nodes.size();
@@ -108,7 +108,7 @@ namespace chapchom
  
  // In charge of output the position and its corresponding attributes
  // (velocity, temperature, mass, etc)
- void CCChapchom2VTK::output_position_and_attribute_data(CCData &position,
+ void CCSciCellxx2VTK::output_position_and_attribute_data(CCData &position,
                                                          CCData &attributes,
                                                          std::ostringstream &file_name)
  {
@@ -149,7 +149,7 @@ namespace chapchom
  // In charge of output the vector positions and its corresponding
  // attributes (velocity, temperature, mass, etc)
  // ========================================================================
- void CCChapchom2VTK::output_position_and_attribute_datas(std::vector<CCData> &positions,
+ void CCSciCellxx2VTK::output_position_and_attribute_datas(std::vector<CCData> &positions,
                                                           std::vector<CCData> &attributes,
                                                           std::ostringstream &file_name)
  {
@@ -184,9 +184,9 @@ namespace chapchom
                   << "Number of points: " << n_points
                   << "\nNumber of points with attributes: " << n_points_with_attributes
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   if (n_points == 0 || n_points_with_attributes == 0)
@@ -197,9 +197,9 @@ namespace chapchom
                   << "Number of points: " << n_points
                   << "\nNumber of points with attributes: " << n_points_with_attributes
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Add points and attributes to the unstructured grid
@@ -223,7 +223,7 @@ namespace chapchom
  // data_set. Inserts the associated TIME to the set of
  // particles. Called from method output_partciles()
  // ==================================================================
- void CCChapchom2VTK::add_time_to_vtk_data_set_helper(Real time,
+ void CCSciCellxx2VTK::add_time_to_vtk_data_set_helper(Real time,
                                                       vtkSmartPointer<vtkUnstructuredGrid> &data_set)
  {
   // Add time stamp for the current file
@@ -238,7 +238,7 @@ namespace chapchom
  // Transfer the data from particles_data to data_points and
  // data_set. Called from method output_partciles()
  // ==================================================================
- void CCChapchom2VTK::add_particles_to_vtk_data_set_helper(CCData &particles_data,
+ void CCSciCellxx2VTK::add_particles_to_vtk_data_set_helper(CCData &particles_data,
                                                            vtkSmartPointer<vtkPoints> &data_points,
                                                            vtkSmartPointer<vtkUnstructuredGrid> &data_set,
                                                            const unsigned n_data_per_particle)
@@ -323,7 +323,7 @@ namespace chapchom
  // data_set, respectively. Called from method
  // output_position_and_attribute_data()
  // ==================================================================
- void CCChapchom2VTK::add_data_point_and_attributes_to_vtk_data_set_helper(CCData &position,
+ void CCSciCellxx2VTK::add_data_point_and_attributes_to_vtk_data_set_helper(CCData &position,
                                                                            CCData &attributes,
                                                                            vtkSmartPointer<vtkPoints> &data_points,
                                                                            vtkSmartPointer<vtkUnstructuredGrid> &data_set)
@@ -402,7 +402,7 @@ namespace chapchom
  // data_set, respectively. Called from method
  // output_position_and_attribute_data()
  // ==================================================================
- void CCChapchom2VTK::add_data_points_and_attributes_to_vtk_data_set_helper(std::vector<CCData> &positions,
+ void CCSciCellxx2VTK::add_data_points_and_attributes_to_vtk_data_set_helper(std::vector<CCData> &positions,
                                                                             std::vector<CCData> &attributes,
                                                                             vtkSmartPointer<vtkPoints> &data_points,
                                                                             vtkSmartPointer<vtkUnstructuredGrid> &data_set)
@@ -421,9 +421,9 @@ namespace chapchom
                   << "Number of points: " << n_points
                   << "\nNumber of points with attributes: " << n_points_with_attributes
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   if (n_points == 0 || n_points_with_attributes == 0)
@@ -434,9 +434,9 @@ namespace chapchom
                   << "Number of points: " << n_points
                   << "\nNumber of points with attributes: " << n_points_with_attributes
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Set the number of points in the cloud (Make sure you use

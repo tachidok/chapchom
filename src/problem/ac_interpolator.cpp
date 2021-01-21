@@ -32,9 +32,9 @@ namespace chapchom
   std::ostringstream error_message;
   error_message << "The used interpolator does not support this "
                 << "functionality" << std::endl;
-  throw ChapchomLibError(error_message.str(),
-                         CHAPCHOM_CURRENT_FUNCTION,
-                         CHAPCHOM_EXCEPTION_LOCATION);
+  throw SciCellxxLibError(error_message.str(),
+                         SCICELLXX_CURRENT_FUNCTION,
+                         SCICELLXX_EXCEPTION_LOCATION);
  }
  
  // ===================================================================
@@ -51,9 +51,9 @@ namespace chapchom
   std::ostringstream error_message;
   error_message << "The used interpolator does not support this "
                 << "functionality" << std::endl;
-  throw ChapchomLibError(error_message.str(),
-                         CHAPCHOM_CURRENT_FUNCTION,
-                         CHAPCHOM_EXCEPTION_LOCATION);
+  throw SciCellxxLibError(error_message.str(),
+                         SCICELLXX_CURRENT_FUNCTION,
+                         SCICELLXX_EXCEPTION_LOCATION);
  }
  
  // ===================================================================
@@ -69,9 +69,9 @@ namespace chapchom
   std::ostringstream error_message;
   error_message << "The used interpolator does not support this "
                 << "functionality" << std::endl;
-  throw ChapchomLibError(error_message.str(),
-                         CHAPCHOM_CURRENT_FUNCTION,
-                         CHAPCHOM_EXCEPTION_LOCATION);
+  throw SciCellxxLibError(error_message.str(),
+                         SCICELLXX_CURRENT_FUNCTION,
+                         SCICELLXX_EXCEPTION_LOCATION);
  }
  
  // ===================================================================
@@ -88,9 +88,9 @@ namespace chapchom
   std::ostringstream error_message;
   error_message << "The used interpolator does not support this "
                 << "functionality" << std::endl;
-  throw ChapchomLibError(error_message.str(),
-                         CHAPCHOM_CURRENT_FUNCTION,
-                         CHAPCHOM_EXCEPTION_LOCATION);
+  throw SciCellxxLibError(error_message.str(),
+                         SCICELLXX_CURRENT_FUNCTION,
+                         SCICELLXX_EXCEPTION_LOCATION);
  }
  
  // ===================================================================
@@ -106,9 +106,9 @@ namespace chapchom
   std::ostringstream error_message;
   error_message << "The used interpolator does not support this functionality"
                 << std::endl;
-  throw ChapchomLibError(error_message.str(),
-                         CHAPCHOM_CURRENT_FUNCTION,
-                         CHAPCHOM_EXCEPTION_LOCATION);
+  throw SciCellxxLibError(error_message.str(),
+                         SCICELLXX_CURRENT_FUNCTION,
+                         SCICELLXX_EXCEPTION_LOCATION);
  }
  
  // ===================================================================
@@ -125,9 +125,9 @@ namespace chapchom
   std::ostringstream error_message;
   error_message << "The used interpolator does not support this functionality"
                 << std::endl;
-  throw ChapchomLibError(error_message.str(),
-                         CHAPCHOM_CURRENT_FUNCTION,
-                         CHAPCHOM_EXCEPTION_LOCATION);
+  throw SciCellxxLibError(error_message.str(),
+                         SCICELLXX_CURRENT_FUNCTION,
+                         SCICELLXX_EXCEPTION_LOCATION);
  }
  
 }

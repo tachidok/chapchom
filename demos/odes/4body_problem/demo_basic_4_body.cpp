@@ -18,15 +18,15 @@
 // Matrices representations
 #include "../../../src/matrices/cc_matrix.h"
 
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
 // Include Armadillo type matrices since the templates may include
 // Armadillo type matrices
 #include "../../../src/matrices/cc_matrix_armadillo.h"
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
 
-#ifdef CHAPCHOM_USES_VTK
+#ifdef SCICELLXX_USES_VTK
 #include "../../../src/vtk/cc_chapchom2vtk.h"
-#endif // #ifdef CHAPCHOM_USES_VTK
+#endif // #ifdef SCICELLXX_USES_VTK
 
 // Base class for the concrete problem
 #include "../../../src/problem/ac_ivp_for_odes.h"
@@ -124,7 +124,7 @@ public:
   // Document animation
   const Real t = this->time();
   const unsigned n_data_per_particle = 6;
-  CCChapchom2VTK::get_instance().output_particles(t, (*U_pt), output_filename, n_data_per_particle);
+  CCSciCellxx2VTK::get_instance().output_particles(t, (*U_pt), output_filename, n_data_per_particle);
   
   // Output
   std::cout.precision(8);

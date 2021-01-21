@@ -31,11 +31,11 @@ namespace chapchom
   // ------------------------------------------------------
   // Check what linear solver we need to create
   // ------------------------------------------------------
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
   return new CCSolverArmadillo();
 #else
   return new CCLUSolverNumericalRecipes();
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
  }
  
  // ===================================================================
@@ -55,13 +55,13 @@ namespace chapchom
    {
     return new CCLUSolverNumericalRecipes();
    }
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
   // Linear solver from Armadillo
   else if (linear_solver_name.compare("armadillo")==0)
    {
     return new CCSolverArmadillo();
    }
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
   else
    {
     std::ostringstream error_message;
@@ -71,9 +71,9 @@ namespace chapchom
                   << "- LU linear solver from Numerical Recipes (numerical_recipes)\n"
                   << "- Armadillo Linear Solver (armadillo) - only if support for armadiilo library is enabled\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
  }

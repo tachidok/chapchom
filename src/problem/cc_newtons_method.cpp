@@ -85,9 +85,9 @@ namespace chapchom
     error_message << "You have not established the strategy for Jacobian\n"
                   << "and residual computation."
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
  }
  
@@ -106,9 +106,9 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "You have not established a linear solver."
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
  
  }
@@ -141,9 +141,9 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "There are no stored solution available."
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
  }
@@ -212,9 +212,9 @@ namespace chapchom
                   << "Set it first by calling the method\n\n"
                   << "set_jacobian_computation_strategy()\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);  
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);  
    }
   
   // We need to check whether a linear solver has been set
@@ -226,9 +226,9 @@ namespace chapchom
                   << "Set it first by calling the method\n\n"
                   << "set_linear_solver()\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // We need to check whether the initial guess has been set or not
@@ -243,9 +243,9 @@ namespace chapchom
                   << "guess as a parameter\n\n"
                   << "solve(x_0)"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Create an instance of a factory for matrices and vectors
@@ -425,9 +425,9 @@ namespace chapchom
                     << "set your own by calling the method\n\n"
                     << "set_maximum_allowed_residual()\n"
                     << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
      }
     
     if (n_newton_iterations >= Maximum_newton_iterations)
@@ -439,9 +439,9 @@ namespace chapchom
                     << "set your own by calling the method\n\n"
                     << "set_maximum_newton_interations()\n"
                     << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
      }
     
    } // while(n_newton_iterations < Maximum_newton_iterations && current_residual_norm >= termination_tolerance)

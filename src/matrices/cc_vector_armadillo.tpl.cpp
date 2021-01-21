@@ -211,9 +211,9 @@ namespace chapchom
                   << this->Is_own_memory_allocated << "\n"
                   << "right_vector.is_own_memory_allocated() = "
                   << right_vector.is_own_memory_allocated() << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the dimensions of the vectors allow the operation
@@ -227,9 +227,9 @@ namespace chapchom
                   << "dim(right_vector) = (" << n_values_right_vector << ")\n"
                   << "dim(this) = (" << n_values_this_vector << ")\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check that THIS vector is a row vector and that the right vector
@@ -240,9 +240,9 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "THIS vector should be a row vector\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   if (!right_vector.is_column_vector())
@@ -251,9 +251,9 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "The right vector should be a column vector\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Store the dot product of the vectors
@@ -368,9 +368,9 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "You are trying to free the memory of a vector that is\n"
                   << "not marked as deletable" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
  
  }
@@ -392,9 +392,9 @@ namespace chapchom
                   << this->Is_own_memory_allocated << "\n"
                   << "vector.is_own_memory_allocated() = "
                   << vector.is_own_memory_allocated() << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the dimensions of the vectors are the same
@@ -408,9 +408,9 @@ namespace chapchom
                   << "dim(vector) = (" << n_values_input_vector << ")\n"
                   << "dim(this) = (" << n_values_this_vector << ")\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check that the three vectors have the same column vector status
@@ -421,9 +421,9 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "The three vectors MUST BE either column or row vectors\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the solution vector has allocated memory, otherwise
@@ -445,9 +445,9 @@ namespace chapchom
                     << "dim(solution_vector): " << solution_vector.n_values()
                     << "\ndim(vector): " << vector.n_values()
                     << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
      }
     
    }
@@ -480,9 +480,9 @@ namespace chapchom
                   << this->Is_own_memory_allocated << "\n"
                   << "vector.is_own_memory_allocated() = "
                   << vector.is_own_memory_allocated() << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the dimensions of the vectors are the same
@@ -496,9 +496,9 @@ namespace chapchom
                   << "dim(vector) = (" << n_values_input_vector << ")\n"
                   << "dim(this) = (" << n_values_this_vector << ")\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check that the three vectors have the same column vector status
@@ -509,9 +509,9 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "The three vectors MUST BE either column or row vectors\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the solution vector has allocated memory, otherwise
@@ -533,9 +533,9 @@ namespace chapchom
                     << "dim(solution_vector): " << solution_vector.n_values()
                     << "\ndim(vector): " << vector.n_values()
                     << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
      }
     
    }
@@ -569,9 +569,9 @@ namespace chapchom
                   << this->Is_own_memory_allocated << "\n"
                   << "vector.is_own_memory_allocated() = "
                   << vector.is_own_memory_allocated() << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the dimensions of the vectors are the same
@@ -585,9 +585,9 @@ namespace chapchom
                   << "dim(vector) = (" << n_values_input_vector << ")\n"
                   << "dim(this) = (" << n_values_this_vector << ")\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
 
   // Check that the three vectors have the same column vector status
@@ -598,9 +598,9 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "The three vectors MUST BE either column or row vectors\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the solution vector has allocated memory, otherwise
@@ -622,9 +622,9 @@ namespace chapchom
                     << "dim(solution_vector): " << solution_vector.n_values()
                     << "\ndim(vector): " << vector.n_values()
                     << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
      }
     
    }
@@ -657,9 +657,9 @@ namespace chapchom
     error_message << "THIS vector has no memory allocated\n"
                   << "this->Is_own_memory_allocated = "
                   << this->Is_own_memory_allocated << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Copy all the vector
@@ -686,16 +686,16 @@ namespace chapchom
  template<class T>
  const T CCVectorArmadillo<T>::value(const unsigned long i) const
  {
-#ifdef CHAPCHOM_RANGE_CHECK
+#ifdef SCICELLXX_RANGE_CHECK
   if (!(this->is_own_memory_allocated()))
    {
     // Error message
     std::ostringstream error_message;
     error_message << "The vector has no memory allocated"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   if (i > this->n_values())
@@ -705,11 +705,11 @@ namespace chapchom
     error_message << "The entry you are trying to access is out of range\n"
                   << "Number of values: " << this->n_values() << std::endl
                   << "Requested entry: " << i << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    } 
-#endif // #ifdef CHAPCHOM_RANGE_CHECK
+#endif // #ifdef SCICELLXX_RANGE_CHECK
   // Return the value at position i
   return (*Arma_vector_pt)(i);
  }
@@ -720,16 +720,16 @@ namespace chapchom
  template<class T>
  T &CCVectorArmadillo<T>::value(const unsigned long i)
  {
-#ifdef CHAPCHOM_RANGE_CHECK
+#ifdef SCICELLXX_RANGE_CHECK
   if (!(this->is_own_memory_allocated()))
    {
     // Error message
     std::ostringstream error_message;
     error_message << "The vector has no memory allocated"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   if (i > this->n_values())
@@ -739,11 +739,11 @@ namespace chapchom
     error_message << "The entry you are trying to access is out of range\n"
                   << "Number of values: " << this->n_values() << std::endl
                   << "Requested entry: " << i << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    } 
-#endif // #ifdef CHAPCHOM_RANGE_CHECK
+#endif // #ifdef SCICELLXX_RANGE_CHECK
   // Return the value at row i and column j
   return (*Arma_vector_pt)(i);
  }
@@ -759,9 +759,9 @@ namespace chapchom
     // Error message
     std::ostringstream error_message;
     error_message << "The vector has no memory allocated. It is empty" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   else
    {
@@ -793,9 +793,9 @@ namespace chapchom
     // Error message
     std::ostringstream error_message;
     error_message << "The vector has no memory allocated. It is empty" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   else
    {
@@ -837,9 +837,9 @@ namespace chapchom
     error_message << "We can not compute the norm of a vector with no memory allocated\n"
                   << "this->Is_own_memory_allocated = "
                   << this->Is_own_memory_allocated << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   return sum;
@@ -867,9 +867,9 @@ namespace chapchom
     error_message << "We can not compute the norm of a vector with no memory allocated\n"
                   << "this->Is_own_memory_allocated = "
                   << this->Is_own_memory_allocated << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   return sum;
@@ -897,9 +897,9 @@ namespace chapchom
     error_message << "We can not compute the infinite norm of a vector with no memory allocated\n"
                   << "this->Is_own_memory_allocated = "
                   << this->Is_own_memory_allocated << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   return norm;
@@ -926,9 +926,9 @@ namespace chapchom
     error_message << "We can not compute the maximum of a vector with no memory allocated\n"
                   << "this->Is_own_memory_allocated = "
                   << this->Is_own_memory_allocated << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   return max;
@@ -955,9 +955,9 @@ namespace chapchom
     error_message << "We can not compute the minimum of a vector with no memory allocated\n"
                   << "this->Is_own_memory_allocated = "
                   << this->Is_own_memory_allocated << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   return min;
@@ -1035,9 +1035,9 @@ namespace chapchom
     error_message << "The vector has no memory allocated\n"
                   << "this->Is_own_memory_allocated = "
                   << this->Is_own_memory_allocated << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);    
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);    
    }
   
  }
@@ -1064,9 +1064,9 @@ namespace chapchom
                   << left_vector.is_own_memory_allocated() << "\n"
                   << "right_vector.is_own_memory_allocated() = "
                   << right_vector.is_own_memory_allocated() << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the dimensions of the vectors allow the operation
@@ -1080,9 +1080,9 @@ namespace chapchom
                   << "dim(left_vector) = (" << n_values_left_vector << ")\n"
                   << "dim(right_vector) = (" << n_values_right_vector << ")\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check that the left vector is a row vector and that the right
@@ -1093,9 +1093,9 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "The left vector should be a row vector\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   if (!right_vector.is_column_vector())
@@ -1104,9 +1104,9 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "The right vector should be a column vector\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Store the dot product of the vectors
@@ -1134,9 +1134,9 @@ namespace chapchom
                   << vector_one.is_own_memory_allocated() << "\n"
                   << "vector_two.is_own_memory_allocated() = "
                   << vector_two.is_own_memory_allocated() << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the dimensions of the vectors are the same
@@ -1150,9 +1150,9 @@ namespace chapchom
                   << "dim(vector_one) = (" << n_values_vector_one << ")\n"
                   << "dim(vector_two) = (" << n_values_vector_two << ")\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check that the three vectors have the same column vector status
@@ -1163,9 +1163,9 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "The three vectors MUST BE either column or row vectors\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the solution vector has allocated memory, otherwise
@@ -1187,9 +1187,9 @@ namespace chapchom
                     << "dim(solution_vector): " << solution_vector.n_values()
                     << "\ndim(vector_one): " << vector_one.n_values()
                     << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
      }
     
    }
@@ -1224,9 +1224,9 @@ namespace chapchom
                   << vector_one.is_own_memory_allocated() << "\n"
                   << "vector_two.is_own_memory_allocated() = "
                   << vector_two.is_own_memory_allocated() << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the dimensions of the vectors are the same
@@ -1240,9 +1240,9 @@ namespace chapchom
                   << "dim(vector_one) = (" << n_values_vector_one << ")\n"
                   << "dim(vector_two) = (" << n_values_vector_two << ")\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check that the three vectors have the same column vector status
@@ -1253,9 +1253,9 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "The three vectors MUST BE either column or row vectors\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the solution vector has allocated memory, otherwise
@@ -1277,9 +1277,9 @@ namespace chapchom
                     << "dim(solution_vector): " << solution_vector.n_values()
                     << "\ndim(vector_one): " << vector_one.n_values()
                     << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
      }
     
    }
@@ -1314,9 +1314,9 @@ namespace chapchom
                   << vector_one.is_own_memory_allocated() << "\n"
                   << "vector_two.is_own_memory_allocated(): "
                   << vector_two.is_own_memory_allocated() << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the dimensions of the vectors are the same
@@ -1330,9 +1330,9 @@ namespace chapchom
                   << "dim(vector_one) = (" << n_values_vector_one << ")\n"
                   << "dim(vector_two) = (" << n_values_vector_two << ")\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
 
   // Check that the three vectors have the same column vector status
@@ -1343,9 +1343,9 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "The three vectors MUST BE either column or row vectors\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the solution vector has allocated memory, otherwise
@@ -1367,9 +1367,9 @@ namespace chapchom
                     << "dim(solution_vector): " << solution_vector.n_values()
                     << "\ndim(vector_one): " << vector_one.n_values()
                     << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
      }
     
    }
@@ -1407,9 +1407,9 @@ namespace chapchom
                   << left_vector.is_own_memory_allocated() << "\n"
                   << "right_vector.is_own_memory_allocated(): "
                   << right_vector.is_own_memory_allocated() << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether both vectors are row vectors
@@ -1424,9 +1424,9 @@ namespace chapchom
                   << "left_vector.is_column_vector(): " << left_vector.is_column_vector()
                   << "\nright_vector.is_column_vector(): " << right_vector.is_column_vector()
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the concatenated vector is a row vector, if not
@@ -1440,9 +1440,9 @@ namespace chapchom
                     << concatenated_vector.is_column_vector()
                     << "\n\n Thus I am going to transpose it!!!"
                     << std::endl;
-    ChapchomLibWarning(warning_message.str(),
-                       CHAPCHOM_CURRENT_FUNCTION,
-                       CHAPCHOM_EXCEPTION_LOCATION);
+    SciCellxxLibWarning(warning_message.str(),
+                       SCICELLXX_CURRENT_FUNCTION,
+                       SCICELLXX_EXCEPTION_LOCATION);
     
     concatenated_vector.transpose();
     
@@ -1474,9 +1474,9 @@ namespace chapchom
                     << "dim(concatenated_vector): " << concatenated_vector.n_values()
                     << "\nn_elements_new_concatenated_vector: " << n_elements_new_concatenated_vector
                     << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
      }
     
    }
@@ -1511,9 +1511,9 @@ namespace chapchom
                   << upper_vector.is_own_memory_allocated() << "\n"
                   << "lower_vector.is_own_memory_allocated(): "
                   << lower_vector.is_own_memory_allocated() << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether both vectors are column vectors
@@ -1528,9 +1528,9 @@ namespace chapchom
                   << "upper_vector.is_column_vector(): " << upper_vector.is_column_vector()
                   << "\nlower_vector.is_column_vector(): " << lower_vector.is_column_vector()
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check whether the concatenated vector is a column vector
@@ -1542,9 +1542,9 @@ namespace chapchom
                   << "concatenated_vector.is_column_vector(): "
                   << concatenated_vector.is_column_vector()
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Get the number of elements of each vector and compute the new
@@ -1573,9 +1573,9 @@ namespace chapchom
                     << "dim(concatenated_vector): " << concatenated_vector.n_values()
                     << "\nn_elements_new_concatenated_vector: " << n_elements_new_concatenated_vector
                     << std::endl;
-      throw ChapchomLibError(error_message.str(),
-                             CHAPCHOM_CURRENT_FUNCTION,
-                             CHAPCHOM_EXCEPTION_LOCATION);
+      throw SciCellxxLibError(error_message.str(),
+                             SCICELLXX_CURRENT_FUNCTION,
+                             SCICELLXX_EXCEPTION_LOCATION);
      }
     
    }

@@ -36,7 +36,7 @@ namespace chapchom
   // Initialise CPU clock time
   Global_timings::Global_initial_cpu_clock_time=Timing::cpu_clock_time();
   
-  chapchom_output << "[DONE]: Chapchom initialisation" << std::endl;
+  chapchom_output << "[DONE]: SciCellxx initialisation" << std::endl;
   // Everything was alright
   return true;
   
@@ -60,7 +60,7 @@ namespace chapchom
   chapchom_output << "Total wall time: " << total_wall_time << std::endl;
   chapchom_output << "Total cpu clock time: " << total_cpu_clock_time << std::endl; 
   
-  chapchom_output << "[DONE]: Chapchom termination" << std::endl;
+  chapchom_output << "[DONE]: SciCellxx termination" << std::endl;
   // Everything was alright
   return true;
  }

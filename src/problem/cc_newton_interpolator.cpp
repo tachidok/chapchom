@@ -47,9 +47,9 @@ namespace chapchom
     error_message << "The number of data points do not match" << std::endl
                   << "Number of x-points: " << n_x << std::endl
                   << "Number of fx-points: " << n_fx << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // We check whether we have the corresponding number of data points
@@ -60,9 +60,9 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "The number of data points do not match with the "
                   << "requested\ninterpolation order" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check that the value to interpolate is within the interval
@@ -74,9 +74,9 @@ namespace chapchom
     error_message << "The requested interpolated value is not within the range\n"
                   << "[" << x[0] << ", " << x[n_x-1] << "].\n"
                   << "The requested x_interpolate value is: " << x_interpolate << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // The coefficients vector (we use b as mostly used in Newton's
@@ -153,9 +153,9 @@ namespace chapchom
     std::cout << "We have only implemented zero, linear, quadratic and cubic "
               << "interpolation" << std::endl;
     std::cout << "Requested interpolation order: " << order << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
  
  }
@@ -189,9 +189,9 @@ namespace chapchom
     error_message << "The number of data points do not match" << std::endl
                   << "Number of x-points: " << n_x << std::endl
                   << "Number of fx-points: " << n_fx << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // We check whether we have at least the corresponding number of
@@ -202,9 +202,9 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "We do not have enough points to perform this type of"
                   << "interpolation order" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Check that the fx_interpolated vector has the same size as the x_interpolate vector
@@ -219,9 +219,9 @@ namespace chapchom
                   << "different sizes" << std::endl
                   << "n_x_interpolate: " << n_x_interpolate << std::endl
                   << "n_fx_interpolated" << n_fx_interpolated << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   // Loop over the ""x_interpolate" values and for each one search for
@@ -323,9 +323,9 @@ namespace chapchom
           error_message << "The requested 'x_interpolated[i]' value is not between the supplied\n"
                         << "x's values"
                         << std::endl;
-          throw ChapchomLibError(error_message.str(),
-                                 CHAPCHOM_CURRENT_FUNCTION,
-                                 CHAPCHOM_EXCEPTION_LOCATION);
+          throw SciCellxxLibError(error_message.str(),
+                                 SCICELLXX_CURRENT_FUNCTION,
+                                 SCICELLXX_EXCEPTION_LOCATION);
          }
         
        } // Binary search condition
@@ -374,9 +374,9 @@ namespace chapchom
                       << "i_right: " << i_right
                       << "size of vector: " << n_x_interpolate
                       << std::endl;
-        throw ChapchomLibError(error_message.str(),
-                               CHAPCHOM_CURRENT_FUNCTION,
-                               CHAPCHOM_EXCEPTION_LOCATION);
+        throw SciCellxxLibError(error_message.str(),
+                               SCICELLXX_CURRENT_FUNCTION,
+                               SCICELLXX_EXCEPTION_LOCATION);
         
        }
       

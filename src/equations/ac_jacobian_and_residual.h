@@ -11,10 +11,10 @@
 #include "../matrices/cc_vector.h"
 #include "../matrices/cc_matrix.h"
 
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
 #include "../matrices/cc_vector_armadillo.h"
 #include "../matrices/cc_matrix_armadillo.h"
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
 
 #include "../matrices/cc_factory_matrices.h"
 

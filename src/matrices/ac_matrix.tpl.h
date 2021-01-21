@@ -9,10 +9,10 @@
 #include "../general/common_includes.h"
 #include "../general/utilities.h"
 
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
 // Add Armadillo's includes (only for the arma_matrix_pt() method)
 #include <armadillo>
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
 
 namespace chapchom
 {
@@ -137,12 +137,12 @@ namespace chapchom
     std::ostringstream error_message;
     error_message << "Virtual function to resolve matrix pointer, should be\n"
                   << "implemented in derived class" << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
    
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
    // Get access to the Armadillo's matrix
    virtual arma::Mat<T> *arma_matrix_pt() const
    {
@@ -151,11 +151,11 @@ namespace chapchom
     error_message << "Virtual function to resolve armadillo matrix pointer, should be\n"
                   << "implemented in derived class if you want to use the armadillo solver\n"
                   << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
    
   protected:
    

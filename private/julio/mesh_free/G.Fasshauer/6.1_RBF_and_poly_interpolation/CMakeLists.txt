@@ -10,9 +10,9 @@ SET(LIB_demo_RBF_and_poly_interpolation numerical_recipes_lib argparse_lib gener
 # Check whether chapchom is using VTK (either way this demo is not
 # going to work without VTK support, so it should be selected in the
 # ./configs/default file)
-IF (CHAPCHOM_USES_VTK)
+IF (SCICELLXX_USES_VTK)
   LIST(APPEND LIB_demo_RBF_and_poly_interpolation ${VTK_LIBRARIES})
-ENDIF (CHAPCHOM_USES_VTK)
+ENDIF (SCICELLXX_USES_VTK)
 
 # ... and link againts them
 TARGET_LINK_LIBRARIES(julio_demo_RBF_and_poly_interpolation ${LIB_demo_RBF_and_poly_interpolation})

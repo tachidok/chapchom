@@ -33,9 +33,9 @@ namespace chapchom
                   << "used to compute the Jacobian matrix\n."
                   << "Call the method set_ODEs() to specify the set of ODEs\n"
                   << "used to compute the Jacobian matrix." << std::endl;
-    throw ChapchomLibError(error_message.str(),
-                           CHAPCHOM_CURRENT_FUNCTION,
-                           CHAPCHOM_EXCEPTION_LOCATION);
+    throw SciCellxxLibError(error_message.str(),
+                           SCICELLXX_CURRENT_FUNCTION,
+                           SCICELLXX_EXCEPTION_LOCATION);
    }
   
   int i, j, nEq;

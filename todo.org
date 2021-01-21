@@ -1,17 +1,17 @@
 #+STARTUP: showall
-#+TITLE: TODO list for CHAPCHOM
+#+TITLE: TODO list for SciCell++
 #+AUTHOR: Julio César Pérez Sansalvador
 
 * Tuesday, April 21/2020
 ** TODO
 + Implement full demo for Poisson Equation
 + Integrate the use of Triangle for the generation of points/nodes
-+ Work on documentation (How to git with CHAPCHOM and README.md)
++ Work on documentation (How to git with SciCell++ and README.md)
 ** WORKING ON
 *** Delete templates from matrices and linear solvers
    There is really no need for templates since we have a typedef to
    define whether use float or doubles
-* Chapchom
+* SciCell++
 ** DONE Create factory for matrices and vector
 - [DONE] After deleting innecessary templates it seems necessary to
   create a matrices and vectors generator based on whether armadillo

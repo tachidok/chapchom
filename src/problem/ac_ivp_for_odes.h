@@ -50,9 +50,9 @@ namespace chapchom
    std::ostringstream error_message;
    error_message << "Virtual function in ACIVPForODEs class, you should implement\n"
                  << "it to document your solution" << std::endl;
-   throw ChapchomLibError(error_message.str(),
-                          CHAPCHOM_CURRENT_FUNCTION,
-                          CHAPCHOM_EXCEPTION_LOCATION);
+   throw SciCellxxLibError(error_message.str(),
+                          SCICELLXX_CURRENT_FUNCTION,
+                          SCICELLXX_EXCEPTION_LOCATION);
   }
   // -------------------------------------------------------------------------
   // THESE METHODS MUST BE IMPLEMENTED IN THE CONCRETE PROBLEM CLASS [END]

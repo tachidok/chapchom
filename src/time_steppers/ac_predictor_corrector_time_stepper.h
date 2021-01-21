@@ -7,12 +7,12 @@
 #include "../data_structures/ac_odes.h"
 #include "../data_structures/cc_data.h"
 
-#ifdef CHAPCHOM_USES_ARMADILLO
+#ifdef SCICELLXX_USES_ARMADILLO
 // Include Armadillo type vector for residual
 #include "../matrices/cc_vector_armadillo.h"
 #else
 #include "../matrices/cc_vector.h"
-#endif // #ifdef CHAPCHOM_USES_ARMADILLO
+#endif // #ifdef SCICELLXX_USES_ARMADILLO
 
 #include "./ac_time_stepper.h"
 

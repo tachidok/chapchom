@@ -2,19 +2,19 @@
 SET(SRC_demo_basic_ode demo_basic_ode.cpp)
 
 # Create executable (check whether compilation was requested or not)
-IF(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
+IF(${SCICELLXX_BUILD_DEMOS} STREQUAL TRUE)
   ADD_EXECUTABLE(demo_basic_ode ${SRC_demo_basic_ode})
-ELSE(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
+ELSE(${SCICELLXX_BUILD_DEMOS} STREQUAL TRUE)
   ADD_EXECUTABLE(demo_basic_ode EXCLUDE_FROM_ALL ${SRC_demo_basic_ode})
-ENDIF(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
+ENDIF(${SCICELLXX_BUILD_DEMOS} STREQUAL TRUE)
 
 # Indicate linking libraries
 SET(LIB_demo_basic_ode data_structures_lib matrices_lib time_stepper_lib equations_lib problem_lib linear_solvers_lib numerical_recipes_lib general_lib)
 
 # Check whether chapchom is using Armadillo
-IF (CHAPCHOM_USES_ARMADILLO)
+IF (SCICELLXX_USES_ARMADILLO)
  LIST(APPEND LIB_demo_basic_ode ${ARMADILLO_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
-ENDIF (CHAPCHOM_USES_ARMADILLO)
+ENDIF (SCICELLXX_USES_ARMADILLO)
 
 # ... and link againts them  
 TARGET_LINK_LIBRARIES(demo_basic_ode ${LIB_demo_basic_ode})

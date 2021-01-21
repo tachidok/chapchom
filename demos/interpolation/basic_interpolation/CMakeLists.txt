@@ -2,11 +2,11 @@
 SET(SRC_demo_basic_interpolation demo_basic_interpolation.cpp)
 
 # Create executable (check whether compilation was requested or not)
-IF(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
+IF(${SCICELLXX_BUILD_DEMOS} STREQUAL TRUE)
   ADD_EXECUTABLE(demo_basic_interpolation ${SRC_demo_basic_interpolation})
-ELSE(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
+ELSE(${SCICELLXX_BUILD_DEMOS} STREQUAL TRUE)
   ADD_EXECUTABLE(demo_basic_interpolation EXCLUDE_FROM_ALL ${SRC_demo_basic_interpolation})
-ENDIF(${CHAPCHOM_BUILD_DEMOS} STREQUAL TRUE)
+ENDIF(${SCICELLXX_BUILD_DEMOS} STREQUAL TRUE)
 
 # Indicate linking libraries
 SET(LIB_demo_basic_interpolation general_lib problem_lib)
@@ -39,11 +39,11 @@ set_target_properties(demo_basic_interpolation
 ADD_TEST(NAME TEST_demo_basic_interpolation_run
           COMMAND demo_basic_interpolation)
 # Validate output
-IF (CHAPCHOM_USES_DOUBLE_PRECISION)
+IF (SCICELLXX_USES_DOUBLE_PRECISION)
    SET (VALIDATE_FILENAME_demo_basic_interpolation "validate_double_demo_basic_interpolation.dat")
-ELSE (CHAPCHOM_USES_DOUBLE_PRECISION)
+ELSE (SCICELLXX_USES_DOUBLE_PRECISION)
      SET (VALIDATE_FILENAME_demo_basic_interpolation "validate_demo_basic_interpolation.dat")
-ENDIF (CHAPCHOM_USES_DOUBLE_PRECISION)
+ENDIF (SCICELLXX_USES_DOUBLE_PRECISION)
 #ADD_TEST(NAME TEST_demo_basic_interpolation_check_output
 #         COMMAND sdiff -s ${CMAKE_CURRENT_SOURCE_DIR}/validate/${VALIDATE_FILENAME_demo_basic_interpolation} ${#CMAKE_CURRENT_BINARY_DIR}/output_test.dat)
 ADD_TEST(NAME TEST_demo_basic_interpolation_check_output
