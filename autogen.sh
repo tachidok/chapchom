@@ -72,10 +72,9 @@ build_test_demos=TRUE
 # Indicates the number of processors to build the demos
 default_number_of_processors_to_run_demos=4
 number_of_processors_to_run_demos=$default_number_of_processors_to_run_demos
+test_results_directory=test_results
 # Prompts for FULL configuration
 full_configuration=FALSE
-# Generate code coverage report (default to FALSE)
-generate_code_coverage_report=FALSE
 # Indicates whether to output building information (currently not in use)
 verbose=TRUE
 
@@ -109,9 +108,6 @@ do
              ;;
          i)
              full_configuration=TRUE
-             ;;
-         r)
-             generate_code_coverage_report=TRUE
              ;;
          v)
              verbose=TRUE
@@ -476,13 +472,24 @@ if test "$build_test_demos" = "TRUE" ; then
     cd ..
     
     # Once all test have been run, copy the file with the results of
-    # the test to the root directoy
+    # the test into the test results directory
     echo ""
     echo "============================================================= "
     echo ""
-    echo "Copying validation files ..."
-    cp build/Testing/Temporary/LastTest.log ./validation.log
-    cp build/Testing/Temporary/CTestCostData.txt ./validation_short.log    
+    echo "I will copy the test results summary into the following folder"
+    echo "$test_results_directory"
+
+    # Check whether the test directory already exists, if that is the
+    # case then delete it
+    if (test -d  $test_results_directory); then
+        rm -rf $test_results_directory
+    fi
+    
+    mkdir $test_results_directory
+    
+    echo "Copying test results files ..."
+    cp build/Testing/Temporary/LastTest.log ./$test_results_directory/test_results.log
+    cp build/Testing/Temporary/CTestCostData.txt ./$test_results_directory/test_results_short.txt
     echo ""
     echo "============================================================= "
     echo ""
