@@ -206,6 +206,20 @@ fi
 if test "$update_report_to_codecovio" = "TRUE" ; then
     echo ""
     echo "============================================================= "
+    echo ""
+    echo "Coverage report will not be updated, only master branch code"
+    echo "coverage report will be updated"
+    echo ""
+    echo "============================================================= "
+    echo ""
+fi
+
+# Overwrite option so report is not updated even if was requested
+update_report_to_codecovio=FALSE
+
+if test "$update_report_to_codecovio" = "TRUE" ; then
+    echo ""
+    echo "============================================================= "
     echo "I am going to update the report to CodeCov.io"
     echo "============================================================= "
     echo ""
