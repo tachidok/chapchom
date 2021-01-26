@@ -1,21 +1,30 @@
-##+STARTUP: showall
-#+TITLE: Julio's Kanbam board for SciCell++
+#+STARTUP: showall
+#+TITLE: Julio's Kanban board for SciCell++
 #+AUTHOR: Julio César Pérez Sansalvador
 
-* TODO Backlog
-** Update version 0.5.0 to indicate the renaming of the framework
+* Backlog
+** Use docker image from scicellxx to build/run test
++ Check documentation from GitHub to implement workflow
++ Add workflow for docker image into workflow
 ** Re-install docs folder with sphinx
- * How to with with SciCell++
+ * How to git with SciCell++
  * Update READEME.md file
+** Add tools for code-coverage for branches
+ [ ] Check information on codecov.io
 ** Demo for Poisson Equation
 ** Integrate Triangle for Mesh Generation
 ** Delete templates from matrices and linear solvers
  * There is really no need for templates since we have a typedef to
    define whether use float or doubles
+** Move cellular automata code to SciCell++
+ [ ] Create new branch for moving
+ [ ] Move the src code
+ [ ] Move the demos
+ [ ] Demo driver for pedestrian evacuation
 * Ready to start
 * Working on
 * Reviewing
-* DONE Done
+* Done
 ** Change chapchom name in files for scicellxx
 + Use emacs with dired for help
 ** Need to modify the strategy for memory allocation of matrices and vectors

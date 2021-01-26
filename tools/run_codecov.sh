@@ -38,6 +38,8 @@ code_report_html_dir=html
 
 # Update code report to CodeCov.io
 update_report_to_codecovio=FALSE
+# Name for the CodeCov.io script
+code_cov_script_filename=codecov.sh
 
 # The name of the library
 lib_name=SciCell++
@@ -59,7 +61,7 @@ do
          w)
              web_version_of_code_report=TRUE
              ;;
-         w)
+         u)
              update_report_to_codecovio=TRUE
              ;;
          v)
@@ -207,12 +209,20 @@ if test "$update_report_to_codecovio" = "TRUE" ; then
     echo "I am going to update the report to CodeCov.io"
     echo "============================================================= "
     echo ""
-    if ! bash <(curl -s https://codecov.io/bash) -f $lcov_output_file ; then
+    echo "Downloading the CodeCov.io script"
+    echo ""
+    curl -o $code_cov_script_filename https://codecov.io/bash
+    export CODECOV_TOKEN=a4a203a3-9183-47ca-b122-9e09b0a5dd45
+    echo ""
+    echo "Running the CodeCov.io script $code_cov_script_filename"
+    echo ""
+    #    if ! bash <(curl -s https://codecov.io/bash) -f ./$code_report_dir/$lcov_output_file ; then
+    if ! bash ./$code_cov_script_filename ; then
         echo ""
         echo ""
         echo ""
         echo "========================================================= "
-        echo "[FAIL] 'bash <(curl -s https://codecov.io/bash) -f $lcov_output_file"
+        echo "[FAIL] 'sh ./$code_cov_script_filename'"
         echo "========================================================= "
         echo ""
         exit 1
@@ -221,6 +231,9 @@ if test "$update_report_to_codecovio" = "TRUE" ; then
     echo ""
     echo "[DONE] Update report to CodeCov.io"
     echo ""
+    echo "Cleaning up"
+    rm $code_cov_script_filename
+    rm *.gcov
     
 fi
 

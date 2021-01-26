@@ -27,6 +27,8 @@ GTAGS
 bin/
 build/
 include/
+code_report/
+test_results/
 
 # ==============================================================
 # These include all files on any folder with the bin or build
