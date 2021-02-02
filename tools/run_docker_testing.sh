@@ -50,7 +50,8 @@ folder_in_container=/home/scicellxx
 working_folder_in_container=/home/scicellxx/
 
 # Command to run in container
-run_this_command='./autogen.sh -c ./configs/container'
+#run_this_command='./autogen.sh -c ./configs/container'
+run_this_command='./autogen.sh -t STATIC -b RELEASE -n 16 -c ./configs/container -d 16 -v'
 
 #====================================================================
 # Parse arguments
@@ -170,7 +171,7 @@ echo ""
 echo "============================================================= "
 echo ""
 # Check whether pull container from DockerHub was requested
-if test "$get_project_from_github" = "TRUE" ; then
+if test "$get_container_from_dockerhub" = "TRUE" ; then
     if ! docker pull $dockerhub_image ; then
         echo ""
         echo "[ERROR] - Getting SciCell++ container from DockerHub"
