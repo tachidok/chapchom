@@ -10,7 +10,7 @@ usage()
 cat << EOF
 usage: $0 [OPTIONS]
 
-This script builds and runs the test of SciCell++
+This script builds [and runs the test suite of] SciCell++
 
 OPTIONS:
    -h      Show this message
@@ -81,9 +81,9 @@ verbose=TRUE
 #====================================================================
 # Parse arguments
 # ====================================================================
-# The ':' followed by the argument letter indicates that it requires
-# an argument value. Example: 't:' indicates that 't' is followed by
-# an argument value. 'h', 'i', 'r' and 'v' do not require arguments.
+# A letter followed by a ':' indicates that it requires an argument
+# value. Example: 't:' indicates that 't' is followed by an argument
+# value. 'h', 'i', 'r' and 'v' do not require arguments.
 while getopts “ht:b:c:n:d:irv” OPTION
 do
      case $OPTION in

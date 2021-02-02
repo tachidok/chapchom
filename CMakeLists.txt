@@ -17,6 +17,9 @@ SET(${CMAKE_PROJECT_NAME}_PATCH_LEVEL 0)
 # ----------------------------------------------------------------------
 # Output requested configuration
 # ----------------------------------------------------------------------
+MESSAGE( STATUS "-----------------------------------------------------------------------" )
+MESSAGE( STATUS "CMAKE VERSION:                 " ${CMAKE_VERSION} )
+MESSAGE( STATUS "-----------------------------------------------------------------------" )
 MESSAGE( STATUS "" )
 MESSAGE( STATUS "-----------------------------------------------------------------------" )
 MESSAGE( STATUS "** GENERAL LIBRARY INFORMATION **" )
@@ -28,7 +31,6 @@ MESSAGE( STATUS "PROJECT_NAME:                 " ${PROJECT_NAME})
 MESSAGE( STATUS "PROJECT_MAJOR_VERSION:        " ${SCICELLXX_MAJOR_VERSION})
 MESSAGE( STATUS "PROJECT_MINOR_VERSION:        " ${SCICELLXX_MINOR_VERSION})
 MESSAGE( STATUS "PROJECT_PATCH_LEVEL:          " ${SCICELLXX_PATCH_LEVEL})
-MESSAGE( STATUS "-----------------------------------------------------------------------" )
 
 # ----------------------------------------------------------------------
 # Read configuration file and extract values of variables
