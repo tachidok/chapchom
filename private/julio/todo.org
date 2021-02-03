@@ -3,12 +3,9 @@
 #+AUTHOR: Julio César Pérez Sansalvador
 
 * Backlog
-** Use docker image from scicellxx to build/run test
-+ Check documentation from GitHub to implement workflow
-+ Add workflow for docker image into workflow
-** Re-install docs folder with sphinx
- * How to git with SciCell++
- * Update README.md file
+** Review the use of docker containers in GitHub actions
+ * The current workflow in GitHub actions is taking too much time, it
+   is currently commented/disabled in the workflow file for GitHub
 ** Demo for Poisson Equation
 ** Integrate Triangle for Mesh Generation
 ** Delete templates from matrices and linear solvers
@@ -20,14 +17,20 @@
  3. [ ] Move the demos
  4. [ ] Demo driver for pedestrian evacuation
 * Ready to start
+** Re-install docs folder with sphinx
+ * How to git with SciCell++
+ * Update README.md file
 * Working on
 * Reviewing
+* Done
 ** Add tools for code-coverage for branches
  * [x] Check information on codecov.io
  * There is no need to update coverage reports per branch, therefore
    the option for updating reports in the tools/run_codecov.sh has
    been commented.
-* Done
+** Use docker image from scicellxx to build/run test
++ Check documentation from GitHub to implement workflow
++ Add workflow for docker image into workflow
 ** Change chapchom name in files for scicellxx
 + Use emacs with dired for help
 ** Need to modify the strategy for memory allocation of matrices and vectors
