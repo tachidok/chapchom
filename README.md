@@ -4,6 +4,8 @@
 ![GitHub-master-push](https://github.com/tachidok/scicellxx/workflows/Build-and-Test/badge.svg?branch=master&event=push)
 [![codecov](https://codecov.io/gh/tachidok/scicellxx/branch/master/graph/badge.svg?token=JAAOFSS1IQ)](https://codecov.io/gh/tachidok/scicellxx)
 
+[![Documentation Status](https://readthedocs.org/projects/scicellxx/badge/?version=latest)](https://scicellxx.readthedocs.io/en/latest/?badge=latest)
+
 ---
 
 ## Welcome!

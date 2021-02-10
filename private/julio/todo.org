@@ -6,7 +6,7 @@
 ** Review the use of docker containers in GitHub actions
  * The current workflow in GitHub actions is taking too much time, it
    is currently commented/disabled in the workflow file for GitHub
-** Demo for Poisson Equation
+** Demo for Poisson Equation (using MeshFree Methods)
 ** Integrate Triangle for Mesh Generation
 ** Delete templates from matrices and linear solvers
  * There is really no need for templates since we have a typedef to
@@ -16,6 +16,9 @@
  2. [ ] Move the src code
  3. [ ] Move the demos
  4. [ ] Demo driver for pedestrian evacuation
+** Demo of the Model to Predict COVID-19 Epidemics with Applications to South Korea, Italy, and Spain
+ * Here is the link
+https://sinews.siam.org/Details-Page/a-model-to-predict-covid-19-epidemics-with-applications-to-south-korea-italy-and-spain
 * Ready to start
 ** Re-install docs folder with sphinx
  * How to git with SciCell++

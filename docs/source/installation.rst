@@ -1,13 +1,24 @@
 Installation
 ============
 
+We have two main approaches to install the framework and have it ready
+to go.
+
+* Docker-based installation: use this installation if you want an easy
+  and strees-free installation process.
+
+* Manual installation: use this installation if you are familiar with
+  unix based systems and if you love full configuration with command
+  line installation process.
+  
 Docker-based installation
 -------------------------
 
 This type of installation provides you with a ready-out-of-the-box
-container. You do not need to worry about software dependencies such
-that you to focus on using SciCell++ to solve your specific problem
-right-out-of-the-box.
+container (a magic box with all software dependencies preinstalled and
+ready to go). You do not need to worry about software dependencies
+such that you to focus on using SciCell++ to solve your specific
+problem right-out-of-the-box.
 
 Docker installation
 ^^^^^^^^^^^^^^^^^^^
@@ -45,6 +56,13 @@ The following software packages are optional:
 * **Latex** to generate math symbols in documentation generated from source.
 
 * **MPI** support for parallel features (not currently supported).
+
+You can use our spack.yml file in case you use `spack
+<https://spack.readthedocs.io/en/latest/>`_ as your software package manager.
+
+.. code-block:: shell
+
+   Here goes the spack file
 
 Get your own copy of the project
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

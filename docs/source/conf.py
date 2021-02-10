@@ -17,7 +17,8 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'scicellxx'
+#project = 'scicellxx'
+project = 'SciCell++'
 copyright = '2021, Julio César Pérez Sansalvador'
 author = 'Julio César Pérez Sansalvador'
 
