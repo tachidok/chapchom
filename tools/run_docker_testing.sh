@@ -50,8 +50,9 @@ folder_in_container=/home/scicellxx
 working_folder_in_container=/home/scicellxx/
 
 # Command to run in container
-#run_this_command='./autogen.sh -c ./configs/container'
-run_this_command='./autogen.sh -t STATIC -b RELEASE -n 16 -c ./configs/container -d 16 -v'
+run_this_command='./autogen.sh -t STATIC -b DEBUG -n 4 -c ./configs/container -d 4 -v'
+#run_this_command='./autogen.sh -t STATIC -b RELEASE -n 4 -c ./configs/container -d 4 -v'
+#run_this_command='./autogen.sh -t STATIC -b RELEASE -n 16 -c ./configs/container -d 16 -v'
 
 #====================================================================
 # Parse arguments
