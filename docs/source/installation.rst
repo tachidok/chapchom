@@ -4,13 +4,15 @@ Installation
 We have two main approaches to install the framework and have it ready
 to go.
 
-* Docker-based installation: use this installation if you want an easy
-  and strees-free installation process.
+**Docker-based installation**
+  Use this installation if you want an easy and strees-free
+  installation process.
 
-* Manual installation: use this installation if you are familiar with
-  unix based systems and if you love full configuration with command
-  line installation process.
-  
+**Manual installation**
+  Use this installation if you are familiar with unix based systems
+  and if you love full configuration with command line installation
+  process.
+
 Docker-based installation
 -------------------------
 
@@ -20,63 +22,75 @@ ready to go). You do not need to worry about software dependencies
 such that you to focus on using SciCell++ to solve your specific
 problem right-out-of-the-box.
 
-Docker installation
-^^^^^^^^^^^^^^^^^^^
+Install docker
+^^^^^^^^^^^^^^
 
-Follow the instructions in `the official docker web page <https://docs.docker.com/engine/install/>`_ to get Docker installed in your system.
+Follow the instructions in `docker official installation website
+<https://docs.docker.com/engine/install/>`_ to get Docker installed in
+your system.
 
 Get the docker container from the official repository
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. warning:: Not finished section.
 
+Run the docker application
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Run the docker image
+^^^^^^^^^^^^^^^^^^^^
+
 Manual installation
 -------------------
-This type of installation requires you to install few software
-packages in your machine needed by SciCell++. This give you full
-customization of the software and hardware resources in your machine.
 
-Required software
-^^^^^^^^^^^^^^^^^
+This type of installation gives you full customization of the software
+and hardware resources in your machine. Make sure the following
+software packages are installed in your machine.
 
-Make sure you have the following software installed in your machine:
+* `Git <https://git-scm.com/>`_ to get a copy of the framework in your system.
 
-* **Git** to get a copy of the framework in your system.
-
-* A **C++ compiler** to build the framework and the demo drivers. Tested with version 7.4.0.
+* A **C++ compiler** to build the framework and the demo drivers. We
+  tested with `gcc <https://gcc.gnu.org/>`_ version 7.4.0.
   
-* **CMake** tool to configure and install it. We tested with version 3.10.2.
+* `CMake <https://cmake.org/>`_ tool to configure and install it. We
+  tested with version 3.10.2.
 
-* **Python** language to run the unit test. For some demos we include python based scripts to plot the result . Tested with version 3.7.3.
+* `Python <https://www.python.org/>`_ language to run the unit
+  test. For some demos we include python based scripts to plot the
+  result . Tested with version 3.7.3.
 
-The following software packages are optional:
+The following software packages are optional (but recommended)
   
-* **Doxygen** to build documentation and classes diagrams from source code.
+* `Doxygen <https://www.doxygen.nl/index.html>`_ to build
+  documentation and classes diagrams from source code.
 
-* **Latex** to generate math symbols in documentation generated from source.
+* `Latex <https://www.latex-project.org/>`_ to generate math symbols
+  in documentation generated from source.
 
-* **MPI** support for parallel features (not currently supported).
+* **MPI** support for parallel features (will be tested with openmpi -
+  not currently supported-).
 
-You can use our spack.yml file in case you use `spack
-<https://spack.readthedocs.io/en/latest/>`_ as your software package manager.
-
-.. code-block:: shell
-
-   Here goes the spack file
+.. note::
+   You can use our :download:`spack file <./spack.yaml>` file in case
+   you use `Spack <https://spack.readthedocs.io/en/latest/>`_ as your
+   software package manager.
 
 Get your own copy of the project
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-In the command line type the following:
+
+Once you have all the previous packages installed in your system you
+can get your own copy of SciCell++. In the command line type the
+following:
 
 .. code-block:: shell
    
-   git clone https://github.com/tachidok/chapchom
-   cd chapchom
+   git clone https://github.com/tachidok/scicellxx
+   cd scicellxx
    git checkout -b john_cool
 
-After executing the first line you will be prompted to provide your
-GitHub user name and password. The third line generates a fully
-customised branch named ``john_cool``.
+The previous commands get a copy of the project down to your local
+machine, then move into the project folder, and finally generates a
+fully customised branch named ``john_cool``.
 
 Configuration
 ^^^^^^^^^^^^^
@@ -181,8 +195,14 @@ At Sunday, April/12, 2020 there is one and only one developer, me
 This project was initially uploaded to GitHub on Friday, 11 March 2016
 :smile:
 
-## Here is a list (in wikipedia) of other software packages that implement the FEM
+External resources
+^^^^^^^^^^^^^^^^^^
 
-https://en.wikipedia.org/wiki/List_of_finite_element_software_packages
+A list (in wikipedia) of `software packages that implement the FEM`_
 
-## Have fun and enjoy .... !!!
+References
+----------
+
+.. target-notes::
+   
+.. _`software packages that implement the FEM`: https://en.wikipedia.org/wiki/List_of_finite_element_software_packages

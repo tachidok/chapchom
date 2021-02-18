@@ -1,0 +1,29 @@
+spack:
+  #concretization: together
+  concretization: separately
+
+  config:
+    install_tree: /opt/software
+
+  packages:
+    all:
+      target: [x86_64]
+      providers:
+        mpi: [openmpi, mpich]
+    cmake:
+      version:
+      - 3.18.4
+    gcc:
+      version:
+      - 7.5.0
+    git:
+      version:
+      - 2.29.0
+    hwloc:
+      version:
+      - 1.11.11
+  specs:
+  - openmpi@3.1.6
+  - mpich@3.3.2
+
+  view: false
