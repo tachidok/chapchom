@@ -8,12 +8,15 @@ SciCell++
 =========
 
 SciCell++ is an object-oriented framework for the simulation of
-biophysical phenomena modelled as continuous or discrete processes.
+biological and physical phenomena modelled as continuous or discrete
+processes.
 
 .. toctree::
    :maxdepth: 2
 
    installation
+   first_steps
+   external_packages_installation
    demos
    contributions
    license

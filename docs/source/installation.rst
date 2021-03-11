@@ -1,17 +1,16 @@
 Installation
 ============
 
-We have two main approaches to install the framework and have it ready
-to go.
+We have two main approaches to install SciCell++ and have it ready to
+go.
 
-**Docker-based installation**
+`Docker-based installation`_
   Use this installation if you want an easy and strees-free
   installation process.
 
-**Manual installation**
-  Use this installation if you are familiar with unix based systems
-  and if you love full configuration with command line installation
-  process.
+`Manual installation`_
+  Use this installation if you are familiar with Unix based systems
+  and if you prefer command line installation..
 
 Docker-based installation
 -------------------------
@@ -22,65 +21,68 @@ ready to go). You do not need to worry about software dependencies
 such that you to focus on using SciCell++ to solve your specific
 problem right-out-of-the-box.
 
-Install docker
-^^^^^^^^^^^^^^
+1. Install docker
 
 Follow the instructions in `docker official installation website
 <https://docs.docker.com/engine/install/>`_ to get Docker installed in
 your system.
 
-Get the docker container from the official repository
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2. Get the docker container from the official repository
 
 .. warning:: Not finished section.
 
-Run the docker application
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+3. Run the docker application
 
-Run the docker image
-^^^^^^^^^^^^^^^^^^^^
+4. Run the docker image
+
 
 Manual installation
 -------------------
 
 This type of installation gives you full customization of the software
-and hardware resources in your machine. Make sure the following
-software packages are installed in your machine.
+and hardware resources in your machine.
 
-* `Git <https://git-scm.com/>`_ to get a copy of the framework in your system.
+**Requirements**
 
-* A **C++ compiler** to build the framework and the demo drivers. We
-  tested with `gcc <https://gcc.gnu.org/>`_ version 7.4.0.
+* `Git <https://git-scm.com/>`_ to get a copy of SciCell++ in your
+  system.
+
+* A **C++ compiler** to build the SciCell++ and the demos. We tested
+  with `gcc <https://gcc.gnu.org/>`_ version 7.4.0.
   
-* `CMake <https://cmake.org/>`_ tool to configure and install it. We
-  tested with version 3.10.2.
+* The `CMake <https://cmake.org/>`_ tool to configure and install
+  SciCell++. We tested with CMake version 3.10.2.
 
-* `Python <https://www.python.org/>`_ language to run the unit
-  test. For some demos we include python based scripts to plot the
-  result . Tested with version 3.7.3.
+* The `Python <https://www.python.org/>`_ language to run some of the
+  demos and the unit test. We include Python based scripts to plot the
+  result for some demos . Tested with Python version 3.7.3.
 
 The following software packages are optional (but recommended)
   
 * `Doxygen <https://www.doxygen.nl/index.html>`_ to build
-  documentation and classes diagrams from source code.
+  documentation and classes diagrams from source code for SciCell++.
 
-* `Latex <https://www.latex-project.org/>`_ to generate math symbols
-  in documentation generated from source.
+* `Latex <https://www.latex-project.org/>`_ to generate *math* symbols
+  in documentation generated from source code.
 
-* **MPI** support for parallel features (will be tested with openmpi -
-  not currently supported-).
+* A software implementation of **MPI** to support parallel features
+  (openmpi/mpicc recommended - not currently supported-).
 
-.. note::
-   You can use our :download:`spack file <./spack.yaml>` file in case
-   you use `Spack <https://spack.readthedocs.io/en/latest/>`_ as your
-   software package manager.
+.. important::
+   
+   If you use `Spack <https://spack.readthedocs.io/en/latest/>`_ as
+   your software package manager here is our spack :download:`file
+   <./spack.yaml>`. Feel free to use it to ease the installation
+   process.
 
-Get your own copy of the project
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Steps**
+   
+Now follow the steps below that guide you through the installation
+process:
 
-Once you have all the previous packages installed in your system you
-can get your own copy of SciCell++. In the command line type the
-following:
+1. Get your own copy of SciCell++
+
+   Open a command line and type the following:
 
 .. code-block:: shell
    
@@ -88,115 +90,68 @@ following:
    cd scicellxx
    git checkout -b john_cool
 
-The previous commands get a copy of the project down to your local
-machine, then move into the project folder, and finally generates a
-fully customised branch named ``john_cool``.
+The previous commands get a copy of SciCell++ from the `official
+GitHub repository <https://github.com/tachidok/scicellxx>`_ down to
+your local machine and moves into the ``scicellxx`` folder. Finally, a
+new branch named ``john_cool`` is generated.
 
-Configuration
-^^^^^^^^^^^^^
+.. note::
 
-* In a command line go into the ``chapchom`` folder and execute the
-  automatic generator shell script as follows:
+   Feel free to rename de ``john_cool`` folder with your name.
+
+2. Configuration
+
+Within the ``scicellxx`` folder execute the automatic generator shell
+script as follows:
 
 .. code-block:: shell
 
    ./autogen.sh
 
-.. warning::
+.. important::
 
-   You can pass parameters to the ``autogen`` script, try it with the
-   ``-h`` option to get the full list of arguments.
-   
-* From here on you can continue with the `starting_up` document in the
-`doc` folder.
+   This commands executes a full compilation of SciCell++ and runs all
+   the demos and tests to make sure you are working with an stable
+   copy. If you want to fully configure the compilation process use
+   the ``-i`` parameter. You will be able to specify the number of
+   processors to compile SciCell++, also the number of processor to
+   run the demos, use predefined configuration files for access to
+   third-party libraries and many more. For a full list of available
+   options use the ``-h`` parameter.
 
-**For full details and additional features please check the full
-documentation in the `doc` folder.**
+A summary of the compilation and testing process is shown once they
+have finished. If no errors were reported then SciCell++ is ready to
+go. We recommend you to have a look at the list of :doc:`demos` as
+follow up.
 
-Generating ``doxygen`` documentation from source code
------------------------------------------------------
+Additional features
+-------------------
 
-If you got doxygen installed in your system then you can generate the
-source code documentation by typing the following in a command line:
+Generating ``doxygen`` documentation for SciCell++
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+This includes class diagramas and full source documentation.
+
+**Requirements**
+
+* `Doxygen <https://www.doxygen.nl/index.html>`_ and `Latex
+  <https://www.latex-project.org/>`_ to generate documentation from
+  source code.
+
+**Steps**
+  
+1. Go to the upper level folder of the project, probably called
+`scicellxx`.
+
+2. Open a command line and type
+  
 .. code-block:: shell
 
    ./make_doc.sh
 
-the documentation will be automatically generated into the
-`doc/doxy_doc/html` folder, then open the `index.html` file in a
-web-browser.
-
-### Additional and recommended external libraries
-If you want to get the maximum performance you will need to install
-the following external packages. You can find information on how to
-configure them in the `doc` folder.
-
-* OpenBLAS
-* SuperLU (requires OpenBLAS)
-* Armadillo (requires SuperLU)
-* VTK (for visuallisation purposes, we use it in combination with
-  Paraview)
-  
-NOTE: The project works and runs nicely without these packages.
-
-## Examples and test cases
-
-Demos, examples or test cases are in the `demos` folder. These demos
-are also used to self test the implementation. You should run all of
-them to make sure nothing is broken. You can select to perform a full
-test at installation time, otherwise type
-
-```shell
-./ctest
-```
-into the specified build folder (the default one is `build`).
-
-A large number of examples is expected to live in the `demos` folder
-so check there for any feature available in the project.
-
-### Current demos for specific functionalities
-* Interpolation
-* Linear solvers
-* Matrices operations
-* Newton's method
-* Solution of ODE's
-  * Lotka-Volterra solved with different time steppers
-  * N-body problem (only 3-body and 4-body)
-  * Explicit time steppers
-  * Implicit time steppers (full implicit and _E(PC)^k E_
-    implementations)
-  * Adaptive time steppers
-
-## License
-
-Mmm ... that is something we need to carefully think about.
-
-## How to contribute
-
-Get your own copy and have fun. Do not hesitate to contact the
-developers at :envelope: (jcp.sansalvador.at.inaoep.mx) :envelope:
-
-### Notes for contributors
-For full details on contributions please check the documentation in
-the `doc` folder. Contact the developers for current in-development
-features.
-
-## Facts and curiosities
-
-### How many developers are currently working on the library
-
-At Sunday, April/12, 2020 there is one and only one developer, me
-:no_mouth:
-
-:construction: :construction: :construction: :construction: :construction:
-
-### When did this start?
-This project was initially uploaded to GitHub on Friday, 11 March 2016
-:smile:
-
-External resources
-^^^^^^^^^^^^^^^^^^
+Voila! The documentation will be automatically generated into the
+`docs/doxy_doc/html` folder. Open the file `index.html` within your
+favorite web-browser to read the documentation.
 
 A list (in wikipedia) of `software packages that implement the FEM`_
 
