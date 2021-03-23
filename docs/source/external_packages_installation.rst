@@ -1,5 +1,5 @@
 External packages installation
-=============================
+==============================
 
 If you want to get the maximum performance for SciCell++ you will need
 to install the following external packages.
@@ -10,11 +10,12 @@ to install the following external packages.
 * `VTK <https://vtk.org/>`_ (for visuallisation purposes, we use it in
   combination with `Paraview <https://www.paraview.org/>`_)
 
-.. important::
+.. note::
    
    If you used our provided spack :download:`file <./spack.yaml>` then
-   you have already installed these ones as well.
-  
+   you have already installed these ones as well. You skip to the
+   *check for installation sections*.
+   
 .. important::
 
    You do not need to install these packages for basic use of
@@ -23,75 +24,69 @@ to install the following external packages.
    
 .. important::
 
-   The provied instructions were tested in the following
-   distributions of Ubuntu
+   The provided instructions were tested in the following
+   distributions of Ubuntu:
 
    * Ubuntu 16.04 LTS 64 bits
+     
    * Ubuntu 18.04.2 LTS 64 bits
+     
    * Ubuntu 18.04.5 LTS 64 bits
 
 **General requirements**
 
-Before installing any of the external libraries in your system ensure
-that none of them is already installed in your system, this may
-produce crashes between versions.
+1. Before installing any of the external libraries in your system
+   ensure that none of them is already installed in your system, this
+   may produce crashes between versions.
 
-Installing OpenBLAS
--------------------
+2. Once you ensure that non other versions of the external packages
+   are already installed in your system then proceed to check that you
+   have the following packages installed in your system. You may use
+   ``synaptic`` to install them.
+   
+   * Ubuntu 16.04 LTS 64 bits
+     
+     + cmake (cmake 3.5.1-1ubuntu3)
+       
+     + liblapack (liblapack-dev 3.6.0-2ubuntu2)
+       
+     + libarpack (libarpack2, libarpack2-dev 3.3.0-1build2)
 
-Installing SuperLU
+   * Ubuntu 18.04.2 LTS 64 bits
+     
+     + cmake 3.10.2
+       
+     + liblapack (liblapack3 3.7.1-4ubuntu1, liblapack-dev
+       3.7.1-4ubuntu1)
+       
+     + libarpack (libarpack2 3.5.0+real-2, libarpack2-dev
+       3.5.0+real-2)
+
+3. Once installed those packages follow the order below for installing
+   the external packages
+
+Doxygen (need to generate link to this section)
 ------------------
 
-Installing Armadillo
---------------------
+If you want to create documentation from the source code then install
+Doxygen and graphviz.
 
-Installing VTK
---------------
+* Tested versions with Ubuntu 18.04.2 LTS 64 bits
+ * doxygen 1.8.13-10 (installed from package manager ``synaptic``)
+ * graphviz 2.40.1-2 (installed from package manager ``synaptic``)
+   
+OpenBLAS
+--------
+
+SuperLU
+-------
+
+Armadillo
+---------
+
+VTK
+---
 
 
 
-This guide is to allow [[https://github.com/tachidok/chapchom][chapchom]] to work with external libraries such
-as =Armadillo=, =SuperLU= and =VTK (for visualisation)= in the
-following =OS=:
- - =Ubuntu 16.04 LTS 64 bits=,
- - =Ubuntu 18.04.2 LTS 64 bits=.
-If you find any problem or something in this guide makes no sense
-please contact the author.
 
-* Requirements
-Before installing any of the external libraries in your system ensure
-that none of them is already installed in your system, this may
-produce crashes between versions.
-
-Once you ensure that non other versions of the external packages are
-already installed in your system then proceed to check that you have
-the following packages installed in your system.[fn:note:You may need
-to install =synaptic= package manager to install them.]
-
- * =Ubuntu 16.04 LTS 64 bits=
-   - cmake (=cmake 3.5.1-1ubuntu3=)
-   - liblapack (=liblapack-dev 3.6.0-2ubuntu2=)
-   - libarpack (=libarpack2=, =libarpack2-dev 3.3.0-1build2=)
- * =Ubuntu 18.04.2 LTS 64 bits=
-   - =cmake 3.10.2=
-   - liblapack (=liblapack3 3.7.1-4ubuntu1=, =liblapack-dev
-     3.7.1-4ubuntu1=)
-   - libarpack (=libarpack2 3.5.0+real-2=, =libarpack2-dev
-     3.5.0+real-2=)
-
- * +libblas-dev (tested with =libblas-common=, =libblas-dev 3.6.0-2ubuntu2=)+
-
-* Optional
-If you want to create the documentation then install doxygen and
-graphviz.
- * Tested versions with =Ubuntu 18.04.2 LTS 64 bits=
-  - =doxygen 1.8.13-10= (installed from package manager synaptic)
-  - =graphviz 2.40.1-2= (installed from package manager synaptic)
-
-* Installation
-
-Suggested (and working) installation order
-- OpenBLAS
-- SuperLU
-- Armadillo
-- VTK
