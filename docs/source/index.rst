@@ -15,8 +15,7 @@ processes.
    :maxdepth: 2
 
    installation
-   first_steps
-   external_packages_installation
+   tutorials
    demos
    contributions
    license

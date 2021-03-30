@@ -1,3 +1,5 @@
+.. _installation-label_installation.rst:
+
 Installation
 ============
 
@@ -111,7 +113,7 @@ new branch named ``john_cool`` is generated.
 .. note::
 
    Feel free to rename de ``john_cool`` folder with your name.
-
+   
 2. Configuration
 
 Within the ``scicellxx`` folder execute the automatic generator shell
@@ -147,7 +149,7 @@ to move SciCell++ to a computer with no Internet access.
 Generate ``doxygen`` documentation for SciCell++
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This includes class diagramas and full source documentation.
+This includes class diagrams and full source documentation.
 
 **Requirements**
 
@@ -155,6 +157,9 @@ This includes class diagramas and full source documentation.
   <https://www.latex-project.org/>`_ to generate documentation from
   source code.
 
+ * Check :ref:`this section <doxygen-installation-label_installation.rst>` for doxygen
+   installation.
+  
 **Steps**
   
 1. Go to the upper level folder of the project, probably called
@@ -210,3 +215,94 @@ those in the ``demos`` folder will be keep).
 The process of creating a compressed file will start, once finished a
 file named ``SciCell++.tar.gz`` will be created in the root folder of
 SciCell++.
+
+External packages installation
+------------------------------
+
+If you want to get the maximum performance for SciCell++ you will need
+to install the following external packages.
+
+* `OpenBLAS <https://www.openblas.net/>`_
+* `SuperLU <https://portal.nersc.gov/project/sparse/superlu/>`_ (requires OpenBLAS)
+* `Armadillo <http://arma.sourceforge.net/>`_ (requires SuperLU)
+* `VTK <https://vtk.org/>`_ (for visuallisation purposes, we use it in
+  combination with `Paraview <https://www.paraview.org/>`_)
+
+.. note::
+   
+   If you used our provided spack :download:`file <./spack.yaml>` then
+   you have already installed these ones as well. You skip to the
+   *check for installation sections*.
+   
+.. important::
+
+   You do not need to install these packages for basic use of
+   SciCell++, install these packages only if you require additional
+   features.
+   
+.. important::
+
+   The provided instructions were tested in the following
+   distributions of Ubuntu:
+
+   * Ubuntu 16.04 LTS 64 bits
+     
+   * Ubuntu 18.04.2 LTS 64 bits
+     
+   * Ubuntu 18.04.5 LTS 64 bits
+
+**General requirements**
+
+1. Before installing any of the external libraries in your system
+   ensure that none of them is already installed in your system, this
+   may produce crashes between versions.
+
+2. Once you ensure that non other versions of the external packages
+   are already installed in your system then proceed to check that you
+   have the following packages installed in your system. You may use
+   ``synaptic`` to install them.
+   
+   * Ubuntu 16.04 LTS 64 bits
+     
+     + cmake (cmake 3.5.1-1ubuntu3)
+       
+     + liblapack (liblapack-dev 3.6.0-2ubuntu2)
+       
+     + libarpack (libarpack2, libarpack2-dev 3.3.0-1build2)
+
+   * Ubuntu 18.04.2 LTS 64 bits
+     
+     + cmake 3.10.2
+       
+     + liblapack (liblapack3 3.7.1-4ubuntu1, liblapack-dev
+       3.7.1-4ubuntu1)
+       
+     + libarpack (libarpack2 3.5.0+real-2, libarpack2-dev
+       3.5.0+real-2)
+
+3. Once installed those packages follow the order below for installing
+   the external packages
+
+.. _doxygen-installation-label_installation.rst:
+   
+Doxygen
+^^^^^^^
+
+If you want to create documentation from the source code then install
+Doxygen and graphviz.
+
+* Tested versions with Ubuntu 18.04.2 LTS 64 bits
+ * doxygen 1.8.13-10 (installed from package manager ``synaptic``)
+ * graphviz 2.40.1-2 (installed from package manager ``synaptic``)
+   
+OpenBLAS
+^^^^^^^^
+
+SuperLU
+^^^^^^^
+
+Armadillo
+^^^^^^^^^
+
+VTK
+^^^
