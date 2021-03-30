@@ -261,8 +261,10 @@ to install the following external packages.
    are already installed in your system then proceed to check that you
    have the following packages installed in your system. You may use
    ``synaptic`` to install them.
+
    
    * Ubuntu 16.04 LTS 64 bits
+
      
      + cmake (cmake 3.5.1-1ubuntu3)
        
@@ -270,7 +272,9 @@ to install the following external packages.
        
      + libarpack (libarpack2, libarpack2-dev 3.3.0-1build2)
 
+
    * Ubuntu 18.04.2 LTS 64 bits
+
      
      + cmake 3.10.2
        
@@ -279,6 +283,7 @@ to install the following external packages.
        
      + libarpack (libarpack2 3.5.0+real-2, libarpack2-dev
        3.5.0+real-2)
+
 
 3. Once installed those packages follow the order below for installing
    the external packages
