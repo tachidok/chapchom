@@ -4,6 +4,13 @@ Differential Equations
 What are differential equations?
 --------------------------------
 
+* Move the solution of a differential equation ot other section
+  * You may start by stating that a solution is a function and not a
+    value
+
+* In the section of why DE are important check the YouTube video
+  https://youtu.be/p_di4Zn4wz4
+
 A differential equation is any expression where a function :math:`y`
 is related to its derivative [Strang2014]_, for example:
 
@@ -69,17 +76,21 @@ phenomena found in nature. Differential equations connect maths with
 physics, biology and chemestry.
 
 Differential equations describe changes
+
+Differential equations are commonly used when it is easier to
+describe changes on a phenomena rather than state why a phenome is at
+a particular state.
            
 .. important::
 
-   In order to ease the writting of differential equations you will
-   mostly find that the function :math:`y(t)` is commonly written
-   without its variables, that is :math:`y`. The same happens in
-   :math:`\frac{d}{dt}y(t)` which is commonly written as
-   :math:`\frac{dy}{dt}`, or sometimes as :math:`\frac{d}{dt}y`. You
-   will find that this notation is very common when working with
-   differential equations. We will adopt this notation in the rest of
-   the documentation.
+   It is a common practice to write the dependent function without its
+   parameters, for example, :math:`y` is commonly used instead of
+   :math:`y(t)`. Therefore the notation is simplified as
+   :math:`\frac{dy}{dt}` instead of :math:`\frac{d}{dt}y(t)`. You
+   should be careful that a similar notation may be used for dependant
+   function with multiple parameters, for example, :math:`u(t, x)` may
+   be wrote as :math:`u`. By now we will only deal with functions with
+   one parameter.
 
 Types of differential equations
 -------------------------------
@@ -100,4 +111,5 @@ References
 .. [Strang2014] Strang, G. (2014). Differential Equations and Linear
                 Algebra. Wellesley, MA: Wellesley-Cambridge Press.
 
+.. []
                 

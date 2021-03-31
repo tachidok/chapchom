@@ -4,16 +4,14 @@ Installation
 ============
 
 We have two main approaches to install SciCell++ and have it ready to
-go.
+go:
 
-`Docker-based installation`_
-  Use this installation if you prefer a fast and easier installation
-  of SciCell++.
+  `Docker-based installation`_: Use this installation if you prefer a
+  fast and easier installation of SciCell++.
 
-`Manual installation`_
-  Use this installation if you are familiar with Unix based systems,
-  within this installation you have control over the versions of the
-  third-part packages used by SciCell++.
+  `Manual installation`_: Use this installation if you are familiar
+  with Unix based systems, within this installation you have control
+  over the versions of the third-part packages used by SciCell++.
 
 Docker-based installation
 -------------------------
@@ -54,10 +52,17 @@ and hardware resources in your machine.
 .. note::
 
    Currently only Unix based systems are considerd for this type of
-   installation. The steps provided were tested for Ubuntu 18.04.5
-   LTS.
+   installation. The steps provided in this section have been tested
+   in Ubuntu 16.04 LTS, Ubuntu 18.04.2 LTS and Ubuntu 18.04.5 LTS.
+
+.. note::
    
-**Requirements**
+   If you use `Spack <https://spack.readthedocs.io/en/latest/>`_ as
+   your software package manager we provide you with our spack
+   :download:`file <./spack.yaml>`. Feel free to use it to ease the
+   installation process and skip this section.
+   
+**Software pacakges requirements**
 
 * `Git <https://git-scm.com/>`_ to get a copy of SciCell++ in your
   system.
@@ -83,61 +88,53 @@ The following software packages are optional (but recommended)
 * A software implementation of **MPI** to support parallel features
   (openmpi/mpicc recommended - not currently supported-).
 
-.. important::
-   
-   If you use `Spack <https://spack.readthedocs.io/en/latest/>`_ as
-   your software package manager here is our spack :download:`file
-   <./spack.yaml>`. Feel free to use it to ease the installation
-   process.
-
 **Steps**
    
-Now follow the steps below that guide you through the installation
-process:
+The following step guide you through the installation process:
 
 1. Get your own copy of SciCell++
 
-   Open a command line and type the following:
+   Open a command line and type in the following:
 
-.. code-block:: shell
+   .. code-block:: shell
    
-   git clone https://github.com/tachidok/scicellxx
-   cd scicellxx
-   git checkout -b john_cool
+                   git clone https://github.com/tachidok/scicellxx
+                   cd scicellxx
+                   git checkout -b john_cool
 
-The previous commands get a copy of SciCell++ from the `official
-GitHub repository <https://github.com/tachidok/scicellxx>`_ down to
-your local machine and moves into the ``scicellxx`` folder. Finally, a
-new branch named ``john_cool`` is generated.
+   The previous commands get a copy of SciCell++ from the `official
+   GitHub repository <https://github.com/tachidok/scicellxx>`_ down to
+   your local machine and moves into the ``scicellxx``
+   folder. Finally, a new branch named ``john_cool`` is generated.
 
-.. note::
+   .. note::
 
-   Feel free to rename de ``john_cool`` folder with your name.
+      Feel free to rename the ``john_cool`` folder with your name.
    
 2. Configuration
 
-Within the ``scicellxx`` folder execute the automatic generator shell
-script as follows:
+   Within the ``scicellxx`` folder execute the automatic generator
+   shell script as follows:
 
-.. code-block:: shell
+   .. code-block:: shell
 
-   ./autogen.sh
+                   ./autogen.sh
 
-.. important::
+   .. important::
 
-   This commands executes a full compilation of SciCell++ and runs all
-   the demos and tests to make sure you are working with an stable
-   copy. If you want to fully configure the compilation process use
-   the ``-i`` parameter. You will be able to specify the number of
-   processors to compile SciCell++, also the number of processor to
-   run the demos, use predefined configuration files for access to
-   third-party libraries and many more. For a full list of available
-   options use the ``-h`` parameter.
+      This commands executes a full compilation of SciCell++ and runs
+      all the demos and tests to make sure you are working with an
+      stable copy. If you want to fully configure the compilation
+      process use the ``-i`` parameter. You will be able to specify
+      the number of processors to compile SciCell++, also the number
+      of processor to run the demos, use predefined configuration
+      files for access to third-party libraries and many more. For a
+      full list of available options use the ``-h`` parameter.
 
-A summary of the compilation and testing process is shown once they
-have finished. If no errors were reported then SciCell++ is ready to
-go. We recommend you to have a look at the list of :doc:`demos` as
-follow up.
+   A summary of the compilation and testing process is shown once they
+   have finished. If no errors were reported then SciCell++ is ready
+   to go. We recommend you to have a look at the :doc:`tutorials` and
+   :doc:`demos` as follow up.
 
 Additional features
 -------------------
@@ -149,7 +146,8 @@ to move SciCell++ to a computer with no Internet access.
 Generate ``doxygen`` documentation for SciCell++
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This includes class diagrams and full source documentation.
+This allows you to create class diagrams and browseable documentation
+directly from the source code of SciCell++.
 
 **Requirements**
 
@@ -157,23 +155,24 @@ This includes class diagrams and full source documentation.
   <https://www.latex-project.org/>`_ to generate documentation from
   source code.
 
- * Check :ref:`this section <doxygen-installation-label_installation.rst>` for doxygen
-   installation.
+  Check :ref:`this section <doxygen-installation-label_installation.rst>` for doxygen installation.
   
 **Steps**
   
-1. Go to the upper level folder of the project, probably called
-`scicellxx`.
+1. Open a command line and go to the upper level folder of the
+   project, probably called ``scicellxx``.
 
-2. Open a command line and type
+2. In the command line type the following:
   
-.. code-block:: shell
+   .. code-block:: shell
 
-   ./make_doc.sh
+                   ./make_doc.sh
 
-Voila! The documentation will be automatically generated into the
-``docs/doxy_doc/html`` folder. Open the file ``index.html`` within
-your favorite web-browser to read the documentation.
+   Voila! The documentation will be automatically generated into the
+   ``docs/doxy_doc/html`` folder.
+
+3. Open the file ``index.html`` within your favorite web-browser to
+   read the documentation.
 
 Generate a ``.tar.gz`` file to distribute SciCell++
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -182,18 +181,15 @@ The easiest way to distributed SciCell++ is by means of the official
 GitHub repository, however, if you need to move your current copy of
 SciCell++ to a computer with no Internet access (ex. an isolated
 cluster of computers or a SuperComputer) this is an easy way to do
-it. Here we present the steps to create a ``.tar.gz`` file with your
-current version of SciCell++.
-
-**Previous steps**
-
-* Save all of your current work and make sure your current version is
-  stable. In order to do so run the ``./autogen.sh`` script at the root
-  directory of SciCell++.
+so. Follow the steps in this section to create a ``.tar.gz`` package
+file with your current version of SciCell++.
 
 **Requirements**
 
-* A working copy of SciCell++ with neither errors nor broken demos.
+* Save all of your work
+* Make sure that your current version has neither errors nor broken
+  demos. You can verify this by running the ``./autogen.sh`` script at
+  the root directory of SciCell++.
 
 **Steps**
 
@@ -201,49 +197,50 @@ current version of SciCell++.
    ``scicellxx``.
 
 2. Open a command line and type
-  
-.. code-block:: shell
 
-   ./make_clean_distro.sh
+   .. code-block:: shell
 
-The full folder containing SciCell++ will be copied into a temporary
-location, all the control version information generated by Git will be
-removed. You will be prompted to remove all files with the extension
-``.dat, .png, .tar.gz, .fig, .bin, .rar, .vtu, .ubx, .gp, .m`` (only
-those in the ``demos`` folder will be keep).
-   
-The process of creating a compressed file will start, once finished a
-file named ``SciCell++.tar.gz`` will be created in the root folder of
-SciCell++.
+                   ./make_clean_distro.sh
+
+   The full folder containing SciCell++ will be copied into a
+   temporary location, all the control version information generated
+   by Git will be removed. You will be prompted to remove all files
+   with the extension ``.dat, .png, .tar.gz, .fig, .bin, .rar, .vtu,
+   .ubx, .gp, .m`` (only those in the ``demos`` folder will be
+   keep). The process of creating a compressed file will start.
+
+3. Once finished a file named ``SciCell++.tar.gz`` will be created in
+   the root folder of SciCell++.
 
 External packages installation
 ------------------------------
 
 If you want to get the maximum performance for SciCell++ you will need
-to install the following external packages.
+to install some or all of the packages listed in this section.
 
-* `OpenBLAS <https://www.openblas.net/>`_
-* `SuperLU <https://portal.nersc.gov/project/sparse/superlu/>`_ (requires OpenBLAS)
-* `Armadillo <http://arma.sourceforge.net/>`_ (requires SuperLU)
-* `VTK <https://vtk.org/>`_ (for visuallisation purposes, we use it in
-  combination with `Paraview <https://www.paraview.org/>`_)
+.. note::
+
+   You do not need to install these packages for basic use of
+   SciCell++, install them only if you require additional features.
 
 .. note::
    
-   If you used our provided spack :download:`file <./spack.yaml>` then
-   you have already installed these ones as well. You skip to the
-   *check for installation sections*.
-   
-.. important::
+   If you used our provided spack :download:`file <./spack.yaml>` at
+   the :ref:`installation
+   <doxygen-installation-label_installation.rst>` step then you
+   already have these ones as well. You may skip this section.
 
-   You do not need to install these packages for basic use of
-   SciCell++, install these packages only if you require additional
-   features.
-   
-.. important::
+The list of packages is the following:
+  
+* `OpenBLAS <https://www.openblas.net/>`_
+* `SuperLU <https://portal.nersc.gov/project/sparse/superlu/>`_ (requires OpenBLAS)
+* `Armadillo <http://arma.sourceforge.net/>`_ (it is recommended to
+  previously install SuperLU)
+* `VTK <https://vtk.org/>`_ (for visuallisation purposes, we use it
+  with `Paraview <https://www.paraview.org/>`_)
 
-   The provided instructions were tested in the following
-   distributions of Ubuntu:
+.. note:: Please note that the provided instructions were tested in
+   the following distributions of Ubuntu:
 
    * Ubuntu 16.04 LTS 64 bits
      
@@ -257,14 +254,28 @@ to install the following external packages.
    ensure that none of them is already installed in your system, this
    may produce crashes between versions.
 
-2. Once you ensure that non other versions of the external packages
-   are already installed in your system then proceed to check that you
-   have the following packages installed in your system. You may use
-   ``synaptic`` to install them.
+   You may remove the installed packages with the following command:
 
+   .. code-block:: shell
+
+      sudo apt-get remove --purge <package-name>
+
+   where `<package-name>` should be substituted by the name of the
+   package you want to remove.
+   
+2. Install the followling packages in your system (we provide the
+   version of each package that we used for the installation):
+
+   You may verify the available version of a package by typing:
+
+   .. code-block:: shell
+
+      apt-cache policy <package-name>
+
+   where `<package-name>` should be substituted by the name of the
+   package which you want to check its version.
    
    * Ubuntu 16.04 LTS 64 bits
-
      
      + cmake (cmake 3.5.1-1ubuntu3)
        
@@ -272,9 +283,7 @@ to install the following external packages.
        
      + libarpack (libarpack2, libarpack2-dev 3.3.0-1build2)
 
-
    * Ubuntu 18.04.2 LTS 64 bits
-
      
      + cmake 3.10.2
        
@@ -285,8 +294,8 @@ to install the following external packages.
        3.5.0+real-2)
 
 
-3. Once installed those packages follow the order below for installing
-   the external packages
+3. Once installed follow the order below for installing the external
+   packages
 
 .. _doxygen-installation-label_installation.rst:
    
@@ -296,12 +305,31 @@ Doxygen
 If you want to create documentation from the source code then install
 Doxygen and graphviz.
 
-* Tested versions with Ubuntu 18.04.2 LTS 64 bits
+Open a terminal and type
+
+.. code-block:: shell
+
+  sudo apt-get install doxygen
+  sudo apt-get install graphviz
+
+Tested versions with Ubuntu 18.04.2 LTS 64 bits:
  * doxygen 1.8.13-10 (installed from package manager ``synaptic``)
  * graphviz 2.40.1-2 (installed from package manager ``synaptic``)
    
 OpenBLAS
 ^^^^^^^^
+
+This section guides you through the installation of ``OpenBLAS
+0.2.20`` on the following Ubuntu distributions:
+
+* Ubuntu 16.04 LTS 64 bits
+ 
+* Ubuntu 18.04.2 LTS 64 bits
+     
+* Ubuntu 18.04.5 LTS 64 bits
+
+.. note:: Please refer to the original documentation in case you are
+          having troubles with the installation.
 
 SuperLU
 ^^^^^^^
