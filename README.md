@@ -17,7 +17,7 @@ SciCell++ is an object-oriented framework for the simulation of biological and p
 ## Table of Contents
 
 1. [Installation](#installation)
-2. [Examples and test cases](#examples_and_test_cases)
+2. [Demos](#demos)
 3. [Documentation](#documentation)
 4. [How to contribute](#how_to_contribute)
 5. [Facts and curiosities](#facts_and_curiosities)
@@ -79,18 +79,17 @@ customised branch, we assume that your name is _john_cool_
 * Follow up the instructions on screen to configure your own copy of
 the project.
 
-## Demos <a name="examples_and_test_cases"></a>
+## Demos <a name="demos"></a>
 
-Demos live in the `demos` folder. You should run all of them to make sure nothing is broken. If you did not run them at installation time (by default) you can do it at any time by typing in a terminal
+Demos live in the `demos` folder. You should run all of them to make sure everything is working fine. If you did not run them at installation time (by default) you can do it at any time by opening a terminal, going into the build folder (the default one is `build`) and typing
 
 ```shell
 ./ctest
 ```
-into the specified build folder (the default one is `build`).
 
-A large number of demos is expected to live in the `demos` folder so check there for any feature available in the project or review the [corresponding documentation](https://scicellxx.readthedocs.io/en/latest/?badge=latest).
+A large number of demos is expected to live in the `demos` folder. Review the [corresponding documentation](https://scicellxx.readthedocs.io/en/latest/?badge=latest) for their full description.
 
-### Current demos for specific functionalities
+### Featured demos
 * Interpolation
 * Linear solvers
 * Matrices operations
@@ -113,7 +112,7 @@ Please check the [corresponding documentation](https://scicellxx.readthedocs.io/
 
 ## Facts and curiosities <a name="facts_and_curiosities"></a>
 
-### How many developers are currently working on this project
+### How many developers are currently working on this project?
 
 At Wednesday, March/31, 2021 there is one and only one developer, me
 :no_mouth: :envelope:
