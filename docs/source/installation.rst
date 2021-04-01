@@ -212,6 +212,8 @@ file with your current version of SciCell++.
 3. Once finished a file named ``SciCell++.tar.gz`` will be created in
    the root folder of SciCell++.
 
+.. _external-packages-installation-label_installation.rst:
+   
 External packages installation
 ------------------------------
 
@@ -231,13 +233,12 @@ to install some or all of the packages listed in this section.
    already have these ones as well. You may skip this section.
 
 The list of packages is the following:
-  
-* `OpenBLAS <https://www.openblas.net/>`_
-* `SuperLU <https://portal.nersc.gov/project/sparse/superlu/>`_ (requires OpenBLAS)
-* `Armadillo <http://arma.sourceforge.net/>`_ (it is recommended to
-  previously install SuperLU)
-* `VTK <https://vtk.org/>`_ (for visuallisation purposes, we use it
-  with `Paraview <https://www.paraview.org/>`_)
+
+* :ref:`Doxygen <doxygen-installation-label_installation.rst>`
+* :ref:`OpenBLAS <openblas-installation-label_installation.rst>`
+* :ref:`SuperLU <superlu-installation-label_installation.rst>` (requires OpenBLAS)
+* :ref:`Armadillo <armadillo-installation-label_installation.rst>` (it is recommended to previously install SuperLU)
+* :ref:`VTK <vtk-installation-label_installation.rst>` (for visuallisation purposes, we use it with `Paraview <https://www.paraview.org/>`_)
 
 .. note:: Please note that the provided instructions were tested in
    the following distributions of Ubuntu:
@@ -263,19 +264,20 @@ The list of packages is the following:
    where `<package-name>` should be substituted by the name of the
    package you want to remove.
    
-2. Install the followling packages in your system (we provide the
-   version of each package that we used for the installation):
+2. Install the following packages in your system.
 
-   You may verify the available version of a package by typing:
+   .. note:: We provide the version of each package that we used for
+             the installation. You could check the available version
+             of a package for your system by typing:
 
-   .. code-block:: shell
+             .. code-block:: shell
 
-      apt-cache policy <package-name>
+                apt-cache policy <package-name>
 
-   where `<package-name>` should be substituted by the name of the
-   package which you want to check its version.
+             where `<package-name>` should be substituted by the name
+             of the package which you want to check its version.
    
-   * Ubuntu 16.04 LTS 64 bits
+  **Ubuntu 16.04 LTS 64 bits**
      
      + cmake (cmake 3.5.1-1ubuntu3)
        
@@ -283,7 +285,13 @@ The list of packages is the following:
        
      + libarpack (libarpack2, libarpack2-dev 3.3.0-1build2)
 
-   * Ubuntu 18.04.2 LTS 64 bits
+   Install them by typing:
+
+   .. code-block:: shell
+
+      sudo apt-get install cmake liblapack-dev libarpack2 libarpack2-dev
+
+  **Ubuntu 18.04.2 LTS 64 bits**
      
      + cmake 3.10.2
        
@@ -293,7 +301,12 @@ The list of packages is the following:
      + libarpack (libarpack2 3.5.0+real-2, libarpack2-dev
        3.5.0+real-2)
 
+   Install them by typing:
 
+   .. code-block:: shell
+
+      sudo apt-get install cmake liblapack3 liblapack-dev libarpack2 libarpack2-dev
+       
 3. Once installed follow the order below for installing the external
    packages
 
@@ -305,37 +318,209 @@ Doxygen
 If you want to create documentation from the source code then install
 Doxygen and graphviz.
 
-Open a terminal and type
+**Steps**
+
+1. Open a terminal and type
 
 .. code-block:: shell
 
   sudo apt-get install doxygen
   sudo apt-get install graphviz
 
-Tested versions with Ubuntu 18.04.2 LTS 64 bits:
- * doxygen 1.8.13-10 (installed from package manager ``synaptic``)
- * graphviz 2.40.1-2 (installed from package manager ``synaptic``)
+.. note:: Tested versions with Ubuntu 18.04.2 LTS 64 bits:
+          
+          * doxygen 1.8.13-10
+          * graphviz 2.40.1-2
+
+.. _openblas-installation-label_installation.rst:
    
 OpenBLAS
 ^^^^^^^^
 
-This section guides you through the installation of ``OpenBLAS
-0.2.20`` on the following Ubuntu distributions:
+OpenBLAS is an optimised version of the Basic Linear Algebra
+Subprograms (BLAS). This section guides you through the installation
+of ``OpenBLAS 0.2.20`` on the following Ubuntu distributions:
 
 * Ubuntu 16.04 LTS 64 bits
- 
 * Ubuntu 18.04.2 LTS 64 bits
-     
 * Ubuntu 18.04.5 LTS 64 bits
 
-.. note:: Please refer to the original documentation in case you are
-          having troubles with the installation.
+.. note:: Please refer to the `original documentation
+          <https://www.openblas.net/>`_ in case you have problems with
+          the installation.
+
+**Requirements**
+
+Double-check that no previous installation of OpenBLAS is part of your
+system. If that is the case we recommend you to uninstall them before
+continuing.
+
+  **Ubuntu 16.04 LTS 64 bits**
+
+  Packages to install:
+  
+  * libblas-dev (libblas-common, libblas-dev 3.6.0-2ubuntu2)
+
+  Open a terminal and type the following:
+
+  .. code-block:: shell
+
+     sudo apt-get install libblas-common libblas-dev
+     
+  **Ubuntu 18.04.2 LTS 64 bits**
+
+  Packages to install:
+
+  * libblas-dev (libblas3 3.7.1-4ubuntu1, libblas-dev 3.7.1-4ubuntu1)
+
+  Open a terminal and type the following:
+
+  .. code-block:: shell
+  
+     sudo apt-get install libblas3 libblas-dev
+
+**Steps**
+
+1. Extract the compressed file in
+   ``scicellxx/external_src/openBLAS/OpenBLAS-0.2.20.tar.gz`` in a folder.
+
+  .. warning:: We recommend you to extract it out of the ``scicellxx``
+               project folder to avoid adding the files to the git
+               repository. If you do extract it in the ``scicellxx``
+               project folder then do not commit that folder within
+               the project.
+  
+2. Open a terminal and go into the folder where you extracted the
+   files and type
+
+   .. code-block:: shell
+
+                   make
+
+   .. note:: You can try with ``make -j <number_of_processors>`` to
+             use more processors at compilation time.
+
+3. Once compilation is finished type the following to start the
+   installation process
+
+   .. code-block:: shell
+
+                   mkdir installation
+                   make PREFIX=./installation install
+                   
+   .. note:: If you prefer you can specify a different installation
+             foilder as follow:
+
+             .. code-block:: shell
+
+                             make PREFIX=/path/to/your/installation install
+                
+
+.. _superlu-installation-label_installation.rst:
 
 SuperLU
 ^^^^^^^
 
+SuperLU is a library for the direct solution of large, sparse,
+nonsymmetric systems of linear equations. This section guides you
+through the installation of ``SuperLU 5.2.0`` on the following Ubuntu
+distributions:
+
+* Ubuntu 16.04 LTS 64 bits
+* Ubuntu 18.04.2 LTS 64 bits
+
+.. note:: Please refer to the `original documentation
+          <http://crd-legacy.lbl.gov/~xiaoye/SuperLU/>`_ in case you
+          have problems with the installation.
+  
+**Requirements**
+
+Double-check that no previous installation of SuperLU is part of your
+system. If that is the case we recommend you to uninstall them before
+continuing.
+
+You must have cmake installed in your system. Please refer to
+:ref:`that section
+<external-packages-installation-label_installation.rst>` to ensure its
+installation.
+
+**Steps**
+
+1. Extract the compressed file ``/external_src/superLU/superlu_5.2.0.tar.gz`` in a folder of your
+  preference. We recommend you to extract it out of the chapchom
+  project folder to avoid adding the files to the git repository. If
+  you do extract it inside the chapchom project folder please extreme
+  precautions when adding your files to the git repository.
+
+- Go to the folder where you extracted the files and type
+
+#+BEGIN_SRC bash
+mkdir build
+cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=../lib
+#+END_SRC
+
+the last line indicates where to perform the installation, I use to
+install it in the =lib= directory of the SuperLU folder, that is why
+that value. However, if you have root privileges then you may not need
+to specify a value for the =CMAKE_INSTALL_PREFIX= variable.
+
+NOTE: If you are installing =Armadillo= with =SuperLU= support then
+you may need to install =SuperLU= with the flag =-fPIC= (which stands
+for 'Position Independent Code'), to do so open the =CMakeLists.txt=
+file in the main folder of =SuperLU= and edit the line where =CFLAGS=
+are added (in =SuperLU 5.2.0= it is in line =68=). This is how it
+looks for =version 5.2.0=.
+
+#+BEGIN_SRC cmake
+set(CMAKE_C_FLAGS "-fPIC -DPRNTlevel=0 -DAdd_ ${CMAKE_C_FLAGS}")
+#+END_SRC
+
+- When the process finish then type
+
+#+BEGIN_SRC bash
+make
+#+END_SRC
+
+You can try =make -j # of processors= instead of =make= to use more
+processors at compilation time.
+
+- Install it ...
+
+#+BEGIN_SRC bash
+make install
+#+END_SRC
+
+- And finally, run the test by typing
+
+#+BEGIN_SRC bash
+ctest
+#+END_SRC
+
+You can check the results of the testing process in the following
+files
+
+| =build/TESTING/s_test.out= | =single precision, real=   |
+| =build/TESTING/d_test.out= | =double precision, real=   |
+| =build/TESTING/c_test.out= | =single precision, complex=   |
+| =build/TESTING/z_test.out= | =double precision, complex=   |
+
+.. _armadillo-installation-label_installation.rst:
+
 Armadillo
 ^^^^^^^^^
 
+.. _vtk-installation-label_installation.rst:
+
 VTK
 ^^^
+
+External packages webpages
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* `Doxygen <https://www.doxygen.nl/index.html>`_
+* `OpenBLAS <https://www.openblas.net/>`_
+* `SuperLU <https://portal.nersc.gov/project/sparse/superlu/>`_
+* `Armadillo <http://arma.sourceforge.net/>`_
+* `VTK <https://vtk.org/>`_
+* `Paraview <https://www.paraview.org/>`_
