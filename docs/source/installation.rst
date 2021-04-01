@@ -218,7 +218,14 @@ External packages installation
 ------------------------------
 
 If you want to get the maximum performance for SciCell++ you will need
-to install some or all of the packages listed in this section.
+to install some or all of the following packages:
+
+* :ref:`Doxygen <doxygen-installation-label_installation.rst>`
+* :ref:`OpenBLAS <openblas-installation-label_installation.rst>`
+* :ref:`SuperLU <superlu-installation-label_installation.rst>` (requires OpenBLAS)
+* :ref:`Armadillo <armadillo-installation-label_installation.rst>` (it is recommended to previously install SuperLU)
+* :ref:`VTK <vtk-installation-label_installation.rst>` (for visuallisation purposes, we use it with `Paraview <https://www.paraview.org/>`_)
+
 
 .. note::
 
@@ -231,14 +238,6 @@ to install some or all of the packages listed in this section.
    the :ref:`installation
    <doxygen-installation-label_installation.rst>` step then you
    already have these ones as well. You may skip this section.
-
-The list of packages is the following:
-
-* :ref:`Doxygen <doxygen-installation-label_installation.rst>`
-* :ref:`OpenBLAS <openblas-installation-label_installation.rst>`
-* :ref:`SuperLU <superlu-installation-label_installation.rst>` (requires OpenBLAS)
-* :ref:`Armadillo <armadillo-installation-label_installation.rst>` (it is recommended to previously install SuperLU)
-* :ref:`VTK <vtk-installation-label_installation.rst>` (for visuallisation purposes, we use it with `Paraview <https://www.paraview.org/>`_)
 
 .. note:: Please note that the provided instructions were tested in
    the following distributions of Ubuntu:
@@ -315,8 +314,10 @@ The list of packages is the following:
 Doxygen
 ^^^^^^^
 
-If you want to create documentation from the source code then install
-Doxygen and graphviz.
+`Doxygen <https://www.doxygen.nl/index.html>`_ is a documentation
+generator from source code. The source code of SciCell++ is documented
+following Doxygen directives, if you want to create documentation from
+the source code then install Doxygen and graphviz.
 
 **Steps**
 
@@ -345,15 +346,15 @@ of ``OpenBLAS 0.2.20`` on the following Ubuntu distributions:
 * Ubuntu 18.04.2 LTS 64 bits
 * Ubuntu 18.04.5 LTS 64 bits
 
-.. note:: Please refer to the `original documentation
+.. note:: Please refer to the `OpenBLAS project original documentation
           <https://www.openblas.net/>`_ in case you have problems with
           the installation.
 
 **Requirements**
 
-Double-check that no previous installation of OpenBLAS is part of your
-system. If that is the case we recommend you to uninstall them before
-continuing.
+* Double-check that no previous installation of OpenBLAS is part of
+  your system. If that is the case we recommend you to uninstall them
+  before continue.
 
   **Ubuntu 16.04 LTS 64 bits**
 
@@ -391,7 +392,7 @@ continuing.
                the project.
   
 2. Open a terminal and go into the folder where you extracted the
-   files and type
+   files, then type
 
    .. code-block:: shell
 
@@ -429,98 +430,342 @@ distributions:
 * Ubuntu 16.04 LTS 64 bits
 * Ubuntu 18.04.2 LTS 64 bits
 
-.. note:: Please refer to the `original documentation
-          <http://crd-legacy.lbl.gov/~xiaoye/SuperLU/>`_ in case you
-          have problems with the installation.
+.. note:: Please refer to the `SuperLU original documentation
+          <https://portal.nersc.gov/project/sparse/superlu/>`_ in case
+          you have problems with the installation.
   
 **Requirements**
 
-Double-check that no previous installation of SuperLU is part of your
-system. If that is the case we recommend you to uninstall them before
-continuing.
+* Double-check that no previous installation of SuperLU is part of
+  your system. If that is the case we recommend you to uninstall them
+  before continue.
 
-You must have cmake installed in your system. Please refer to
-:ref:`that section
-<external-packages-installation-label_installation.rst>` to ensure its
-installation.
+* You must have cmake installed in your system. Please refer to
+  :ref:`that section
+  <external-packages-installation-label_installation.rst>` to ensure
+  its installation.
 
 **Steps**
 
-1. Extract the compressed file ``/external_src/superLU/superlu_5.2.0.tar.gz`` in a folder of your
-  preference. We recommend you to extract it out of the chapchom
-  project folder to avoid adding the files to the git repository. If
-  you do extract it inside the chapchom project folder please extreme
-  precautions when adding your files to the git repository.
+1. Extract the compressed file
+   ``/external_src/superLU/superlu_5.2.0.tar.gz`` in a folder.
 
-- Go to the folder where you extracted the files and type
+  .. warning:: We recommend you to extract it out of the ``scicellxx``
+               project folder to avoid adding the files to the git
+               repository. If you do extract it in the ``scicellxx``
+               project folder then do not commit that folder within
+               the project.
 
-#+BEGIN_SRC bash
-mkdir build
-cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=../lib
-#+END_SRC
+  .. note:: If you are installing Armadillo with SuperLU support then
+            you need to install SuperLU with the flag ``-fPIC`` (which
+            stands for `Position Independent Code`), to do so open the
+            ``CMakeLists.txt`` file in the folder where you extracted
+            ``SuperLU``, edit the line where ``CFLAGS`` are added (it
+            should be line ``68`` for the version we supply you. It
+            should look something like this.
 
-the last line indicates where to perform the installation, I use to
-install it in the =lib= directory of the SuperLU folder, that is why
-that value. However, if you have root privileges then you may not need
-to specify a value for the =CMAKE_INSTALL_PREFIX= variable.
+            .. code-block:: shell
+                            
+               set(CMAKE_C_FLAGS "-fPIC -DPRNTlevel=0 -DAdd_ ${CMAKE_C_FLAGS}")
+                  
+2. Open a terminal and go into the folder where you extracted the
+   files, then type
 
-NOTE: If you are installing =Armadillo= with =SuperLU= support then
-you may need to install =SuperLU= with the flag =-fPIC= (which stands
-for 'Position Independent Code'), to do so open the =CMakeLists.txt=
-file in the main folder of =SuperLU= and edit the line where =CFLAGS=
-are added (in =SuperLU 5.2.0= it is in line =68=). This is how it
-looks for =version 5.2.0=.
+   .. code-block:: shell
+                   
+      mkdir build
+      cd build
+      cmake .. -DCMAKE_INSTALL_PREFIX=../lib
+                   
+   the last line indicates where to save the installation, here we use
+   the ``lib`` folder of the SuperLU directory. If you have root
+   privileges then you may not need to specify a value for the
+   ``CMAKE_INSTALL_PREFIX`` variable.
 
-#+BEGIN_SRC cmake
-set(CMAKE_C_FLAGS "-fPIC -DPRNTlevel=0 -DAdd_ ${CMAKE_C_FLAGS}")
-#+END_SRC
+3. Once cmake finished its configuration type
 
-- When the process finish then type
+   .. code-block:: shell
 
-#+BEGIN_SRC bash
-make
-#+END_SRC
+      make
+      make install
 
-You can try =make -j # of processors= instead of =make= to use more
-processors at compilation time.
+   .. note:: You can try with ``make -j <number_of_processors>`` to
+             use more processors at compilation time.
+      
+**Run tests**
 
-- Install it ...
+1. Run the following command in the same folder where you extracted
+   SuperLU:
 
-#+BEGIN_SRC bash
-make install
-#+END_SRC
+   .. code-block:: shell
 
-- And finally, run the test by typing
+      ctest
+                   
+   The results of the testing process can be found in the folowing
+   files:
 
-#+BEGIN_SRC bash
-ctest
-#+END_SRC
-
-You can check the results of the testing process in the following
-files
-
-| =build/TESTING/s_test.out= | =single precision, real=   |
-| =build/TESTING/d_test.out= | =double precision, real=   |
-| =build/TESTING/c_test.out= | =single precision, complex=   |
-| =build/TESTING/z_test.out= | =double precision, complex=   |
-
+   ========================  ========================
+   build/TESTING/s_test.out  single precision real
+   build/TESTING/d_test.out  double precision real
+   build/TESTING/c_test.out  single precision complex
+   build/TESTING/z_test.out  double precision complex
+   ========================  ========================
+         
 .. _armadillo-installation-label_installation.rst:
 
 Armadillo
 ^^^^^^^^^
 
+Armadillo is a C++ library for linear algebra and scientific
+computing. This section guides you through the installation of
+``Armadillo 8.300.3`` on the following Ubuntu distributions:
+
+* Ubuntu 16.04 LTS 64 bits
+* Ubuntu 18.04.2 LTS 64 bits
+
+.. note:: Please refer to the `Armadillo original documentation
+          <http://arma.sourceforge.net/>`_ in case you have problems
+          with the installation.
+
+**Requirements**
+
+* Double-check that no previous installation of Armadillo is in your
+  system. If that is the case we recommend you to uninstall them
+  before continue.
+
+* You must have cmake installed in your system. Please refer to :ref:`that section <external-packages-installation-label_installation.rst>` to ensure its installation.
+
+* This installation assumes you have SuperLU 5.2.0 already installed
+  in your system, if that is not the case then :ref:`install SuperLU
+  <superlu-installation-label_installation.rst>` and return to this
+  point.
+
+.. note:: According to Armadillo's documentation, LAPACK and BLAS are
+          used to work with dense matrices, meanwhile ARPACK and
+          SuperLU are used to work with sparese matrices. If you want
+          to use SuperLU then you need to stick to version 5.2 (check
+          the README.txt file at line 146 of Armadillo
+          documentation). If you want to use OpenMP then make sure you
+          are using version 3.1 or newer (check the README.txt file at
+          line 372 of Armadillo documentation).
+
+**Steps**
+
+1. Extract the compressed file ``/external_src/armadillo/armadillo-8.300.3.tar.xz`` in a folder
+
+  .. warning:: We recommend you to extract it out of the ``scicellxx``
+               project folder to avoid adding the files to the git
+               repository. If you do extract it in the ``scicellxx``
+               project folder then do not commit that folder within
+               the project.
+
+2. Open a terminal and go into the folder where you extracted the
+   files, then type
+
+   .. code-block:: shell
+
+      mkdir installation
+      cmake . \
+      -DCMAKE_INSTALL_PREFIX=lib \
+      -DSuperLU_INCLUDE_DIR=path_to_SuperLU_include_directory \
+      -DSuperLU_LIBRARY=path_to_SuperLU_library \
+      -Dopenblas_LIBRARY=path_to_openBLAS_library
+
+   .. note:: Observe that you need to substitute with the paths on your particular machine. If you just followed the instructions on the previous sections then you may use the following configuration:
+
+      .. code-block:: shell
+             
+         mkdir installation
+         cmake . \
+         -DCMAKE_INSTALL_PREFIX=installation \
+         -DSuperLU_INCLUDE_DIR=../SuperLU_5.2.0/installation/include \
+         -DSuperLU_LIBRARY=../SuperLU_5.2.0/installation/lib/libsuperlu.a \
+         -Dopenblas_LIBRARY=../OpenBLAS-0.2.20/installation/lib/libopenblas.a
+                
+   .. note:: If you use ``cmake-gui`` then you can configure the above
+             variables there as well.
+
+3. Once cmake finished its configuration type
+
+   .. code-block:: shell
+
+      make
+      make install
+
+   .. note:: You can try with ``make -j <number_of_processors>`` to
+             use more processors at compilation time.
+   
+   .. note:: In previous versions we required to indicate the
+             installation directory at the ``make`` command , if you
+             need to do it here is how, otherwise, just ignore these
+             lines
+
+             .. code-block:: shell
+
+                make install DESTDIR=my_installation_directory
+
+4. Add the library path to the environment variable ``LD_LIBRARY_PATH``. To do so open a terminal and type
+
+  .. code-block:: shell
+
+     LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/armadillo/installation/lib/folder
+
+  .. note:: If you want to add this path "permanently" to your user
+            add these lines to your ``~/.profile`` file:
+  
+            .. code-block:: shell
+
+               export LD_LIBRARY_PATH=/path/to/armadillo/installation/lib/folder
+                     
+            and relogin.
+
+  .. note:: Observe that you need to specify the path for your current
+            machine. Here are the values I use for my personal
+            computer:
+
+            .. code-block:: shell
+ 
+               export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/tachidok/local/working/my_stuff/armadillo-8.300.3/installation/lib/
+
+            The following is the line I added to my ``~/.profile``
+            file
+
+            .. code-block:: shell
+
+               export LD_LIBRARY_PATH=/home/tachidok/local/working/my_stuff/armadillo-8.300.3/installation/lib/
+
+5. You can verify that the path is on your ``LD_LIBRARY_PATH``
+   environment variable by typing:
+
+   .. code-block:: shell
+
+      echo $LD_LIBRARY_PATH
+                   
+**Run tests**
+
+1. Open a termianl and go to folder where you extracted Armadillo,
+   then open the ``Makefile`` in the ``examples`` folder.
+
+2. Add the following lines (substitute them with the correct paths in
+   your computer):
+
+   .. code-block:: shell
+                   
+      INCLUDE=-I /path/to/armadillo/include/folder
+      LIBS=-L /path/to/armadillo/lib/folder
+
+3. In the same file add the ``$(INCLUDE)`` and ``$(LIBS)`` directives
+   in the line:
+
+   .. code-block:: shell
+
+      CXXFLAGS = $(DEBUG) $(FINAL) $(OPT) $(EXTRA_OPT) $(INCLUDE) $(LIBS)
+                   
+4. Save and close the file.
+
+5. Compile ``example1`` by typing
+
+   .. code-block:: shell
+
+      make example1
+                   
+   .. note:: If you got errors related with the ``pthread`` library then add the following in the ``Makefile``
+             
+      .. code-block:: shell
+
+         LIB_FLAGS = -larmadillo -lpthread
+         
+  You should have an executable file called ``example1``.
+
+6. Run the example as follows:
+
+   .. code-block:: shell
+
+      ./example1
+
+   .. note:: If you have problems related to no shared library found
+             then make sure you added the correct path for the
+             armadillo libraries (/.so/) in the environment variable
+             ``LD_LIBRARY_PATH``.
+
+**Further steps**
+
+If you require an specific configuration for Armadillo as OpenMP
+support, acceleration, disabling of BLAS, LAPACK or something else
+please do check `the official documentation for additional features <http://arma.sourceforge.net/docs.html#example_prog>`_.
+             
 .. _vtk-installation-label_installation.rst:
 
 VTK
 ^^^
 
-External packages webpages
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+`VTK <https://vtk.org/>`_ is an open source Visualization Toolkit to
+display scientific data in 2D and 3D. We use `Paraview
+<https://www.paraview.org/>`_ , an open source visualization
+application which makes use of VTK to display the plots. This section
+guides you through the installation of ``VTK-8.1.1`` on the following
+Ubuntu distributions:
 
-* `Doxygen <https://www.doxygen.nl/index.html>`_
-* `OpenBLAS <https://www.openblas.net/>`_
-* `SuperLU <https://portal.nersc.gov/project/sparse/superlu/>`_
-* `Armadillo <http://arma.sourceforge.net/>`_
-* `VTK <https://vtk.org/>`_
-* `Paraview <https://www.paraview.org/>`_
+* Ubuntu 16.04 LTS 64 bits
+* Ubuntu 18.04.2 LTS 64 bits
+
+**Steps**
+
+1. Extract the compressed file ``/external_src/vtk/VTK-8.1.1.tar.gz``
+   in a folder.
+
+  .. warning:: We recommend you to extract it out of the ``scicellxx``
+               project folder to avoid adding the files to the git
+               repository. If you do extract it in the ``scicellxx``
+               project folder then do not commit that folder within
+               the project.
+
+2. Open a terminal and go to the folder where you extracted the compressed file, inside the VTK folder create a new one and execute the ``cmake-gui`` as follow:
+
+  .. code-block:: shell
+     
+     mkdir VTK-bin
+     cd VTK-bin
+     cmake-gui ../../VTK-8.1.1 -DCMAKE_INSTALL_PREFIX=./installation
+
+  the installation will be performed in the ``installation`` directory
+  of the ``VTK-bin folder``. If you have root privileges then you may
+  not need to specify a value for the ``CMAKE_INSTALL_PREFIX``
+  variable.
+
+3. In the cmake gui click on the ``configure`` button, once finished
+   click on the ``generate`` button.
+
+   .. note:: Make sure that the source code and build binary directories are correctly set.
+
+      * Source ``./VTK-8.1.1``
+      * Bin ``./VTK-8.1.1/VTK-bin``
+
+   .. note:: If you want to enable MPI then you need to set it in the
+             variable ``VTK_Group_MPI``.
+
+   .. note:: Verify that the building type you want has been set
+             correctly; ``debug`` or ``release``.
+
+4. After the configuration has finished close the cmake gui and in a
+   terminal type
+
+   .. code-block:: shell
+
+      make
+      
+   .. note:: You can try with ``make -j <number_of_processors>`` to
+             use more processors at compilation time.
+
+5. Install VTK
+
+   .. code-block:: shell
+
+      make install
+
+   this will install VTK into the folder specified by the build option
+   ``DCMAKE_INSTALL_PREFIX``.
+
+**Further steps**
+   
+* Learning VTK by examples: check `this guide <https://www.vtk.org/vtk-users-guide/>`_, specially chapters 1, 2, 3, 11 and 12.
