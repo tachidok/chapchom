@@ -1,3 +1,4 @@
+
 #+STARTUP: showall
 #+TITLE: Installing external libraries
 #+AUTHOR: Julio C.
@@ -43,7 +44,7 @@ graphviz.
 * Installation
 
 Suggested (and working) installation order
-- OpenBLAS
-- SuperLU
-- Armadillo
-- VTK
+1) OpenBLAS
+2) SuperLU
+3) Armadillo
+4) VTK
