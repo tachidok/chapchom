@@ -25,6 +25,11 @@ https://sinews.siam.org/Details-Page/a-model-to-predict-covid-19-epidemics-with-
  * Update README.md file
 * Working on
 * Reviewing
+** Add tools for code-coverage for branches
+ * [x] Check information on codecov.io
+ * There is no need to update coverage reports per branch, therefore
+   the option for updating reports in the tools/run_codecov.sh has
+   been commented.
 * Done
 ** Add tools for code-coverage for branches
  * [x] Check information on codecov.io
