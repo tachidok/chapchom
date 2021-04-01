@@ -8,28 +8,31 @@ time.
 How to contribute?
 ------------------
 
-The easy approach
-^^^^^^^^^^^^^^^^^
+**The easy approach**
+
 Create new issues from the GitHub tool or send an email directly to
 the developer's team (jcp.sansalvador@inaoep.mx)
 
-A more complicated approach
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**A more complicated approach**
+
 For more information please check the contributions section of the
 documentation.
 
 Facts and curiosities
 ---------------------
 
-How many developers are currently working on the library?
-- At Thrusday, February/09, 2021 there is one and only one developer.
+**How many developers are currently working on the library?**
 
-When did this project start?
-- The first commit to GitHub of this project was on Friday, 11 March 2016.
+* At Thrusday, February/09, 2021 there is one and only one developer.
 
-A list (in wikipedia) of some software packages implement the FEM
-- https://en.wikipedia.org/wiki/List_of_finite_element_software_packages
-  
+**When did this project start?**
+
+* The first commit to GitHub of this project was on Friday, 11 March 2016.
+
+**A list (in wikipedia) of some software packages implement the FEM**
+
+* https://en.wikipedia.org/wiki/List_of_finite_element_software_packages  
+    
 List of contributors
 ^^^^^^^^^^^^^^^^^^^^
 
