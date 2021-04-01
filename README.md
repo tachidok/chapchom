@@ -8,15 +8,29 @@
 ---
 
 ## Welcome!
-This is the official git repository for the **SciCell++** project.
+This is the official GitHub repository for the **SciCell++** project.
 
-## What the project is about?
-We intent to develop a **Object-Oriented-Parallel numerical framework**
-with aims to solve PDE's by Mesh Free/Finite Element Method.
+## What is SciCell++?
 
-## Ultra-fast installation!!!
+SciCell++ is an object-oriented framework for the simulation of biological and physical phenomena modelled as continuous or discrete processes.
+
+## Table of Contents
+
+1. [Installation](#installation)
+2. [Demos](#demos)
+3. [Documentation](#documentation)
+4. [How to contribute](#how_to_contribute)
+5. [Facts and curiosities](#facts_and_curiosities)
+6. [License](#license)
+
+## Installation <a name="installation"></a>
+
+### Docker-based installation
 We are adopting containers to ease the installation and release of
 versions so you do not need to worry about any dependencies.
+
+This section and installation procedure is under development.
+:construction: :construction: :construction: :construction: :construction:
 
 Follow the instructions in
 [here](https://docs.docker.com/engine/install/) to get Docker
@@ -25,9 +39,9 @@ installed in your system.
 Then get the image from our Docker repository and ta-dah, you are
 ready to go.
 
-## Fast installation and starting up!!!
+### Fast installation and starting up!!!
 
-### What you need to have it running and working nicely?
+#### What you need to have it running and working nicely?
 * A C++ compiler - demo drivers and library built with version
   7.4.0. It may work with previous versions as well.
   
@@ -37,30 +51,24 @@ ready to go.
   (also to produce nice plots). We tested with version 3.7.3 but it
   should work with any version >= 3
 
-#### Optional
-
-* Latex - to build documentation. Most documentation is generated from
-  `.org` files.
-
-* Doxygen - to build classes diagrams and useful documentation from
-  the code.
+##### Optional
 
 * MPI support for parallel features - `not currently supported`.
 
-### Get your own copy of the project
+#### Get your own copy of the project
 You need **git** installed in your computer, then type in a terminal
 
 ```shell
 git clone https://github.com/tachidok/scicellxx
 cd scicellxx
-git checkout -b john
+git checkout -b john_cool
 ```
 
-After executing the first line you will be prompted with your github
+After executing the first line you will be prompted with your GitHub
 user name and your password. The third line generates your fully
-customised branch and assumes your name is _john_
+customised branch, we assume that your name is _john_cool_
 
-### Configuration
+#### Configuration
 * In a terminal (shell command line) go into the `scicellxx` folder
   then type
 
@@ -71,54 +79,17 @@ customised branch and assumes your name is _john_
 * Follow up the instructions on screen to configure your own copy of
 the project.
 
-* From here on you can continue with the `starting_up` document in the
-`doc` folder.
+## Demos <a name="demos"></a>
 
-**For full details and additional features please check the full
-documentation in the `doc` folder.**
-
-#### Documentation
-
-If you got doxygen installed in your system then generate the
-documentation by typing in a terminal,
-
-```shell
-./make_doc.sh
-```
-
-the documentation will be automatically generated into the
-`doc/doxy_doc/html` folder, then open the `index.html` file in a
-web-browser.
-
-### Additional and recommended external libraries
-If you want to get the maximum performance you will need to install
-the following external packages. You can find information on how to
-configure them in the `doc` folder.
-
-* OpenBLAS
-* SuperLU (requires OpenBLAS)
-* Armadillo (requires SuperLU)
-* VTK (for visuallisation purposes, we use it in combination with
-  Paraview)
-  
-NOTE: The project works and runs nicely without these packages.
-
-## Examples and test cases
-
-Demos, examples or test cases are in the `demos` folder. These demos
-are also used to self test the implementation. You should run all of
-them to make sure nothing is broken. You can select to perform a full
-test at installation time, otherwise type
+Demos live in the `demos` folder. You should run all of them to make sure everything is working fine. If you did not run them at installation time (by default) you can do it at any time by opening a terminal, going into the build folder (the default one is `build`) and typing
 
 ```shell
 ./ctest
 ```
-into the specified build folder (the default one is `build`).
 
-A large number of examples is expected to live in the `demos` folder
-so check there for any feature available in the project.
+A large number of demos is expected to live in the `demos` folder. Review the [corresponding documentation](https://scicellxx.readthedocs.io/en/latest/?badge=latest) for their full description.
 
-### Current demos for specific functionalities
+### Featured demos
 * Interpolation
 * Linear solvers
 * Matrices operations
@@ -131,27 +102,20 @@ so check there for any feature available in the project.
     implementations)
   * Adaptive time steppers
 
-## License
+## Documentation <a name="documentation"></a>
 
-Mmm ... that is something we need to carefully think about.
+The full documentation is [here](https://scicellxx.readthedocs.io/en/latest/?badge=latest).
 
-## How to contribute
+## How to contribute <a name="how_to_contribute"></a>
 
-Once we have something intereseting to share with you we will  make the
-project public. Please check continuously for updates or contact the
-developers :construction: :envelope: (jcp.sansalvador.at.inaoe.mx) :envelope: :
+Please check the [corresponding documentation](https://scicellxx.readthedocs.io/en/latest/?badge=latest) section for contributions.
 
-### Notes for contributors
-For full details on contributions please check the documentation in
-the `doc` folder. Contact the developers for current in-development
-features.
+## Facts and curiosities <a name="facts_and_curiosities"></a>
 
-## Facts and curiosities
+### How many developers are currently working on this project?
 
-### How many developers are currently working on the library
-
-At Sunday, April/12, 2020 there is one and only one developer, me
-:no_mouth:
+At Wednesday, March/31, 2021 there is one and only one developer, me
+:no_mouth: :envelope:
 
 :construction: :construction: :construction: :construction: :construction:
 
@@ -159,8 +123,6 @@ At Sunday, April/12, 2020 there is one and only one developer, me
 This project was initially uploaded to GitHub on Friday, 11 March 2016
 :smile:
 
-## Here is a list (in wikipedia) of other software packages that implement the FEM
+## License <a name="license"></a>
 
-https://en.wikipedia.org/wiki/List_of_finite_element_software_packages
-
-## Have fun and enjoy .... !!!
+Licensed under the GNU GPLv3. A copy can be found on the [LICENSE](./LICENSE) file.
