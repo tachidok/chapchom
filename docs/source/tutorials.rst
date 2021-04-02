@@ -1,36 +1,30 @@
 Tutorials
 =========
 
-Here you will find a large set of tutorials to help your way with
-SciCell++.
+In this section you will find a large set of tutorials (some of them
+with exercises) to help your way through SciCell++.
 
-SciCell++ starting-up
----------------------
+Starting up with SciCell++
+--------------------------
 
-Basic
-^^^^^
+.. toctree::
+   :maxdepth: 1
+   :numbered:
 
-:doc:`A framework, not a library <tutorials/scicellxx_tutorials/a_framework_not_a_library>`
+   tutorials/scicellxx_tutorials/a_quick_starting_up_guide
 
 Maths
 -----
 
-Basic
-^^^^^
-
-:doc:`Differential Equations <tutorials/maths_tutorials/differential_equations>`
+.. toctree::
+   :maxdepth: 1
+   :numbered:
+   
+   tutorials/maths_tutorials/differential_equations
   
 Cellular Automata
 -----------------
 
-Basic
-^^^^^
-
 Cellular Motors
 
 TASEP
-
-
-
-
-
