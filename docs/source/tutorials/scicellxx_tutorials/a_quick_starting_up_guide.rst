@@ -260,48 +260,75 @@ Options for the configuration file
 Running demos
 -------------
 
-Go to the demo folder you are interested and type =./bin/= followed by
-the name of the demo. Make sure there is a =./RESLT/= folder in the
-directory you are running the demo since the results of the
-computations are stored in there.
+SciCell++ is released with a set of demos that show you some of its
+main features. We recommend you to explore the demos section of the
+documentation and the demos folder. Whenever you want to run a demo
+just go to the demo folder which you are interested, create a folder
+called ``RESLT`` if it is not already there and type ``./bin/``
+followed by the name of the demo.
 
-Once the demo has started you should see output messages on the
-terminal with general information about the results of the
-computations.
+* **Example:** Lets say you want to run the Lotka-Volterra demo in the
+  folder ``/demos/lotka_volterra/``, once you are in that folder
+  create the ``RESLT`` folder where the output is stored (all the
+  demos are configured to store its output in a folder with that name,
+  if the folder does not exist then the output is not generated) and
+  run the demo:
 
-**Input arguments**
-Some demos require input arguments to run, you can check what input
-arguments you need to pass by passing the =--help= or =-h= option to
-the demo driver.
+  .. code-block:: shell
+
+     mkdir RESLT
+     ./bin/demo_lotka_volterra
+
+  Once the demo has started you should see output messages on the
+  terminal with general information about the results of the
+  computations. You can check the produced results in the ``RESLT``
+  folder.
+
+.. note:: Observe that some demos are equipped with Python or GNUPlot
+          script to visualise the results. Try to run them as ``python
+          <name-of-the-python-script.py>`` or ``gnuplot
+          <name-of-the-gnu-script.gp>``.
+
+Input arguments
+^^^^^^^^^^^^^^^
+
+Some demos require input arguments to run, if you try to run one of
+those and pass nothing you will get a message indicating what you need
+to pass. You can also check what input arguments a demo needs by
+passing the ``--help`` or ``-h`` options at running time.
 
 Create your ``private`` folder
-----------------------------
+------------------------------
 
-In order to modify or create your own code we encourage you to do so
-in your own private folder, to do so open a terminal and create your
-folder inside the =private= folder.
+Every user has its own private folder, use this folder to store all of
+your work, in-development demos and any of your new developed features
+for SciCell++. One of the first things that you should do in order to
+start developing new features for SciCell++ is to create your private
+folder, to do so follow theses instructions:
 
-In a terminal type
+1. Open a terminal and go to the ``private`` folder of SciCell++ and
+   typet the following (make sure to substitute ``john_cool`` by
+   your name):
 
-#+BEGIN_SRC bash
-cd private
-mkdir john
-cd john
-#+END_SRC
+   .. code-block:: shell
 
-Note that we are assuming you are named =john=, change that with your
-name. Once you have created your own private folder update the
-=CMakeLists.txt= file in the private folder by adding your folder name
-at the end of the file using the following line
+      cd private
+      mkdir john_cool
+      cd john_cool
 
-#+BEGIN_SRC bash
-ADD_SUBDIRECTORY(john)
-#+END_SRC
+2. Update the ``CMakeLists.txt`` file in the private folder by adding
+   your folder name at the end of the file as follow (make sure to
+   substitute ``john_cool`` by your name):
 
-Substitute =john= with your folder name.
+   .. code-block:: shell
 
-Compile again the full framework using the =./autogen.sh= comand at the
-root folder and make sure no problems are found.
+      ADD_SUBDIRECTORY(john_cool)
+
+3. Run the ``autogen.sh`` script at the root folder of SciCell++ and
+   make sure no problems are found. If there are any problem
+   double-check that you added your folder inside the ``private``
+   folder of SciCell++ and that you are modifying the correct
+   ``CMakeLists.txt`` file.
 
 Creating your own project
 -------------------------

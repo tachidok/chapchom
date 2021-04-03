@@ -114,7 +114,7 @@ The following step guide you through the installation process:
 2. Configuration
 
    Within the ``scicellxx`` folder execute the automatic generator
-   shell script as follows:
+   shell script as follow:
 
    .. code-block:: shell
 
@@ -124,17 +124,27 @@ The following step guide you through the installation process:
 
       This commands executes a full compilation of SciCell++ and runs
       all the demos and tests to make sure you are working with an
-      stable copy. If you want to fully configure the compilation
-      process use the ``-i`` parameter. You will be able to specify
-      the number of processors to compile SciCell++, also the number
-      of processor to run the demos, use predefined configuration
-      files for access to third-party libraries and many more. For a
-      full list of available options use the ``-h`` parameter.
-
+      stable copy. You can pass the ``-h`` parameter to have a list of
+      available options or check the ``autogen.sh`` script options
+      section.
+      
    A summary of the compilation and testing process is shown once they
    have finished. If no errors were reported then SciCell++ is ready
    to go. We recommend you to have a look at the :doc:`tutorials` and
    :doc:`demos` as follow up.
+
+Options for the ``autogen.sh`` script
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+      If you want to fully configure the compilation
+      process use the ``-i`` parameter. Check the options for the
+      ``autogen.sh`` section.
+      sectionsYou will be able to specify
+      the number of processors to compile SciCell++, also the number
+      of processor to run the demos, use predefined configuration
+      files for access to third-party libraries and many more. For a
+      full list of available options use the ``-h`` parameter.
 
 Additional features
 -------------------
