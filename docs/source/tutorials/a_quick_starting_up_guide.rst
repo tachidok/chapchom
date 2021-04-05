@@ -370,9 +370,10 @@ template. For this example we are going to copy the demo driver
     tag to identify libraries required for your code. For example:
     ``LIB_demo_sophy``.
 
-  * Include the libraries you need. In the template we include the
-  ``general_lib`` and the ``problem_lib``. Check the section # for the
-  list of libraries that you may include in your project.
+  * Include the modules you need. In the template we only include the
+    ``general_lib`` and the ``problem_lib`` modules. Check the
+    :doc:`modules` document for the full list of module and their
+    details.
 
 5. Go to the root folder of SciCell++ and execute the ``./autogen.sh``
    script. If you find errors please make sure you correctly changed
@@ -423,19 +424,30 @@ Open a terminal and follow these instructions:
 
                * Whenever you want to execute your project go to your ``private`` folder and type ``./bin/the-name-of-your-project``.
             
-Add your project as a demo into the ``demos`` folder
-----------------------------------------------------
+Add your project to the ``demos`` folder
+----------------------------------------
 
-Once you are fully happy with the results of your project you can
-include it as part of the framework in the =demos= folder. Here are
-three things that you need to do before including it in the =demos=
-folder.
-1) You need to think where in the =demos= folder structure to include
-   your demo.
-2) You need to create the expected/correct output files that will be
+If you add a new feature to SciCell++ we encourage you to create a
+tutorial and a demo showing these new features. Here we detail the
+process to include your project into the ``demos`` folder of
+SciCell++.
+
+1) Run your project to generate the output that will be used at the
+   testing stage, save this data into a file.
+
+Create a new folder into the ``demos`` folder structure or select the
+one that is better related to your project. Once identified this
+folder follow these instructions:
+
+
+
+You need to create the expected/correct output files that will be
    used by the testing unit to check for running errors.
 3) You will have to check your demo is run and passed properly when
    running the demos of the project.
+
+
+   
 After considering these points proceed as follows:
 + Create the required folder structure into the =demo= folder.
 + Add =ADD_SUBDIRECTORY= lines in the corresponding =CMakeLists.txt=
