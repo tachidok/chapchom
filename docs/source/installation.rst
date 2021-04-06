@@ -222,6 +222,19 @@ file with your current version of SciCell++.
 3. Once finished a file named ``SciCell++.tar.gz`` will be created in
    the root folder of SciCell++.
 
+Add the ``bin`` folder of SciCell++ to your ``PATH`` variable
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This would allow you to execute any scripts in the ``bin`` folder of
+SciCell++ without specifying the full path of the scripts.
+
+1. Add the following line at the end of your ``.bashrc`` file from
+   your home folder.
+
+   .. code-block:: shell
+
+      export PATH="/path/to/your/scicellxx/installation/bin/:$PATH"
+   
 .. _external-packages-installation-label_installation.rst:
    
 External packages installation
