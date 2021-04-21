@@ -17,31 +17,85 @@ Docker-based installation
 -------------------------
 
 This type of installation provides you with a ready-out-of-the-box
-container (a magic box with all software dependencies preinstalled and
+container (a black-box with all software dependencies preinstalled and
 ready to go). You will be able to use SciCell++ just
 right-out-of-the-box.
 
 Windows systems
 ^^^^^^^^^^^^^^^
 
-
-Ubuntu 18.04.5 LTS
-^^^^^^^^^^^^^^^^^^
-
-1. Install docker
-
-Follow the instructions in `docker official installation website
-<https://docs.docker.com/engine/install/>`_ to get Docker installed in
-your system.
-
-2. Get the docker container from the official repository
-
-.. warning:: Not finished section.
+.. warning:: Work in progress
 
 3. Run the docker application
 
 4. Run the docker image
 
+.. warning:: Not finished section.
+             
+
+Linux systems
+^^^^^^^^^^^^^
+
+This section presents instructions for the installation of SciCell++
+on a linux type system. The instructions were tested on Ubuntu 18.04
+but we expect them to work on recent versions as well.
+
+**Requirements**
+
+* `Docker <https://docs.docker.com/engine/install/>`_ to get the
+  SciCell++ container with the preinstalled software packages.
+
+* `Git <https://git-scm.com/>`_ to get a copy of SciCell++ in your
+  system.
+
+**Steps**
+  
+1. Install Docker
+
+Follow the instructions in the `docker official installation website
+<https://docs.docker.com/engine/install/>`_ to install Docker in your
+system.
+
+2. Get the docker container from the official repository of SciCell++,
+   to do so just open a terminal an type the following:
+
+   .. code-block:: shell
+                   
+                   docker pull scicellxx/scicellxx-base-all:0.1
+
+3. Get your own copy of SciCell++
+
+   Open a command line and type the following:
+
+   .. code-block:: shell
+   
+                   git clone https://github.com/tachidok/scicellxx
+                   cd scicellxx
+                   git checkout -b john_cool
+
+   The previous commands get a copy of SciCell++ from the `official
+   GitHub repository <https://github.com/tachidok/scicellxx>`_ down to
+   your local machine and moves into the ``scicellxx``
+   folder. Finally, a new branch named ``john_cool`` is generated.
+
+   .. note::
+
+      Feel free to rename the ``john_cool`` folder with your name.
+      
+4. Configure SciCell++
+
+   Open a terminal and go to the folder where you ran the `git clone`
+   command and type the following:
+
+   .. code-block:: shell
+
+      ./scicellxx/tools/run_scicellxx_on_docker.sh -f ./autogen.sh -t
+      STATIC -b DEBUG -n 4 -c ./configs/container -d 4 -v
+
+      sudo ./scicellxx/tools/run_scicellxx_on_docker.sh
+
+      Inside run the ./autogen script
+   
 
 Manual installation
 -------------------
