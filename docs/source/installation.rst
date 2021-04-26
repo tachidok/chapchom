@@ -21,6 +21,8 @@ container (a black-box with all software dependencies preinstalled and
 ready to go). You will be able to use SciCell++ just
 right-out-of-the-box.
 
+.. _windows-systems-docker-installation-label_installation.rst:
+
 Windows systems
 ^^^^^^^^^^^^^^^
 
@@ -33,6 +35,8 @@ Windows systems
 .. warning:: Not finished section.
              
 
+.. _linux-systems-docker-installation-label_installation.rst:
+             
 Linux systems
 ^^^^^^^^^^^^^
 
@@ -95,8 +99,7 @@ system.
       sudo ./scicellxx/tools/run_scicellxx_on_docker.sh
 
       Inside run the ./autogen script
-   
-
+      
 Manual installation
 -------------------
 
@@ -107,7 +110,7 @@ and hardware resources in your machine.
 
    Currently only Unix based systems are considerd for this type of
    installation. The steps provided in this section have been tested
-   in Ubuntu 16.04 LTS, Ubuntu 18.04.2 LTS and Ubuntu 18.04.5 LTS.
+   in Ubuntu 16.04 LTS and Ubuntu 18.04 LTS.
 
 .. note::
    
@@ -116,7 +119,7 @@ and hardware resources in your machine.
    :download:`file <./spack.yaml>`. Feel free to use it to ease the
    installation process and skip this section.
    
-**Software pacakges requirements**
+**Software packages requirements**
 
 * `Git <https://git-scm.com/>`_ to get a copy of SciCell++ in your
   system.
@@ -130,6 +133,11 @@ and hardware resources in your machine.
 * The `Python <https://www.python.org/>`_ language to run some of the
   demos and the unit test. We include Python based scripts to plot the
   result for some demos . Tested with Python version 3.7.3.
+
+You need to manually install the previous packages, if you prefer to
+use a container with all the previous packages preinstalled then go to
+the :ref:`docker based linux systems section
+<linux-systems-docker-installation-label_installation.rst>`.
 
 The following software packages are optional (but recommended)
   
@@ -164,11 +172,20 @@ The following step guide you through the installation process:
    .. note::
 
       Feel free to rename the ``john_cool`` folder with your name.
-   
-2. Configuration
 
-   Within the ``scicellxx`` folder execute the automatic generator
-   shell script as follow:
+That is it, now you can move to the configuration of SciCell++ section.
+
+.. _configuration-label_installation.rst:
+
+Configuration
+-------------
+
+This section guides you through the configuration process of
+SciCell++. The configuration is performed with help of the
+``autogen.sh`` script which lives in the main SciCell++ folder.
+
+1. Open a terminal and go to the ``scicellxx`` folder.
+2. Execute the automatic generator script by typing:
 
    .. code-block:: shell
 
@@ -178,27 +195,34 @@ The following step guide you through the installation process:
 
       This commands executes a full compilation of SciCell++ and runs
       all the demos and tests to make sure you are working with an
-      stable copy. You can pass the ``-h`` parameter to have a list of
-      available options or check the ``autogen.sh`` script options
-      section.
+      stable copy. If you want a full list of available parameters for
+      this script then add the ``-h`` parameter or review the
+      :ref:`options section for autogen.sh
+      <autogen.sh-options-label_installation.rst>`.
+
+   .. important::
+
+      If you are using a docker container to run SciCell++ then do not
+      forget to pass the ``-c ./configs/container`` option to the
+      ``autogen.sh`` script.
       
    A summary of the compilation and testing process is shown once they
    have finished. If no errors were reported then SciCell++ is ready
    to go. We recommend you to have a look at the :doc:`tutorials` and
    :doc:`demos` as follow up.
 
+.. _autogen.sh-options-label_installation.rst:
+        
 Options for the ``autogen.sh`` script
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-
-      If you want to fully configure the compilation
-      process use the ``-i`` parameter. Check the options for the
-      ``autogen.sh`` section.
-      sectionsYou will be able to specify
-      the number of processors to compile SciCell++, also the number
-      of processor to run the demos, use predefined configuration
-      files for access to third-party libraries and many more. For a
-      full list of available options use the ``-h`` parameter.
+If you want to fully configure the compilation process use the ``-i``
+parameter. Check the options for the ``autogen.sh`` section.
+sectionsYou will be able to specify the number of processors to
+compile SciCell++, also the number of processor to run the demos, use
+predefined configuration files for access to third-party libraries and
+many more. For a full list of available options use the ``-h``
+parameter.
 
 Additional features
 -------------------

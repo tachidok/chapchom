@@ -236,6 +236,7 @@
 
 ;;; gg-tags for autocomplete, finding references in files and dumb-jump
 (use-package ggtags
+;  :disabled ; default [enabled]
   :ensure t
   :config
   (add-hook 'c-mode-common-hook
@@ -246,6 +247,7 @@
 
 ;;; Dumb-jump, o jump to function definitions
 (use-package dumb-jump
+;  :disabled ; default [enabled]
   :ensure t
   :bind (("M-g o" . dumb-jump-go-other-window)
 	 ("M-g j" . dumb-jump-go)
@@ -256,18 +258,20 @@
   (message "dumb-jump ... [DONE]"))
 
 (use-package company-irony
+;  :disabled ; default [enabled]
   :ensure t
   :config
   (message "company-irony ... [DONE]"))
 
 (use-package company-c-headers
+;  :disabled ; default [enabled]
   :ensure t
   :config
   (message "company-c-headers ... [DONE]"))
 
 ;;; Company mode (complete anything mode)
 (use-package company
-;;;  :disabled
+;  :disabled ; default [enabled]
   :ensure t
   :config
   (add-hook 'after-init-hook 'global-company-mode)
@@ -285,7 +289,7 @@
 
 ;;; Irony for code completion
 (use-package irony
-;;;  :disabled
+;  :disabled ; default [enabled]
   :ensure t
   :config
   (add-hook 'c++-mode-hook 'irony-mode)
@@ -296,7 +300,7 @@
 
 ;;; Auto-complete basic configuration
 (use-package auto-complete
-  :disabled
+  :disabled ; default [disabled]
   :ensure t
   :init
   (progn
@@ -306,8 +310,11 @@
   :config
   (message "auto-complete ... [DONE]"))
 
-;;; Flycheck
+;;; Flycheck - on-the-fly-sintax checking extension
+;;; This consume LARGE AMOUNTS OF MEMORY that is why it is disabled, a
+;;; delay on response is introduced by the activation of this option
 (use-package flycheck
+  :disabled ; default [enabled]
   :ensure t
   :init
   (global-flycheck-mode t)
@@ -316,7 +323,7 @@
 
 ;;; Yasnippet
 (use-package yasnippet
-  :disabled
+  :disabled ; default [disabled]
   :ensure t
   :init
   (yas-global-mode 1)
@@ -325,7 +332,7 @@
 
 ;;; Agressive indent, automatically indents the code
 (use-package aggressive-indent
-  :disabled
+  :disabled ; default [disabled]
   :ensure t
   :config
   (global-aggressive-indent-mode 1)
@@ -394,7 +401,7 @@
 
 ;;; Enable the package elpy, used for python
 (use-package elpy
-  ;;;:disabled
+  ;;;:disabled ; default [enabled]
   :ensure t
   :config
   (message "elpy ... [DONE]"))
@@ -513,7 +520,7 @@
  '(mouse-wheel-scroll-amount (quote (1 ((shift) . 1) ((control)))))
  '(package-selected-packages
    (quote
-    (web-mode git-timemachine elpy cmake-font-lock cmake-mode geben-helm-projectile iedit expand-region aggressive-indent flycheck company-c-headers company-irony dumb-jump ggtags markdown-mode gnuplot-mode counsel-projectile projectile auctex magit counsel undo-tree org-bullets ace-window which-key use-package)))
+    (try web-mode git-timemachine elpy cmake-font-lock cmake-mode geben-helm-projectile iedit expand-region aggressive-indent flycheck company-c-headers company-irony dumb-jump ggtags markdown-mode gnuplot-mode counsel-projectile projectile auctex magit counsel undo-tree org-bullets ace-window which-key use-package)))
  '(text-mode-hook (quote (turn-on-auto-fill text-mode-hook-identify))))
 
 (custom-set-faces
